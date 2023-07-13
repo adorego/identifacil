@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react';
+
 import dayjs from 'dayjs';
 
 /*export default deleteRecord = async (id) => {
@@ -42,7 +43,7 @@ export async function fetchData(url : string) {
 
 export async function fetchFormData(id: any, entity: string) {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${entity}?id=${id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/${entity}?id=${id}`);
         if (!response.ok) {
             throw new Error('Error en la petición');
         }
@@ -59,7 +60,7 @@ export async function fetchFormData(id: any, entity: string) {
     }
 }
 
-/*
+/**
 Como recibir del otro lado el fetch
 // OtraPagina.js
 import { useEffect, useState } from 'react';
@@ -83,6 +84,7 @@ export default function OtraPagina() {
 
 /**
  * Filtra un array de objetos basado en un rango de fechas.
+ *
  * @param {Array} data Array de objetos a filtrar.
  * @param {string} startDate Fecha de inicio para el filtro.
  * @param {string} endDate Fecha de finalización para el filtro.
@@ -128,8 +130,8 @@ export const postEntity = async (
         const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
         console.log(stateForm)
         const url = isEditMode !== 'crear'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}/${params.id}`
-            : `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`;
+            ? `http://localhost:5000/${endpoint}/${params.id}` // PUT
+            : `http://localhost:5000/${endpoint}`;                                             // POST
 
         const response = await fetch(url, {
             method: method,
@@ -146,6 +148,54 @@ export const postEntity = async (
 
             openSnackbar(message, 'success');
             router.push(`/${endpoint}`);
+        } else {
+            throw new Error('Error en la petición');
+        }
+    } catch (error) {
+        setLoading(false);
+        console.error('Error:', error);
+    }
+};
+
+
+export const postForm = async (
+    isEditMode: boolean,
+    endpoint: string,
+    entityName: string,
+
+    stateForm: any,
+    setLoading: (arg0: boolean) => void,
+    openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
+    router: any,
+    redirect: boolean = false
+) => {
+    try {
+        setLoading(true);
+
+        const method = isEditMode ? 'PUT' : 'POST';
+        console.log(JSON.stringify(stateForm))
+        const url = isEditMode
+            ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${stateForm.id}`
+            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
+
+        console.log(url)
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(stateForm),
+        });
+
+        setLoading(false);
+
+        if (response.ok) {
+            const message = isEditMode
+                ? `${entityName} actualizada correctamente.`
+                : `${entityName} creada correctamente.`;
+
+            openSnackbar(message, 'success');
+            if(redirect){
+                router.push(`/${endpoint}`);
+            }
         } else {
             throw new Error('Error en la petición');
         }

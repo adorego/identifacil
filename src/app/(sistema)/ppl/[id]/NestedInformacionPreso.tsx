@@ -2,22 +2,21 @@
 
 import * as React from 'react';
 
-import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
 import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
 import {
+    datosDeSalud2Initial, datosDeSalud2Type,
     datosEducacionInicial,
     datosEducacionType,
     datosFamiliaresInicial,
     datosFamiliaresType,
     datosJudicialesInicial,
     datosJudicialesType,
-    datosSaludInicial,
-    datosSaludType,
     datosSeguridadInicial,
     datosSeguridadType
 } from "@/components/utils/systemTypes";
-
 import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
+
+import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
 import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliar";
 import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
 import BloqueSalud from "../../cuestionario/components/BloqueSalud";
@@ -59,19 +58,24 @@ function a11yProps(index: number) {
 }
 
 
-
 type datosPersonaType = {
     id_persona: number | null;
     nombre: string;
     apellido: string;
     genero: number;
     apodo: string;
-    fecha_nacimiento: string;
-    datosPersonales:{
-        estadoCivil: string;
+    fechaDeNacimiento: string;
+    datosPersonales: {
+        id: number | null;
+        estadoCivil: {
+            id: number | null;
+        };
         lugarDeNacimiento: string;
         direccion: string;
         barrioCompania: string;
+        nacionalidad: {
+            id: number | null;
+        };
         numeroDeContacto: string;
         contactoDeEmergencia1: string;
         contactoDeEmergencia2: string;
@@ -82,23 +86,29 @@ type datosPersonaType = {
     datosDeSeguridad: datosSeguridadType;
     datosFamiliares: datosFamiliaresType;
     datosEducacion: datosEducacionType;
-    datosSalud: datosSaludType;
+    datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
 }
 
 
-const datosPersonaInitial = {
+const datosPersonaInitial: datosPersonaType = {
     id_persona: 0,
     nombre: "",
     apellido: "",
     genero: 1,
     apodo: "",
-    fecha_nacimiento: "",
-    datosPersonales:{
-        estadoCivil: "",
+    fechaDeNacimiento: "",
+    datosPersonales: {
+        id: null,
+        estadoCivil: {
+            id: null,
+        },
         lugarDeNacimiento: "",
         direccion: "",
         barrioCompania: "",
+        nacionalidad: {
+            id: null,
+        },
         numeroDeContacto: "",
         contactoDeEmergencia1: "",
         contactoDeEmergencia2: "",
@@ -109,11 +119,11 @@ const datosPersonaInitial = {
     datosDeSeguridad: datosSeguridadInicial,
     datosFamiliares: datosFamiliaresInicial,
     datosEducacion: datosEducacionInicial,
-    datosSalud: datosSaludInicial,
+    datosDeSalud: datosDeSalud2Initial,
     datosJudiciales: datosJudicialesInicial
 }
 
-export default function NestedInformacionPreso({datosPersona=datosPersonaInitial} : { datosPersona:datosPersonaType }) {
+export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: { datosPersona: datosPersonaType }) {
 
     const [value, setValue] = React.useState(0);
 
@@ -143,15 +153,17 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
                         <Grid item sm={10}>
                             <CustomTabPanel value={value} index={0}>
 
-                                { datosPersona ?
+                                {datosPersona ?
                                     <FormularioDatosPersonales datosDeIdentificacion={{
                                         id_persona: datosPersona.id_persona,
+                                        id_datos_personales: datosPersona.datosPersonales?.id,
                                         nombres: datosPersona.nombre,
                                         apellidos: datosPersona.apellido,
                                         apodo: datosPersona.apodo,
                                         codigo_genero: datosPersona.genero,
-                                        fecha_nacimiento: '1989/07/20',
-                                        estadoCivil: datosPersona?.datosPersonales?.estadoCivil,
+                                        fechaDeNacimiento: datosPersona.fechaDeNacimiento,
+                                        nacionalidad: datosPersona?.datosPersonales?.nacionalidad?.id,
+                                        estadoCivil: datosPersona?.datosPersonales?.estadoCivil?.id,
                                         lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
                                         direccion: datosPersona?.datosPersonales?.direccion,
                                         barrioCompania: datosPersona?.datosPersonales?.barrioCompania,
@@ -168,30 +180,33 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={1}>
-                                 <BloqueSalud
+
+                                <BloqueSalud
                                      id_persona={datosPersona.id_persona}
-                                     datosAlmacenados={datosPersona.datosSalud}
+                                     datosAlmacenados={datosPersona.datosDeSalud}
                                  />
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={2}>
-                                 <BloqueSeguridad
-                                     datosIniciales={datosPersona.datosDeSeguridad}
-                                     id_persona={datosPersona.id_persona}
-                                 />
+                                <BloqueSeguridad
+                                    datosIniciales={datosPersona.datosDeSeguridad}
+                                    id_persona={datosPersona.id_persona}
+                                />
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={3}>
-                                 <BloqueEducacion id_persona={datosPersona.id_persona} 
-                                 datosEducacionIniciales={datosPersona.datosEducacion}/>
+                                <BloqueEducacion id_persona={datosPersona.id_persona}
+                                                 datosEducacionIniciales={datosPersona.datosEducacion}/>
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={4}>
-                                 <BloqueFamiliares id_persona={datosPersona.id_persona} datosFamiliaresIniciales={datosPersona.datosFamiliares} />
+                                <BloqueFamiliares id_persona={datosPersona.id_persona}
+                                                  datosFamiliaresIniciales={datosPersona.datosFamiliares}/>
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={5}>
-                                 <BloqueJudicial id_persona={datosPersona.id_persona} datosIniciales={datosPersona.datosJudiciales} />
+                                <BloqueJudicial id_persona={datosPersona.id_persona}
+                                                datosIniciales={datosPersona.datosJudiciales}/>
                             </CustomTabPanel>
                         </Grid>
                     </Grid>

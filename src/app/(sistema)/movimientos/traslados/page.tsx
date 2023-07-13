@@ -3,20 +3,18 @@
 import * as React from 'react';
 
 import {
-    CircularProgress, Paper,
+    CircularProgress,
+    Paper,
 } from "@mui/material";
+import {useEffect, useState} from "react";
 
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
-import TituloComponent from "@/components/titulo/tituloComponent";
-import {useEffect, useState} from "react";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import ModalBorrado from "@/components/modal/ModalBorrado";
+import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
-
-
-
 
 const header2 = [
     {id: 'id', label: 'ID'},

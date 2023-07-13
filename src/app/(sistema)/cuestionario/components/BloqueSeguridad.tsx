@@ -10,7 +10,7 @@ import {
     Radio,
     RadioGroup
 } from "@mui/material";
-import React, {FC, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {datosSeguridadInicial, datosSeguridadType} from "@/components/utils/systemTypes";
 
 import {api_request} from "@/lib/api-request";
@@ -22,19 +22,59 @@ interface BloqueSeguridadProps {
     id_persona: number | null;
 }
 
-const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona}) =>{
-  const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(datosIniciales);
-  const {openSnackbar} = useGlobalContext();
-  // console.log(estadoBloqueSeguridadFormulario);
-  const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.target.name);
-    setEstadoBloqueSeguridadFormulario(
-      (previus) =>{
-        return(
-          {
-            ...previus,
-            [event.target.name]:event.target.value,
-            [`${event.target.name}_modificado`]:true
+const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona}) => {
+
+
+    const estadoIncial = datosIniciales ? datosIniciales : datosSeguridadInicial
+    const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(estadoIncial);
+    const {openSnackbar} = useGlobalContext();
+
+    console.log(datosIniciales);
+
+    useEffect(() => {
+        if(datosIniciales){
+            setEstadoBloqueSeguridadFormulario(prevState => {
+                    return{
+                        ...prevState,
+                        id_persona: datosIniciales.id_persona,
+                        riesgoParaPersonal: datosIniciales.riesgoParaPersonal,
+                        riesgoParaPersonal_modificado: datosIniciales.riesgoParaPersonal_modificado,
+                        riesgoParaPersonalRespuesta: datosIniciales.riesgoParaPersonalRespuesta,
+                        riesgoParaPersonalRespuesta_modificado: datosIniciales.riesgoParaPersonalRespuesta_modificado,
+                        riesgoParaReclusos: datosIniciales.riesgoParaReclusos,
+                        riesgoParaReclusos_modificado: datosIniciales.riesgoParaReclusos_modificado,
+                        riesgoParaReclusosRespuesta: datosIniciales.riesgoParaReclusosRespuesta,
+                        riesgoParaReclusosRespuesta_modificado: datosIniciales.riesgoParaReclusosRespuesta_modificado,
+                        riesgoDeSufrirLesionPorOtrosReclusos: datosIniciales.riesgoDeSufrirLesionPorOtrosReclusos,
+                        riesgoDeSufrirLesionPorOtrosReclusos_modificado: datosIniciales.riesgoDeSufrirLesionPorOtrosReclusos_modificado,
+                        riesgoDeSufrirLesionPorOtrosReclusosRespuesta: datosIniciales.riesgoDeSufrirLesionPorOtrosReclusosRespuesta,
+                        riesgoDeDanharLaPropiedad: datosIniciales.riesgoDeDanharLaPropiedad,
+                        riesgoDeDanharLaPropiedad_modificado: datosIniciales.riesgoDeDanharLaPropiedad_modificado,
+                        riesgoDeDanharLaPropiedadRespuesta: datosIniciales.riesgoDeDanharLaPropiedadRespuesta,
+                        miembroDeGrupoQueConstituyeAmenazaParaSeguridad: datosIniciales.miembroDeGrupoQueConstituyeAmenazaParaSeguridad,
+                        miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado: datosIniciales.miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado,
+                        miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta: datosIniciales.miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta,
+                        tieneEntrenamientoMilitarPrevio: datosIniciales.tieneEntrenamientoMilitarPrevio,
+                        tieneEntrenamientoMilitarPrevio_modificado: datosIniciales.tieneEntrenamientoMilitarPrevio_modificado,
+                        tieneEntrenamientoMilitarPrevioRespuesta: datosIniciales.tieneEntrenamientoMilitarPrevioRespuesta,
+                        eraFuncionarioPublico: datosIniciales.eraFuncionarioPublico,
+                        eraFuncionarioPublico_modificado: datosIniciales.eraFuncionarioPublico_modificado,
+                        eraFuncionarioPublicoRespuesta: datosIniciales.eraFuncionarioPublicoRespuesta
+                    }
+                }
+            )
+        }
+    }, [datosIniciales]);
+
+    const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        // console.log(event.target.name);
+        setEstadoBloqueSeguridadFormulario(
+            (previus) => {
+                return (
+                    {
+                        ...previus,
+                        [event.target.name]: event.target.value,
+                        [`${event.target.name}_modificado`]: true
 
                     }
                 )
@@ -57,19 +97,19 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
         )
     }
 
-  const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-    event.preventDefault();
-    if(id_persona){
-      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_seguridad`;
-      const datosDelFormulario:datosSeguridadType = Object.assign({},estadoBloqueSeguridadFormulario);
-      datosDelFormulario.id_persona = id_persona;
-      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-      const respuesta = await api_request(url,{
-        method:'POST',
-        body:JSON.stringify(datosDelFormulario),
-        headers: {
-            'Content-Type': 'application/json'
-        }
+    const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        if (id_persona) {
+            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`;
+            const datosDelFormulario: datosSeguridadType = Object.assign({}, estadoBloqueSeguridadFormulario);
+            datosDelFormulario.id_persona = id_persona;
+            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+            const respuesta = await api_request(url, {
+                method: 'POST',
+                body: JSON.stringify(datosDelFormulario),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
 
             })
             if (respuesta.success) {
@@ -85,6 +125,7 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
             openSnackbar("Falta el identifiicador de la persona", "error");
         }
     }
+
     return (
         <Box
             component="form"
@@ -155,7 +196,6 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
                                 Observacion
                             </InputLabel>
                             <OutlinedInput
-                                disabled={!estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
                                 name="riesgoParaReclusosRespuesta"
                                 value={estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
                                 onChange={onDatoChange}

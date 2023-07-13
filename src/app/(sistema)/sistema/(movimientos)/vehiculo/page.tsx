@@ -1,12 +1,14 @@
 'use client'
 
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+
 import {Box, CircularProgress} from "@mui/material";
+import {useEffect, useState} from 'react';
+
 import CustomTable from "@/components/CustomTable";
-import {deleteRecord} from "@/app/api";
-import TituloComponent from "@/components/titulo/tituloComponent";
 import ModalBorrado from "@/components/modal/ModalBorrado";
+import TituloComponent from "@/components/titulo/tituloComponent";
+import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 
 // Datos para armar el header de la tabla

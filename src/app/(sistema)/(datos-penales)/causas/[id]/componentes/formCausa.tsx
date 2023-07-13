@@ -11,9 +11,9 @@ import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
 const ENDPOINT  = 'http://localhost:5000/causas/1'
-
 // TODO: Hacer completado de form cuando es update o /crear
 export default function FormCausa({params} : { params: { id: number | string } }){
+    //@ts-ignore
     const [datosFormulario, setDatosFormularios] = useState<CausaType>(initialDataForm);
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
@@ -100,7 +100,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Nro. causa"
                         variant="outlined"
-                        value={datosFormulario.nroCausa}
+                        value={datosFormulario.numeroDeDocumento}
                         name="nroCausa"
                         onChange={handleChange}/>
                 </Grid>
@@ -109,7 +109,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Año causa"
                         variant="outlined"
-                        value={datosFormulario.ano}
+                        value={datosFormulario.anho}
                         name="ano"
                         onChange={handleChange}/>
                 </Grid>
@@ -118,7 +118,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Fecha de aprension y detención"
                         variant="outlined"
-                        value={datosFormulario.fechaAprension}
+                        value={datosFormulario.fecha_de_aprehension}
                         name="fechaAprension"
                         onChange={handleChange}/>
                 </Grid>
@@ -128,7 +128,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Caratula"
                         variant="outlined"
-                        value={datosFormulario.caratula}
+                        value={datosFormulario.caratula_causa}
                         name="caratula"
                         onChange={handleChange}/>
                 </Grid>
@@ -137,7 +137,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Hecho punible"
                         variant="outlined"
-                        value={datosFormulario.hechoPunible}
+                        value={datosFormulario.hechos_punibles}
                         name="hechoPunible"
                         onChange={handleChange}/>
                 </Grid>
@@ -148,7 +148,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Situación procesal"
                         variant="outlined"
-                        value={datosFormulario.situacionProcesal}
+                        value={datosFormulario.estado_procesal}
                         name="situacionProcesal"
                         onChange={handleChange}/>
                 </Grid>
@@ -157,7 +157,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Años"
                         variant="outlined"
-                        value={datosFormulario.tiempoDeCondenaAnos}
+                        value={datosFormulario.tiempo_de_condena}
                         name="tiempoDeCondenaAnos"
                         onChange={handleChange}/>
                 </Grid>
@@ -166,7 +166,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Meses"
                         variant="outlined"
-                        value={datosFormulario.tiempoDeCondenaMeses}
+                        value={datosFormulario.tiempo_de_condena}
                         name="tiempoDeCondenaMeses"
                         onChange={handleChange}/>
                 </Grid>
@@ -176,7 +176,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="¿Cuentas con años extras de condena por medida de seguridad?"
                         variant="outlined"
-                        value={datosFormulario.anosExtrasDeCondenaPorMedidaDeSeguridad}
+                        value={datosFormulario.tiene_anhos_extra_de_seguridad}
                         name="anosExtrasDeCondenaPorMedidaDeSeguridad"
                         onChange={handleChange}/>
                 </Grid>
@@ -185,7 +185,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Años"
                         variant="outlined"
-                        value={datosFormulario.anosDeCondenaPorMedidasDeSeguridad}
+                        value={datosFormulario.tiempo_de_seguridad}
                         name="anosDeCondenaPorMedidasDeSeguridad"
                         onChange={handleChange}/>
                 </Grid>
@@ -194,7 +194,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Meses"
                         variant="outlined"
-                        value={datosFormulario.mesesDeCondenaPorMedidasDeSeguridad}
+                        value={datosFormulario.tiempo_de_seguridad}
                         name="mesesDeCondenaPorMedidasDeSeguridad"
                         onChange={handleChange}/>
                 </Grid>
@@ -204,7 +204,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Sentencia definitiva"
                         variant="outlined"
-                        value={datosFormulario.sentenciaDefinitiva}
+                        value={datosFormulario.sentencia_definitiva}
                         name="sentenciaDefinitiva"
                         onChange={handleChange}/>
                 </Grid>
@@ -213,7 +213,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="En caracter de"
                         variant="outlined"
-                        value={datosFormulario.sentenciaDescripcion}
+                        value={datosFormulario.sentencia_definitiva}
                         name="sentenciaDescripcion"
                         onChange={handleChange}/>
                 </Grid>
@@ -223,7 +223,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Compurgamiento inicial"
                         variant="outlined"
-                        value={datosFormulario.compurgamiento}
+                        value={datosFormulario.fecha_de_compurgamiento_inicial}
                         name="compurgamiento"
                         onChange={handleChange}/>
                 </Grid>
@@ -232,7 +232,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Compurgamiento recalculado"
                         variant="outlined"
-                        value={datosFormulario.fechaCompurgamientoCalculada}
+                        value={datosFormulario.fecha_de_compurgamiento_recalculada}
                         name="fechaCompurgamientoCalculada"
                         onChange={handleChange}/>
                 </Grid>
@@ -254,7 +254,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Juzgado de tribunal de sentencia"
                         variant="outlined"
-                        value={datosFormulario.juzgadoDeEjecucionOSentencia}
+                        value={datosFormulario.juzgado_de_tribunal_de_sentencia}
                         name="juzgadoDeEjecucionOSentencia"
                         onChange={handleChange}/>
                 </Grid>
@@ -268,31 +268,14 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         onChange={handleChange}/>
                 </Grid>
 
-                <Grid item sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Nombre de familiar (Notificar ingreso)"
-                        variant="outlined"
-                        value={datosFormulario.nombreDelFamiliar}
-                        name="nombreDelFamiliar"
-                        onChange={handleChange}/>
-                </Grid>
-                <Grid item sm={6}>
-                    <TextField
-                        fullWidth
-                        label="Teléfono del familiar"
-                        variant="outlined"
-                        value={datosFormulario.telefonoDelFamiliar}
-                        name="telefonoDelFamiliar"
-                        onChange={handleChange}/>
-                </Grid>
+
 
                 <Grid item sm={6}>
                     <TextField
                         fullWidth
                         label="Fecha del hecho"
                         variant="outlined"
-                        value={datosFormulario.fechaHecho}
+                        value={datosFormulario.lugar_del_hecho}
                         name="fechaHecho"
                         onChange={handleChange}/>
                 </Grid>
@@ -301,7 +284,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Lugar del hecho"
                         variant="outlined"
-                        value={datosFormulario.lugarHecho}
+                        value={datosFormulario.lugar_del_hecho}
                         name="lugarHecho"
                         onChange={handleChange}/>
                 </Grid>
@@ -311,7 +294,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                         fullWidth
                         label="Link de la noticia"
                         variant="outlined"
-                        value={datosFormulario.linkDeNoticia}
+                        value={datosFormulario.link_de_noticia}
                         name="linkDeNoticia"
                         onChange={handleChange}/>
                 </Grid>
@@ -334,7 +317,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                                 fullWidth
                                 label="Nombre del Defensor"
                                 variant="outlined"
-                                value={datosFormulario.nombreDelDefensor}
+                                value={datosFormulario.defensor.nombreDelDefensor}
                                 name="nombreDelDefensor"
                                 onChange={handleChange}/>
                         </Grid>
@@ -343,7 +326,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
                                 fullWidth
                                 label="Nombre del Defensor"
                                 variant="outlined"
-                                value={datosFormulario.telefonoDelDefensor}
+                                value={datosFormulario.defensor.telefonoDelDefensor}
                                 name="telefonoDelDefensor"
                                 onChange={handleChange}/>
                         </Grid>

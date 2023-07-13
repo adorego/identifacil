@@ -1,85 +1,67 @@
 import {Dayjs} from "dayjs";
 
-export type datosSaludType = {
-    id_persona:number | null;
-    tieneAfeccionADrogas_modificado: boolean;
-    tieneAfeccionADrogras: boolean;
-    grupo_sanguineo: number;
-    grupo_sanguineo_modificado: boolean;
-    vacunas_recibidas: Array<{
-        id: number,
-        label: string
-    }>;
-    vacunas_recibidas_modificada: boolean;
-    presion_arterial: number;
-    presion_arterial_modificada: boolean;
-    frecuencia_cardiaca: number;
-    frecuencia_cardiaca_modificada: boolean;
-    frecuencia_respiratoria: number;
-    frecuencia_respiratoria_modificada: boolean;
-    temperatura: number;
-    temperatura_modificada: boolean;
-    peso: number;
-    peso_modificado: boolean;
-    talla: number;
-    talla_modificado: boolean;
-    imc: number;
-    imc_modificado: boolean;
-    vdrl: boolean;
-    vdrl_modificado: boolean;
-    vih: boolean;
-    vih_modificado: boolean;
-    tb: boolean;
-    tb_modificado: boolean;
-    gestacion: boolean;
-    gestacion_modificado: boolean;
-    tiempo_gestacion: number;
-    tiempo_gestacion_modificado: boolean;
-    fecha_parto: Dayjs | null;
-    fecha_parto_modificada: boolean;
-    discapacidad_fisica: string;
-    discapacidad_modificada: boolean;
-    explicacion_discapacidad_fisica:string;
-    explicacion_discapacidad_fisica_modificada:boolean;
-    sigue_tratamiento_mental: boolean;
-    sigue_tratamiento_mental_modificado: boolean;
-    tiene_antecedentes_de_lesiones_autoinflingidas: boolean;
-    tiene_antecedentes_de_lesiones_autoinflingidas_modificado: boolean;
-    ha_estado_internado_en_hospital_psiquiatrico: boolean;
-    ha_estado_internado_en_hospital_psiquiatrico_modificado: boolean;
-    reporta_abuso_de_droga_previo_al_ingreso: boolean;
-    reporta_abuso_de_droga_previo_al_ingreso_modificado: boolean;
-    medicacion_actual: Array<string>;
-    medicacion_actual_modificada: boolean;
-    tiene_afeccion_severa_por_estupefacientes: boolean;
-    tiene_afeccion_severa_por_estupefaciente_modificado: boolean;
-    necesitaInterprete: boolean;
-    necesitaInterprete_modificado: boolean;
-    tieneDificultadParaLeerYEscribir: boolean;
-    tieneDificultadParaLeerYEscribir_modificado: boolean;
+export type datosDeSalud2Type =  {
+    id: number | null;
+    id_persona: number | null;
+    tieneAfeccionADrogras: boolean | null;
+    tieneAfeccionADrogas_modificado: boolean | null;
+    grupo_sanguineo: {id: number | null, nombre: string |null};
+    grupo_sanguineo_modificado: boolean | null;
+    vacunas_recibidas:  Array<{ id: number; nombre: string }>;
+    vacunas_recibidas_modificado: boolean | null;
+    presion_arterial: string | null;
+    presion_arterial_modificado: boolean | null;
+    frecuencia_cardiaca: null;
+    frecuencia_cardiaca_modificado: boolean | null;
+    frecuencia_respiratoria: string | null;
+    frecuencia_respiratoria_modificado: boolean | null;
+    temperatura: string | null;
+    temperatura_modificado: boolean | null;
+    peso: string | null;
+    peso_modificado: boolean | null;
+    talla: string | null;
+    talla_modificado: boolean | null;
+    imc: string | null;
+    imc_modificado: boolean | null;
+    vdrl: boolean | null;
+    vdrl_modificado: boolean | null;
+    vih: boolean | null;
+    vih_modificado: boolean | null;
+    tb: boolean | null;
+    tb_modificado: boolean | null;
+    gestacion: boolean | null;
+    gestacion_modificado: boolean | null;
+    tiempo_gestacion: number | null;
+    tiempo_gestacion_modificado: boolean | null;
+    fecha_parto: Dayjs | string | null;
+    fecha_parto_modificado: boolean;
+    saludMental: saludMentalType;
+    saludFisica: saludFisicaType;
+    limitacionesIdiomaticas: limitacionesIdiomaticasType;
 }
 
-export const datosSaludInicial: datosSaludType = {
+export const datosDeSalud2Initial: datosDeSalud2Type =  {
+    id: null,
     id_persona: null,
-    tieneAfeccionADrogas_modificado: false,
     tieneAfeccionADrogras: false,
-    grupo_sanguineo: 0,
+    tieneAfeccionADrogas_modificado: false,
+    grupo_sanguineo: {id: null, nombre: null},
     grupo_sanguineo_modificado: false,
     vacunas_recibidas: [],
-    vacunas_recibidas_modificada: false,
-    presion_arterial: 0,
-    presion_arterial_modificada: false,
-    frecuencia_cardiaca: 0,
-    frecuencia_cardiaca_modificada: false,
-    frecuencia_respiratoria: 0,
-    frecuencia_respiratoria_modificada: false,
-    temperatura: 0,
-    temperatura_modificada: false,
-    peso: 0,
+    vacunas_recibidas_modificado: false,
+    presion_arterial: null,
+    presion_arterial_modificado: false,
+    frecuencia_cardiaca: null,
+    frecuencia_cardiaca_modificado: false,
+    frecuencia_respiratoria: null,
+    frecuencia_respiratoria_modificado: false,
+    temperatura: null,
+    temperatura_modificado: false,
+    peso: null,
     peso_modificado: false,
-    talla: 0,
+    talla: null,
     talla_modificado: false,
-    imc: 0,
+    imc: null,
     imc_modificado: false,
     vdrl: false,
     vdrl_modificado: false,
@@ -89,32 +71,74 @@ export const datosSaludInicial: datosSaludType = {
     tb_modificado: false,
     gestacion: false,
     gestacion_modificado: false,
-    tiempo_gestacion: 0,
+    tiempo_gestacion: null,
     tiempo_gestacion_modificado: false,
     fecha_parto: null,
-    fecha_parto_modificada: false,
-    discapacidad_fisica: "",
-    discapacidad_modificada: false,
-    explicacion_discapacidad_fisica:"",
-    explicacion_discapacidad_fisica_modificada:false,
-    sigue_tratamiento_mental: false,
-    sigue_tratamiento_mental_modificado: false,
-    tiene_antecedentes_de_lesiones_autoinflingidas: false,
-    tiene_antecedentes_de_lesiones_autoinflingidas_modificado: false,
-    ha_estado_internado_en_hospital_psiquiatrico: false,
-    ha_estado_internado_en_hospital_psiquiatrico_modificado: false,
-    reporta_abuso_de_droga_previo_al_ingreso: false,
-    reporta_abuso_de_droga_previo_al_ingreso_modificado: false,
-    medicacion_actual: [],
-    medicacion_actual_modificada: false,
-    tiene_afeccion_severa_por_estupefacientes: false,
-    tiene_afeccion_severa_por_estupefaciente_modificado: false,
-    necesitaInterprete: false,
-    necesitaInterprete_modificado: false,
-    tieneDificultadParaLeerYEscribir: false,
-    tieneDificultadParaLeerYEscribir_modificado: false,
-
+    fecha_parto_modificado: false,
+    saludMental: {
+        id: null,
+        sigue_tratamiento_mental: false,
+        sigue_tratamiento_mental_modificado: false,
+        tiene_antecedentes_de_lesiones_autoinflingidas: false,
+        tiene_antecedentes_de_lesiones_autoinflingidas_modificado: false,
+        ha_estado_internado_en_hospital_psiquiatrico: false,
+        ha_estado_internado_en_hospital_psiquiatrico_modificado: false,
+        reporta_abuso_de_droga_previo_al_ingreso: false,
+        reporta_abuso_de_droga_previo_al_ingreso_modificado: false,
+        medicacion_actual: [],
+        medicacion_actual_modificado: false,
+        tiene_afeccion_severa_por_estupefacientes: false,
+        tiene_afeccion_severa_por_estupefacientes_modificado: false
+    },
+    saludFisica: {
+        id: null,
+        discapacidad_fisica: 'ninguna',
+        discapacidad_fisica_modificado: true,
+        explicacion_de_discapacidad: null,
+        explicacion_de_discapacidad_modificado: false,
+    },
+    limitacionesIdiomaticas: {
+        id: null,
+        necesitaInterprete: false,
+        necesitaInterprete_modificado: false,
+        tieneDificultadParaLeerYEscribir: false,
+        tieneDificultadParaLeerYEscribir_modificado: false
+    }
 }
+
+export type saludMentalType = {
+    id: number | null;
+    sigue_tratamiento_mental: boolean | null;
+    sigue_tratamiento_mental_modificado: boolean | null;
+    tiene_antecedentes_de_lesiones_autoinflingidas: boolean | null;
+    tiene_antecedentes_de_lesiones_autoinflingidas_modificado: boolean | null;
+    ha_estado_internado_en_hospital_psiquiatrico: boolean | null;
+    ha_estado_internado_en_hospital_psiquiatrico_modificado: boolean | null;
+    reporta_abuso_de_droga_previo_al_ingreso: boolean | null;
+    reporta_abuso_de_droga_previo_al_ingreso_modificado: boolean | null;
+    medicacion_actual: [];
+    medicacion_actual_modificado: boolean | null;
+    tiene_afeccion_severa_por_estupefacientes: boolean | null;
+    tiene_afeccion_severa_por_estupefacientes_modificado: boolean | null;
+};
+
+export type saludFisicaType = {
+    id: number | null;
+    discapacidad_fisica: "fisica" | "motora" | "ninguna" | "intelectual" | "visual" | "auditivas" | "otros";
+    discapacidad_fisica_modificado: boolean;
+    explicacion_de_discapacidad: string | null;
+    explicacion_de_discapacidad_modificado: boolean;
+};
+
+export type limitacionesIdiomaticasType = {
+    id: number | null;
+    necesitaInterprete: boolean | null
+    necesitaInterprete_modificado: boolean | null
+    tieneDificultadParaLeerYEscribir: boolean | null;
+    tieneDificultadParaLeerYEscribir_modificado: boolean | null
+};
+
+
 
 
 export type datosSeguridadType = {
@@ -214,20 +238,23 @@ export const familiarInicial: familiar = {
     vinculo: "",
     lugar: ""
 }
-export interface datosConcubino {
-    numeroDeIdentificacion: string;
-    nombres: string;
-    apellidos: string;
+export interface    datosConcubino {
+    id: number | null;
+    numeroDeIdentificacion: string| null;
+    nombres: string| null;
+    apellidos: string| null;
 
 }
 
 export const datosConcubinoInicial = {
+    id: null,
     numeroDeIdentificacion: "",
     nombres: "",
     apellidos: ""
 }
 
 export type datosFamiliaresType = {
+    id: number | null;
     id_persona: number|null;
     esCabezaDeFamilia: boolean;
     esCabezaDeFamilia_modificado: boolean;
@@ -242,6 +269,7 @@ export type datosFamiliaresType = {
 }
 
 export const datosFamiliaresInicial : datosFamiliaresType = {
+    id: null,
     id_persona: null,
     esCabezaDeFamilia: false,
     esCabezaDeFamilia_modificado: false,
@@ -251,7 +279,12 @@ export const datosFamiliaresInicial : datosFamiliaresType = {
     familiares_modificado: false,
     tieneConcubino: false,
     tieneConcubino_modificado: false,
-    concubino: null,
+    concubino: {
+        id: null,
+        nombres: null,
+        apellidos:null,
+        numeroDeIdentificacion: null
+    },
     concubino_modificado: false,
 }
 
@@ -342,3 +375,28 @@ export const datosJudicialesInicial:datosJudicialesType = {
     sentenciaDefinitiva_modificado:false,
 }
 
+export type circuloFamiliarStateType = {
+    id: number | null;
+    nombre: string | null;
+    apellido: string | null;
+    esFuncionario: boolean | null;
+    vinculo: {
+        id: number | null;
+        nombre: string | null;
+    };
+    edad: number | null ;
+    establecimiento: {
+        id: number | null;
+        nombre: string | null;
+    };
+    lugar_donde_esta_hijo: string | null;
+}
+export const circuloFamiliarStateInitial = {
+    id_persona: null,
+    nombre: null,
+    apellido: null,
+    vinculo: {},
+    establecimiento: {},
+    edad: null,
+    lugar_donde_esta_hijo: null
+}

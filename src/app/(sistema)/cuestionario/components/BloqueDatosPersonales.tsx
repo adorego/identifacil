@@ -1,146 +1,162 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Snackbar, Stack, TextField, Typography } from "@mui/material";
-import { ChangeEvent, FC, useEffect, useState } from "react";
-import { DatePicker, DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
-import { EstadoCivil, EstadoCivilDTO } from "@/model/estadoCivil.model";
-import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
-import { RequestResponse, api_request } from "@/lib/api-request";
-import dayjs, { Dayjs }  from "dayjs";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Grid,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Radio,
+    RadioGroup,
+    Select,
+    SelectChangeEvent,
+    Snackbar,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
+import {ChangeEvent, FC, useEffect, useState} from "react";
+import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
+import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
+import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
+import {RequestResponse, api_request} from "@/lib/api-request";
+import dayjs, {Dayjs} from "dayjs";
 
-import { DatosDeIdentificacion } from "@/components/registro/identificacionForm";
+import {DatosDeIdentificacion} from "@/components/registro/identificacionForm";
 import log from "loglevel";
-import { useGlobalContext } from "@/app/Context/store";
+import {useGlobalContext} from "@/app/Context/store";
 
 interface datosPersonales {
-  id_persona:number|null;
-  numeroDeIdentificacion:string|null;
-  nombre: string;
-  nombre_modificado:boolean;
-  apellido: string;
-  apellido_modificado:boolean;
-  apodo: string;
-  apodo_modificado:boolean;
-  estadoCivil: string;
-  estadoCivil_modificado:boolean;
-  fechaDeNacimiento: Dayjs | null;
-  fechaDeNacimiento_modificado:boolean;
-  nacionalidad: string;
-  nacionalidad_modificado:boolean;
-  lugarDeNacimiento: string;
-  lugarDeNacimiento_modificado:boolean;
-  sexo: string;
-  sexo_modificado:boolean;
-  tipoDeDocumento: string;
-  tipoDeDocumento_modificado:boolean;
-  direccion: string;
-  direccion_modificado:boolean;
-  barrioCompania: string;
-  barrioCompania_modificado:boolean;
-  numeroDeContacto: string;
-  numeroDeContacto_modificado:boolean;
-  contactoDeEmergencia1: string;
-  contactoDeEmergencia1_modificado:boolean;
-  contactoDeEmergencia2: string;
-  contactoDeEmergencia2_modificado:boolean;
-  pueblosIndigenas: boolean;
-  pueblosIndigenas_modificado:boolean;
-  nombreEtnia: string;
-  nombreEtnia_modificado:boolean;
-  perteneceAComunidadLGTBI:boolean;
-  perteneceAComunidadLGTBI_modificado:boolean;
-  grupoLGTBI: string;
-  grupoLGTBI_modificado:boolean;
+    id_persona: number | null;
+    numeroDeIdentificacion: string | null;
+    nombre: string;
+    nombre_modificado: boolean;
+    apellido: string;
+    apellido_modificado: boolean;
+    apodo: string;
+    apodo_modificado: boolean;
+    estadoCivil: string;
+    estadoCivil_modificado: boolean;
+    fechaDeNacimiento: Dayjs | null;
+    fechaDeNacimiento_modificado: boolean;
+    nacionalidad: string;
+    nacionalidad_modificado: boolean;
+    lugarDeNacimiento: string;
+    lugarDeNacimiento_modificado: boolean;
+    sexo: string;
+    sexo_modificado: boolean;
+    tipoDeDocumento: string;
+    tipoDeDocumento_modificado: boolean;
+    direccion: string;
+    direccion_modificado: boolean;
+    barrioCompania: string;
+    barrioCompania_modificado: boolean;
+    numeroDeContacto: string;
+    numeroDeContacto_modificado: boolean;
+    contactoDeEmergencia1: string;
+    contactoDeEmergencia1_modificado: boolean;
+    contactoDeEmergencia2: string;
+    contactoDeEmergencia2_modificado: boolean;
+    pueblosIndigenas: boolean;
+    pueblosIndigenas_modificado: boolean;
+    nombreEtnia: string;
+    nombreEtnia_modificado: boolean;
+    perteneceAComunidadLGTBI: boolean;
+    perteneceAComunidadLGTBI_modificado: boolean;
+    grupoLGTBI: string;
+    grupoLGTBI_modificado: boolean;
 
 }
 
 const datosPersonalesInicial: datosPersonales = {
-  id_persona:null,
-  numeroDeIdentificacion:null,
-  nombre: '',
-  apellido: '',
-  apodo: '',
-  estadoCivil: '',
-  fechaDeNacimiento: null,
-  nacionalidad: '',
-  lugarDeNacimiento: '',
-  sexo: '',
-  tipoDeDocumento: '',
-  direccion: '',
-  barrioCompania: '',
-  numeroDeContacto: '',
-  contactoDeEmergencia1: '',
-  contactoDeEmergencia2: '',
-  pueblosIndigenas: false,
-  nombreEtnia: '',
-  nombre_modificado: false,
-  apellido_modificado: false,
-  apodo_modificado: false,
-  estadoCivil_modificado: false,
-  fechaDeNacimiento_modificado: false,
-  nacionalidad_modificado: false,
-  lugarDeNacimiento_modificado: false,
-  sexo_modificado: false,
-  tipoDeDocumento_modificado: false,
-  direccion_modificado: false,
-  barrioCompania_modificado: false,
-  numeroDeContacto_modificado: false,
-  contactoDeEmergencia1_modificado: false,
-  contactoDeEmergencia2_modificado: false,
-  pueblosIndigenas_modificado: false,
-  nombreEtnia_modificado: false,
-  grupoLGTBI: '',
-  grupoLGTBI_modificado: false,
-  perteneceAComunidadLGTBI:false,
-  perteneceAComunidadLGTBI_modificado:false,
-}
-export interface BloqueDatosPersonalesProps{
-  datosDeIdentificacion:DatosDeIdentificacion;
-  
+    id_persona: null,
+    numeroDeIdentificacion: null,
+    nombre: '',
+    apellido: '',
+    apodo: '',
+    estadoCivil: '',
+    fechaDeNacimiento: null,
+    nacionalidad: '',
+    lugarDeNacimiento: '',
+    sexo: '',
+    tipoDeDocumento: '',
+    direccion: '',
+    barrioCompania: '',
+    numeroDeContacto: '',
+    contactoDeEmergencia1: '',
+    contactoDeEmergencia2: '',
+    pueblosIndigenas: false,
+    nombreEtnia: '',
+    nombre_modificado: false,
+    apellido_modificado: false,
+    apodo_modificado: false,
+    estadoCivil_modificado: false,
+    fechaDeNacimiento_modificado: false,
+    nacionalidad_modificado: false,
+    lugarDeNacimiento_modificado: false,
+    sexo_modificado: false,
+    tipoDeDocumento_modificado: false,
+    direccion_modificado: false,
+    barrioCompania_modificado: false,
+    numeroDeContacto_modificado: false,
+    contactoDeEmergencia1_modificado: false,
+    contactoDeEmergencia2_modificado: false,
+    pueblosIndigenas_modificado: false,
+    nombreEtnia_modificado: false,
+    grupoLGTBI: '',
+    grupoLGTBI_modificado: false,
+    perteneceAComunidadLGTBI: false,
+    perteneceAComunidadLGTBI_modificado: false,
 }
 
+export interface BloqueDatosPersonalesProps {
+    datosDeIdentificacion: DatosDeIdentificacion;
 
-const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) =>{
-  const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
-    ...datosPersonalesInicial,
-    fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"DD-MM-YYYY"),
-    fechaDeNacimiento_modificado:true,
-    id_persona:datosDeIdentificacion.id_persona,
-    numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
-    nombre:datosDeIdentificacion.nombres,
-    nombre_modificado:true,
-    apellido:datosDeIdentificacion.apellidos,
-    apellido_modificado:true,
-    
-  });
-  const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
-  const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
-  const {openSnackbar} = useGlobalContext();
+}
 
-  console.log("Fecha de nacimiento recepcionada:", datosDeIdentificacion.fecha_nacimiento);
-  console.log("fecha de Nacimiento:", datosPersonalesState.fechaDeNacimiento);
+
+const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) => {
+    const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
+        ...datosPersonalesInicial,
+        fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento, "DD-MM-YYYY"),
+        fechaDeNacimiento_modificado: true,
+        id_persona: datosDeIdentificacion.id_persona,
+        numeroDeIdentificacion: datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
+        nombre: datosDeIdentificacion.nombres,
+        nombre_modificado: true,
+        apellido: datosDeIdentificacion.apellidos,
+        apellido_modificado: true,
+
+    });
+    const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+    const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
+    const {openSnackbar} = useGlobalContext();
+
 
     useEffect(
-        () =>{
+        () => {
 
-            const getNacionalidades = async () =>{
+            const getNacionalidades = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/nacionalidades`;
-                try{
-                    const respuesta:RequestResponse = await api_request<NacionalidadesDTO>(url,{
-                        method:'GET',
-                        headers:{
-                            'Content-type':'application/json'
+                try {
+                    const respuesta: RequestResponse = await api_request<NacionalidadesDTO>(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
                         }
                     });
                     // console.log("Respuesta:", respuesta);
-                    if(respuesta.success && respuesta.datos){
+                    if (respuesta.success && respuesta.datos) {
                         setNacionalidades(respuesta.datos.nacionalidades);
-                    }else{
+                    } else {
                         openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
                     }
 
-                }catch(error){
+                } catch (error) {
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
-
 
 
             }
@@ -148,43 +164,43 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
             console.log("Consultando nacionalidades");
             getNacionalidades();
 
-        },[]
+        }, []
     )
 
     useEffect(
-        () =>{
-            const getEstadosCiviles = async () =>{
+        () => {
+            const getEstadosCiviles = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
-                try{
-                    const respuesta:RequestResponse = await api_request<EstadoCivilDTO>(url,{
-                        method:'GET',
-                        headers:{
-                            'Content-type':'application/json'
+                try {
+                    const respuesta: RequestResponse = await api_request<EstadoCivilDTO>(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
                         }
                     });
                     // console.log("Respuesta:", respuesta);
-                    if(respuesta.success && respuesta.datos){
+                    if (respuesta.success && respuesta.datos) {
                         setEstadosCiviles(respuesta.datos.estadosCiviles);
-                    }else{
+                    } else {
                         openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
                     }
 
-                }catch(error){
+                } catch (error) {
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
             }
             getEstadosCiviles();
-        },[]
+        }, []
     )
-    const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+    const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
         setDatosPersonalesState(
-            (previus) =>{
-                return(
+            (previus) => {
+                return (
                     {
                         ...previus,
-                        [event.target.name]:event.target.value,
-                        [`${event.target.name}_modificado`]:true
+                        [event.target.name]: event.target.value,
+                        [`${event.target.name}_modificado`]: true
 
                     }
                 )
@@ -192,14 +208,14 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
         )
     }
 
-    const onDatoSelectChange = (event:SelectChangeEvent) =>{
+    const onDatoSelectChange = (event: SelectChangeEvent) => {
         setDatosPersonalesState(
-            (previus) =>{
-                return(
+            (previus) => {
+                return (
                     {
                         ...previus,
-                        [event.target.name]:event.target.value,
-                        [`${event.target.name}_modificado`]:true
+                        [event.target.name]: event.target.value,
+                        [`${event.target.name}_modificado`]: true
 
                     }
                 )
@@ -207,68 +223,69 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
         )
     }
 
-    const onOptionSelectChange = (event:ChangeEvent<HTMLInputElement>) =>{
+    const onOptionSelectChange = (event: ChangeEvent<HTMLInputElement>) => {
         // console.log("Name of event:", event.target.name);
         setDatosPersonalesState(
-            (previus) =>{
-                return(
+            (previus) => {
+                return (
                     {
                         ...previus,
-                        [event.target.name]:(event.target.value === 'true'),
-                        [`${event.target.name}_modificado`]:true
+                        [event.target.name]: (event.target.value === 'true'),
+                        [`${event.target.name}_modificado`]: true
                     }
                 )
             }
         )
     }
 
-    const onFechaNacimientoChange = (value:Dayjs|null , context:PickerChangeHandlerContext<DateValidationError>) =>{
+    const onFechaNacimientoChange = (value: Dayjs | null, context: PickerChangeHandlerContext<DateValidationError>) => {
         // console.log(value);
         setDatosPersonalesState(
-            (previus) =>{
-                return(
+            (previus) => {
+                return (
                     {
                         ...previus,
-                        fechaNacimiento:value,
-                        fechaDeNacimiento_modificado:true
+                        fechaDeNacimiento: value,
+                        fechaDeNacimiento_modificado: true
 
 
-          }
+                    }
+                )
+            }
         )
-      }
-    )
-  }
-  const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-    event.preventDefault();
-    if(datosDeIdentificacion.id_persona){
-      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
-      const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
-      datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
-      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-      const respuesta = await api_request(url,{
-        method:'POST',
-        body:JSON.stringify(datosDelFormulario),
-        headers: {
-            'Content-Type': 'application/json'
-        }
+    }
+
+    const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        if (datosDeIdentificacion.id_persona) {
+            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
+            const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
+            datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
+            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+            const respuesta = await api_request(url, {
+                method: 'POST',
+                body: JSON.stringify(datosDelFormulario),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
 
             })
-            if(respuesta.success){
-                openSnackbar("Datos guardados correctamente","success")
-            }else{
-                if(respuesta.error){
-                    openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+            if (respuesta.success) {
+                openSnackbar("Datos guardados correctamente", "success")
+            } else {
+                if (respuesta.error) {
+                    openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                     log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
                 }
             }
 
             // console.log("Respuesta:", respuesta);
-        }else{
-            openSnackbar("Falta el número de identificación","error");
+        } else {
+            openSnackbar("Falta el número de identificación", "error");
         }
     }
 
-    return(
+    return (
         <Box component={'form'} autoComplete="off">
             <Typography variant='h6'>
                 Datos Personales
@@ -321,16 +338,17 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                         <Select
                             id="estado_civil_id"
                             name="estadoCivil"
+                            label='Estado Civil'
                             value={datosPersonalesState.estadoCivil}
                             onChange={onDatoSelectChange}
                         >
                             {estadosCiviles ? estadosCiviles.map(
-                                (estadoCivil,id) =>{
-                                    return(
+                                (estadoCivil, id) => {
+                                    return (
                                         <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
                                     )
                                 }
-                            ): null}
+                            ) : null}
 
                         </Select>
                     </FormControl>
@@ -338,7 +356,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                 <Grid item sm={4}>
                     <FormControl fullWidth={true}>
                         <DatePicker
-                            readOnly={true}
+
                             value={datosPersonalesState.fechaDeNacimiento}
                             format="DD/MM/YYYY"
                             onChange={onFechaNacimientoChange}
@@ -356,8 +374,8 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                             name="nacionalidad"
                         >
                             {nacionalidades ? nacionalidades.map(
-                                (data, id) =>{
-                                    return(
+                                (data, id) => {
+                                    return (
                                         <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
                                     )
                                 }
@@ -393,9 +411,9 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                         <InputLabel>Barrio/Compañia</InputLabel>
                         <OutlinedInput
                             name="barrioCompania"
+                            label='Barrio/Compañia'
                             value={datosPersonalesState.barrioCompania}
                             onChange={onDatoChange}
-                            label="Barrio"
                         />
                     </FormControl>
                 </Grid>
@@ -447,11 +465,11 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                             name="pueblosIndigenas">
                             <FormControlLabel
                                 value={true}
-                                control={<Radio  /> }
+                                control={<Radio/>}
                                 label="Si"/>
                             <FormControlLabel
                                 value={false}
-                                control={<Radio  /> }
+                                control={<Radio/>}
                                 label="No"/>
                         </RadioGroup>
                     </FormControl>
@@ -481,16 +499,16 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                             name="perteneceAComunidadLGTBI">
                             <FormControlLabel
                                 value={true}
-                                control={<Radio  /> }
+                                control={<Radio/>}
                                 label="Si"/>
                             <FormControlLabel
                                 value={false}
-                                control={<Radio  /> }
+                                control={<Radio/>}
                                 label="No"/>
                         </RadioGroup>
                     </FormControl>
                 </Grid>
-                <Grid item sm={8}>
+                {/*<Grid item sm={8}>
                     <TextField
                         fullWidth
                         label="Nombre de la comunidad"
@@ -499,7 +517,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                         onChange={onDatoChange}
                         disabled={!datosPersonalesState.perteneceAComunidadLGTBI}
                     />
-                </Grid>
+                </Grid>*/}
                 <Grid item sm={12}>
                     <Stack direction="row" spacing={2}>
                         <Button variant='contained' onClick={onDatosPersonalesSubmit}>

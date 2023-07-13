@@ -21,8 +21,8 @@ interface ContextProps {
     snackbar: SnackType;
     openSnackbar: (message: string, severity: SnackType['severity']) => void;
     closeSnackbar: () => void;
-    selectedEstablecimiento: string;
-    setSelectedEstablecimiento: Dispatch<SetStateAction<string>>;
+    selectedEstablecimiento: number;
+    setSelectedEstablecimiento: Dispatch<SetStateAction<number>>;
 }
 
 const SnackInitialState: SnackType = {
@@ -44,7 +44,7 @@ const GlobalContext = createContext<ContextProps>({
     },
     closeSnackbar: () => {
     },
-    selectedEstablecimiento: '0',
+    selectedEstablecimiento: 0,
     setSelectedEstablecimiento: ()=>{}
 });
 
@@ -54,7 +54,7 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({childr
     const [userId, setUserId] = useState<string>('');
     const [snackbar, setSnackbar] = useState<SnackType>(SnackInitialState);
     const [sidebarStatus, setSidebarStatus] = useState<boolean>(true);
-    const [selectedEstablecimiento, setSelectedEstablecimiento] = useState<string>('0');
+    const [selectedEstablecimiento, setSelectedEstablecimiento] = useState<number>(0);
 
 
     const openSnackbar = (message: string, severity: string) => {

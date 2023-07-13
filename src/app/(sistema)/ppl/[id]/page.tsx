@@ -15,13 +15,13 @@ import {fetchData} from "@/components/utils/utils";
 import Image from "next/image";
 import avatar from "@/common/blank-profile-picture-973460_960_720.webp"
 import {
+    datosDeSalud2Initial, datosDeSalud2Type,
     datosEducacionInicial,
     datosEducacionType, datosFamiliaresInicial,
     datosFamiliaresType,
     datosJudicialesInicial,
     datosJudicialesType,
-    datosSaludInicial,
-    datosSaludType, datosSeguridadInicial, datosSeguridadType
+    datosSeguridadInicial, datosSeguridadType
 } from "@/components/utils/systemTypes";
 
 interface familiar {
@@ -49,11 +49,17 @@ type dataType = {
     genero: number;
     fecha_nacimiento: string;
     numero_de_identificacion: string;
-    datosPersonales: {
-        estadoCivil: string;
+    datosPersonales:{
+        id: number | null;
+        estadoCivil: {
+            id: number | null;
+        };
         lugarDeNacimiento: string;
         direccion: string;
         barrioCompania: string;
+        nacionalidad: {
+            id: number | null;
+        };
         numeroDeContacto: string;
         contactoDeEmergencia1: string;
         contactoDeEmergencia2: string;
@@ -64,7 +70,7 @@ type dataType = {
     datosDeSeguridad: datosSeguridadType;
     datosFamiliares: datosFamiliaresType;
     datosEducacion: datosEducacionType;
-    datosSalud: datosSaludType;
+    datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
 }
 
@@ -79,10 +85,16 @@ const initialData = {
     fecha_nacimiento: '',
     numero_de_identificacion: '',
     datosPersonales:{
-        estadoCivil: "",
+        id: null,
+        estadoCivil:{
+            id: null,
+        },
         lugarDeNacimiento: "",
         direccion: "",
         barrioCompania: "",
+        nacionalidad: {
+            id: null,
+        },
         numeroDeContacto: "",
         contactoDeEmergencia1: "",
         contactoDeEmergencia2: "",
@@ -93,7 +105,7 @@ const initialData = {
     datosDeSeguridad: datosSeguridadInicial,
     datosFamiliares: datosFamiliaresInicial,
     datosEducacion: datosEducacionInicial,
-    datosSalud: datosSaludInicial,
+    datosDeSalud: datosDeSalud2Initial,
     datosJudiciales: datosJudicialesInicial
 }
 
