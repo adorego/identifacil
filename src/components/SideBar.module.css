@@ -1,0 +1,17 @@
+.title{
+  padding-top: 98.3px;
+  font-size: 20px;
+  /* font-family: 'Inter'; */
+  font-weight: bold;
+}
+
+.navList{
+  /* border: 2px solid red; */
+  background-color: #E2E8F0;
+}
+
+.navItem{
+  /* border: 2px solid blue; */
+  margin: auto;
+  max-width: 100%;
+}

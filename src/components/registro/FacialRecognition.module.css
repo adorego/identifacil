@@ -1,0 +1,17 @@
+.camara{
+  
+  /* border: 2px solid red; */
+  margin-top: 0;
+  padding-top: -100;
+}
+
+.video-wrapper {
+  width: 640px;
+  height: 360px;
+  background: aliceblue;
+}
+
+.canvas{
+  width: 200px;
+  height: 250px;
+}
