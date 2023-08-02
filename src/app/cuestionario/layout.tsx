@@ -19,7 +19,7 @@ export default function MainLayout({
                 </Grid>
                 <Grid item sm={10}>
                     <TopNav />
-                    <StatusNav />
+                    {/*<StatusNav />*/}
                     <div className='container-main'>
                         {children}
                     </div>

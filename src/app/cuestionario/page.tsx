@@ -29,7 +29,7 @@ export default function About(){
         <div>
             <h2>Cuestionario de Ingreso</h2>
             <div>
-                <Breadcrumbs aria-label="breadcrumb">
+                <Breadcrumbs aria-label="breadcrumb" >
                     <Link underline="hover" color="inherit" href="/">
                         MUI
                     </Link>
@@ -43,16 +43,32 @@ export default function About(){
                     <Typography color="text.primary">Breadcrumbs</Typography>
                 </Breadcrumbs>
             </div>
-            <div>
-                <Stepper activeStep={0} alternativeLabel>
+            <Box my={2}>
+                <Stepper activeStep={0} alternativeLabel
+                         sx={{
+                             ".MuiSvgIcon-root:not(.Mui-completed)": {
+                                 color: "gray"
+                             },
+                             ".MuiStepIcon-text": {
+                                 fill: "#FFF",
+                                 fontWeight: 500
+                             },
+                             ".MuiSvgIcon-root.Mui-active": {
+                                 color: "green"
+                             },
+                             ".Mui-active .MuiStepIcon-text": {
+                                 fill: "white"
+                             }
+                         }}>
                     {steps.map((label) => (
-                        <Step key={label}>
-                            <StepLabel>{label}</StepLabel>
+                        <Step key={label}  sx={{iconColor: 'red',}}>
+                            <StepLabel >{label}</StepLabel>
                         </Step>
                     ))}
                 </Stepper>
-            </div>
+            </Box>
             <div>
+
                 <Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
