@@ -4,7 +4,7 @@ import { Box, Button, Divider, FormControl, FormControlLabel, FormLabel, Grid, R
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import React, { ChangeEvent, useState } from "react";
 
-import FacialRecognition from "./FacialRecognition";
+import FaceRecognition from "./FaceRecognition";
 import IdentificationForm from "./IdentificationForm";
 import PPLRegistration from "./PPLRegistration";
 import style from "./FormRegister.module.css";
@@ -45,7 +45,7 @@ export default function FormRegister(){
           )}
         </Stepper>
         {activeStep === 0 && <IdentificationForm /> }
-        {activeStep === 1 && <FacialRecognition /> }
+        {activeStep === 1 && <FaceRecognition /> }
         {activeStep === 2 && <PPLRegistration foto="" /> }
         
         <Grid container spacing={5}>
