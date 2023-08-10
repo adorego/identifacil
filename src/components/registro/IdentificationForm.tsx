@@ -48,7 +48,7 @@ const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
 
 return(
       
-      <Box sx={{padding:"10px"}}>
+      <Box sx={{}}>
         <FormLabel id="nacionalidad">Es Paraguayo ?</FormLabel>
         <RadioGroup row defaultValue="SI" name="nacionalidad-opciones">
           <FormControlLabel value="SI" control={<Radio />} label="SI" />
@@ -62,7 +62,7 @@ return(
             
           </Grid>
           <Grid item xs={2} >
-            <Button sx={{minHeight:"100%"}} onClick={onConsultarRegistroCivil} variant="outlined" endIcon={<Storage />}>
+            <Button sx={{minHeight:"100%"}} onClick={onConsultarRegistroCivil} variant="contained" endIcon={<Storage />}>
               Consultar
             </Button>
           </Grid>
