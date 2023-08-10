@@ -4,7 +4,7 @@ import { Box, Button, Divider, FormControl, FormControlLabel, FormLabel, Grid, R
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import React, { ChangeEvent, useState } from "react";
 
-import FacialRecognition from "./FacialRecognition";
+import FaceRecognition from "./FaceRecognition";
 import IdentificationForm from "./IdentificationForm";
 import PPLRegistration from "./PPLRegistration";
 import style from "./FormRegister.module.css";
@@ -12,6 +12,7 @@ import style from "./FormRegister.module.css";
 const steps = ["Identificación", "Reconocimiento", "Registro"];
 export default function FormRegister(){
   const [activeStep, setActiveStep] = useState(0);
+  const [habilitarBotonSiguiente, setHabilitarBotonSiguiente] = useState(false);
   
 
   const onStepForward = () =>{
@@ -30,10 +31,10 @@ export default function FormRegister(){
     }
   }
   return(
-    <>
+    <Box sx={{margin:'30px'}}>
       <FormControl className={style.form}>
         <Typography variant="h6">Registro PPL</Typography>
-        <Stepper sx={{padding:"8px"}} activeStep={activeStep}>
+        <Stepper sx={{marginTop:"8px",marginBottom:"8px",fontSize:32}} activeStep={activeStep}>
           {steps.map(
             (label,index) =>{
               return(
@@ -44,25 +45,39 @@ export default function FormRegister(){
             }
           )}
         </Stepper>
-        {activeStep === 0 && <IdentificationForm /> }
-        {activeStep === 1 && <FacialRecognition /> }
+        {activeStep === 0 && <IdentificationForm habilitarBotonSiguiente={setHabilitarBotonSiguiente} /> }
+        {activeStep === 1 && <FaceRecognition /> }
         {activeStep === 2 && <PPLRegistration foto="" /> }
         
-        <Grid container spacing={5}>
-          <Grid sx={{display:"flex", justifyContent:"end"}} item xs={6}>
-            <Button variant="contained" onClick={onStepBackward} startIcon={<KeyboardArrowLeft />}>
-              Anterior
-            </Button>
+        
+        {activeStep !== 0 ? 
+          <Grid container justifyContent={'center'} spacing={5}>
+            <Grid item xs={'auto'}>
+              <Button variant="contained" 
+              onClick={onStepBackward} 
+              startIcon={<KeyboardArrowLeft />}>
+                Anterior
+              </Button>
+            </Grid> 
+            <Grid item xs={'auto'}>
+              <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                Siguiente
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-              Siguiente
-            </Button>
+        : 
+          <Grid container justifyContent={'center'}>
+            <Grid item xs='auto'>
+                <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                  Siguiente
+                </Button>
+            </Grid>
           </Grid>
+        }
           
-        </Grid>
+        
       
       </FormControl>
-    </>
+    </Box>
   )
 }

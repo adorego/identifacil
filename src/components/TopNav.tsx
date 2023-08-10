@@ -1,25 +1,26 @@
 'use client';
 
-import styles from "./TopNav.module.css";
-
 import * as React from 'react';
-import {styled, alpha} from '@mui/material/styles';
+
+import {Avatar, Tooltip} from "@mui/material";
+import {alpha, styled} from '@mui/material/styles';
+
+import AccountCircle from '@mui/icons-material/AccountCircle';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
-import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
+import InputBase from '@mui/material/InputBase';
+import MailIcon from '@mui/icons-material/Mail';
 import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MailIcon from '@mui/icons-material/Mail';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import MenuItem from '@mui/material/MenuItem';
 import MoreIcon from '@mui/icons-material/MoreVert';
-import {Avatar, Tooltip} from "@mui/material";
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import SearchIcon from '@mui/icons-material/Search';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import styles from "./TopNav.module.css";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -229,7 +230,7 @@ export default function TopNav() {
                     <Box sx={{flexGrow: 0}} mx={2}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/>
+                                {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/> */}
                             </IconButton>
                         </Tooltip>
                         <Menu

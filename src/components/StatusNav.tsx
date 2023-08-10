@@ -17,7 +17,7 @@ export default function StatusNav(){
   const nameList = pathName.split('/');
   useEffect(
     () =>{
-      console.log('Current path:', pathName);
+      // console.log('Current path:', pathName);
     },[pathName]
   )
   return(

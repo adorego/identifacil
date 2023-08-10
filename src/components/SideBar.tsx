@@ -80,7 +80,7 @@ export default function SideBar() {
 
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                            <ListItemButton onClick={(e) => handleNavigation('/main/registro/ppl')}>
+                            <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
                                 <ListItemIcon>
 
                                     <PermIdentity/>
