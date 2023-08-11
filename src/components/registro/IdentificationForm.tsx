@@ -118,44 +118,44 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
 
 
 
-  return(
-        <Box sx={{padding:"10px"}}>
-          {/* <FormLabel id="nacionalidad">Es Paraguayo ?</FormLabel>
-          <RadioGroup row defaultValue="SI" name="nacionalidad-opciones">
-            <FormControlLabel value="SI" control={<Radio />} label="SI" />
-            <FormControlLabel value="NO" control={<Radio />} label="NO" />
-          </RadioGroup> */}
-        
-          <Grid container spacing={2}>
-            <Grid item xs={6} >
-              <TextField autoComplete="false" id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
-              
-              
-            </Grid>
-            <Grid item xs={2} >
-              <Button sx={{minHeight:"100%"}} onClick={onConsultarRegistroCivil} variant="outlined" endIcon={<Storage />}>
-                Consultar
-              </Button>
-            </Grid>
-            <Grid item xs={6}>
-              <TextField  id="nombres" value={formulario.nombres} fullWidth label="Nombres" variant="outlined" disabled />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField  id="apellido" value={formulario.apellidos} fullWidth label="Apellidos" variant="outlined" disabled />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField  id="fechaNacimiento" value={formulario.fecha_nacimiento} fullWidth label="Fecha de Nacimiento" variant="outlined" disabled />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField  id="genero" 
-              value={formulario.codigo_genero == '1' ? 'femenino' : 'masculino'} 
-              fullWidth label="Genero" variant="outlined" disabled />
-            </Grid>
+return(
+      
+      <Box sx={{}}>
+        <FormLabel id="nacionalidad">Es Paraguayo ?</FormLabel>
+        <RadioGroup row defaultValue="SI" name="nacionalidad-opciones">
+          <FormControlLabel value="SI" control={<Radio />} label="SI" />
+          <FormControlLabel value="NO" control={<Radio />} label="NO" />
+        </RadioGroup>
+      
+        <Grid container spacing={2}>
+          <Grid item xs={6} >
+            <TextField id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
+            
             
           </Grid>
-        </Box>
-      
-  )
+          <Grid item xs={2} >
+            <Button sx={{minHeight:"100%"}} onClick={onConsultarRegistroCivil} variant="contained" endIcon={<Storage />}>
+              Consultar
+            </Button>
+          </Grid>
+          <Grid item xs={6}>
+            <TextField  id="nombre" fullWidth label="Nombre" variant="outlined" disabled />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField  id="apellido" fullWidth label="Apellido" variant="outlined" disabled />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField  id="apodo" fullWidth label="Apodo" variant="outlined" disabled />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField  id="genero" fullWidth label="Genero" variant="outlined" disabled />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField  id="direccion" fullWidth label="Direccion" variant="outlined" disabled />
+          </Grid>
+        </Grid>
+      </Box>
+)
 
 }
 

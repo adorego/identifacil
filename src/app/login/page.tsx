@@ -5,6 +5,9 @@ import {
     , FormControlLabel, Checkbox, Typography
 } from '@mui/material';
 
+import styles from './layout.module.css'
+import splash from '../../common/splash-img.png';
+
 import {redirect} from 'next/navigation';
 import {useRouter} from 'next/navigation';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
@@ -39,35 +42,45 @@ export default function Login() {
                 <Grid
                     item
                     xs={false}
-                    sm={4}
-                    md={6}
+                    sm={6}
+                    md={8}
                     sx={{
-                        backgroundImage: 'url(https://source.unsplash.com/random?wallpapers)',
+                        backgroundImage: `url(${splash.src})`,
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
 
                     }}
                 />
-                <Grid item xs={12} sm={8} md={6} component={Paper} elevation={6} square>
+                <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square
+                      className={styles.gridLogin}
+                      sx={{
+                          borderLeft:'1px solid #e3f9e8',
+                          boxShadow: 'none',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          justifyContent: 'center',
+
+                }}>
                     <Box
                         sx={{
                             my: 8,
-                            mx: 4,
+                            mx: 10,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                         }}
                     >
                         <Typography component="h1" variant="h4">
-                            Identifacil
+                            IDENTIFACIL
                         </Typography>
-                        <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                        {/*<Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                             <LockOutlinedIcon/>
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
+                        </Avatar>*/}
+                        <hr/>
+                        {/*<Typography component="h1" variant="h5">
                             Iniciar Sesion
-                        </Typography>
+                        </Typography>*/}
                         <Box component="form" noValidate  sx={{mt: 1}}>
                             <TextField
                                 margin="normal"
@@ -89,10 +102,10 @@ export default function Login() {
                                 id="password"
                                 autoComplete="current-password"
                             />
-                            <FormControlLabel
+                            {/*<FormControlLabel
                                 control={<Checkbox value="remember" color="primary"/>}
                                 label="Remember me"
-                            />
+                            />*/}
 
                             <Button
                                 onClick={onAceptarClick}
@@ -103,19 +116,17 @@ export default function Login() {
                             >
                                 Iniciar sesión
                             </Button>
-                            <Grid container>
-                                <Grid item xs>
+                            <Grid container textAlign={'center'}>
+                                <Grid item xs >
                                     <Link href="#" variant="body2">
                                         ¿Olvidaste tu contraseña?
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link href="#" variant="body2">
-                                        {"¿No tienes una cuenta? Registrate."}
-                                    </Link>
+
                                 </Grid>
                             </Grid>
-                            <Copyright sx={{mt: 5}}/>
+
                         </Box>
                     </Box>
                 </Grid>
