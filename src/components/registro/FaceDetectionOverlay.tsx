@@ -22,7 +22,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, class
         // console.log('Video:', videoElement)
         if(videoElement){
           const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions());
-          // console.log(singleFace);
+          // console.log(detectionResult);
           if(detectionResult){
             if(overlayRef.current){
               const canvas = overlayRef.current;
@@ -56,7 +56,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, class
         intervalId.current = setInterval(
           () =>{
             detectFaces();
-          },1000
+          },500
         )
       }
       return () =>{
