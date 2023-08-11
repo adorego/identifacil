@@ -14,10 +14,10 @@ enum ActionType{
 
 interface IReducer{
   type:ActionType,
-  data:IFormularioForm
+  data:IdentificacionForm
 }
 
-interface IFormularioForm{
+export interface IdentificacionForm{
   cedula_identidad:string;
   nombres:string;
   apellidos:string;
@@ -25,7 +25,7 @@ interface IFormularioForm{
   codigo_genero:string;
 }
 
-const InitialStateFormulario:IFormularioForm = {
+const InitialStateFormulario:IdentificacionForm = {
   cedula_identidad:"",
   nombres:"",
   apellidos:"",
@@ -46,9 +46,10 @@ interface DatosCedulaDTO{
 
 export interface IdentificationFormProps{
   habilitarBotonSiguiente:(arg0:boolean) => void;
+  actualizarIdentificacion:(arg0:IdentificacionForm) => void;
 } 
 
-const formularioReducer:Reducer<IFormularioForm, IReducer> = (state=InitialStateFormulario, action) =>{
+const formularioReducer:Reducer<IdentificacionForm, IReducer> = (state=InitialStateFormulario, action) =>{
   console.log(action);
   try{
     switch(action.type){
@@ -78,7 +79,7 @@ const formularioReducer:Reducer<IFormularioForm, IReducer> = (state=InitialState
 const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationFormProps):ReactElement =>{
   const [cedula, setCedula] = useState('');
   const [error,setError] = useState({error:false,msg:""});
-  const [formulario, dispatch] = useReducer<Reducer<IFormularioForm,IReducer>>(formularioReducer, InitialStateFormulario )
+  const [formulario, dispatch] = useReducer<Reducer<IdentificacionForm,IReducer>>(formularioReducer, InitialStateFormulario )
   
   const onConsultarRegistroCivil = async () =>{
     const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/consultaci';
@@ -95,10 +96,11 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
       });
       if(response.ok){
         const data:DatosCedulaDTO = await response.json();
-        console.log(data);
+        // console.log(data);
         if(data.exito && data.datosDeCedula.nombres != ""){
-          console.log(data);
+          // console.log(data);
           dispatch({type:ActionType.FILL_FORM, data:data.datosDeCedula});
+          props.actualizarIdentificacion(data.datosDeCedula);
           props.habilitarBotonSiguiente(true);
         }
       }

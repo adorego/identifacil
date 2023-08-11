@@ -1,21 +1,31 @@
 'use client'
 
 import {
-    Container, Avatar, Button, Link, Paper, Box, Grid, CssBaseline, TextField
-    , FormControlLabel, Checkbox, Typography
+    Avatar,
+    Box,
+    Button,
+    Checkbox,
+    Container,
+    CssBaseline,
+    FormControlLabel,
+    Grid,
+    Link,
+    Paper,
+    TextField,
+    Typography
 } from '@mui/material';
 
-import {redirect} from 'next/navigation';
-import {useRouter} from 'next/navigation';
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import React from "react";
+import {redirect} from 'next/navigation';
+import {useRouter} from 'next/navigation';
 
 export default function Login() {
     const router = useRouter();
 
     const onAceptarClick = () => {
         console.log("navigate");
-        router.push('/main');
+        router.push('/inicio');
     };
 
 

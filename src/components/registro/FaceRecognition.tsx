@@ -5,6 +5,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { FC, Suspense, useEffect, useRef, useState } from "react";
 
 import FaceDetectionOverlay from "./FaceDetectionOverlay";
+import { IdentificacionForm } from "./IdentificationForm";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 import VideoPlayer from "./VideoPlayer";
 import styles from "./FaceRecognition.module.css";
@@ -14,22 +15,28 @@ interface ErrorInt{
   error:boolean;
   message:string;
 }
-const FaceRecognition:FC = () =>{
+export interface FaceRecognitionProps{
+  actualizarFoto:(fotoParam:string) => void;
+  mostrar_registro_final:(mostrar:boolean) => void;
+}
+const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>{
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const [modelsLoaded, setModelLoaded] = useState(false);
+  
+  
   useEffect(
     () =>{
       
       Promise.all(
         [
-          faceapi.nets.tinyFaceDetector.loadFromUri('/models')
+          // faceapi.loadSsdMobilenetv1Model('/models'),
+          faceapi.loadTinyFaceDetectorModel('/models'),
+          faceapi.loadFaceLandmarkModel('/models'),
+          // faceapi.loadFaceDetectionModel('/models'),
+          faceapi.loadFaceRecognitionModel('/models')
         ]
       ).then(
         () =>{
-          if(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL){
-            testWebSocketConnection(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL)
-            .then( (isConnected) =>{
-              
                 const canvas = document.createElement('canvas');
                 const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
                 canvas: canvas as HTMLCanvasElement,
@@ -52,30 +59,37 @@ const FaceRecognition:FC = () =>{
               
             })
             .catch((error) =>{
-              
+              console.log(error);
             })
           }
-        })
-        ;
-       },[]
+      
     )
+
+    const onFotoCapture = () =>{
+       props.mostrar_registro_final(true);
+      // setShowVideo(false);
+    }
 
     return (
       <Box sx={{display:"flex", flexDirection:"column", alignItems:"center", marginBottom:"10px"}}>
-        <div className={styles.video_container}>
-            <>
-            <video className={styles.video} 
-            ref={videoElementRef} 
-            id="videoElement" width={"80%"} height={420} autoPlay></video>
-            <FaceDetectionOverlay 
-            className={styles.relayCanvas} 
-            videoElement={videoElementRef.current} /> 
-
-            </>
-          
-          
-        </div>
-        <Button className={styles.capturePhoto} variant={"contained"} endIcon={<AddAPhoto />}>Capturar</Button>
+        
+            
+              <Typography sx={{marginTop:5, marginBottom:5, textAlign:'center'}} variant="h6">
+                Por favor situe a la persona frente a la camara y presione Capturar
+              </Typography>
+              <div className={styles.video_container}>
+                <video className={styles.video} 
+                width={"100%"}
+                height={"100%"}
+                ref={videoElementRef} 
+                id="videoElement" autoPlay></video>
+                
+                <FaceDetectionOverlay 
+                className={styles.relayCanvas} 
+                videoElement={videoElementRef.current} 
+                actualizar_foto={props.actualizarFoto} /> 
+              </div>
+        <Button onClick={onFotoCapture} className={styles.capturePhoto} variant={"contained"} endIcon={<AddAPhoto />}>Capturar</Button>
       </Box>
       
       )
