@@ -34,7 +34,16 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, class
                 context.clearRect(0,0,canvas.width, canvas.height);
                 const box = detectionForSize.box;
                 faceapi.draw.drawDetections(canvas, detectionForSize);
-                
+                const fotoCanvas = copyCanvas.current;
+                if(fotoCanvas){
+                    const fotoContext = fotoCanvas.getContext('2d');
+                    if(fotoContext){
+                      fotoContext.drawImage(canvas,box.x, box.y,box.width, box.height);
+                      const foto = fotoCanvas.toDataURL('img/png');
+                      console.log(foto);
+                      
+                    }
+                }
                   
               
                 
@@ -67,7 +76,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, class
   return(
     <>
     <canvas ref={overlayRef} className={className}></canvas>
-    
+    <canvas ref={copyCanvas} className={className}></canvas>
     </>
   ) 
 }

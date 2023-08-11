@@ -4,6 +4,7 @@ import {createTheme, ThemeOptions, ThemeProvider } from "@mui/material/styles";
 import {NextAppDirEmotionCacheProvider} from "./EmotionCache"
 import CssBaseline from "@mui/material/CssBaseline";
 import React from "react";
+import { lime, purple } from '@mui/material/colors';
 import { Roboto } from "next/font/google";
 import { Public_Sans } from "next/font/google";
 
@@ -18,12 +19,35 @@ const themeOptions: ThemeOptions = {
         fontFamily: publicSans.style.fontFamily,
         fontSize: 12,
     },
-    palette:{
+    palette: {
+        primary: {
+            main: '#00A76F',
+            // light: will be calculated from palette.primary.main,
+            // dark: will be calculated from palette.primary.main,
+            // contrastText: will be calculated to contrast with palette.primary.main
+        },
         background:{
-            default: "#fff"
+            default: '#fff',
+        },
+    },
+    components: {
+        MuiButton: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    height: '38px',
+                    backgroundColor: '#00A76F',
+                },
+            },
+        },
+        MuiInputBase:{
+            styleOverrides: {
+                root:{
+
+                }
+            }
         }
     },
-    components:{},
 }
 
 const theme = createTheme(themeOptions);

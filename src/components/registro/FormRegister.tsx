@@ -56,10 +56,10 @@ export default function FormRegister(){
     )
   }
   return(
-        <Box sx={{margin:'30px'}}>
+        <Box sx={{padding:'20px'}}>
           <FormControl className={style.form}>
             <Typography variant="h6">Registro PPL</Typography>
-            <Stepper sx={{marginTop:"8px",marginBottom:"8px",fontSize:32}} activeStep={activeStep}>
+            <Stepper sx={{marginY:"20px"}} activeStep={activeStep}>
               {steps.map(
                 (label,index) =>{
                   return(
@@ -70,6 +70,13 @@ export default function FormRegister(){
                 }
               )}
             </Stepper>
+            <Box sx={{
+                    backgroundColor: '#FFF',
+                    paddingY: '20px',
+                    paddingX: '30px',
+                    borderRadius: '16px',
+                    boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
+                }}>
             {activeStep === 0 && <IdentificationForm 
             habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
             actualizarIdentificacion={setIdentificacion}
@@ -82,7 +89,7 @@ export default function FormRegister(){
             
             
             {activeStep !== 0 ? 
-              <Grid container justifyContent={'center'} spacing={5}>
+              <Grid container  spacing={5} mt={1}>
                 <Grid item xs={'auto'}>
                   <Button variant="contained" 
                   onClick={onStepBackward} 
@@ -97,7 +104,7 @@ export default function FormRegister(){
                 </Grid>
               </Grid>
             : 
-              <Grid container justifyContent={'center'}>
+              <Grid container spacing={5} mt={1}>
                 <Grid item xs='auto'>
                     <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
                       Siguiente
@@ -107,7 +114,7 @@ export default function FormRegister(){
             }
               
             
-          
+            </Box>
           </FormControl>
         </Box>
 

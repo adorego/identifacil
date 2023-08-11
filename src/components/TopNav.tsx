@@ -181,8 +181,12 @@ export default function TopNav() {
     );
 
     return (
-        <Box sx={{flexGrow: 1}}>
-            <AppBar position="static" sx={{backgroundColor: '#fff', color: '#000'}} >
+        <Box sx={{flexGrow: 1}} color='red'>
+            <AppBar position="static"
+                    sx={{
+                        backgroundColor: '#FFF', color: '#000',
+                        boxShadow: 'none',
+                    }} >
                 <Toolbar>
                     <IconButton
                         size="large"

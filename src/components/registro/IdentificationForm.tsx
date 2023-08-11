@@ -135,7 +135,7 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
               
             </Grid>
             <Grid item xs={2} >
-              <Button sx={{minHeight:"100%"}} onClick={onConsultarRegistroCivil} variant="outlined" endIcon={<Storage />}>
+              <Button sx={{minHeight:"100%"}} onClick={onConsultarRegistroCivil} variant="contained" endIcon={<Storage />}>
                 Consultar
               </Button>
             </Grid>
