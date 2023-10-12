@@ -1,10 +1,11 @@
 'use client'
 
+import { Box, Typography } from "@mui/material"
 import { Suspense, useEffect, useState } from "react"
 
-import Loading from "./loading"
 import CardBlock from "../../components/blocks/CardBlock";
 import {Grid} from "@mui/material";
+import Loading from "./loading"
 
 export default function Main(){
   

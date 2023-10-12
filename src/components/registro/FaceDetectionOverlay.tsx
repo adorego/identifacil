@@ -2,21 +2,24 @@ import * as faceapi from "face-api.js";
 
 import { FC, useEffect, useRef, useState } from "react";
 
-import { clearInterval } from "timers";
+import Image from "next/image";
 
 interface FaceDetectionOverlayProps{
   videoElement: HTMLVideoElement | null;
   className:string;
-  actualizar_foto:(fotoParam:string) => void;
+  actualizar_foto:(fotoParam:Blob | null) => void;
   
+}
+
+interface IPhoto{
+  blob_photo:Blob;
+  b64_string:string;
 }
 const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, className, actualizar_foto}) =>{
   const intervalId = useRef<any>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
-  const copyCanvas = useRef<HTMLCanvasElement>(null);
-  const foto = useRef<string | null>(null);
+ 
   
-  console.log("VideoElement Props:", videoElement);
   const detectFaces = async () =>{
     try{
         // console.log('Video:', videoElement)
@@ -29,22 +32,23 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, class
               const detectionForSize = faceapi.resizeResults(detectionResult, {width:videoElement.width, height:videoElement.height})
               canvas.width = videoElement.width;
               canvas.height = videoElement.height;
+              console.log("canvas.width, canvas.height:", canvas.width, canvas.height);
               const context = canvas.getContext('2d');
               if(context){
                 context.clearRect(0,0,canvas.width, canvas.height);
-                const box = detectionForSize.box;
+                const {box} = detectionForSize;
+                console.log("Box:", box);
                 faceapi.draw.drawDetections(canvas, detectionForSize);
-                const fotoCanvas = copyCanvas.current;
-                if(fotoCanvas){
-                    const fotoContext = fotoCanvas.getContext('2d');
-                    if(fotoContext){
-                      fotoContext.drawImage(canvas,box.x, box.y,box.width, box.height);
-                      const foto = fotoCanvas.toDataURL('img/png');
-                      console.log(foto);
-                      
-                    }
-                }
-                  
+                let region = new faceapi.Rect(box.x, box.y, box.width, box.height);
+                let face = await faceapi.extractFaces(canvas, [region]);
+                // console.log("Extracted faces:", face[0]);
+                const landmarks = await faceapi.detectFaceLandmarksTiny(face[0]);
+                
+                let descriptor = await faceapi.computeFaceDescriptor(face[0]);
+                console.log("Descriptor de la cara:", descriptor);
+                face[0].toBlob((blob) =>{
+                 actualizar_foto(blob);
+                });
               
                 
                 
@@ -73,10 +77,11 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = ({videoElement, class
       }
     },[videoElement]
   )
+
+  
   return(
     <>
     <canvas ref={overlayRef} className={className}></canvas>
-    <canvas ref={copyCanvas} className={className}></canvas>
     </>
   ) 
 }

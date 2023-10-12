@@ -17,7 +17,7 @@ const style = {
 };
 
 export interface NotificacionRegistroProps{
-  foto:string | null;
+  foto:Blob | null;
   open:boolean;
 }
 const NotificacionRegistro = (props:NotificacionRegistroProps) =>{
@@ -25,6 +25,7 @@ const NotificacionRegistro = (props:NotificacionRegistroProps) =>{
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   if(props.foto == null){
+    console.log('La foto es null');
     return(
       <div></div>
     )
@@ -38,7 +39,7 @@ const NotificacionRegistro = (props:NotificacionRegistroProps) =>{
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <img src={props.foto} width={120} height={220} alt="foto" />
+            <img src={URL.createObjectURL(props.foto)} width={120} height={220} alt="foto" />
           </Box>
         </Modal>
       </>
