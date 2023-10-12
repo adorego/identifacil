@@ -66,7 +66,7 @@ export default function SideBar() {
                     component="nav">
                     {/* <ListItem disablePadding > */}
 
-                    <MenuItem name={'Panel'}/>
+                    <MenuItem name={'Panel'} link={'/inicio'} children={<AirportShuttle sx={{ color:'#00A76F' }}/>}/>
 
                     {/* </ListItem> */}
                     {/* <ListItem disablePadding> */}

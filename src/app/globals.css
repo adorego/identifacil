@@ -28,6 +28,28 @@ nav.MuiList-root.MuiList-padding {
 .MuiGrid-root.MuiGrid-item.MuiGrid-grid-sm-10{
   background: #F6FAFF;
 }
+.secondaryData{
+  color: #b3b3b3;
+}
+thead tr th.MuiTableCell-root {
+  background: #f4f6f8;
+  FONT-WEIGHT: 600;
+  color: #637381;
+}
+.imageContainer {
+  width: 150px;
+  height: 150px;
+  background: #F3f3f3;
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
+  margin: 10px;
+}
+.cardContainer{
+  background-color: #FFF;
+  border: 1px solid #e3e3e3;
+  padding: 20px;
+  border-radius: 10px;
+}
 /* :root {
   --max-width: 1100px;
   --border-radius: 12px;

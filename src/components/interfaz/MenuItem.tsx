@@ -6,11 +6,12 @@ import getConfig from "next/config";
 import styles from "./SideBar.module.css";
 import {useRouter} from "next/navigation";
 
-export default function MenuItem({name}) {
+export default function MenuItem({name, link, children}) {
+    children: React.ReactNode
     return (
-        <ListItemButton sx={{}} className={'active'}>
+        <ListItemButton sx={{}} className={'active'} href={link}>
             <ListItemIcon>
-                <AirportShuttle sx={{ color:'#00A76F' }}/>
+                {children}
             </ListItemIcon>
             <ListItemText primary={name}/>
         </ListItemButton>

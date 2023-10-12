@@ -18,7 +18,14 @@
 .sidebar {
   background: #FFF;
   border-right: 1px solid #E2E8F0;
-  min-width: 260px;
+  min-width: 213px;
   width: 100%;
 }
 
+@media screen and (max-width: 1200px) {
+  .sidebar .MuiListItemIcon-root {
+    padding-left: 0;
+    min-width: 30px;
+  }
+
+}
