@@ -130,7 +130,7 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
         
           <Grid container spacing={2}>
             <Grid item xs={6} >
-              <TextField autoComplete="false" id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
+              <TextField autoComplete="off" id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
               
               
             </Grid>

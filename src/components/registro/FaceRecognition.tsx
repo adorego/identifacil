@@ -15,48 +15,69 @@ interface ErrorInt {
     error: boolean;
     message: string;
 }
-
-export interface FaceRecognitionProps {
-    actualizarFoto: (fotoParam: string) => void;
-    mostrar_registro_final: (mostrar: boolean) => void;
+export interface FaceRecognitionProps{
+  actualizarFoto:(fotoParam:Blob | null) => void;
+  mostrar_registro_final:(mostrar:boolean) => void;
 }
+const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>{
+  const videoElementRef = useRef<HTMLVideoElement | null>(null);
+  const [modelsLoaded, setModelLoaded] = useState(false);
+  
+  const conectar_con_camaraIP = () =>{
+    try{
+      const canvas = document.createElement('canvas');
+      const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
+      canvas: canvas as HTMLCanvasElement,
+      loop:true,
+      autoplay:true,
+      protocols:['mp2t'],
+      onSourceEstablished:(source:any) =>{
+        if(videoElementRef.current){
+          videoElementRef.current.srcObject = canvas.captureStream(); 
+        }
+      },
+      onEnded: (player:any) =>{
+        if(videoElementRef.current){
+          videoElementRef.current.srcObject = null;
+        }
+      }
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
 
-const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) => {
-    const videoElementRef = useRef<HTMLVideoElement | null>(null);
-    const [modelsLoaded, setModelLoaded] = useState(false);
-
-
-    useEffect(
-        () => {
-
-            Promise.all(
-                [
-                    // faceapi.loadSsdMobilenetv1Model('/models'),
-                    faceapi.loadTinyFaceDetectorModel('/models'),
-                    faceapi.loadFaceLandmarkModel('/models'),
-                    // faceapi.loadFaceDetectionModel('/models'),
-                    faceapi.loadFaceRecognitionModel('/models')
-                ]
-            ).then(
-                () => {
-                    const canvas = document.createElement('canvas');
-                    const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
-                        canvas: canvas as HTMLCanvasElement,
-                        loop: true,
-                        autoplay: true,
-                        protocols: ['mp2t'],
-                        onSourceEstablished: (source: any) => {
-                            if (videoElementRef.current) {
-                                videoElementRef.current.srcObject = canvas.captureStream();
-                            }
-                        },
-                        onEnded: (player: any) => {
-                            if (videoElementRef.current) {
-                                videoElementRef.current.srcObject = null;
-                            }
-                        }
-                    });
-                    setModelLoaded(true);
+  const conectar_con_webcam = () =>{
+      try{
+        navigator.mediaDevices.getUserMedia({video:true})
+        .then(function(stream){
+          if(videoElementRef.current != null){
+            videoElementRef.current.srcObject = stream;
+          }
+        })
+      }catch(error){
+        console.log(error);
+      }
+      
+  }
+  
+  useEffect(
+    () =>{
+      
+      Promise.all(
+        [
+          // faceapi.loadSsdMobilenetv1Model('/models'),
+          faceapi.loadTinyFaceDetectorModel('/models'),
+          faceapi.loadFaceLandmarkModel('/models'),
+          faceapi.loadFaceLandmarkTinyModel('/models'),
+          // faceapi.loadFaceDetectionModel('/models'),
+          faceapi.loadFaceRecognitionModel('/models')
+        ]
+      ).then(
+        () =>{
+                //conectar_con_camaraIP();
+                conectar_con_webcam();
+                setModelLoaded(true);
 
 
                 })
