@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 
 import {redirect} from 'next/navigation';
-import splash from '../../common/splash-img.png';
+import splash from '../../common/images/logo-sippy.png';
 import styles from './layout.module.css'
 import {useRouter} from 'next/navigation';
 
@@ -54,7 +54,7 @@ export default function Login() {
                     sx={{
                         backgroundImage: `url(${splash.src})`,
                         backgroundRepeat: 'no-repeat',
-                        backgroundSize: 'cover',
+                        backgroundSize: 'auto',
                         backgroundPosition: 'center',
 
                     }}

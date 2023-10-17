@@ -14,7 +14,9 @@ export default function CardBlock({name, link,image}){
                         title="green iguana"
                     />
                     <CardContent>
-                        <Typography gutterBottom variant="h5" component="div">
+                        <Typography gutterBottom variant="h5" component="div" sx={{
+                            textAlign: 'center',
+                        }}>
                             {name}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
@@ -23,6 +25,7 @@ export default function CardBlock({name, link,image}){
                     <CardActions>
                         <Button size="small" variant={"contained"} sx={{
                             boxShadow: "none",
+                            width: "100%",
                         }}>Continuar</Button>
                     </CardActions>
                 </Card>

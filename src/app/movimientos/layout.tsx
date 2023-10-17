@@ -1,8 +1,8 @@
 import {Container, Grid} from "@mui/material";
 import { Inter } from "next/font/google";
-import SideBar from "../../components/SideBar"
-import StatusNav from "../../components/StatusNav";
-import TopNav from "../../components/TopNav";
+import SideBar from "@/components/SideBar"
+import StatusNav from "@/components/StatusNav";
+import TopNav from "@/components/TopNav";
 import styles from "./layout.module.css";
 
 const inter = Inter({ subsets: ['latin'] })

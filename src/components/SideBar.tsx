@@ -96,45 +96,55 @@ export default function SideBar() {
                         </List>
                     </Collapse>
 
+                    {/*<ListItemButton sx={{}} className={'active'} href={link}>
+                        <ListItemIcon>
+                            {children}
+                        </ListItemIcon>
+                        <ListItemText primary={name}/>
+                    </ListItemButton>*/}
 
-                    <ListItemButton sx={{}}>
+                    <ListItemButton sx={{}} href={'/ppl'}>
                         <ListItemIcon>
                             <Mood/>
                         </ListItemIcon>
-                        <ListItemText primary={'Gestión PPLs'}/>
+                        <ListItemText primary={'Gestión PPLs'} />
                     </ListItemButton>
 
-                    <ListItemButton sx={{}}>
+                    <ListItemButton sx={{}} href={'/movimientos'}>
+                        <ListItemIcon>
+                            <AirportShuttle/>
+                        </ListItemIcon>
+                        <ListItemText primary={'Movimientos'}/>
+                    </ListItemButton>
+
+                    <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
                             <Hail/>
                         </ListItemIcon>
                         <ListItemText primary={'Gestión de Visitas'}/>
                     </ListItemButton>
-                    <ListItemButton sx={{}}>
-                        <ListItemIcon>
-                            <AirportShuttle/>
-                        </ListItemIcon>
-                        <ListItemText primary={'Traslados'}/>
-                    </ListItemButton>
-                    <ListItemButton sx={{}}>
+
+                    <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
                             <BarChart/>
                         </ListItemIcon>
                         <ListItemText primary={'Reportes'}/>
                     </ListItemButton>
-                    <ListItemButton sx={{}}>
+
+                    <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
                             <ManageAccounts/>
                         </ListItemIcon>
                         <ListItemText primary={'Gestión de Funcionarios'}/>
                     </ListItemButton>
-                    <ListItemButton sx={{}}>
+
+                    <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
                             <AccountBalance/>
                         </ListItemIcon>
                         <ListItemText primary={'Defensoría'}/>
                     </ListItemButton>
-                    <ListItemButton sx={{}}>
+                    <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
                             <Key/>
                         </ListItemIcon>
