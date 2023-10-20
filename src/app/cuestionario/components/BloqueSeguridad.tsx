@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 
 
 import {
+    Button,
     FormControl,
     FormControlLabel,
     FormLabel,
@@ -12,8 +13,74 @@ import {
     Radio,
     RadioGroup
 } from "@mui/material";
+import {ChangeEvent, useState} from "react";
+
+interface MyState{
+    riesgoParaPersonal: boolean;
+    riesgoParaPersonalRpta: string;
+    riesgoReclusos: boolean;
+    riesgoReclusosRpta: string;
+    riesgoPorReclusos: boolean;
+    riesgoPorReclusosRpta: string;
+    danhoPropiedad: boolean;
+    danhoPropiedadRpta: string;
+    miembroGrupo: boolean;
+    miembroGrupoRpta: string;
+    entrenamientoMilitar: boolean;
+    entrenamientoMilitarRpta: string;
+    funcionarioPublico: boolean;
+    funcionarioPublicoRpta: string;
+
+}
+
+const initialState: MyState = {
+    riesgoParaPersonal: false,
+    riesgoParaPersonalRpta: '',
+    riesgoReclusos: false,
+    riesgoReclusosRpta: '',
+    riesgoPorReclusos: false,
+    riesgoPorReclusosRpta: '',
+    danhoPropiedad: false,
+    danhoPropiedadRpta: '',
+    miembroGrupo: false,
+    miembroGrupoRpta: '',
+    entrenamientoMilitar: false,
+    entrenamientoMilitarRpta: '',
+    funcionarioPublico: false,
+    funcionarioPublicoRpta: '',
+}
 
 export default function BloqueSeguridad (){
+
+    const [state, setState] = useState<MyState>(initialState)
+
+    const handleChange = (event: any)=>{
+        const inputName: string = event.target.name;
+
+        setState({
+            ...state,
+            [inputName]: event.target.value,
+        });
+    }
+
+    const handleBoolean = (event:  ChangeEvent<HTMLInputElement>) => {
+
+        const inputName: string = event.target.name;
+        const inputValue = event.target.value === 'true';
+
+        setState({
+            ...state,
+            [inputName]: inputValue,
+        });
+
+    }
+
+    // captura click en boton guardar para luego enviar objeto como JSON
+    const  handleClick = (event: any)=>{
+        event.preventDefault();
+        console.log(JSON.stringify(state));
+        console.log(state);
+    }
 
     return(
         <>
@@ -35,17 +102,33 @@ export default function BloqueSeguridad (){
                                 aria-labelledby="riesgoPersona;"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.riesgoParaPersonal === true}
+                                        name='riesgoParaPersonal'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.riesgoParaPersonal === false}
+                                        name='riesgoParaPersonal'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <FormControl fullWidth={true}>
-
+                            <InputLabel htmlFor='riesgoParaPersonalRpta'>
+                                Observacion
+                            </InputLabel>
                             <OutlinedInput
-                                id="institucionEducactia"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="riesgoParaPersonalRpta"
+                                value={state.riesgoParaPersonalRpta}
+                                onChange={handleChange}
+                                label="Observacion"
                             />
                         </FormControl>
                     </Grid>
@@ -58,17 +141,33 @@ export default function BloqueSeguridad (){
                                 aria-labelledby="riesgoRecluso;"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.riesgoReclusos === true}
+                                        name='riesgoReclusos'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.riesgoReclusos === false}
+                                        name='riesgoReclusos'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <FormControl fullWidth={true}>
-
+                            <InputLabel htmlFor='riesgoReclusosRpta'>
+                                Observacion
+                            </InputLabel>
                             <OutlinedInput
-                                id="institucionEducactia"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="riesgoReclusosRpta"
+                                value={state.riesgoReclusosRpta}
+                                onChange={handleChange}
+                                label="Observacion"
                             />
                         </FormControl>
                     </Grid>
@@ -81,40 +180,73 @@ export default function BloqueSeguridad (){
                                 aria-labelledby="riesgoOtroRecluso;"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.riesgoPorReclusos === true}
+                                        name='riesgoPorReclusos'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.riesgoPorReclusos === false}
+                                        name='riesgoPorReclusos'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
-                        <FormControl fullWidth={true}>
 
+                        <FormControl fullWidth={true}>
+                            <InputLabel htmlFor='riesgoPorReclusosRpta;'>
+                                Observacion
+                            </InputLabel>
                             <OutlinedInput
-                                id="motivoRiesgoOtroRecluso"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="riesgoPorReclusosRpta"
+                                value={state.riesgoPorReclusosRpta}
+                                onChange={handleChange}
+                                label="Observacion"
                             />
                         </FormControl>
                     </Grid>
 
                     <Grid item sm={12}>
                         <FormControl>
-                            <FormLabel id="riesgoPropiedad;">¿Riesgo de dañar la propiedad?</FormLabel>
+                            <FormLabel id="danhoPropiedad;">¿Riesgo de dañar la propiedad?</FormLabel>
                             <RadioGroup
                                 row
-                                aria-labelledby="riesgoPropiedad;"
+                                aria-labelledby="danhoPropiedad;"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.danhoPropiedad === true}
+                                        name='danhoPropiedad'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.danhoPropiedad === false}
+                                        name='danhoPropiedad'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <FormControl fullWidth={true}>
-
+                            <InputLabel htmlFor='danhoPropiedadRpta'>
+                                Observacion
+                            </InputLabel>
                             <OutlinedInput
-                                id="motivoRiesgoPropiedad"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="danhoPropiedadRpta"
+                                value={state.danhoPropiedadRpta}
+                                onChange={handleChange}
+                                label="Observacion"
                             />
                         </FormControl>
                     </Grid>
@@ -127,17 +259,33 @@ export default function BloqueSeguridad (){
                                 aria-labelledby="grupoAmenaza;"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.miembroGrupo === true}
+                                        name='miembroGrupo'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.miembroGrupo === false}
+                                        name='miembroGrupo'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <FormControl fullWidth={true}>
-
+                            <InputLabel htmlFor="miembroGrupoRpta"
+                            >Nombre del grupo
+                            </InputLabel>
                             <OutlinedInput
-                                id="motivoGrupoAmenaza"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="miembroGrupoRpta"
+                                value={state.miembroGrupoRpta}
+                                onChange={handleChange}
+                                label="Nombre del grupo"
                             />
                         </FormControl>
                     </Grid>
@@ -147,20 +295,36 @@ export default function BloqueSeguridad (){
                             <FormLabel id="entrenamientoMilitar;">¿Entrenamiento militar previo?</FormLabel>
                             <RadioGroup
                                 row
-                                aria-labelledby="entrenamientoMilitar;"
+                                aria-labelledby="entrenamientoMilitar"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.entrenamientoMilitar === true}
+                                        name='entrenamientoMilitar'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.entrenamientoMilitar === false}
+                                        name='entrenamientoMilitar'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <FormControl fullWidth={true}>
-
+                            <InputLabel htmlFor="entrenamientoMilitarRpta"
+                            >Agregar Respuesta
+                            </InputLabel>
                             <OutlinedInput
-                                id="motivoEntrenamientoMilitar"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="entrenamientoMilitarRpta"
+                                value={state.entrenamientoMilitarRpta}
+                                onChange={handleChange}
+                                label="Agregar Respuesta"
                             />
                         </FormControl>
                     </Grid>
@@ -173,19 +337,38 @@ export default function BloqueSeguridad (){
                                 aria-labelledby="funcionarioPublico;"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.funcionarioPublico === true}
+                                        name='funcionarioPublico'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={state.funcionarioPublico === false}
+                                        name='funcionarioPublico'
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <FormControl fullWidth={true}>
-
+                            <InputLabel htmlFor='funcionarioPublicoRpta'>Agregar cargo</InputLabel>
                             <OutlinedInput
-                                id="motivoFuncionarioPublico"
-                                defaultValue="Indicar respuesta..."
-                                label=""
-                                size="small"
+                                name="funcionarioPublicoRpta"
+                                value={state.funcionarioPublicoRpta}
+                                onChange={handleChange}
+                                label="Agregar cargo"
                             />
                         </FormControl>
+                    </Grid>
+                    <Grid item sm={12}>
+                        <Button onClick={handleClick} variant='contained'>
+                            Guardar
+                        </Button>
                     </Grid>
                 </Grid>
             </Box>

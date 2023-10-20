@@ -37,6 +37,7 @@ export default function Ppl() {
     const [condena, setCondena] = React.useState('');
     const handleChangeCondena = (event: SelectChangeEvent) => {
         setCondena(event.target.value as string);
+
     };
 
     // Variables para selector de rango de fecha
@@ -49,7 +50,7 @@ export default function Ppl() {
 
     return (
         <div>
-            <h2>Movimientos</h2>
+            <h2>Movimientos - {condena}</h2>
 
             <Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">

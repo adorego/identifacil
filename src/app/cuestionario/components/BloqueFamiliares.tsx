@@ -15,9 +15,128 @@ import {
     RadioGroup,
     Typography
 } from "@mui/material";
+import {ChangeEvent, useState} from "react";
 
+
+interface MyState{
+    cabezaFamilia: boolean;
+    circuloFamiliar: boolean;
+    familia: object;
+    tieneConcubino: boolean;
+    concubinoDocumento: string;
+    concubinoNombre: string;
+    concubinoApellido: string;
+    tieneHijos: boolean;
+    hijos: object;
+}
+
+const initialState: MyState = {
+    cabezaFamilia: false,
+    circuloFamiliar: false,
+    familia: {},
+    tieneConcubino: false,
+    concubinoDocumento: '',
+    concubinoNombre: '',
+    concubinoApellido: '',
+    tieneHijos: false,
+    hijos: {},
+}
+
+interface Familiar {
+    nombre: string;
+    vinculo: string;
+    sistema: string;
+    reclusion: string;
+}
+
+interface Hijos {
+    nombre: string;
+    edad: number;
+    lugar: string;
+}
 
 export default function BloqueFamiliares (){
+    const [state, setState] = useState<MyState>(initialState);
+
+    // Captura cada cambio de estado de los elementos del form y guarda en el state
+    const handleChange = (event: any) => {
+        const inputName: any = event.target.name;
+        const inputValue: any = event.target.value;
+
+        setState({
+            ...state,
+            [inputName]: inputValue,
+        })
+    }
+
+
+    const handleBoolean = (event:  ChangeEvent<HTMLInputElement>) =>{
+
+        const inputName: any = event.target.name;
+        const inputValue: any = event.target.value === 'true';
+
+        setState({
+            ...state,
+            [inputName]: inputValue,
+        })
+    }
+
+
+    const [familiares, setFamiliares] = useState<Familiar[]>([
+        { nombre: '', vinculo: '', sistema: '', reclusion: '' }
+    ]);
+
+    const [hijos, setHijos] = useState<Hijos[]>([
+        { nombre: '', edad: 0, lugar: '' }
+    ]);
+
+    const handleFamilia = () => {
+        setFamiliares([...familiares, { nombre: '', vinculo: '', sistema: '', reclusion: '' }]);
+    };
+
+    const handleHijos= () => {
+        setHijos([...hijos, { nombre: '', edad: 0, lugar: '' }]);
+    };
+
+
+
+    const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const { name, value } = event.target;
+        const nuevosFamiliares = [...familiares];
+        nuevosFamiliares[index][name] = value;
+
+        setFamiliares(nuevosFamiliares);
+
+        setState({
+            ...state,
+            familia: [...familiares],
+        })
+    };
+
+    const handleInputChangeHijos = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const { name, value } = event.target;
+        const nuevosHijos = [...hijos];
+        nuevosHijos[index][name] = value;
+
+        setHijos(nuevosHijos);
+
+        setState({
+            ...state,
+            hijos: [...hijos],
+        })
+    };
+
+    const handleSubmit = (event: any) =>{
+        setState({
+            ...state,
+            familia: [...familiares],
+        })
+
+        console.log(state)
+    }
+
 
     return(
         <>
@@ -38,66 +157,114 @@ export default function BloqueFamiliares (){
                                 aria-labelledby="datoLiderFamilia"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.cabezaFamilia}
+                                        onChange={handleBoolean}
+                                        name='cabezaFamilia'
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={!state.cabezaFamilia}
+                                        onChange={handleBoolean}
+                                        name='cabezaFamilia'
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                     </Grid>
-                    <Grid item sm={12}>
+
+                    <Grid item sm={12} sx={{
+                        background: '#f9f9f9',
+                        padding: '20px',
+                        margin: '20px',
+                        borderRadius: '12px',
+                        border: '1px solid #dfdfdf',
+                    }}>
+
                         <FormControl>
-                            <FormLabel id="datoLiderFamilia">Círculo Familiar:</FormLabel>
+                            <FormLabel id="circuloFamiliarLabel">Círculo Familiar:</FormLabel>
                             <RadioGroup
                                 row
-                                aria-labelledby="datoLiderFamilia"
+                                aria-labelledby="circuloFamiliarLabel"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.circuloFamiliar}
+                                        onChange={handleBoolean}
+                                        name='circuloFamiliar'
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        value='false'
+                                        checked={!state.circuloFamiliar}
+                                        onChange={handleBoolean}
+                                        name='circuloFamiliar'
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
-                        <Grid container spacing={2}>
+                        {/*Comienzo de familia */}
+                        {familiares.map((familiar, index) => (
+                        <Grid container spacing={2} mt={2} key={index}>
+
                             <Grid item sm={3}>
                                 <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="datoNombreMiembroFamilia">Nombre y apellido</InputLabel>
+                                    <InputLabel htmlFor="familiaNombre">Nombre y apellido</InputLabel>
                                     <OutlinedInput
-                                        id="datoNombreMiembroFamilia"
-                                        defaultValue=""
-                                        label="Nombre y apellido"
+                                        name="nombre"
+                                        value={familiar.nombre}
+                                        label='Nombre y apellido'
+                                        onChange={(event) => handleInputChange(index, event)}
                                     />
                                 </FormControl>
                             </Grid>
                             <Grid item sm={3}>
                                 <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="datoVinculoFamiliar">Vinculo</InputLabel>
+                                    <InputLabel htmlFor="datoVinfamiliaVinculoculoFamiliar">Vinculo</InputLabel>
                                     <OutlinedInput
-                                        id="datoVinculoFamiliar"
-                                        defaultValue=""
+                                        name="vinculo"
+                                        value={familiar.vinculo}
                                         label="Vinculo"
+                                        onChange={(event) => handleInputChange(index, event)}
                                     />
                                 </FormControl>
                             </Grid>
                             <Grid item sm={3}>
                                 <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="datoVinculoSistema">Vinculo con el sistema penitenciario</InputLabel>
+                                    <InputLabel htmlFor="vinculoSistema">Vinculo con el sistema penitenciario</InputLabel>
                                     <OutlinedInput
-                                        id="datoVinculoSistema"
-                                        defaultValue=""
+                                        name="sistema"
+                                        value={familiar.sistema}
                                         label="Vinculo con el sistema penitenciario"
+                                        onChange={(event) => handleInputChange(index, event)}
                                     />
                                 </FormControl>
                             </Grid>
                             <Grid item sm={3}>
                                 <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="datoLugar">Lugar</InputLabel>
+                                    <InputLabel htmlFor="lugarReclusion">Lugar</InputLabel>
                                     <OutlinedInput
-                                        id="datoLugar"
-                                        defaultValue=""
+                                        name="reclusion"
+                                        value={familiar.reclusion}
                                         label="Lugar"
+                                        onChange={(event) => handleInputChange(index, event)}
                                     />
                                 </FormControl>
                             </Grid>
+
+                        </Grid>
+                        ))}
+                        {/* Button Add Familiar */}
+                        <Grid container spacing={2} mt={2}>
                             <Grid item sm={12}>
-                                <Button variant="contained" startIcon={<PersonAddIcon />}>
+                                <Button variant="contained" startIcon={<PersonAddIcon />} onClick={handleFamilia}>
                                     Agregar familiar
                                 </Button>
                             </Grid>
@@ -105,7 +272,7 @@ export default function BloqueFamiliares (){
                     </Grid>
 
                     {/* CONCUBINO */}
-                    <Grid item sm={12}>
+                    <Grid item sm={12} mt={2}>
                         <FormControl>
                             <FormLabel id="datoLiderFamilia">Concubino</FormLabel>
                             <RadioGroup
@@ -113,8 +280,23 @@ export default function BloqueFamiliares (){
                                 aria-labelledby="datoLiderFamilia"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        value='true'
+                                        checked={state.tieneConcubino}
+                                        onChange={handleBoolean}
+                                        name='tieneConcubino'
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+
+                                        value='false'
+                                        checked={!state.tieneConcubino}
+                                        onChange={handleBoolean}
+                                        name='tieneConcubino'
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
                         <Grid container spacing={2}>
@@ -122,9 +304,10 @@ export default function BloqueFamiliares (){
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="concubinoDocumento">Nro. de documento</InputLabel>
                                     <OutlinedInput
-                                        id="concubinoDocumento"
-                                        defaultValue=""
+                                        name="concubinoDocumento"
+                                        value={state.concubinoDocumento}
                                         label="Nro. de documento"
+                                        onChange={handleChange}
                                     />
                                 </FormControl>
                             </Grid>
@@ -132,9 +315,10 @@ export default function BloqueFamiliares (){
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="datoNombreConcubino">Nombre</InputLabel>
                                     <OutlinedInput
-                                        id="datoNombreConcubino"
-                                        defaultValue=""
+                                        name="concubinoNombre"
+                                        value={state.concubinoNombre}
                                         label="Nombre"
+                                        onChange={handleChange}
                                     />
                                 </FormControl>
                             </Grid>
@@ -142,9 +326,10 @@ export default function BloqueFamiliares (){
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="datoApellidoConcubino">Apellido</InputLabel>
                                     <OutlinedInput
-                                        id="datoApellidoConcubino"
-                                        defaultValue=""
+                                        name="concubinoApellido"
+                                        value={state.concubinoApellido}
                                         label="Apellido"
+                                        onChange={handleChange}
                                     />
                                 </FormControl>
                             </Grid>
@@ -152,7 +337,13 @@ export default function BloqueFamiliares (){
                     </Grid>
 
                     {/* Hijos */}
-                    <Grid item sm={12}>
+                    <Grid item sm={12} sx={{
+                        background: '#f9f9f9',
+                        padding: '20px',
+                        margin: '20px',
+                        borderRadius: '12px',
+                        border: '1px solid #dfdfdf',
+                    }}>
                         <FormControl>
                             <FormLabel id="datosHijos">Hijos:</FormLabel>
                             <RadioGroup
@@ -160,17 +351,33 @@ export default function BloqueFamiliares (){
                                 aria-labelledby="datosHijos"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        name='tieneHijos'
+                                        value='true'
+                                        checked={state.tieneHijos}
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        name='tieneHijos'
+                                        value='false'
+                                        checked={!state.tieneHijos}
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
                         </FormControl>
-                        <Grid container spacing={2}>
+                        {hijos.map((hijos, index) => (
+                        <Grid container spacing={2} key={index} mt={2}>
                             <Grid item sm={4}>
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="nombreHijo">Nombre del hijo/a</InputLabel>
                                     <OutlinedInput
-                                        id="nombreHijo"
-                                        defaultValue=""
+                                        name="nombre"
+                                        value={hijos.nombre}
+                                        onChange={(event) => handleInputChangeHijos(index, event)}
                                         label="Nombre del hijo/a"
                                     />
                                 </FormControl>
@@ -179,8 +386,9 @@ export default function BloqueFamiliares (){
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="datoNombreConcubino">Edad</InputLabel>
                                     <OutlinedInput
-                                        id="datoEdadHijo"
-                                        defaultValue=""
+                                        name="edad"
+                                        value={hijos.edad}
+                                        onChange={(event) => handleInputChangeHijos(index, event)}
                                         label="Edad"
                                     />
                                 </FormControl>
@@ -189,19 +397,31 @@ export default function BloqueFamiliares (){
                                 <FormControl fullWidth={true}>
                                     <InputLabel htmlFor="datoLugarSistemaHijo">Lugar(Dentro del sistema penitenciario</InputLabel>
                                     <OutlinedInput
-                                        id="datoLugarSistemaHijo"
-                                        defaultValue=""
-                                        label="Lugar(Dentro del sistema penitenciario"
+                                        name="lugar"
+                                        onChange={handleInputChangeHijos}
+                                        value={hijos.lugar}
+                                        onChange={(event) => handleInputChangeHijos(index, event)}
                                     />
                                 </FormControl>
                             </Grid>
+
+                        </Grid>
+                        ))}
+                        <Grid container spacing={2} mt={2}>
                             <Grid item sm={12}>
-                                <Button variant="contained" startIcon={<PersonAddIcon />}>
-                                    Agregar familiar
+                                <Button variant="contained" startIcon={<PersonAddIcon />} onClick={handleHijos}>
+                                    Agregar hijo/a
                                 </Button>
                             </Grid>
                         </Grid>
                     </Grid>
+
+                    <Grid item sm={12}>
+                        <Button variant="contained"  onClick={handleSubmit}>
+                            Guardar cambios
+                        </Button>
+                    </Grid>
+
                 </Grid>
             </Box>
         </>
