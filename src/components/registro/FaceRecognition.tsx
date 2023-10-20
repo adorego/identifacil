@@ -3,11 +3,12 @@ import * as faceapi from "face-api.js";
 import {AddAPhoto, Height} from "@mui/icons-material";
 import {Alert, Box, Button, Grid, Typography} from "@mui/material";
 import {FC, Suspense, useEffect, useRef, useState} from "react";
+import FaceDetectionOverlay, { IReconocimiento } from "./FaceDetectionOverlay";
 
-import FaceDetectionOverlay from "./FaceDetectionOverlay";
 import {IdentificacionForm} from "./IdentificationForm";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 import VideoPlayer from "./VideoPlayer";
+import { blue } from "@mui/material/colors";
 import styles from "./FaceRecognition.module.css";
 import {testWebSocketConnection} from "@/common/testWebSocketConnection";
 
@@ -16,7 +17,7 @@ interface ErrorInt {
     message: string;
 }
 export interface FaceRecognitionProps{
-  actualizarFoto:(fotoParam:Blob | null) => void;
+  agregar_reconocimiento:({}:IReconocimiento) => void;
   mostrar_registro_final:(mostrar:boolean) => void;
 }
 const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>{
@@ -61,29 +62,29 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
       
   }
   
-  useEffect(
-    () =>{
+    useEffect(
+      () =>{
       
-      Promise.all(
-        [
-          // faceapi.loadSsdMobilenetv1Model('/models'),
-          faceapi.loadTinyFaceDetectorModel('/models'),
-          faceapi.loadFaceLandmarkModel('/models'),
-          faceapi.loadFaceLandmarkTinyModel('/models'),
-          // faceapi.loadFaceDetectionModel('/models'),
-          faceapi.loadFaceRecognitionModel('/models')
-        ]
-      ).then(
-        () =>{
-                //conectar_con_camaraIP();
-                conectar_con_webcam();
-                setModelLoaded(true);
+          Promise.all(
+            [
+              // faceapi.loadSsdMobilenetv1Model('/models'),
+              faceapi.loadTinyFaceDetectorModel('/models'),
+              faceapi.loadFaceLandmarkModel('/models'),
+              faceapi.loadFaceLandmarkTinyModel('/models'),
+              // faceapi.loadFaceDetectionModel('/models'),
+              faceapi.loadFaceRecognitionModel('/models')
+            ]
+          ).then(
+            () =>{
+                    //conectar_con_camaraIP();
+                    conectar_con_webcam();
+                    setModelLoaded(true);
 
 
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    })
         }
     )
 
@@ -95,31 +96,36 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
     return (
         <Grid container>
             <Grid item xs={12}>
-                <Box sx={{display: "flex", flexDirection: "column", alignItems: "center", marginBottom: "10px"}}
-                     className='containerVideoCam'>
+                <Box sx={{
+                  // border:"2px solid blue",
+                  display: "flex", 
+                  flexDirection: "column", 
+                  alignItems: "center", 
+                  width:'100%',
+                  height:'100%',
+                  marginBottom: "10px"}} >
 
                     <Alert severity="info" sx={{
                         position: 'absolute',
-                        bottom: '90px',
-                    }}>Por favor situe a la persona frente a la camara y presione Capturar</Alert>
-                    {/*<Typography sx={{marginTop:5, marginBottom:5, textAlign:'center'}} variant="h6">
-                Por favor situe a la persona frente a la camara y presione Capturar
-              </Typography>*/}
+                        top: '90px',
+                    }}>Por favor situe a la persona frente para generar el registro</Alert>
+                   
                     <div className={styles.video_container}>
                         <video className={styles.video}
-                               width={"100%"}
-                               height={"100%"}
+                               width={600}
+                               height={600} 
                                ref={videoElementRef}
                                id="videoElement" autoPlay></video>
 
                         <FaceDetectionOverlay
                             className={styles.relayCanvas}
                             videoElement={videoElementRef.current}
-                            actualizar_foto={props.actualizarFoto}/>
+                            agregar_reconocimiento={props.agregar_reconocimiento}/>
+                    
+                        {/* <Button onClick={onFotoCapture} className={styles.capturePhoto} variant={"contained"}
+                                endIcon={<AddAPhoto/>}>Capturar</Button> */}
                     </div>
-                    <Button onClick={onFotoCapture} className={styles.capturePhoto} variant={"contained"}
-                            endIcon={<AddAPhoto/>}>Capturar</Button>
-                </Box>
+                  </Box>
             </Grid>
         </Grid>
 

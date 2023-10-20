@@ -22,6 +22,7 @@ import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";
 
 import FaceRecognition from "./FaceRecognition";
+import { IReconocimiento } from "./FaceDetectionOverlay";
 import NotificacionRegistro from "./NotificacionRegistro";
 import PPLRegistration from "./PPLRegistration";
 import style from "./FormRegister.module.css";
@@ -33,7 +34,9 @@ export default function FormRegister(){
   const [habilitarBotonSiguiente, setHabilitarBotonSiguiente] = useState(false);
   const [desplegarRegistroFinal, setDesplegarRegistroFinal] = useState(false);
   const identidad = useRef<IdentificacionForm | null>(null);
+  const reconocimientos = useRef<Array<IReconocimiento>>([])
   const foto = useRef<string | null>(null);
+  const contadorReconocimiento = useRef<number>(0);
 
     const setIdentificacion = (identificacion: IdentificacionForm) => {
         // console.log("Datos de identificacion:", identificacion);
@@ -43,6 +46,39 @@ export default function FormRegister(){
     const setFoto = (fotoParam: string) => {
         foto.current = fotoParam;
         console.log(foto.current);
+    }
+
+    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
+      reconocimientos.current.push(reconocimiento);
+      contadorReconocimiento.current++;
+      if(contadorReconocimiento.current === 3){
+        const datos = {
+          tipo_identificacion:'cedula',
+          numero_identificacion:identidad.current?.cedula_identidad,
+          nombres:identidad.current?.nombres,
+          apellidos:identidad.current?.apellidos,
+          genero:identidad.current?.codigo_genero,
+          foto1:reconocimientos.current[0].foto,
+          descriptor1:reconocimientos.current[0].descriptor,
+          foto2:reconocimientos.current[1].foto,
+          descriptor2: reconocimientos.current[1].descriptor,
+          foto3: reconocimientos.current[2].foto,
+          descriptor3: reconocimientos.current[2].descriptor
+        }
+        if(process.env.NEXT_PUBLIC_SERVER_URL){
+          const result = await fetch(process.env.NEXT_PUBLIC_SERVER_URL,{
+            method:'POST',
+            headers:{
+              Accept: 'application.json',
+              'Content-Type': 'application/json'
+            },
+            body:JSON.stringify(datos)
+          })
+          if(!result.ok){
+            console.log('Ocurrio un error');
+          }
+        }
+      }
     }
 
     const mostrarRegistroFinal = (mostrar: boolean) => {
@@ -98,7 +134,7 @@ export default function FormRegister(){
             actualizarIdentificacion={setIdentificacion}
             /> }
             {activeStep === 1 && <FaceRecognition  
-            actualizarFoto={setFoto}
+            agregar_reconocimiento={agregar_reconocimiento}
             mostrar_registro_final={mostrarRegistroFinal} />}
 
             {activeStep === 2 && <PPLRegistration foto="" /> }
