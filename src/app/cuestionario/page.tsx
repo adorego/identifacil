@@ -43,6 +43,8 @@ export default function About(){
                     <Typography color="text.primary">Breadcrumbs</Typography>
                 </Breadcrumbs>
             </div>
+
+            {/* Stepper */}
             <Box my={2}>
                 <Stepper activeStep={0} alternativeLabel
                          sx={{
@@ -67,6 +69,7 @@ export default function About(){
                     ))}
                 </Stepper>
             </Box>
+            {/* Fin del stepper */}
             <div>
 
                 <Accordion>

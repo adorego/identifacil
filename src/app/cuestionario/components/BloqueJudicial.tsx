@@ -11,17 +11,66 @@ import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import StyledTextarea from '../../../components/interfaz/StyledTextArea';
+import {ChangeEvent} from "react";
+
+
+interface MyState{
+    situacionJudicial: string;
+    primeraVezPrision: boolean;
+    cantidadIngresos: number;
+    causa: string;
+    oficio: string;
+    ultimoTrabajo: string
+}
+
+const initialState: MyState = {
+    situacionJudicial: 'condenado',
+    primeraVezPrision: false,
+    cantidadIngresos: 0,
+    causa: '',
+    oficio: '',
+    ultimoTrabajo: '',
+}
+
 
 export default function BloqueJudicial() {
 
+    const [state, setState] = React.useState(initialState);
     const [causa, setCausa] = React.useState('');
+    const [value, setValue] = React.useState<Dayjs | null>(dayjs());
 
-    const handleChange = (event: SelectChangeEvent) => {
+    const handleChangeSelect = (event: SelectChangeEvent) => {
         setCausa(event.target.value as string);
     };
 
-    const [value, setValue] = React.useState<Dayjs | null>(dayjs());
+    const handleChange = (event: SelectChangeEvent) => {
 
+        const inputName: any = event.target.name;
+        const inputValue: any = event.target.value;
+
+        setState({
+            ...state,
+            [inputName]: inputValue,
+        });
+    };
+
+    const handleBoolean = (event:  ChangeEvent<HTMLInputElement>) => {
+
+        const inputName: string = event.target.name;
+        const inputValue = event.target.value === 'true';
+
+        setState({
+            ...state,
+            [inputName]: inputValue,
+        });
+
+    }
+
+    const handleSubmit = (event: ChangeEvent<HTMLInputElement>)=>{
+        event.preventDefault();
+
+        console.log(state);
+    }
 
     return (
         <>
@@ -43,8 +92,22 @@ export default function BloqueJudicial() {
                                 aria-labelledby="situacionJudicial"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="procesado" control={<Radio/>} label="Procesado"/>
-                                <FormControlLabel value="condena" control={<Radio/>} label="Condena"/>
+                                <FormControlLabel value="procesado" control={
+                                    <Radio
+                                        name='situacionJudicial'
+                                        value='procesado'
+                                        checked={state.situacionJudicial === 'procesado'}
+                                        onChange={handleChange}
+                                    />
+                                } label="Procesado"/>
+                                <FormControlLabel value="condenado" control={
+                                    <Radio
+                                        name='situacionJudicial'
+                                        value='condenado'
+                                        checked={state.situacionJudicial === 'condenado'}
+                                        onChange={handleChange}
+                                    />
+                                } label="Condenado"/>
                             </RadioGroup>
                         </FormControl>
                     </Grid>
@@ -56,8 +119,22 @@ export default function BloqueJudicial() {
                                 aria-labelledby="primeraVezPrision"
                                 name="row-radio-buttons-group"
                             >
-                                <FormControlLabel value="si" control={<Radio/>} label="Si"/>
-                                <FormControlLabel value="no" control={<Radio/>} label="No"/>
+                                <FormControlLabel value="si" control={
+                                    <Radio
+                                        name='primeraVezPrision'
+                                        value='true'
+                                        checked={state.primeraVezPrision}
+                                        onChange={handleBoolean}
+                                    />
+                                } label="Si"/>
+                                <FormControlLabel value="no" control={
+                                    <Radio
+                                        name='primeraVezPrision'
+                                        value='false'
+                                        checked={!state.primeraVezPrision}
+                                        onChange={handleBoolean}
+                                    />
+                                } label="No"/>
                             </RadioGroup>
 
                         </FormControl>
@@ -66,8 +143,9 @@ export default function BloqueJudicial() {
                         <FormControl fullWidth={true}>
                             <InputLabel htmlFor="cantidadVecesPrision">Cantidad de veces de ingreso</InputLabel>
                             <OutlinedInput
-                                id="cantidadVecesPrision"
-                                defaultValue=""
+                                name="cantidadIngresos"
+                                value={state.cantidadIngresos}
+                                onChange={handleChange}
                                 label="Cantidad de veces de ingreso"
                             />
                         </FormControl>
@@ -76,24 +154,26 @@ export default function BloqueJudicial() {
                         <FormControl fullWidth={true}>
                             <InputLabel htmlFor="datoCausa">Seleccionar Causa</InputLabel>
                             <OutlinedInput
-                                id="datoCausa"
-                                defaultValue=""
+                                name="causa"
+                                value={state.causa}
+                                onChange={handleChange}
                                 label="Seleccionar Causa"
                             />
                         </FormControl>
                     </Grid>
                 </Grid>
 
-                <Grid container spacing={2} my={2}>
+                {/*<Grid container spacing={2} my={2}>
                     <Grid item sm={6}>
                         <FormControl fullWidth>
                             <InputLabel id="selectCausa">Causa</InputLabel>
                             <Select
+                                disabled
                                 labelId="selectCausa"
                                 id="selectCausa"
                                 value={causa}
                                 label="Causa"
-                                onChange={handleChange}
+                                onChange={handleChangeSelect}
                             >
                                 <MenuItem value={10}>Causa 1</MenuItem>
                                 <MenuItem value={20}>Causa 2</MenuItem>
@@ -101,15 +181,16 @@ export default function BloqueJudicial() {
                             </Select>
                         </FormControl>
                     </Grid>
-                </Grid>
+                </Grid>*/}
 
                 <Grid container spacing={2} my={2}>
                     <Grid item sm={6}>
                         <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
+                            <InputLabel htmlFor="oficio">Oficio</InputLabel>
                             <OutlinedInput
-                                id="datoOficio"
-                                defaultValue=""
+                                name="oficio"
+                                value={state.oficio}
+                                onChange={handleChange}
                                 label="Oficio"
                             />
                         </FormControl>
@@ -118,8 +199,9 @@ export default function BloqueJudicial() {
                         <FormControl fullWidth={true}>
                             <InputLabel htmlFor="datoUltimaEducativa">Ultimo lugar de trabajo</InputLabel>
                             <OutlinedInput
-                                id="datoUltimaEducativa"
-                                defaultValue=""
+                                name="ultimoTrabajo"
+                                value={state.ultimoTrabajo}
+                                onChange={handleChange}
                                 label="Ultimo lugar de trabajo"
                             />
                         </FormControl>
@@ -130,7 +212,7 @@ export default function BloqueJudicial() {
                     <Grid item sm={12}>
                         <Typography sx={{fontWeight:'bold', textTransform:'uppercase'}}>Documento que ordena la reclusión</Typography>
                     </Grid>
-                    <Grid item sm={12} spacing={2}>
+                    <Grid item sm={12}>
                         <Grid container>
                             <Grid item sm={12} my={1}>
                                 <Typography >Oficio judicial</Typography>
@@ -249,7 +331,7 @@ export default function BloqueJudicial() {
                                 id="selectCausa"
                                 value={causa}
                                 label="Hecho punible/Delito"
-                                onChange={handleChange}
+                                onChange={handleChangeSelect}
                             >
                                 <MenuItem value={10}>Causa 1</MenuItem>
                                 <MenuItem value={20}>Causa 2</MenuItem>
@@ -306,6 +388,11 @@ export default function BloqueJudicial() {
                                 />
                             </LocalizationProvider>
                         </FormControl>
+                    </Grid>
+                    <Grid item sm={12} mt={2}>
+                        <Button variant='contained' onClick={handleSubmit}>
+                            Guardar cambios
+                        </Button>
                     </Grid>
                 </Grid>
             </Box>
