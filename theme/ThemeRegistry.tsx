@@ -38,6 +38,10 @@ const themeOptions: ThemeOptions = {
                     height: '38px',
                     backgroundColor: '#00A76F',
                 },
+                outlined: {
+                    // Aquí puedes personalizar el estilo del botón outlined
+                    background: '#FFF',
+                },
             },
         },
         MuiInputBase:{

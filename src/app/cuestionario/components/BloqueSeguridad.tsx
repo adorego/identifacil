@@ -50,7 +50,7 @@ const initialState: MyState = {
     funcionarioPublicoRpta: '',
 }
 
-export default function BloqueSeguridad (){
+export default function BloqueSeguridad ({ onCloseAccordion }){
 
     const [state, setState] = useState<MyState>(initialState)
 
@@ -78,8 +78,12 @@ export default function BloqueSeguridad (){
     // captura click en boton guardar para luego enviar objeto como JSON
     const  handleClick = (event: any)=>{
         event.preventDefault();
+        onCloseAccordion(); // Cierra el acordeon
+
+        // Convierte a JSON el state
         console.log(JSON.stringify(state));
-        console.log(state);
+
+        // TODO: Hacer FETCH
     }
 
     return(

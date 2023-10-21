@@ -30,7 +30,7 @@ const initialState: MyState = {
     ultimoTrabajo: '',
 };
 
-export default function BloqueEducacion() {
+export default function BloqueEducacion({ onCloseAccordion }) {
     const [state, setState] = useState<MyState>(initialState);
 
     const handleSubmit = (event: FormEvent) => {
@@ -61,6 +61,18 @@ export default function BloqueEducacion() {
         // console.log(state)
     };
 
+    // captura click en boton guardar para luego enviar objeto como JSON
+    const  handleClick = (event: any)=>{
+        event.preventDefault();
+
+        // Después de enviar el formulario, llama a la función de devolución de llamada para cerrar el acordeón
+        onCloseAccordion();
+
+        // Convierte a JSON el state
+        console.log(JSON.stringify(state));
+
+        // TODO: Agregar FETCH
+    }
     return (
         <>
             <Box
@@ -176,7 +188,7 @@ export default function BloqueEducacion() {
                         </FormControl>
                     </Grid>
                     <Grid item sm={12} mt={4}>
-                        <Button variant='contained' onClick={handleSubmit}>
+                        <Button variant='contained' onClick={handleClick}>
                             Guardar
                         </Button>
                     </Grid>

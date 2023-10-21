@@ -27,7 +27,7 @@ export default function EmptyTextarea() {
 
     const StyledTextarea = styled(TextareaAutosize)(
         ({ theme }) => `
-    width: 320px;
+    width: 100%;
     font-family: IBM Plex Sans, sans-serif;
     font-size: 0.875rem;
     font-weight: 400;

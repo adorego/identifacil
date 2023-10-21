@@ -55,7 +55,7 @@ interface Hijos {
     lugar: string;
 }
 
-export default function BloqueFamiliares (){
+export default function BloqueFamiliares (handleFormSubmit){
     const [state, setState] = useState<MyState>(initialState);
 
     // Captura cada cambio de estado de los elementos del form y guarda en el state
@@ -69,7 +69,7 @@ export default function BloqueFamiliares (){
         })
     }
 
-
+    // Controlador para Radios Buttons booleanos
     const handleBoolean = (event:  ChangeEvent<HTMLInputElement>) =>{
 
         const inputName: any = event.target.name;
@@ -82,13 +82,16 @@ export default function BloqueFamiliares (){
     }
 
 
+    // Estado para poder hacer dinamico el campo familia
     const [familiares, setFamiliares] = useState<Familiar[]>([
         { nombre: '', vinculo: '', sistema: '', reclusion: '' }
     ]);
 
+    // Estado para poder hacer dinamico el campo hijos
     const [hijos, setHijos] = useState<Hijos[]>([
         { nombre: '', edad: 0, lugar: '' }
     ]);
+
 
     const handleFamilia = () => {
         setFamiliares([...familiares, { nombre: '', vinculo: '', sistema: '', reclusion: '' }]);
@@ -99,7 +102,7 @@ export default function BloqueFamiliares (){
     };
 
 
-
+    // Manejador para Inputs field
     const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
 
         const { name, value } = event.target;
@@ -128,13 +131,19 @@ export default function BloqueFamiliares (){
         })
     };
 
+    // Manejador para enviar el formulario
     const handleSubmit = (event: any) =>{
         setState({
             ...state,
             familia: [...familiares],
         })
+        // Cierra el Acordeon
+        handleFormSubmit();
 
-        console.log(state)
+        //Convierte a JSON el state
+        console.log(console.log(JSON.stringify(state)));
+
+        // TODO: Hacer el FETCH aca
     }
 
 

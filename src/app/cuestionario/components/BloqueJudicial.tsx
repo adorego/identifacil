@@ -9,10 +9,28 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import StyledTextarea from '../../../components/interfaz/StyledTextArea';
 import {ChangeEvent} from "react";
+import Textarea from '@mui/joy/Textarea';
 
+
+interface oficioType{
+    numeroDocumento: number;
+    fechaDocumento: string;
+    lugar: string;
+}
+interface resolucionType{
+    numeroDocumento: number;
+    fechaDocumento: string;
+    documento: string;
+}
+interface expedienteType{
+    numeroDocumento: number;
+    fechaDocumento: string;
+}
 
 interface MyState{
     situacionJudicial: string;
@@ -20,7 +38,13 @@ interface MyState{
     cantidadIngresos: number;
     causa: string;
     oficio: string;
-    ultimoTrabajo: string
+    ultimoTrabajo: string,
+    oficioJudicial: oficioType,
+    resolucion: resolucionType,
+    expediente: expedienteType,
+    caratula: string;
+    hechoPunible: string;
+    nroSd: string;
 }
 
 const initialState: MyState = {
@@ -30,10 +54,27 @@ const initialState: MyState = {
     causa: '',
     oficio: '',
     ultimoTrabajo: '',
+    oficioJudicial:{
+        numeroDocumento: 0,
+        fechaDocumento: '',
+        lugar: '',
+    },
+    resolucion:{
+        numeroDocumento: 0,
+        fechaDocumento: '',
+        documento: '',
+    },
+    expediente:{
+        numeroDocumento: 0,
+        fechaDocumento: '',
+    },
+    caratula: '',
+    hechoPunible: '',
+    nroSd:'',
 }
 
 
-export default function BloqueJudicial() {
+export default function BloqueJudicial({ onCloseAccordion }) {
 
     const [state, setState] = React.useState(initialState);
     const [causa, setCausa] = React.useState('');
@@ -43,15 +84,29 @@ export default function BloqueJudicial() {
         setCausa(event.target.value as string);
     };
 
-    const handleChange = (event: SelectChangeEvent) => {
+    // se recibe valores de los inputs depende si es un tipoDato arma un objeto dentro del state
+    const handleChange = (tipoDato: any="", event: any,) => {
 
         const inputName: any = event.target.name;
         const inputValue: any = event.target.value;
 
-        setState({
-            ...state,
-            [inputName]: inputValue,
-        });
+
+        if(tipoDato=='oficioJudicial' || tipoDato == 'resolucion' || tipoDato =='expediente'){
+            // console.log('oficio')
+            setState({
+                ...state,
+                [tipoDato]: {
+                    ...state[tipoDato],
+                    [inputName]: inputValue,
+                }
+            });
+        }else{
+            setState({
+                ...state,
+                [inputName]: inputValue,
+            });
+        }
+
     };
 
     const handleBoolean = (event:  ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +124,14 @@ export default function BloqueJudicial() {
     const handleSubmit = (event: ChangeEvent<HTMLInputElement>)=>{
         event.preventDefault();
 
+        // Cierra el Acordeon
+        onCloseAccordion();
+
+        //Convierte a JSON el state
+        // console.log(console.log(JSON.stringify(state)));
         console.log(state);
+
+        // TODO: Hacer el FETCH aca
     }
 
     return (
@@ -97,7 +159,7 @@ export default function BloqueJudicial() {
                                         name='situacionJudicial'
                                         value='procesado'
                                         checked={state.situacionJudicial === 'procesado'}
-                                        onChange={handleChange}
+                                        onChange={(event) => handleChange('', event)}
                                     />
                                 } label="Procesado"/>
                                 <FormControlLabel value="condenado" control={
@@ -105,7 +167,7 @@ export default function BloqueJudicial() {
                                         name='situacionJudicial'
                                         value='condenado'
                                         checked={state.situacionJudicial === 'condenado'}
-                                        onChange={handleChange}
+                                        onChange={(event) => handleChange('', event)}
                                     />
                                 } label="Condenado"/>
                             </RadioGroup>
@@ -139,24 +201,24 @@ export default function BloqueJudicial() {
 
                         </FormControl>
                     </Grid>
-                    <Grid item sm={12}>
-                        <FormControl fullWidth={true}>
+                    <Grid item sm={6}>
+                        <FormControl fullWidth>
                             <InputLabel htmlFor="cantidadVecesPrision">Cantidad de veces de ingreso</InputLabel>
                             <OutlinedInput
                                 name="cantidadIngresos"
                                 value={state.cantidadIngresos}
-                                onChange={handleChange}
+                                onChange={(event) => handleChange('', event)}
                                 label="Cantidad de veces de ingreso"
                             />
                         </FormControl>
                     </Grid>
                     <Grid item sm={12}>
-                        <FormControl fullWidth={true}>
+                        <FormControl fullWidth>
                             <InputLabel htmlFor="datoCausa">Seleccionar Causa</InputLabel>
                             <OutlinedInput
                                 name="causa"
                                 value={state.causa}
-                                onChange={handleChange}
+                                onChange={(event) => handleChange('', event)}
                                 label="Seleccionar Causa"
                             />
                         </FormControl>
@@ -185,23 +247,23 @@ export default function BloqueJudicial() {
 
                 <Grid container spacing={2} my={2}>
                     <Grid item sm={6}>
-                        <FormControl fullWidth={true}>
+                        <FormControl fullWidth>
                             <InputLabel htmlFor="oficio">Oficio</InputLabel>
                             <OutlinedInput
                                 name="oficio"
                                 value={state.oficio}
-                                onChange={handleChange}
+                                onChange={(event) => handleChange('', event)}
                                 label="Oficio"
                             />
                         </FormControl>
                     </Grid>
                     <Grid item sm={6}>
-                        <FormControl fullWidth={true}>
+                        <FormControl fullWidth>
                             <InputLabel htmlFor="datoUltimaEducativa">Ultimo lugar de trabajo</InputLabel>
                             <OutlinedInput
                                 name="ultimoTrabajo"
                                 value={state.ultimoTrabajo}
-                                onChange={handleChange}
+                                onChange={(event) => handleChange('', event)}
                                 label="Ultimo lugar de trabajo"
                             />
                         </FormControl>
@@ -213,125 +275,169 @@ export default function BloqueJudicial() {
                         <Typography sx={{fontWeight:'bold', textTransform:'uppercase'}}>Documento que ordena la reclusión</Typography>
                     </Grid>
                     <Grid item sm={12}>
-                        <Grid container>
-                            <Grid item sm={12} my={1}>
-                                <Typography >Oficio judicial</Typography>
-                            </Grid>
+                        <Typography variant='h6'>Oficio judicial</Typography>
+                        <Grid container spacing={2}>
+
                             <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="documentoOficioJudicial">Nro. de documento</InputLabel>
+                                <FormControl fullWidth sx={{ marginTop: '17px',}}>
+                                    <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
                                     <OutlinedInput
-                                        id="documentoOficioJudicial"
-                                        defaultValue=""
+                                        name="numeroDocumento"
+                                        value={state.oficioJudicial.numeroDocumento}
                                         label="Nro. de documento"
+                                        onChange={(event) => handleChange('oficioJudicial', event)}
                                     />
                                 </FormControl>
                             </Grid>
                             <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+
+                                    <DemoContainer components={['DatePicker']}>
                                         <DatePicker
-                                            label="Controlled picker"
-                                            value={value}
-                                            onChange={(newValue) => setValue(newValue)}
+                                            label="Fecha documento"
+                                            name='fechaDocumento'
+                                            value={state.oficioJudicial.fechaDocumento}
+                                            onChange={(newValue) => {
+                                                setState({
+                                                    ...state,
+                                                    oficioJudicial: {
+                                                        ...state.oficioJudicial,
+                                                        fechaDocumento: newValue,
+                                                    },
+                                                });
+                                            }}
                                         />
-                                    </LocalizationProvider>
-                                </FormControl>
+                                    </DemoContainer>
+
+                                </LocalizationProvider>
                             </Grid>
                             <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="datoLugar">Lugar</InputLabel>
+                                <FormControl fullWidth sx={{ marginTop: '17px',}}>
+                                    <InputLabel htmlFor="lugar">Lugar</InputLabel>
                                     <OutlinedInput
-                                        id="datoLugar"
-                                        defaultValue=""
+                                        name="lugar"
+                                        value={state.oficioJudicial.lugar}
                                         label="Lugar"
-                                    />
-                                </FormControl>
-                            </Grid>
-                        </Grid>
-                        <Grid container>
-                            <Grid item sm={12}>
-                                <Typography >Resolución MJ/DGEP</Typography>
-                            </Grid>
-                            <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="documentoOficioJudicial">Nro. de documento</InputLabel>
-                                    <OutlinedInput
-                                        id="documentoOficioJudicial"
-                                        defaultValue=""
-                                        label="Nro. de documento"
-                                    />
-                                </FormControl>
-                            </Grid>
-                            <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
-                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                        <DatePicker
-                                            label="Controlled picker"
-                                            value={value}
-                                            onChange={(newValue) => setValue(newValue)}
-                                        />
-                                    </LocalizationProvider>
-                                </FormControl>
-                            </Grid>
-                            <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
-                                    <InputLabel htmlFor="datoLugar">Documento</InputLabel>
-                                    <OutlinedInput
-                                        id="datoDocumento"
-                                        defaultValue=""
-                                        label="Lugar"
+                                        onChange={(event) => handleChange('oficioJudicial', event)}
                                     />
                                 </FormControl>
                             </Grid>
                         </Grid>
 
-                        <Grid container>
+                        {/* Resolucion MJ/DGEP*/}
+                        <Grid container spacing={2}>
                             <Grid item sm={12}>
-                                <Typography >Nro. de Expediente</Typography>
+                                <Typography variant='h6' mt={2} mb={0}>Resolución MJ/DGEP</Typography>
                             </Grid>
                             <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
+                                <FormControl fullWidth sx={{ marginTop: '8px',}}>
                                     <InputLabel htmlFor="documentoOficioJudicial">Nro. de documento</InputLabel>
                                     <OutlinedInput
-                                        id="documentoOficioJudicial"
-                                        defaultValue=""
+                                        name="numeroDocumento"
+                                        value={state.resolucion.numeroDocumento}
                                         label="Nro. de documento"
+                                        onChange={(event) => handleChange('resolucion', event)}
                                     />
                                 </FormControl>
                             </Grid>
                             <Grid item sm={3}>
-                                <FormControl fullWidth={true}>
+
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
-                                            label="Controlled picker"
-                                            value={value}
-                                            onChange={(newValue) => setValue(newValue)}
+                                            label="Fecha documento"
+                                            name='fechaDocumento'
+                                            value={state.resolucion.fechaDocumento}
+                                            onChange={(newValue) => {
+                                                setState({
+                                                    ...state,
+                                                    resolucion: {
+                                                        ...state.resolucion,
+                                                        fechaDocumento: newValue,
+                                                    },
+                                                });
+                                            }}
                                         />
                                     </LocalizationProvider>
+
+                            </Grid>
+                            <Grid item sm={3} >
+                                <FormControl fullWidth sx={{ marginTop: '8px',}}>
+                                    <InputLabel htmlFor="datoLugar">Documento</InputLabel>
+                                    <OutlinedInput
+                                        name="documento"
+                                        value={state.resolucion.documento}
+                                        label="Documento"
+                                        onChange={(event) => handleChange('resolucion', event)}
+                                    />
                                 </FormControl>
                             </Grid>
                         </Grid>
+
+                        <Grid container spacing={2} mt={2}>
+                            <Grid item sm={12}>
+                                <Typography variant='h6'>Nro. de Expediente</Typography>
+                            </Grid>
+                            <Grid item sm={3}>
+                                <FormControl fullWidth sx={{ marginTop: '8px',}}>
+                                    <InputLabel htmlFor="documentoOficioJudicial">Nro. de documento</InputLabel>
+                                    <OutlinedInput
+                                        name="numeroDocumento"
+                                        value={state.expediente.numeroDocumento}
+                                        label="Nro. de documento"
+                                        onChange={(event) => handleChange('expediente', event)}
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item sm={3}>
+
+                                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                        <DatePicker
+                                            label="Fecha documento"
+                                            name='fechaDocumento'
+                                            value={state.expediente.fechaDocumento}
+                                            onChange={(newValue) => {
+                                                setState({
+                                                    ...state,
+                                                    expediente: {
+                                                        ...state.expediente,
+                                                        fechaDocumento: newValue,
+                                                    },
+                                                });
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+
+                            </Grid>
+                        </Grid>
+
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={2} my={1}>
                     <Grid item sm={12}>
+                        <FormControl fullWidth sx={{ marginTop: '17px',}}>
                         <InputLabel htmlFor="caratula">Caratula</InputLabel>
-                        <StyledTextarea />
+                        <OutlinedInput
+                            fullWidth
+                            name="caratula"
+                            value={state.oficioJudicial.caratula}
+                            label="caratula"
+                            onChange={(event) => handleChange('', event)}
+                        />
+                        </FormControl>
                     </Grid>
                 </Grid>
 
                 <Grid container spacing={2} my={1}>
                     <Grid item sm={6}>
                         <FormControl fullWidth>
-                            <InputLabel id="selectCausa">Hecho punible/Delito</InputLabel>
+                            <InputLabel id="hechoPunible">Hecho punible/Delito</InputLabel>
                             <Select
-                                labelId="selectCausa"
-                                id="selectCausa"
-                                value={causa}
+
+                                name="hechoPunible"
+                                value={state.hechoPunible}
                                 label="Hecho punible/Delito"
-                                onChange={handleChangeSelect}
+                                onChange={(event) => handleChange('', event)}
                             >
                                 <MenuItem value={10}>Causa 1</MenuItem>
                                 <MenuItem value={20}>Causa 2</MenuItem>
@@ -339,27 +445,25 @@ export default function BloqueJudicial() {
                             </Select>
                         </FormControl>
                     </Grid>
-                </Grid>
-
-                <Grid container spacing={2} my={1}>
                     <Grid item sm={6}>
-                        <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="nroSD">S.D Nro.(Opcional) (condenado)</InputLabel>
+                        <FormControl fullWidth>
+                            <InputLabel htmlFor="nroSD">S.D. Nro.(Opcional) (condenado)</InputLabel>
                             <OutlinedInput
-                                id="nroSD"
-                                defaultValue=""
+                                name="nroSd"
+                                value={state.nroSd}
+                                onChange={(event) => handleChange('', event)}
                                 label="S.D Nro.(Opcional) (condenado)"
                             />
                         </FormControl>
                     </Grid>
                 </Grid>
 
-                <Grid container spacing={2} my={1}>
+                {/*<Grid container spacing={2} my={1}>
                     <Grid item sm={12}>
                         <InputLabel sx={{fontWeight:'bold', textTransform:'uppercase'}}>Duracion total del a condena en años</InputLabel>
                     </Grid>
                     <Grid item sm={4}>
-                        <FormControl fullWidth={true}>
+                        <FormControl fullWidth>
                             <InputLabel htmlFor="mes">Mes</InputLabel>
                             <OutlinedInput
                                 id="mes"
@@ -369,7 +473,7 @@ export default function BloqueJudicial() {
                         </FormControl>
                     </Grid>
                     <Grid item sm={4}>
-                        <FormControl fullWidth={true}>
+                        <FormControl fullWidth>
                             <InputLabel htmlFor="datoAnho">Año</InputLabel>
                             <OutlinedInput
                                 id="datoAnho"
@@ -379,7 +483,7 @@ export default function BloqueJudicial() {
                         </FormControl>
                     </Grid>
                     <Grid item sm={4}>
-                        <FormControl fullWidth={true}>
+                        <FormControl fullWidth>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
                                     label="Fecha de ingreso"
@@ -390,6 +494,13 @@ export default function BloqueJudicial() {
                         </FormControl>
                     </Grid>
                     <Grid item sm={12} mt={2}>
+                        <Button variant='contained' onClick={handleSubmit}>
+                            Guardar cambios
+                        </Button>
+                    </Grid>
+                </Grid>*/}
+                <Grid container spacing={2} mt={2}>
+                    <Grid item sm={12}>
                         <Button variant='contained' onClick={handleSubmit}>
                             Guardar cambios
                         </Button>

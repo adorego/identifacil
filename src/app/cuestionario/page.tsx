@@ -6,7 +6,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {Breadcrumbs, Link, Step, StepLabel, Stepper} from "@mui/material";
+import {Breadcrumbs, Button, Grid, Link, Step, StepLabel, Stepper} from "@mui/material";
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import BloqueSalud from './components/BloqueSalud';
@@ -14,6 +14,7 @@ import BloqueEducacion from "./components/BloqueEducacion";
 import BloqueSeguridad from "./components/BloqueSeguridad";
 import BloqueFamiliares from "./components/BloqueFamiliares";
 import BloqueJudicial from "./components/BloqueJudicial";
+import {useState} from "react";
 
 
 
@@ -21,9 +22,31 @@ const steps = [
     'Reconocimiento',
     'Datos Personales',
     'Cuestionarios',
+    'confirmacion',
 ];
 
 export default function About(){
+    const [expanded, setExpanded] = useState('');
+
+
+    const handleAccordionChange = (panel) => (_, isExpanded) => {
+        setExpanded(isExpanded ? panel : '');
+    };
+
+    // Manejador para apertura automatica de acordeon
+    const handleFormSubmit = () => {
+        event.preventDefault();
+
+        setExpanded('');
+    };
+
+
+
+    // Manejador para finalizar cuestionario
+    const handleSubmitCuestionario = (event:any, tipoBoton) =>{
+        //TipoBoton: 'continuar' || 'atras'
+        event.preventDefault();
+    }
 
     return(
         <div>
@@ -46,7 +69,7 @@ export default function About(){
 
             {/* Stepper */}
             <Box my={2}>
-                <Stepper activeStep={0} alternativeLabel
+                <Stepper activeStep={2} alternativeLabel
                          sx={{
                              ".MuiSvgIcon-root:not(.Mui-completed)": {
                                  color: "gray"
@@ -70,9 +93,9 @@ export default function About(){
                 </Stepper>
             </Box>
             {/* Fin del stepper */}
-            <div>
-
-                <Accordion>
+            <Box className='cardContainer'>
+                {/* Acordeon Salud */}
+                <Accordion expanded={expanded === 'salud'} onChange={handleAccordionChange('salud')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
@@ -80,10 +103,14 @@ export default function About(){
                     >
                         <Typography sx={{fontWeight:'bold'}}>Preguntas de salud</Typography>
                     </AccordionSummary>
-                    <AccordionDetails children={<BloqueSalud />} />
+                    <AccordionDetails>
+                        {/* Bloque de formulario */}
+                        <BloqueSalud onCloseAccordion={handleFormSubmit} />
+                    </AccordionDetails>
                 </Accordion>
 
-                <Accordion>
+                {/* Acordeon Educacion */}
+                <Accordion expanded={expanded === 'educacion'} onChange={handleAccordionChange('educacion')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
@@ -91,10 +118,11 @@ export default function About(){
                     >
                         <Typography sx={{fontWeight: 'bold'}}>Educación y formación</Typography>
                     </AccordionSummary>
-                    <AccordionDetails children={<BloqueEducacion />} />
+                    <AccordionDetails> <BloqueEducacion onCloseAccordion={handleFormSubmit} /> </AccordionDetails>
                 </Accordion>
 
-                <Accordion>
+                {/* Acordeon Seguridad */}
+                <Accordion expanded={expanded === 'seguridad'} onChange={handleAccordionChange('seguridad')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
@@ -103,11 +131,13 @@ export default function About(){
                         <Typography sx={{fontWeight: 'bold'}}>Preguntas de seguridad</Typography>
                     </AccordionSummary>
 
-                    <AccordionDetails children={<BloqueSeguridad />} />
+                    <AccordionDetails>
+                        <BloqueSeguridad  onCloseAccordion={handleFormSubmit} />
+                    </AccordionDetails>
                 </Accordion>
 
-
-                <Accordion>
+                {/* Acordeon familia */}
+                <Accordion expanded={expanded === 'familiares'} onChange={handleAccordionChange('familiares')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
@@ -116,10 +146,13 @@ export default function About(){
                         <Typography sx={{fontWeight: 'bold'}}>Datos familiares</Typography>
                     </AccordionSummary>
 
-                    <AccordionDetails children={<BloqueFamiliares />} />
+                    <AccordionDetails>
+                        <BloqueFamiliares  onCloseAccordion={handleFormSubmit} />
+                    </AccordionDetails>
                 </Accordion>
 
-                <Accordion>
+                {/* Acordeon Judicial */}
+                <Accordion expanded={expanded === 'judicial'} onChange={handleAccordionChange('judicial')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
@@ -127,10 +160,13 @@ export default function About(){
                     >
                         <Typography  sx={{fontWeight: 'bold'}}>Situación judicial</Typography>
                     </AccordionSummary>
-                    <AccordionDetails children={<BloqueJudicial />} />
+                    <AccordionDetails>
+                        <BloqueJudicial onCloseAccordion={handleFormSubmit}  />
+                    </AccordionDetails>
                 </Accordion>
 
-                <Accordion>
+                {/* Acordeon Fotografia */}
+                {/*<Accordion>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel2a-content"
@@ -144,9 +180,19 @@ export default function About(){
                             malesuada lacus ex, sit amet blandit leo lobortis eget.
                         </Typography>
                     </AccordionDetails>
-                </Accordion>
+                </Accordion>*/}
+                <Grid container spacing={2} mt={2}>
+                    <Grid item sm={12}>
+                        <Button variant='contained' onClick={(event) => handleSubmitCuestionario(event, 'continuar')} sx={{marginRight: '20px',}}>
+                            Continuar
+                        </Button>
 
-            </div>
+                        <Button variant='outlined'  onClick={(event) => handleSubmitCuestionario(event, 'atras')}>
+                            Volver atras
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Box>
         </div>
     )
 }

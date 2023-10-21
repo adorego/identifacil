@@ -1,18 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
-import {
-    Button,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Grid,
-    Input,
-    InputLabel, OutlinedInput,
-    Radio,
-    RadioGroup,
-    Typography
-} from "@mui/material";
+import {Button, FormControl, FormControlLabel, FormLabel, Grid, Input, InputLabel, OutlinedInput, Radio, RadioGroup, Typography} from "@mui/material";
 import {SelectChangeEvent} from "@mui/material/Select";
 import {ChangeEvent, useState} from "react";
 
@@ -76,7 +65,7 @@ const initialState: MyState = {
 }
 
 
-export default function BloqueSalud() {
+export default function BloqueSalud({ onCloseAccordion }) {
 
 
     const [state, setState] = useState<MyState>(initialState);
@@ -113,7 +102,15 @@ export default function BloqueSalud() {
     // captura click en boton guardar para luego enviar objeto como JSON
     const  handleClick = (event: any)=>{
         event.preventDefault();
+
+
+        // Después de enviar el formulario, llama a la función de devolución de llamada para cerrar el acordeón
+        onCloseAccordion();
+
+        // Convierte a JSON el state
         console.log(JSON.stringify(state));
+
+        //TODO: Hacer el FETCH aca
     }
 
     return (
