@@ -19,7 +19,7 @@ interface ErrorInt {
 }
 export interface FaceRecognitionProps{
   agregar_reconocimiento:({}:IReconocimiento) => void;
-  
+  notificacion:string;
 }
 
 interface IRegisterProgress{
@@ -150,10 +150,12 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
                             capturar_foto={capturarFoto}
                             reset_capturar_foto={reset_capturar_foto}
                             agregar_reconocimiento={props.agregar_reconocimiento}/>
-                        {capturarFoto ? 
+                        {/* {capturarFoto ? 
                         <LinearProgressionWithLabel indicador={progress.indicador} estado={progress.estado} />
-                        : null }
-                    
+                        : null } */}
+                        <Typography variant="body1" className={styles.notificacion}>
+                          {props.notificacion}
+                        </Typography>
                         <Button onClick={onFotoCapture} className={styles.capturePhotoButton} variant={"contained"}
                                 endIcon={<AddAPhoto/>}>Capturar</Button>
                     </div>

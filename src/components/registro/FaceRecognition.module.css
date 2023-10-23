@@ -40,3 +40,10 @@
 .containerVideoCam {
     position: relative;
 }
+
+.notificacion{
+    position:absolute;
+    top: 600px;
+    color: red;
+    font-size: 80px;
+}

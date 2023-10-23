@@ -21,13 +21,20 @@ import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";
 
+import ConfirmacionRegistro from "./ConfrimacionRegistro";
+import CuestionarioRegistro from "./CuestionarioRegistro";
 import FaceRecognition from "./FaceRecognition";
 import { IReconocimiento } from "./FaceDetectionOverlay";
 import NotificacionRegistro from "./NotificacionRegistro";
 import PPLRegistration from "./PPLRegistration";
 import style from "./FormRegister.module.css";
 
-const steps = ["Identificación", "Reconocimiento", "Registro"];
+const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
+
+export interface RegistroResponse{
+  success:boolean;
+
+}
 
 export default function FormRegister(){
   const [activeStep, setActiveStep] = useState(0);
@@ -37,6 +44,7 @@ export default function FormRegister(){
   const reconocimientos = useRef<Array<IReconocimiento>>([])
   const foto = useRef<string | null>(null);
   const contadorReconocimiento = useRef<number>(0);
+  const [notificacionRegistro, setNotificacionRegistro] = useState("");
 
     const setIdentificacion = (identificacion: IdentificacionForm) => {
         // console.log("Datos de identificacion:", identificacion);
@@ -46,6 +54,7 @@ export default function FormRegister(){
     
     const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
       // console.log("Entro en agregar_reconocimiento");
+      setNotificacionRegistro('Registrando PPL...');
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
@@ -65,7 +74,8 @@ export default function FormRegister(){
         contadorReconocimiento.current = 0;
         console.log("Datos a enviar:", datos);
         if(process.env.NEXT_PUBLIC_SERVER_URL){
-          const result = await fetch(process.env.NEXT_PUBLIC_SERVER_URL,{
+          const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/registro/'
+          const result = await fetch(url,{
             method:'POST',
             headers:{
               Accept: 'application.json',
@@ -76,6 +86,14 @@ export default function FormRegister(){
           if(!result.ok){
             console.log('Ocurrio un error');
           }
+          const data:RegistroResponse = await result.json();
+          console.log(data);
+          setNotificacionRegistro("PPL Registrado, avance al cuestionario final");
+          if(data.success){
+            setNotificacionRegistro("PPL Registrado, avance al cuestionario final");
+          }
+          
+          
         }
       }
     }
@@ -87,7 +105,7 @@ export default function FormRegister(){
 
 
     const onStepForward = () => {
-        if (activeStep === 2) {
+        if (activeStep === 3) {
             setActiveStep(0);
         } else {
             setActiveStep(activeStep + 1);
@@ -96,7 +114,7 @@ export default function FormRegister(){
 
   const onStepBackward = () =>{
     if(activeStep === 0){
-      setActiveStep(2);
+      setActiveStep(3);
     }else{
       setActiveStep(activeStep-1);
     }
@@ -134,9 +152,12 @@ export default function FormRegister(){
             /> }
             {activeStep === 1 && <FaceRecognition  
             agregar_reconocimiento={agregar_reconocimiento}
+            notificacion={notificacionRegistro}
             />}
 
-            {activeStep === 2 && <PPLRegistration foto="" /> }
+            {activeStep === 2 && <CuestionarioRegistro  /> }
+
+            {activeStep === 3 && <ConfirmacionRegistro />}
             
             
             {activeStep !== 0 ? 
