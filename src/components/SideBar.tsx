@@ -46,7 +46,7 @@ const inter = Inter({
 
 export default function SideBar() {
     const titulo = "IDENTIFACIL";
-    const [open, setOpen] = React.useState(true);
+    const [open, setOpen] = React.useState(false);
     const router = useRouter();
     const handleClick = () => {
         setOpen(!open);
@@ -87,7 +87,7 @@ export default function SideBar() {
                                 </ListItemIcon>
                                 <ListItemText primary="Acceso PPL"/>
                             </ListItemButton>
-                            <ListItemButton>
+                            <ListItemButton disabled>
                                 <ListItemIcon>
                                     <People/>
                                 </ListItemIcon>
@@ -119,16 +119,17 @@ export default function SideBar() {
 
                     <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
-                            <Hail/>
+                            <BarChart/>
                         </ListItemIcon>
-                        <ListItemText primary={'Gestión de Visitas'}/>
+                        <ListItemText primary={'Reportes'}/>
                     </ListItemButton>
 
                     <ListItemButton sx={{}} disabled>
                         <ListItemIcon>
-                            <BarChart/>
+                            <Hail/>
                         </ListItemIcon>
-                        <ListItemText primary={'Reportes'}/>
+                        <ListItemText primary={'Gestión de Visitas'}/>
+
                     </ListItemButton>
 
                     <ListItemButton sx={{}} disabled>

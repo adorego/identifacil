@@ -12,10 +12,9 @@ export default  function QueryBlock(){
                         <Typography variant={'overline'}>
                             Buscardor de PPL
                         </Typography>
-                        <Grid container mt={1} spacing={2}>
+                        <Grid container mt={0} spacing={2}>
                             <Grid item xs={4}>
-
-                                <TextField id="outlined-basic" label="PPL" variant="outlined" fullWidth value='Juan Jose Perez Martinez' />
+                                <TextField id="outlined-basic" label="PPL" variant="outlined" fullWidth value='Juan Jose Perez Martinez' size="small"/>
                             </Grid>
                             <Grid item>
                                 <Button  variant="contained" sx={{

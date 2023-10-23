@@ -11,10 +11,11 @@ import {
     Select,
     MenuItem,
     Box,
-    Typography, Grid, IconButton, Modal,
+    Typography, Grid, IconButton, Modal, Breadcrumbs, Link,
 } from '@mui/material';
 
 import {FileUploadOutlined} from "@mui/icons-material";
+import QueryBlock from "../../../components/blocks/QueryBlock";
 
 export default  function Page(){
     const [formData, setFormData] = React.useState({
@@ -55,7 +56,19 @@ export default  function Page(){
 
     return(
         <Box>
-            <Card>
+            <h2>Movimientos</h2>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Link underline="hover" color="inherit" href="/">
+                    Inicio
+                </Link>
+                <Link underline="hover" color="inherit" href="/movimientos">
+                    Movimientos
+                </Link>
+                <Typography color="text.primary">Salidas especiales</Typography>
+            </Breadcrumbs>
+
+            <QueryBlock/>
+            <Card sx={{marginTop:"20px"}}>
                 <CardContent>
                     <Typography variant='h6' mb={2}>Salidas especiales</Typography>
                     <Grid container spacing={2}>
@@ -180,7 +193,7 @@ export default  function Page(){
                                     type="text"
                                     fullWidth
                                     label='Adjuntar documento de autorización de la salida'
-                                    value={formData.documentoAutorizacion.name}
+                                    value={formData.documentoAutorizacion ? formData.documentoAutorizacion.name : ''}
                                     InputProps={{
                                         endAdornment: (
                                             <IconButton component="label" >
@@ -199,13 +212,13 @@ export default  function Page(){
                             </FormControl>
                         </Grid>
                         <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined">
+
                                 <TextField
-                                    variant="outlined"
-                                    type="text"
-                                    fullWidth
                                     label="Adjuntar documento de cumplimiento del traslado"
-                                    value={formData.documentoCumplimiento.name}
+                                    variant="outlined"
+                                    fullWidth
+                                    name='documentCumplientoContainer'
+                                    value={formData.documentoCumplimiento ? formData.documentoCumplimiento.name : ''}
                                     InputProps={{
                                         endAdornment: (
                                             <IconButton component="label" >
@@ -221,7 +234,7 @@ export default  function Page(){
                                         ),
                                     }}
                                 />
-                            </FormControl>
+
                         </Grid>
                         <Grid item xs={6}>
                         <TextField
