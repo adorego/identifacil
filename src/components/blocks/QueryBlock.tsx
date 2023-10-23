@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Grid, TextField, Typography, Button} from "@mui/material";
+import {Grid, TextField, Typography, Button, InputLabel} from "@mui/material";
 import {Storage} from "@mui/icons-material";
 
 export default  function QueryBlock(){
@@ -14,7 +14,8 @@ export default  function QueryBlock(){
                         </Typography>
                         <Grid container mt={1} spacing={2}>
                             <Grid item xs={4}>
-                                <TextField id="outlined-basic" label="PPL" variant="outlined" fullWidth  />
+
+                                <TextField id="outlined-basic" label="PPL" variant="outlined" fullWidth value='Juan Jose Perez Martinez' />
                             </Grid>
                             <Grid item>
                                 <Button  variant="contained" sx={{

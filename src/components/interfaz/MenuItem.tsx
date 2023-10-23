@@ -33,7 +33,7 @@ export default function MenuItem({name, link, children}) {
                         <ListItemIcon>
                             <AirportShuttle/>
                         </ListItemIcon>
-                        <ListItemText primary={'Traslados'}/>
+                        <ListItemText primary={'traslados'}/>
                     </ListItemButton>
                     <ListItemButton sx={{}}>
                         <ListItemIcon>
