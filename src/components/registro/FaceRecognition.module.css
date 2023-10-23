@@ -18,13 +18,14 @@
     /* border: 3px soliid red; */
 }
 
-/* .capturePhoto {
+.capturePhotoButton {
     max-width: 180px;
     min-height: 48px;
     position: absolute;
+    top:260px;
     bottom: 60px;
     z-index: 10;
-} */
+}
 
 .relayCanvas {
     position: absolute;

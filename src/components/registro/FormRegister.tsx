@@ -43,12 +43,9 @@ export default function FormRegister(){
         identidad.current = identificacion;
     }
 
-    const setFoto = (fotoParam: string) => {
-        foto.current = fotoParam;
-        console.log(foto.current);
-    }
-
+    
     const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
+      // console.log("Entro en agregar_reconocimiento");
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
@@ -65,6 +62,8 @@ export default function FormRegister(){
           foto3: reconocimientos.current[2].foto,
           descriptor3: reconocimientos.current[2].descriptor
         }
+        contadorReconocimiento.current = 0;
+        console.log("Datos a enviar:", datos);
         if(process.env.NEXT_PUBLIC_SERVER_URL){
           const result = await fetch(process.env.NEXT_PUBLIC_SERVER_URL,{
             method:'POST',
@@ -102,11 +101,11 @@ export default function FormRegister(){
       setActiveStep(activeStep-1);
     }
   }
-  if(desplegarRegistroFinal){
-    return(
-      <NotificacionRegistro foto={foto.current} open={true}/>
-    )
-  }
+  // if(desplegarRegistroFinal){
+  //   return(
+  //     // <NotificacionRegistro foto={foto.current} open={true}/>
+  //   )
+  // }
   return(
         <Box sx={{padding:'20px'}}>
           <FormControl className={style.form}>
@@ -135,7 +134,7 @@ export default function FormRegister(){
             /> }
             {activeStep === 1 && <FaceRecognition  
             agregar_reconocimiento={agregar_reconocimiento}
-            mostrar_registro_final={mostrarRegistroFinal} />}
+            />}
 
             {activeStep === 2 && <PPLRegistration foto="" /> }
             
