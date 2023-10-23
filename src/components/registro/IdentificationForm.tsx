@@ -18,10 +18,10 @@ interface IReducer{
 }
 
 export interface IdentificacionForm{
-  cedula_identidad:string;
+  cedula_identidad?:string;
   nombres:string;
   apellidos:string;
-  fecha_nacimiento:Date | "";
+  fecha_nacimiento: string;
   codigo_genero:string;
 }
 
@@ -35,10 +35,10 @@ const InitialStateFormulario:IdentificacionForm = {
 
 interface DatosCedulaDTO{
   datosDeCedula:{
-    cedula_identidad:string;
+    cedula_identidad?:string;
     nombres:string;
     apellidos:string;
-    fecha_nacimiento:Date;
+    fecha_nacimiento:"";
     codigo_genero:string;
   },
   exito:boolean;
@@ -50,8 +50,7 @@ export interface IdentificationFormProps{
 } 
 
 const formularioReducer:Reducer<IdentificacionForm, IReducer> = (state=InitialStateFormulario, action) =>{
-  console.log(action);
-  try{
+  
     switch(action.type){
       case ActionType.FILL_FORM:
         return Object.assign({},{
@@ -71,9 +70,7 @@ const formularioReducer:Reducer<IdentificacionForm, IReducer> = (state=InitialSt
        default:
         return state; 
     }
-  }catch(error){
-    console.log(error);
-  }
+  
 }
 
 const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationFormProps):ReactElement =>{
@@ -82,7 +79,7 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
   const [formulario, dispatch] = useReducer<Reducer<IdentificacionForm,IReducer>>(formularioReducer, InitialStateFormulario )
   
   const onConsultarRegistroCivil = async () =>{
-    const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/consultaci';
+    const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/consultaci/';
     // console.log(url);
     try{
       const headers = new Headers();
@@ -150,7 +147,7 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
             </Grid>
             <Grid item xs={6}>
               <TextField  id="genero" 
-              value={formulario.codigo_genero == '1' ? 'femenino' : 'masculino'} 
+              value={formulario.codigo_genero == '1' ? 'femenino' : formulario.codigo_genero == '2' ? 'masculino' : ''} 
               fullWidth label="Genero" variant="outlined" disabled />
             </Grid>
             
