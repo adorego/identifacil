@@ -27,28 +27,16 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {DatePicker} from "@mui/x-date-pickers";
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomTable from "../../components/CustomTable";
+import FiltrosTables from "./components/filtrosTables";
 
 
 
 export default function Ppl() {
     const [value, setValue] = React.useState('1');
-
-
-    // Variables para el select
-    const [condena, setCondena] = React.useState('');
     const [tabName, settabName] = React.useState('Traslados');
-    const handleChangeCondena = (event: SelectChangeEvent) => {
-        setCondena(event.target.value as string);
-
-    };
-
-    // Variables para selector de rango de fecha
-    const [valueDateStart, setValueDateStart] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
-    const [valueDateEnd, setValueDateEnd] = React.useState<Dayjs | null>(dayjs('2022-04-17'));
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         settabName(event.target.name);
-        console.log(tabName);
         setValue(newValue);
     };
 
@@ -121,28 +109,27 @@ export default function Ppl() {
     // Datos para Salidas Extradiciones
     const headersExtradiciones = [
         { id: 'id', label: 'ID' },
-        { id: 'momentoSalida', label: 'Fecha y hora de salida' },
-        { id: 'momentoEntrada', label: 'Fecha Traslado' },
-        { id: 'estado', label: 'Estado' },
+        { id: 'nroDocumento', label: 'Nro. OJ' },
+        { id: 'fechaTraslado', label: 'Fecha Traslado' },
+        { id: 'destino', label: 'Destino' },
     ];
     const dataExtradiciones = [
-        {id: 1,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 2,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 3,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 4,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 5,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 6,  momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 7,  momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 8,  momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 9,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 10,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
-        {id: 11,  momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', estado: 'completado', url: '/movimientos/salidaTransitoria'},
+        {id: 1,  nroDocumento: '12201/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 2,  nroDocumento: '12202/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 3,  nroDocumento: '12203/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 4,  nroDocumento: '12204/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 5,  nroDocumento: '12205/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 6,  nroDocumento: '12206/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 7,  nroDocumento: '12207/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 8,  nroDocumento: '12208/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 9,  nroDocumento: '12209/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 10,  nroDocumento: '12210/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
+        {id: 11,  nroDocumento: '12211/2023', fechaTraslado: '01/01/2023', destino: 'tacumbu', url: '/movimientos/extradiciones'},
     ];
 
     return (
         <div>
-            <h2>Movimientos - {condena}</h2>
-
+            <h2>Movimientos</h2>
             <Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">
                     Inicio
@@ -195,52 +182,7 @@ export default function Ppl() {
                                                 }}>
                                                     {/*Elemento de tabla de traslados filtros */}
 
-                                                    <Grid container spacing={2}>
-                                                        <Grid item xs={3}>
-                                                            <FormControl fullWidth>
-                                                                <InputLabel id="demo-simple-select-label">Condena</InputLabel>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    value={condena}
-                                                                    label="Condena"
-                                                                    onChange={handleChangeCondena}
-                                                                >
-                                                                    <MenuItem value={10}>Ten</MenuItem>
-                                                                    <MenuItem value={20}>Twenty</MenuItem>
-                                                                    <MenuItem value={30}>Thirty</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    label="Fecha inicial"
-                                                                    value={valueDateStart}
-                                                                    onChange={(newValueDateStart) => setValueDateStart(newValueDateStart)}
-                                                                    sx={{
-                                                                        width:'100%',
-                                                                    }}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    label="Fecha Final"
-                                                                    value={valueDateEnd}
-                                                                    onChange={(newValueDateEnd) => setValueDateEnd(newValueDateEnd)}
-                                                                    sx={{
-                                                                        width:'100%',
-                                                                    }}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
-                                                        <Grid item xs={5}>
-                                                            <TextField id="outlined-basic" label="Buscar por nombre o numero de ppl"
-                                                                       variant="outlined" fullWidth/>
-                                                        </Grid>
-                                                    </Grid>
+                                                    <FiltrosTables />
 
                                                     {/* Elemento Tabla de Traslado*/}
                                                     <Box item sx={{
@@ -261,56 +203,9 @@ export default function Ppl() {
                                                     width: '100%',
                                                     marginTop: '20px',
                                                 }}>
-                                                    {/*Elemento de tabla de traslados filtros */}
-
-                                                    <Grid container spacing={2}>
-                                                        <Grid item xs={3}>
-                                                            <FormControl fullWidth>
-                                                                <InputLabel id="demo-simple-select-label">Condena</InputLabel>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    value={condena}
-                                                                    label="Condena"
-                                                                    onChange={handleChangeCondena}
-                                                                >
-                                                                    <MenuItem value={10}>Ten</MenuItem>
-                                                                    <MenuItem value={20}>Twenty</MenuItem>
-                                                                    <MenuItem value={30}>Thirty</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    label="Fecha inicial"
-                                                                    value={valueDateStart}
-                                                                    onChange={(newValueDateStart) => setValueDateStart(newValueDateStart)}
-                                                                    sx={{
-                                                                        width:'100%',
-                                                                    }}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
-                                                        <Grid item xs={2}>
-                                                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                <DatePicker
-                                                                    label="Fecha Final"
-                                                                    value={valueDateEnd}
-                                                                    onChange={(newValueDateEnd) => setValueDateEnd(newValueDateEnd)}
-                                                                    sx={{
-                                                                        width:'100%',
-                                                                    }}
-                                                                />
-                                                            </LocalizationProvider>
-                                                        </Grid>
-                                                        <Grid item xs={5}>
-                                                            <TextField id="outlined-basic" label="Buscar por nombre o numero de ppl"
-                                                                       variant="outlined" fullWidth/>
-                                                        </Grid>
-                                                    </Grid>
-
                                                     {/* Elemento Tabla de Traslado*/}
+
+                                                    <FiltrosTables />
                                                     <Box item sx={{
                                                         width: '100%',
                                                         marginTop: '20px',
@@ -321,20 +216,31 @@ export default function Ppl() {
                                             </Grid>
                                         </TabPanel>
                                         <TabPanel value="3">
-                                            <Box item sx={{
-                                                width: '100%',
-                                                marginTop: '20px',
-                                            }}>
-                                                <CustomTable data={dataTransitorias} headers={headersTransitorias} targetURL={'/movimientos/salidasTransitorias'}/>
-                                            </Box>
+                                            <Grid container spacing={2}>
+                                                <Box item sx={{width: '100%', marginTop: '20px',}}>
+                                                    <FiltrosTables />
+                                                </Box>
+                                                <Box item sx={{
+                                                    width: '100%',
+                                                    marginTop: '20px',
+                                                }}>
+                                                    <CustomTable data={dataTransitorias} headers={headersTransitorias} targetURL={'/movimientos/salidasTransitorias'}/>
+                                                </Box>
+
+                                            </Grid>
                                         </TabPanel>
                                         <TabPanel value="4">
-                                            <Box item sx={{
-                                                width: '100%',
-                                                marginTop: '20px',
-                                            }}>
-                                                <CustomTable data={dataExtradiciones} headers={headersExtradiciones} targetURL={'/movimientos/extradiciones'}/>
-                                            </Box>
+                                            <Grid container spacing={2}>
+                                                <Box item sx={{width: '100%', marginTop: '20px',}}>
+                                                    <FiltrosTables />
+                                                </Box>
+                                                <Box item sx={{
+                                                    width: '100%',
+                                                    marginTop: '20px',
+                                                }}>
+                                                    <CustomTable data={dataExtradiciones} headers={headersExtradiciones} targetURL={'/movimientos/extradiciones'}/>
+                                                </Box>
+                                            </Grid>
                                         </TabPanel>
                                     </TabContext>
                                 </Box>

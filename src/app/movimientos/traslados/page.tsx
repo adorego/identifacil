@@ -12,10 +12,11 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Typography, IconButton, Box, Modal,
+    Typography, IconButton, Box, Modal, Breadcrumbs, Link,
 } from '@mui/material';
 import {FileUploadOutlined} from "@mui/icons-material";
 import CustomTable from "../../../components/CustomTable";
+import QueryBlock from "../../../components/blocks/QueryBlock";
 
 type PPLType = {
     nombreApellido: string;
@@ -160,7 +161,19 @@ export default function Traslados() {
 
     return (
         <Box>
-            <Card>
+            <h2>Movimientos</h2>
+            <Breadcrumbs aria-label="breadcrumb">
+                <Link underline="hover" color="inherit" href="/">
+                    Inicio
+                </Link>
+                <Link underline="hover" color="inherit" href="/movimientos">
+                    Movimientos
+                </Link>
+                <Typography color="text.primary">Traslados</Typography>
+            </Breadcrumbs>
+
+            <QueryBlock/>
+            <Card sx={{marginTop:"20px"}}>
                 <CardContent>
                     <Typography variant='h6' mb={2}>Traslados</Typography>
                     <form noValidate autoComplete="off">
@@ -287,12 +300,13 @@ export default function Traslados() {
 
                             {/* Documento adjunto */}
                             <Grid item xs={6}>
-                                <FormControl fullWidth variant="outlined">
+
                                     <TextField
                                         variant="outlined"
                                         type="text"
                                         label='Documento adjunto'
-                                        value={formData.documentoAdjunto.name}
+                                        fullWidth
+                                        value={formData.documentoAdjunto ? formData.documentoAdjunto.name : ''}
                                         InputProps={{
                                             endAdornment: (
                                                 <IconButton component="label" >
@@ -303,12 +317,13 @@ export default function Traslados() {
                                                         hidden
                                                         onChange={handleFileChange}
                                                         name="documentoAdjunto"
+                                                        label='Documento adjunto'
                                                     />
                                                 </IconButton>
                                             ),
                                         }}
                                     />
-                                </FormControl>
+
                             </Grid>
 
                             {/* Documento adjunto */}
