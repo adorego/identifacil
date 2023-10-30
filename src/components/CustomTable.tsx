@@ -41,11 +41,11 @@ function CustomTable({
                          showId= false,
                          data=rowsCustom,
                          headers=headersCustom,
-                         targetURL="",
                          options={
                              rowsPerPageCustom:5,
                              pagination:true,
                              tittle: '',
+                             targetURL:"",
                          }}: CustomTableProps): JSX.Element {
 
 
@@ -148,8 +148,8 @@ function CustomTable({
                                                 color="primary"
                                                 aria-label="Edit"
                                                 component={Link}
-                                                href={`${targetURL}`}
-                                                // href={`${targetURL}/edit/${row.id}`}
+                                                href={`${options.targetURL}`}
+                                                // href={`${options.targetURL}/edit/${row.id}`}
                                                 onClick={() => handleCellClick(row.id as number)}
                                             >
                                                 <EditIcon />

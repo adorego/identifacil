@@ -22,8 +22,8 @@ export default function Page() {
 
                         <CardBlock name={'Ingresos'}  image={ingresosIMG.src} link='/informes/ingresos' size={3}/>
                         <CardBlock name={'Traslados'} image={trasladosIMG.src} link='/informes/traslados' size={3}/>
-                        <CardBlock name={'Informes'} image={penalesIMG.src} link='/extradiciones' size={3}/>
-                        <CardBlock name={'Informes'} image={penalesIMG.src} link='/extradiciones' size={3}/>
+                        <CardBlock name={'Visitas'} image={penalesIMG.src} link='/informes/visitas' size={3}/>
+                        <CardBlock name={'Extradiciones'} image={penalesIMG.src} link='/extradiciones' size={3}/>
 
                     </Grid>
                     <Grid container spacing={2} mt={1}>

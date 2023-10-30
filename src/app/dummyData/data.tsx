@@ -181,3 +181,29 @@ export const destinosTrasladosData = ()=>{
         ]
     })
 }
+
+
+export const visitaData = ()=>{
+
+    return({
+        header:[
+            { id: 'id', label: 'ID' },
+            { id: 'detalle', label: 'Detalle' },
+            { id: 'cantidad', label: 'Cantidad' },
+        ],
+        data:        [
+            { id: i++, detalle: 'A',  cantidad: 255 },
+            { id: i++, detalle: 'B',  cantidad: 950 },
+            { id: i++, detalle: 'C',  cantidad: 2500 },
+            { id: i++, detalle: 'D',  cantidad: 5000 },
+            { id: i++, detalle: 'F',  cantidad: 5000 },
+            { id: i++, detalle: 'G',  cantidad: 5000 },
+            { id: i++, detalle: 'H',  cantidad: 5000 },
+            { id: i++, detalle: 'I',  cantidad: 5000 },
+            { id: i++, detalle: 'J',  cantidad: 5000 },
+            { id: i++, detalle: 'K',  cantidad: 5000 },
+            { id: i++, detalle: 'L',  cantidad: 5000 },
+
+        ]
+    })
+}
