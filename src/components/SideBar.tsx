@@ -117,7 +117,7 @@ export default function SideBar() {
                         <ListItemText primary={'Movimientos'}/>
                     </ListItemButton>
 
-                    <ListItemButton sx={{}} disabled>
+                    <ListItemButton sx={{}} href={'/informes'}>
                         <ListItemIcon>
                             <BarChart/>
                         </ListItemIcon>

@@ -10,11 +10,13 @@ import {
     Link,
     IconButton,
     TablePagination,
-    TableSortLabel,
+    TableSortLabel, Typography, Box,
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import {dummyData} from "../app/dummyData/data";
 
 interface Header {
     id: string;
@@ -31,9 +33,24 @@ interface CustomTableProps {
     targetURL: string;
 }
 
-function CustomTable({ data, headers, targetURL="" }: CustomTableProps): JSX.Element {
+
+const { headersCustom, rowsCustom } = dummyData();
+
+
+function CustomTable({
+                         showId= false,
+                         data=rowsCustom,
+                         headers=headersCustom,
+                         targetURL="",
+                         options={
+                             rowsPerPageCustom:5,
+                             pagination:true,
+                             tittle: '',
+                         }}: CustomTableProps): JSX.Element {
+
+
     const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [rowsPerPage, setRowsPerPage] = useState(options.rowsPerPageCustom);
     const [order, setOrder] = useState<'asc' | 'desc'>('asc');
     const [orderBy, setOrderBy] = useState<string>(headers[0].id);
 
@@ -77,58 +94,113 @@ function CustomTable({ data, headers, targetURL="" }: CustomTableProps): JSX.Ele
     const slicedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     return (
-        <TableContainer component={Paper}>
+        <Box>
+            {console.log(data)}
+            <TableContainer component={Paper}>
+                    {options.title ?
+                        (
+                            <Typography variant='h6' sx={{
+                            margin: '20px 20px',
+                            }}>
+                                {options.title}
+                            </Typography>
+                        )
+                        : ''}
 
-            <Table>
-                <TableHead>
-                    <TableRow>
-                        {headers.map((header) => (
-                            <TableCell key={header.id}>
-                                <TableSortLabel
-                                    active={orderBy === header.id}
-                                    direction={orderBy === header.id ? order : 'asc'}
-                                    onClick={() => handleRequestSort(header.id)}
-                                    IconComponent={ArrowDownwardIcon}
-                                >
-                                    {header.label}
-                                </TableSortLabel>
-                            </TableCell>
-                        ))}
-                        <TableCell>Acciones</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {slicedData.map((row) => (
-                        <TableRow key={row.id as number}>
-                            {headers.map((header) => (
-                                <TableCell key={header.id}>{row[header.id]}</TableCell>
-                            ))}
-                            <TableCell>
-                                <IconButton
-                                    color="primary"
-                                    aria-label="Edit"
-                                    component={Link}
-                                    href={`${targetURL}`}
-                                    // href={`${targetURL}/edit/${row.id}`}
-                                    onClick={() => handleCellClick(row.id as number)}
-                                >
-                                    <EditIcon />
-                                </IconButton>
-                            </TableCell>
+
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            {headers.map((header) => {
+                                if (header.id === 'id') return null;
+                                return(
+                                    <TableCell key={header.id}>
+                                        <TableSortLabel
+                                            active={orderBy === header.id}
+                                            direction={orderBy === header.id ? order : 'asc'}
+                                            onClick={() => handleRequestSort(header.id)}
+                                            IconComponent={ArrowDownwardIcon}
+                                        >
+                                            {header.label}
+                                        </TableSortLabel>
+                                    </TableCell>
+                                )
+                            })}
+                            {options.targetURL ?
+                                <TableCell>Acciones</TableCell>
+                                : ''
+                            }
+
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
-            <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={data.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            slicedData.map((row) => (
+                                <TableRow key={row.id as number}>
+                                    {headers.map((header) => {
+                                        if (header.id === 'id') return null;
+
+                                        return <TableCell key={header.id}>{row[header.id]}</TableCell>;
+                                    })}
+                                    {options.targetURL ? (
+                                        <TableCell>
+                                            <IconButton
+                                                color="primary"
+                                                aria-label="Edit"
+                                                component={Link}
+                                                href={`${targetURL}`}
+                                                // href={`${targetURL}/edit/${row.id}`}
+                                                onClick={() => handleCellClick(row.id as number)}
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        </TableCell>
+                                    ) : (
+                                        ''
+                                    )}
+                                </TableRow>
+                            ))
+                        }
+                    </TableBody>
+                </Table>
+                <>
+                    {options.pagination?
+                        (
+                            <TablePagination
+                                rowsPerPageOptions={[5, 10, 25]}
+                                component="div"
+                                count={data.length}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage}
+                                onRowsPerPageChange={handleChangeRowsPerPage}
+                            />
+                        ):''}
+                    {
+                        options.expandedList ?
+                            (
+                                <Box sx={{
+                                    margin: '20px',
+                                    textAlign: 'right',
+                                }}>
+                                    <Link
+                                        sx={{
+                                            display: 'inline-flex',
+                                            alignIems: 'flex-end',
+                                            height: '20px',
+                                            fontWeight: '600',
+                                        }}
+                                        color='inherit' href={options.expandedList} underline="none">Ver mas <ChevronRightIcon /></Link>
+                                </Box>
+                            )
+                            : ''
+                    }
+                </>
+
+            </TableContainer>
+        </Box>
+
+
     );
 }
 

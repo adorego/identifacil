@@ -9,6 +9,8 @@ import ingresosIMG from '../../common/acceso-ppl.png';
 import penalesIMG from '../../common/control-ppl.png';
 import trasladosIMG from '../../common/traslados.png';
 
+
+
 export default function Page() {
 
     return (
@@ -18,8 +20,8 @@ export default function Page() {
                     <h1>Informes</h1>
                     <Grid container spacing={2}>
 
-                        <CardBlock name={'Ingresos'}  image={ingresosIMG.src} link='/informes/accesos' size={3}/>
-                        <CardBlock name={'Movimientos'} image={trasladosIMG.src} link='/informes/traslados' size={3}/>
+                        <CardBlock name={'Ingresos'}  image={ingresosIMG.src} link='/informes/ingresos' size={3}/>
+                        <CardBlock name={'Traslados'} image={trasladosIMG.src} link='/informes/traslados' size={3}/>
                         <CardBlock name={'Informes'} image={penalesIMG.src} link='/extradiciones' size={3}/>
                         <CardBlock name={'Informes'} image={penalesIMG.src} link='/extradiciones' size={3}/>
 

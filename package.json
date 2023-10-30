@@ -17,6 +17,7 @@
     "@mui/joy": "^5.0.0-beta.11",
     "@mui/lab": "^5.0.0-alpha.148",
     "@mui/material": "^5.14.0",
+    "@mui/x-charts": "^6.0.0-alpha.16",
     "@mui/x-data-grid": "^6.16.1",
     "@mui/x-date-pickers": "^6.10.2",
     "@types/node": "20.4.2",
