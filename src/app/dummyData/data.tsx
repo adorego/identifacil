@@ -207,3 +207,21 @@ export const visitaData = ()=>{
         ]
     })
 }
+
+
+export const proximaAudienciaData = ()=>{
+
+    return({
+        header:[
+            { id: 'id', label: 'ID' },
+            { id: 'descripcion', label: 'Detalle' },
+        ],
+        data: [
+            { id: 1, descripcion: 'Autorizacion de PPL para poder salir a trabajar' },
+            { id: 2, descripcion: 'Autorizacion de PPL para poder salir a trabajar' },
+            { id: 3, descripcion: 'Autorizacion de PPL para poder salir a trabajar' },
+            { id: 4, descripcion: 'Autorizacion de PPL para poder salir a trabajar' },
+
+        ]
+    })
+}

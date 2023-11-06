@@ -44,8 +44,9 @@ function CustomTable({
                          options={
                              rowsPerPageCustom:5,
                              pagination:true,
-                             tittle: '',
+                             title: '',
                              targetURL:"",
+                             expandedList: '',
                          }}: CustomTableProps): JSX.Element {
 
 
@@ -95,7 +96,7 @@ function CustomTable({
 
     return (
         <Box>
-            {console.log(data)}
+
             <TableContainer component={Paper}>
                     {options.title ?
                         (
