@@ -8,7 +8,7 @@ import {
     AccountBalance,
     AirportShuttle,
     Analytics,
-    BarChart,
+    BarChart, CameraIndoor, Circle,
     ExpandLess,
     ExpandMore,
     Fingerprint,
@@ -17,7 +17,7 @@ import {
     ManageAccounts,
     Mood,
     People,
-    PermIdentity,
+    PermIdentity, Settings,
     StarBorder
 } from "@mui/icons-material";
 import {
@@ -32,31 +32,32 @@ import {
     Typography
 } from "@mui/material";
 
-import {Inter} from "next/font/google";
+
 import getConfig from "next/config";
 import styles from "./SideBar.module.css";
 import {usePathname , useRouter} from "next/navigation";
 
-const inter = Inter({
-    subsets: ['latin'],
-    weight: '400',
 
-
-});
 
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 
 export default function SideBar() {
 
     const titulo = "IDENTIFACIL";
-    const [open, setOpen] = React.useState(false);
-
+    const [openMenus, setOpenMenus] = React.useState({
+        registroAccesos: false,
+        sistema: false,
+        // Puedes agregar más menús aquí en el futuro
+    });
     const router = useRouter();
     const pathname = usePathname()
 
 
-    const handleClick = () => {
-        setOpen(!open);
+    const handleClick = (menu) => {
+        setOpenMenus((prevOpenMenus) => ({
+            ...prevOpenMenus,
+            [menu]: !prevOpenMenus[menu]
+        }));
     };
 
     const handleNavigation = (url: string) => {
@@ -84,15 +85,15 @@ export default function SideBar() {
 
 
                     {/* <ListItem disablePadding> */}
-                    <ListItemButton onClick={handleClick}>
+                    <ListItemButton onClick={() => handleClick('registroAccesos')}>
                         <ListItemIcon>
                             <Fingerprint/>
                         </ListItemIcon>
                         <ListItemText primary={'Registro de Accesos'}/>
-                        {open ? <ExpandLess/> : <ExpandMore/>}
+                        {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
                     </ListItemButton>
 
-                    <Collapse in={open} timeout="auto" unmountOnExit>
+                    <Collapse in={openMenus.registroAccesos} timeout="auto" unmountOnExit>
                         <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                             <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
                                 <ListItemIcon>
@@ -119,17 +120,18 @@ export default function SideBar() {
                     </ListItemButton>
 
                     <ListItemButton
-                                    className={pathname === '/movimientos' ? 'active' : ''}
-                                    href={'/movimientos'}>
+                        className={pathname === '/movimientos' ? 'active' : ''}
+                        href={'/movimientos'}>
                         <ListItemIcon>
                             <AirportShuttle/>
                         </ListItemIcon>
                         <ListItemText primary={'Movimientos'}/>
                     </ListItemButton>
 
+                    {/* Menu de Reportes */}
                     <ListItemButton
-                                    className={pathname === '/informes' ? 'active' : ''}
-                                    href={'/informes'}
+                        className={pathname === '/informes' ? 'active' : ''}
+                        href={'/informes'}
                     >
                         <ListItemIcon>
                             <BarChart  />
@@ -137,6 +139,9 @@ export default function SideBar() {
                         <ListItemText primary={'Reportes'}/>
                     </ListItemButton>
 
+
+
+                    {/* Menu de Bloqueados */}
                     <ListItemButton disabled>
                         <ListItemIcon>
                             <Hail/>
@@ -158,12 +163,42 @@ export default function SideBar() {
                         </ListItemIcon>
                         <ListItemText primary={'Defensoría'}/>
                     </ListItemButton>
+
                     <ListItemButton disabled>
                         <ListItemIcon>
                             <Key/>
                         </ListItemIcon>
                         <ListItemText primary={'Autorizaciones'}/>
                     </ListItemButton>
+
+
+                    {/* ------------------------- Menu de Sistema ------------------------- */}
+                    <ListItemButton onClick={() => handleClick('sistema')}>
+                        <ListItemIcon>
+                            <Settings/>
+                        </ListItemIcon>
+                        <ListItemText primary={'Sistema'}/>
+                        {openMenus.sistema ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemButton>
+
+                    <Collapse in={openMenus.sistema} timeout="auto" unmountOnExit>
+                        <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+
+                            <ListItemButton onClick={(e) => handleNavigation('/sistema/camaras')}>
+                                <ListItemIcon>
+                                    <CameraIndoor/>
+                                </ListItemIcon>
+                                <ListItemText primary="Camaras"/>
+                            </ListItemButton>
+
+                            <ListItemButton onClick={(e) => handleNavigation('/sistema/roles')}>
+                                <ListItemIcon>
+                                    <ManageAccounts/>
+                                </ListItemIcon>
+                                <ListItemText primary="Roles"/>
+                            </ListItemButton>
+                        </List>
+                    </Collapse>
 
 
                 </List>

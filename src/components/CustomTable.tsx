@@ -10,7 +10,7 @@ import {
     Link,
     IconButton,
     TablePagination,
-    TableSortLabel, Typography, Box,
+    TableSortLabel, Typography, Box, Stack, Button,
 } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -47,6 +47,7 @@ function CustomTable({
                              title: '',
                              targetURL:"",
                              expandedList: '',
+                             newRecord: '',
                          }}: CustomTableProps): JSX.Element {
 
 
@@ -98,15 +99,35 @@ function CustomTable({
         <Box>
 
             <TableContainer component={Paper}>
-                    {options.title ?
-                        (
-                            <Typography variant='h6' sx={{
-                            margin: '20px 20px',
-                            }}>
-                                {options.title}
-                            </Typography>
-                        )
-                        : ''}
+
+                    <Stack direction='row'
+                           justifyContent="space-between"
+                           alignItems="center"
+                           spacing={2}  sx={{
+                        margin: '20px 10px',
+                    }}>
+                        <Box>
+                            {options.title ?
+                                (
+                                    <Typography variant='h6' >
+                                        {options.title}
+                                    </Typography>
+                                )
+                                : ''}
+                        </Box>
+                        <Box>
+                            {options.newRecord ?
+                                (
+                                    <Button variant='contained' href={options.newRecord}>
+                                        Agregar
+                                    </Button>
+                                )
+                                : ''}
+
+                        </Box>
+
+                    </Stack>
+
 
 
                 <Table>
