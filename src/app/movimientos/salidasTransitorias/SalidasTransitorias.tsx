@@ -108,7 +108,7 @@ export default function SalidasTransitorias(){
                     />
                 </Grid>
                 <Grid item xs={6}>
-                    <TextField
+                    {/*<TextField
                         variant="outlined"
                         fullWidth
                         margin='normal'
@@ -129,7 +129,7 @@ export default function SalidasTransitorias(){
                             ),
                         }}
                     />
-
+*/}
                 </Grid>
 
                 <Grid item xs={4}>

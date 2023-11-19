@@ -1,8 +1,22 @@
+'use client';
+
 import * as React from 'react';
 import TituloComponent from "../../../../components/titulo/tituloComponent";
 import {Box, Button, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
+import {useEffect} from 'react';
+import {useGlobalContext} from "../../../Context/store";
 
 export default function Crear(){
+    const {userId, setUserId, data, setData} = useGlobalContext();
+
+    useEffect(()=>{
+        setUserId('2');
+        setData([
+            {firstName: 'Time'},
+            {firstName: 'Michael'},
+            {firstName: 'Kyle'},
+        ])
+    },[])
 
     return(
         <>
@@ -14,6 +28,15 @@ export default function Crear(){
                     <Typography variant='h6'>
                         Datos de la rol
                     </Typography>
+                    <p>
+                        User ID: {userId}
+                    </p>
+                    <p>
+                        First Name:
+                    </p>
+                    <ol>
+                        {data.map((e,i)=><li key={i}>{e.firstName}</li>)}
+                    </ol>
                     <Grid container spacing={2} mt={2}>
                         <Grid item sm={6}>
                             <TextField
@@ -30,7 +53,7 @@ export default function Crear(){
                                 variant="outlined" />
                         </Grid>
                     </Grid>
-                    <Grid sm={12} mt={4}>
+                    <Grid item sm={12} mt={4}>
                         <Stack direction='row' spacing={2}>
 
                             <Button variant='contained'>

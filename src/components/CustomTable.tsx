@@ -103,9 +103,11 @@ function CustomTable({
                     <Stack direction='row'
                            justifyContent="space-between"
                            alignItems="center"
-                           spacing={2}  sx={{
-                        margin: '20px 10px',
-                    }}>
+                           spacing={2}
+                           /*sx={{
+                               margin: '20px 10px',
+                           }}*/
+                    >
                         <Box>
                             {options.title ?
                                 (
@@ -125,7 +127,6 @@ function CustomTable({
                                 : ''}
 
                         </Box>
-
                     </Stack>
 
 

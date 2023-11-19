@@ -1,3 +1,5 @@
+'use client'
+
 import {Container, Grid} from "@mui/material";
 import { Inter } from "next/font/google";
 import SideBar from "@/components/SideBar"

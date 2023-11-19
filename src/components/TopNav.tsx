@@ -21,6 +21,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
+import {useGlobalContext} from "../app/Context/store";
+import {useEffect} from "react";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -62,9 +64,16 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }));
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+const settings = ['Perfil', 'Cerrar sesión'];
 
 export default function TopNav() {
+
+    const {sidebarStatus, setSidebarStatus} = useGlobalContext();
+
+    useEffect(()=>{
+        setSidebarStatus(!sidebarStatus);
+    },[])
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
@@ -75,6 +84,11 @@ export default function TopNav() {
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
+    };
+
+    const handleSidebar = (event: React.MouseEvent<HTMLElement>) => {
+        console.log('holaaa');
+        setSidebarStatus(!sidebarStatus);
     };
 
     const handleMobileMenuClose = () => {
@@ -186,6 +200,7 @@ export default function TopNav() {
                     sx={{
                         backgroundColor: '#FFF', color: '#000',
                         boxShadow: 'none',
+                        borderBottom: '1px solid #E2E8F0'
                     }} >
                 <Toolbar>
                     <IconButton
@@ -194,17 +209,18 @@ export default function TopNav() {
                         color="inherit"
                         aria-label="open drawer"
                         sx={{mr: 2}}
+                        onClick={handleSidebar}
                     >
                         <MenuIcon/>
                     </IconButton>
-                    {/*<Typography
+                    <Typography
                         variant="h6"
                         noWrap
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        MUI
-                    </Typography>*/}
+                        MUI - { sidebarStatus ? 'TRUE' : 'false'}
+                    </Typography>
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon/>
@@ -216,17 +232,17 @@ export default function TopNav() {
                     </Search>
                     <Box sx={{flexGrow: 1}}/>
                     <Box sx={{display: {xs: 'none', md: 'flex'}}}>
-                        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
+                        {/*<IconButton size="large" aria-label="show 4 new mails" color="inherit">
                             <Badge badgeContent={4} color="error">
                                 <MailIcon/>
                             </Badge>
-                        </IconButton>
+                        </IconButton>*/}
                         <IconButton
                             size="large"
-                            aria-label="show 17 new notifications"
+                            aria-label="show 0 new notifications"
                             color="inherit"
                         >
-                            <Badge badgeContent={17} color="error">
+                            <Badge badgeContent={0} color="error">
                                 <NotificationsIcon/>
                             </Badge>
                         </IconButton>
@@ -234,7 +250,7 @@ export default function TopNav() {
                     <Box sx={{flexGrow: 0}} mx={2}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg"/> */}
+                                 <Avatar alt="Remy Sharp" />
                             </IconButton>
                         </Tooltip>
                         <Menu

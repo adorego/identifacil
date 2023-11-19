@@ -2,9 +2,11 @@
 
 
 import * as React from 'react';
+
 import {
     Button,
     Card,
+    CircularProgress,
     CardContent,
     Grid,
     TextField,
@@ -17,6 +19,9 @@ import {
 import {FileUploadOutlined} from "@mui/icons-material";
 import CustomTable from "../../../components/CustomTable";
 import QueryBlock from "../../../components/blocks/QueryBlock";
+import {useRouter} from 'next/navigation';
+import SnackbarComponent from "../../../components/snackback/SnackBarComponent";
+import { SnackbarContext } from '../../../components/snackback/SnackbarContext';
 
 type PPLType = {
     nombreApellido: string;
@@ -54,15 +59,19 @@ const styleModal = {
     p: 4,
 };
 
+// TODO: Cuando se envia el submit se debe bloquear el boton de guardado
+// TODO: Luego de enviar la peticion se debe mostrar una alerta de que se guardo correctamente
 
 export default function Traslados() {
+
+
+
     const initialPPL: PPLType = {
         nombreApellido: '',
         alias: '',
         motivo: '',
         fechaTraslado: '',
     };
-
     const initialFormData: FormData = {
         documento: '',
         fechaDocumento: '',
@@ -81,6 +90,8 @@ export default function Traslados() {
     };
 
     const [formData, setFormData] = React.useState<FormData>(initialFormData);
+    const [loading, setLoading] = React.useState(false);
+
 
 
     // Datos para traslados nombre;alias;motivo;fechaTraslado;
@@ -122,11 +133,44 @@ export default function Traslados() {
         }
     };
 
+    const router = useRouter();
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+    const postTraslado = async () => {
+        try {
+            setLoading(true);
+
+            await delay(5000);
+
+            const response = await fetch('http://localhost:5000/traslados', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData) // formData contiene los datos de tu formulario
+            });
+
+            setLoading(false);
+
+            if (response.ok) {
+
+                router.push('/movimientos');
+            }
+            if (!response.ok) {
+                throw new Error('Error en la petición');
+            }
+
+            const data = await response.json();
+            console.log('Traslado creado:', data);
+        } catch (error) {
+            setLoading(false);
+
+            console.error('Error:', error);
+        }
+    };
     // Manejador de envio
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(formData);
-        console.log(JSON.stringify(formData));
+        postTraslado();
     };
 
 
@@ -176,188 +220,188 @@ export default function Traslados() {
             <Card sx={{marginTop:"20px"}}>
                 <CardContent>
                     <Typography variant='h6' mb={2}>Traslados</Typography>
-                    <form noValidate autoComplete="off">
-                        <Grid container spacing={3}>
-                            {/* Nro. del documento */}
-                            <Grid item xs={4}>
-                                <TextField
-                                    fullWidth
-                                    label="Nro. del documento"
-                                    variant="outlined"
-                                    value={formData.documento}
-                                    name="documento"
-                                    onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Fecha del documento */}
-                            <Grid item xs={4}>
-                                <TextField fullWidth label="Fecha del documento" type="date"
-                                           variant="outlined"
-                                           value={formData.fechaDocumento}
-                                           name="fechaDocumento"
-                                           onChange={handleInputChange}
-                                           InputLabelProps={{ shrink: true }} />
-                            </Grid>
-
-                            {/* Fecha del traslado */}
-                            <Grid item xs={4}>
-                                <TextField fullWidth label="Fecha del traslado" type="date"
-                                           variant="outlined"
-                                           value={formData.fechaTraslado}
-                                           name="fechaTraslado"
-                                           onChange={handleInputChange}
-                                           InputLabelProps={{ shrink: true }} />
-                            </Grid>
-
-                            {/* Persona que autorizó traslado */}
-                            <Grid item xs={6}>
-                                <TextField fullWidth label="Persona que autorizó traslado" variant="outlined"
-                                           value={formData.autorizo}
-                                           name="autorizo"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Tipo de medidas de seguridad */}
-                            <Grid item xs={6}>
-                                <FormControl fullWidth variant="outlined">
-                                    <InputLabel>Tipo de medidas de seguridad</InputLabel>
-                                    <Select
-                                        value={formData.medidasSeguridad}
-                                        onChange={handleSelectChange}
-                                        label="Tipo de medidas de seguridad"
-                                        name="medidasSeguridad"
-                                    >
-                                        {/* Replace these menu items with your options */}
-                                        <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                        <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-
-                            {/* Motivo del traslado */}
-                            <Grid item xs={12}>
-                                <FormControl fullWidth variant="outlined">
-                                    <InputLabel>Motivo del traslado</InputLabel>
-                                    <Select label='Motivo del traslado'
-                                            value={formData.motivoTraslado}
-                                            onChange={handleSelectChange}
-                                            name="motivoTraslado"
-                                    >
-                                        {/* Replace these menu items with your options */}
-                                        <MenuItem value="option1">Traslado 1</MenuItem>
-                                        <MenuItem value="option2">Traslado 2</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-
-                            {/* Descripción del motivo */}
-                            <Grid item xs={12}>
-                                <TextField fullWidth multiline rows={4} label="Descripción del motivo" variant="outlined"
-                                           value={formData.descripcionMotivo}
-                                           name="descripcionMotivo"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Persona que custodia */}
-                            <Grid item xs={6}>
-                                <TextField fullWidth label="Persona que custodia" variant="outlined"
-                                           value={formData.custodia}
-                                           name="custodia"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Chofer */}
-                            <Grid item xs={6}>
-                                <TextField fullWidth label="Chofer" variant="outlined"
-                                           value={formData.chofer}
-                                           name="chofer"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Chapa del vehículo */}
-                            <Grid item xs={6}>
-                                <TextField fullWidth label="Chapa del vehículo" variant="outlined"
-                                           value={formData.chapaVehiculo}
-                                           name="chapaVehiculo"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Modelo del vehículo */}
-                            <Grid item xs={6}>
-                                <TextField fullWidth label="Modelo del vehículo" variant="outlined"
-                                           value={formData.modeloVehiculo}
-                                           name="modeloVehiculo"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Destino del traslado */}
-                            <Grid item xs={6}>
-                                <TextField fullWidth label="Destino del traslado" variant="outlined"
-                                           value={formData.destinoTraslado}
-                                           name="destinoTraslado"
-                                           onChange={handleInputChange}/>
-                            </Grid>
-
-                            {/* Documento adjunto */}
-                            <Grid item xs={6}>
-
+                        <form noValidate autoComplete="off">
+                            <Grid container spacing={3}>
+                                {/* Nro. del documento */}
+                                <Grid item xs={4}>
                                     <TextField
-                                        variant="outlined"
-                                        type="text"
-                                        label='Documento adjunto'
                                         fullWidth
-                                        value={formData.documentoAdjunto ? formData.documentoAdjunto.name : ''}
-                                        InputProps={{
-                                            endAdornment: (
-                                                <IconButton component="label" >
-                                                    <FileUploadOutlined />
-                                                    <input
-                                                        styles={{display:"none"}}
-                                                        type="file"
-                                                        hidden
-                                                        onChange={handleFileChange}
-                                                        name="documentoAdjunto"
-                                                        label='Documento adjunto'
-                                                    />
-                                                </IconButton>
-                                            ),
-                                        }}
-                                    />
+                                        label="Nro. del documento"
+                                        variant="outlined"
+                                        value={formData.documento}
+                                        name="documento"
+                                        onChange={handleInputChange}/>
+                                </Grid>
 
-                            </Grid>
+                                {/* Fecha del documento */}
+                                <Grid item xs={4}>
+                                    <TextField fullWidth label="Fecha del documento" type="date"
+                                               variant="outlined"
+                                               value={formData.fechaDocumento}
+                                               name="fechaDocumento"
+                                               onChange={handleInputChange}
+                                               InputLabelProps={{ shrink: true }} />
+                                </Grid>
 
-                            {/* Documento adjunto */}
-                            <Grid item xs={12}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={handleSubmit}
-                                >
-                                    Guardar cambios
-                                </Button>
-                            </Grid>
+                                {/* Fecha del traslado */}
+                                <Grid item xs={4}>
+                                    <TextField fullWidth label="Fecha del traslado" type="date"
+                                               variant="outlined"
+                                               value={formData.fechaTraslado}
+                                               name="fechaTraslado"
+                                               onChange={handleInputChange}
+                                               InputLabelProps={{ shrink: true }} />
+                                </Grid>
 
-                            {/* PPLs a ser trasladados */}
+                                {/* Persona que autorizó traslado */}
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Persona que autorizó traslado" variant="outlined"
+                                               value={formData.autorizo}
+                                               name="autorizo"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Tipo de medidas de seguridad */}
+                                <Grid item xs={6}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel>Tipo de medidas de seguridad</InputLabel>
+                                        <Select
+                                            value={formData.medidasSeguridad}
+                                            onChange={handleSelectChange}
+                                            label="Tipo de medidas de seguridad"
+                                            name="medidasSeguridad"
+                                        >
+                                            {/* Replace these menu items with your options */}
+                                            <MenuItem value="option1">Medida de seguridad 1</MenuItem>
+                                            <MenuItem value="option2">Medida de seguridad 2</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+
+                                {/* Motivo del traslado */}
+                                <Grid item xs={12}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel>Motivo del traslado</InputLabel>
+                                        <Select label='Motivo del traslado'
+                                                value={formData.motivoTraslado}
+                                                onChange={handleSelectChange}
+                                                name="motivoTraslado"
+                                        >
+                                            {/* Replace these menu items with your options */}
+                                            <MenuItem value="option1">Traslado 1</MenuItem>
+                                            <MenuItem value="option2">Traslado 2</MenuItem>
+                                        </Select>
+                                    </FormControl>
+                                </Grid>
+
+                                {/* Descripción del motivo */}
+                                <Grid item xs={12}>
+                                    <TextField fullWidth multiline rows={4} label="Descripción del motivo" variant="outlined"
+                                               value={formData.descripcionMotivo}
+                                               name="descripcionMotivo"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Persona que custodia */}
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Persona que custodia" variant="outlined"
+                                               value={formData.custodia}
+                                               name="custodia"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Chofer */}
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Chofer" variant="outlined"
+                                               value={formData.chofer}
+                                               name="chofer"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Chapa del vehículo */}
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Chapa del vehículo" variant="outlined"
+                                               value={formData.chapaVehiculo}
+                                               name="chapaVehiculo"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Modelo del vehículo */}
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Modelo del vehículo" variant="outlined"
+                                               value={formData.modeloVehiculo}
+                                               name="modeloVehiculo"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Destino del traslado */}
+                                <Grid item xs={6}>
+                                    <TextField fullWidth label="Destino del traslado" variant="outlined"
+                                               value={formData.destinoTraslado}
+                                               name="destinoTraslado"
+                                               onChange={handleInputChange}/>
+                                </Grid>
+
+                                {/* Documento adjunto */}
+                                <Grid item xs={6}>
+
+                                        <TextField
+                                            variant="outlined"
+                                            type="text"
+                                            label='Documento adjunto'
+                                            fullWidth
+                                            value={formData.documentoAdjunto ? formData.documentoAdjunto.name : ''}
+                                            InputProps={{
+                                                endAdornment: (
+                                                    <IconButton component="label" >
+                                                        <FileUploadOutlined />
+                                                        <input
+                                                            styles={{display:"none"}}
+                                                            type="file"
+                                                            hidden
+                                                            onChange={handleFileChange}
+                                                            name="documentoAdjunto"
+                                                            label='Documento adjunto'
+                                                        />
+                                                    </IconButton>
+                                                ),
+                                            }}
+                                        />
+
+                                </Grid>
+
+                                {/* Documento adjunto */}
+                                <Grid item xs={12}>
+                                    <Button
+                                        variant="contained"
+                                        color="primary"
+                                        onClick={handleSubmit}
+                                    >
+                                        {loading ? <CircularProgress color='success' size={24} /> : "Guardar Cambios"}
+                                    </Button>
+                                </Grid>
+
+                                {/* PPLs a ser trasladados */}
 
 
-                            {/* Agregar PPL Button */}
-                            <Grid item xs={12}>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={6}>
-                                        <Typography variant='h6'>PPLs a ser trasladados</Typography>
-                                    </Grid>
-                                    <Grid item xs={6} textAlign='right'>
-                                        <Button variant="contained" color="primary" onClick={handleOpen}>
-                                            Agregar PPL
-                                        </Button>
+                                {/* Agregar PPL Button */}
+                                <Grid item xs={12}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={6}>
+                                            <Typography variant='h6'>PPLs a ser trasladados</Typography>
+                                        </Grid>
+                                        <Grid item xs={6} textAlign='right'>
+                                            <Button variant="contained" color="primary" onClick={handleOpen}>
+                                                Agregar PPL
+                                            </Button>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item xs={12} >
+                                    <CustomTable data={formData.PPLs} headers={headersPPL} />
+                                </Grid>
                             </Grid>
-                            <Grid item xs={12} >
-                                <CustomTable data={formData.PPLs} headers={headersPPL} />
-                            </Grid>
-                        </Grid>
-                    </form>
+                        </form>
                 </CardContent>
 
             </Card>

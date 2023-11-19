@@ -1,0 +1,153 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "traslados": [
+    {
+      "id": 1,
+      "documento": "3636681",
+      "fechaDocumento": "2023-07-20",
+      "fechaTraslado": "2023-12-01",
+      "autorizo": "Director",
+      "motivoTraslado": "option1",
+      "medidasSeguridad": "option1",
+      "descripcionMotivo": "Descripcion del motivo del trasladoMotivo del traslado",
+      "custodia": "Oficial Perez",
+      "chofer": "Oficial Ramirez",
+      "chapaVehiculo": "ABC 123",
+      "modeloVehiculo": "Mercedes Benz - Sprinter",
+      "destinoTraslado": "Tacumbu",
+      "documentoAdjunto": {},
+      "PPLs": []
+    },
+    {
+      "documento": "1232465",
+      "fechaDocumento": "2023-08-21",
+      "fechaTraslado": "2023-12-02",
+      "autorizo": "Director",
+      "motivoTraslado": "option2",
+      "medidasSeguridad": "option2",
+      "descripcionMotivo": "Descripcion del motivo del trasladoMotivo del traslado 2",
+      "custodia": "Oficial Perez 2",
+      "chofer": "Oficial Ramirez 2",
+      "chapaVehiculo": "ABC 123 2",
+      "modeloVehiculo": "Mercedes Benz - Sprinter 2",
+      "destinoTraslado": "Tacumbu 2",
+      "documentoAdjunto": {},
+      "PPLs": [],
+      "id": 2
+    },
+    {
+      "documento": "as",
+      "fechaDocumento": "34412-02-22",
+      "fechaTraslado": "32323-12-31",
+      "autorizo": "asdasdasd",
+      "motivoTraslado": "option1",
+      "medidasSeguridad": "option2",
+      "descripcionMotivo": "asdasdasdasd",
+      "custodia": "asdasdasd",
+      "chofer": "asdadasd",
+      "chapaVehiculo": "adasdas",
+      "modeloVehiculo": "asdasd",
+      "destinoTraslado": "asdasdas",
+      "documentoAdjunto": {},
+      "PPLs": [],
+      "id": 3
+    },
+    {
+      "documento": "",
+      "fechaDocumento": "",
+      "fechaTraslado": "",
+      "autorizo": "",
+      "motivoTraslado": "",
+      "medidasSeguridad": "",
+      "descripcionMotivo": "",
+      "custodia": "",
+      "chofer": "",
+      "chapaVehiculo": "",
+      "modeloVehiculo": "",
+      "destinoTraslado": "",
+      "documentoAdjunto": "",
+      "PPLs": [],
+      "id": 4
+    },
+    {
+      "documento": "",
+      "fechaDocumento": "",
+      "fechaTraslado": "",
+      "autorizo": "",
+      "motivoTraslado": "",
+      "medidasSeguridad": "",
+      "descripcionMotivo": "",
+      "custodia": "",
+      "chofer": "",
+      "chapaVehiculo": "",
+      "modeloVehiculo": "",
+      "destinoTraslado": "",
+      "documentoAdjunto": "",
+      "PPLs": [],
+      "id": 5
+    },
+    {
+      "documento": "1233156465",
+      "fechaDocumento": "2222-02-01",
+      "fechaTraslado": "2221-02-22",
+      "autorizo": "Director6",
+      "motivoTraslado": "option2",
+      "medidasSeguridad": "option1",
+      "descripcionMotivo": "Descripcion 2",
+      "custodia": "asdad",
+      "chofer": "adadsa",
+      "chapaVehiculo": "abc 123",
+      "modeloVehiculo": "sprinter",
+      "destinoTraslado": "Tacumbu",
+      "documentoAdjunto": {},
+      "PPLs": [
+        {
+          "nombreApellido": "Juan Jose Martinez",
+          "alias": "asdasd",
+          "motivo": "traslados.png",
+          "fechaTraslado": "2023-11-17"
+        },
+        {
+          "nombreApellido": "Roberto Caceres",
+          "alias": "asdasd",
+          "motivo": "asdasd",
+          "fechaTraslado": "2023-11-17"
+        }
+      ],
+      "id": 6
+    },
+    {
+      "documento": "1231313123",
+      "fechaDocumento": "2222-02-22",
+      "fechaTraslado": "2222-02-22",
+      "autorizo": "asdasd",
+      "motivoTraslado": "option2",
+      "medidasSeguridad": "option2",
+      "descripcionMotivo": "asdasdsadasdasd",
+      "custodia": "123123",
+      "chofer": "12313",
+      "chapaVehiculo": "12313",
+      "modeloVehiculo": "1232123",
+      "destinoTraslado": "123123",
+      "documentoAdjunto": {},
+      "PPLs": [],
+      "id": 7
+    }
+  ]
+}

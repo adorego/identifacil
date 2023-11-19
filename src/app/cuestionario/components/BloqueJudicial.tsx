@@ -14,7 +14,7 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import StyledTextarea from '../../../components/interfaz/StyledTextArea';
 import {ChangeEvent} from "react";
-import Textarea from '@mui/joy/Textarea';
+
 
 
 interface oficioType{
