@@ -14,7 +14,7 @@ export default function Main() {
     return (
         <Suspense fallback={<Loading/>}>
             <Grid container>
-                <Grid item xs={12} mx={4}>
+                <Grid item xs={12}>
                     <h1>Panel</h1>
                     <Grid container spacing={2}>
 

@@ -1,7 +1,6 @@
 
-import sidebar from './SideBar.module.css'
 import {Box, Typography} from "@mui/material";
-import styles from "./SideBar.module.css";
+import styles from "./sidebar.module.css";
 import SidebarItems from "./sidebar/sidebarItems";
 
 
@@ -10,8 +9,9 @@ import SidebarItems from "./sidebar/sidebarItems";
 
 export default function SideBar() {
 
+
     return (
-        <nav className={sidebar.sidebar}>
+        <nav className={styles.sidebar}>
 
             <Box sx={{bgcolor: "#FFFFFF", textAlign: 'center', minHeight: '100vh'}}>
 

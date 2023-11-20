@@ -1,6 +1,6 @@
 'use client';
 
-import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Typography} from "@mui/material";
+import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
 import {
     AccountBalance,
     AirportShuttle,
@@ -12,20 +12,22 @@ import {
     People,
     PermIdentity, Settings
 } from "@mui/icons-material";
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import styles from "../SideBar.module.css";
-import {useGlobalContext} from "../../app/Context/store";
+import styles from "../sidebar.module.css";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import * as React from "react";
 
 
 const titulo = "IDENTIFACIL";
 
-export default function SidebarItems(){
-    const {sidebarStatus, setSidebarStatus} = useGlobalContext();
 
-    useEffect(()=>{
-        setSidebarStatus(!sidebarStatus);
-    },[])
+export default function SidebarItems(){
+
+
+
+
 
     const [openMenus, setOpenMenus] = useState({
         registroAccesos: false,
@@ -46,10 +48,40 @@ export default function SidebarItems(){
         router.push(url);
     }
 
+    const [toggleSidebar, setToggleSidebar] =  useState(false);
+
+    const handleSidebar = () =>{
+        setToggleSidebar(!toggleSidebar);
+    }
     return(
         <Box>
-            <Typography variant="h6" className={styles.title} color={'#AAA'}>{titulo}</Typography>
-            <hr className='titleSidebar'/>
+            <Box sx={{
+                height:'64px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderBottom: '1px solid #E2E8F0',
+                m: '0 20px',
+
+            }}>
+
+                <Stack  spacing={1} direction='row' alignItems='center' justifyContent='space-between' width='100%'>
+
+                    <Typography variant="h6" className={styles.title} color={'#AAA'} >
+                        {titulo}
+                    </Typography>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="open drawer"
+                        sx={{mr: 2}}
+                        onClick={handleSidebar}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+                </Stack>
+            </Box>
             <List aria-labelledby="nested-list-subheader" component="nav">
 
 
@@ -60,7 +92,7 @@ export default function SidebarItems(){
                     <ListItemIcon>
                         <AirportShuttle />
                     </ListItemIcon>
-                    <ListItemText primary={'Panel'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Panel'} hidden={toggleSidebar}/>
                 </ListItemButton>
                 {/*</ListItem>*/}
 
@@ -70,7 +102,7 @@ export default function SidebarItems(){
                     <ListItemIcon>
                         <Fingerprint/>
                     </ListItemIcon>
-                    <ListItemText primary={'Registro de Accesos'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Registro de Accesos'} hidden={toggleSidebar}/>
                     {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
                 </ListItemButton>
 
@@ -81,14 +113,14 @@ export default function SidebarItems(){
 
                                 <PermIdentity/>
                             </ListItemIcon>
-                            <ListItemText primary="Ingreso PPL" hidden={sidebarStatus}/>
+                            <ListItemText primary="Ingreso PPL" hidden={toggleSidebar}/>
                         </ListItemButton>
 
                         <ListItemButton href='/acceso'>
                             <ListItemIcon>
                                 <People/>
                             </ListItemIcon>
-                            <ListItemText primary="Acceso al Penal" hidden={sidebarStatus}/>
+                            <ListItemText primary="Acceso al Penal" hidden={toggleSidebar}/>
                         </ListItemButton>
                     </List>
                 </Collapse>
@@ -98,7 +130,7 @@ export default function SidebarItems(){
                     <ListItemIcon>
                         <Mood/>
                     </ListItemIcon>
-                    <ListItemText primary={'Gestión PPLs'}  hidden={sidebarStatus}/>
+                    <ListItemText primary={'Gestión PPLs'}  hidden={toggleSidebar}/>
                 </ListItemButton>
 
                 <ListItemButton
@@ -107,7 +139,7 @@ export default function SidebarItems(){
                     <ListItemIcon>
                         <AirportShuttle/>
                     </ListItemIcon>
-                    <ListItemText primary={'Movimientos'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Movimientos'} hidden={toggleSidebar}/>
                 </ListItemButton>
 
                 {/* Menu de Reportes */}
@@ -118,7 +150,7 @@ export default function SidebarItems(){
                     <ListItemIcon>
                         <BarChart  />
                     </ListItemIcon>
-                    <ListItemText primary={'Reportes'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Reportes'} hidden={toggleSidebar}/>
                 </ListItemButton>
 
 
@@ -128,38 +160,36 @@ export default function SidebarItems(){
                     <ListItemIcon>
                         <Hail/>
                     </ListItemIcon>
-                    <ListItemText primary={'Gestión de Visitas'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Gestión de Visitas'} hidden={toggleSidebar}/>
 
                 </ListItemButton>
 
-                <ListItemButton disabled>
-                    <ListItemIcon>
-                        <ManageAccounts/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Gestión de Funcionarios'} hidden={sidebarStatus}/>
-                </ListItemButton>
+
 
                 <ListItemButton disabled>
                     <ListItemIcon>
                         <AccountBalance/>
                     </ListItemIcon>
-                    <ListItemText primary={'Defensoría'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Defensoría'} hidden={toggleSidebar}/>
                 </ListItemButton>
 
                 <ListItemButton disabled>
                     <ListItemIcon>
                         <Key/>
                     </ListItemIcon>
-                    <ListItemText primary={'Autorizaciones'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Autorizaciones'} hidden={toggleSidebar}/>
                 </ListItemButton>
 
 
                 {/* ------------------------- Menu de Sistema ------------------------- */}
+                <Typography variant='overline' display="block" align="left" pl='16px'>
+                    Sistema
+                </Typography>
                 <ListItemButton onClick={() => handleClick('sistema')}>
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
-                    <ListItemText primary={'Sistema'} hidden={sidebarStatus}/>
+                    <ListItemText primary={'Sistema'} hidden={toggleSidebar}/>
                     {openMenus.sistema ? <ExpandLess/> : <ExpandMore/>}
                 </ListItemButton>
 
@@ -170,18 +200,23 @@ export default function SidebarItems(){
                             <ListItemIcon>
                                 <CameraIndoor/>
                             </ListItemIcon>
-                            <ListItemText primary="Camaras" hidden={sidebarStatus}/>
+                            <ListItemText primary="Camaras" hidden={toggleSidebar}/>
                         </ListItemButton>
 
                         <ListItemButton onClick={(e) => handleNavigation('/sistema/roles')}>
                             <ListItemIcon>
                                 <ManageAccounts/>
                             </ListItemIcon>
-                            <ListItemText primary="Roles" hidden={sidebarStatus}/>
+                            <ListItemText primary="Roles" hidden={toggleSidebar}/>
                         </ListItemButton>
                     </List>
                 </Collapse>
-
+                <ListItemButton disabled>
+                    <ListItemIcon>
+                        <ManageAccounts/>
+                    </ListItemIcon>
+                    <ListItemText primary={'Gestión de Funcionarios'} hidden={toggleSidebar}/>
+                </ListItemButton>
 
             </List>
         </Box>

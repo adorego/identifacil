@@ -203,7 +203,7 @@ export default function TopNav() {
                         borderBottom: '1px solid #E2E8F0'
                     }} >
                 <Toolbar>
-                    <IconButton
+{/*                    <IconButton
                         size="large"
                         edge="start"
                         color="inherit"
@@ -212,7 +212,7 @@ export default function TopNav() {
                         onClick={handleSidebar}
                     >
                         <MenuIcon/>
-                    </IconButton>
+                    </IconButton>*/}
                     <Typography
                         variant="h6"
                         noWrap
@@ -250,7 +250,7 @@ export default function TopNav() {
                     <Box sx={{flexGrow: 0}} mx={2}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                 <Avatar alt="Remy Sharp" />
+                                 <Avatar alt="Remy Sharp" src='https://ui-avatars.com/api/?font-size=0.33' />
                             </IconButton>
                         </Tooltip>
                         <Menu

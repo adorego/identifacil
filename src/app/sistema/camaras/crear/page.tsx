@@ -6,13 +6,13 @@ export default function Crear(){
 
     return(
         <>
-            <TituloComponent titulo='Nueva camara' />
+
             <Box mt={4}>
                 <Paper elevation={1} sx={{
                     p: "20px",
                 }}>
-                    <Typography variant='h6'>
-                        Datos de la camara
+                    <Typography variant='h5'>
+                        Nueva camara
                     </Typography>
                     <Grid container spacing={2} mt={2}>
                         <Grid item sm={6}>

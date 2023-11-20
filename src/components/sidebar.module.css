@@ -1,5 +1,4 @@
 .title{
-  padding-top: 98.3px;
   font-size: 20px;
   /* font-family: 'Inter'; */
   font-weight: bold;
@@ -11,7 +10,7 @@
 }
 
 .navItem{
-  /* border: 2px solid blue; */
+   border: 2px solid blue;
   margin: auto;
   max-width: 100%;
 }
@@ -21,6 +20,9 @@
   width: 100%;
 }
 
+.sidebar  .MuiListItemIcon-root {
+  min-width: 40px;
+}
 @media screen and (max-width: 1200px) {
   .sidebar .MuiListItemIcon-root {
     padding-left: 0;
