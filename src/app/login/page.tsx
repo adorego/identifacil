@@ -1,35 +1,21 @@
 'use client'
 
-import {
-    Avatar,
-    Box,
-    Button,
-    Checkbox,
-    Container,
-    CssBaseline,
-    FormControlLabel,
-    Grid,
-    Link,
-    Paper,
-    TextField,
-    Typography
-} from '@mui/material';
+import {Box, Button, CssBaseline, Grid, Link, Paper, TextField, Typography} from '@mui/material';
 
-import {redirect} from 'next/navigation';
 import splash from '../../common/images/logo-sippy.png';
 import styles from './layout.module.css'
 import {useRouter} from 'next/navigation';
+import AlternateLayout from '../layouts/AlternateLayout';
 
 export default function Login() {
     const router = useRouter();
 
     const onAceptarClick = () => {
-        console.log("navigate");
         router.push('/inicio');
     };
 
 
-    function Copyright(props: any) {
+    /*function Copyright(props: any) {
         return (
             <Typography variant="body2" color="text.secondary" align="center" {...props}>
                 {'Copyright © '}
@@ -40,10 +26,10 @@ export default function Login() {
                 {'.'}
             </Typography>
         );
-    }
+    }*/
 
     return (
-        <>
+        <AlternateLayout>
             <Grid container component="main" sx={{height: '100vh'}}>
                 <CssBaseline/>
                 <Grid
@@ -62,13 +48,13 @@ export default function Login() {
                 <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square
                       className={styles.gridLogin}
                       sx={{
-                          borderLeft:'1px solid #e3f9e8',
+                          borderLeft: '1px solid #e3f9e8',
                           boxShadow: 'none',
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: 'center',
 
-                }}>
+                      }}>
                     <Box
                         sx={{
                             my: 8,
@@ -88,7 +74,7 @@ export default function Login() {
                         {/*<Typography component="h1" variant="h5">
                             Iniciar Sesion
                         </Typography>*/}
-                        <Box component="form" noValidate  sx={{mt: 1}}>
+                        <Box component="form" noValidate sx={{mt: 1}}>
                             <TextField
                                 margin="normal"
                                 required
@@ -124,7 +110,7 @@ export default function Login() {
                                 Iniciar sesión
                             </Button>
                             <Grid container textAlign={'center'}>
-                                <Grid item xs >
+                                <Grid item xs>
                                     <Link href="#" variant="body2">
                                         ¿Olvidaste tu contraseña?
                                     </Link>
@@ -165,7 +151,7 @@ export default function Login() {
                     </Grid>
                 </Grid>
             </Container>*/}
-        </>
+        </AlternateLayout>
 
     )
 }
