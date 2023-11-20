@@ -174,7 +174,7 @@ const CuestionarioRegistro = () =>{
                     </Typography>
                 </AccordionDetails>
             </Accordion>*/}
-            <Grid container spacing={2} mt={2}>
+            {/* <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <Button variant='contained' onClick={(event) => handleSubmitCuestionario(event, 'continuar')} sx={{marginRight: '20px',}}>
                         Continuar
@@ -184,7 +184,7 @@ const CuestionarioRegistro = () =>{
                         Volver atras
                     </Button>
                 </Grid>
-            </Grid>
+            </Grid> */}
         </Box>
     </div>
   )

@@ -7,6 +7,11 @@ const nextConfig = {
             transform: "@mui/icons-material/{{member}}",
         },
     },*/
+    webpack: (config) => {
+          config.watchOptions.poll = 300;
+          return config;
+        },
+    
     
 }
 

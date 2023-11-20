@@ -24,7 +24,7 @@ export default function Login() {
     const router = useRouter();
 
     const onAceptarClick = () => {
-        console.log("navigate");
+        // console.log("navigate");
         router.push('/inicio');
     };
 

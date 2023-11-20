@@ -1,9 +1,10 @@
 'use client'
 
-import { Box, Button, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField } from "@mui/material";
+import { Box, Button, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FC, ReactElement, Reducer, Suspense, useReducer, useState } from "react";
 
 import {Storage} from '@mui/icons-material';
+import styles from "./IdentificacionForm.module.css";
 
 //Definición de tipos necesarios
 
@@ -79,7 +80,9 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
   const [formulario, dispatch] = useReducer<Reducer<IdentificacionForm,IReducer>>(formularioReducer, InitialStateFormulario )
   
   const onConsultarRegistroCivil = async () =>{
-    const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/consultaci/';
+    setError({error:false, msg:""});
+    // const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/consultaci/';
+    const url = "http://localhost:4003/api/consultaci/"
     // console.log(url);
     try{
       const headers = new Headers();
@@ -107,6 +110,7 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
 
     }catch(error){
       console.log(error);
+      setError({error:true, msg:'Hubo un error en la consulta de la cedula'})
     }
     
     
@@ -119,16 +123,20 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
 
   return(
         <Box sx={{padding:"10px"}}>
-          {/* <FormLabel id="nacionalidad">Es Paraguayo ?</FormLabel>
+          <FormLabel id="nacionalidad">Es Paraguayo ?</FormLabel>
           <RadioGroup row defaultValue="SI" name="nacionalidad-opciones">
             <FormControlLabel value="SI" control={<Radio />} label="SI" />
             <FormControlLabel value="NO" control={<Radio />} label="NO" />
-          </RadioGroup> */}
+          </RadioGroup>
         
           <Grid container spacing={2}>
             <Grid item xs={6} >
-              <TextField autoComplete="off" id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
+              {!error.error ?
+              <TextField autoComplete="off"  id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
+              :
+              <TextField autoComplete="off" error helperText={error.msg}  id="cedula" value={cedula} onChange={onCedulaChange} fullWidth label="Ingrese cedula" variant="outlined" required />
               
+              }
               
             </Grid>
             <Grid item xs={2} >

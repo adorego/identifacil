@@ -65,9 +65,9 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
 
   const conectar_con_webcam = () =>{
       try{
-        console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
+        // console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
         if(navigator && navigator.mediaDevices){
-          console.log("Entro en mediaDevice")
+          // console.log("Entro en mediaDevice")
           navigator.mediaDevices.getUserMedia({video:true})
           .then(function(stream){
             if(videoElementRef.current != null){
