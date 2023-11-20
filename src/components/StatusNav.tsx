@@ -28,6 +28,7 @@ export default function StatusNav() {
           return (
               <Link
                   className={styles.link}
+                  textTransform='capitalize'
                   key={index}
                   underline="hover"
                   href={getPath(index)}

@@ -1,7 +1,8 @@
-import './globals.css'
+import React, { useState } from 'react';
 
-import {Inter} from 'next/font/google'
-import React from "react";
+
+import './globals.css';
+import {Inter} from 'next/font/google';
 import ThemeRegistry from "../../theme/ThemeRegistry";
 import {GlobalContextProvider} from "./Context/store";
 import {Box, Grid, Stack} from "@mui/material";
@@ -20,6 +21,8 @@ export const metadata = {
 export default function RootLayout({children,}: {
   children: React.ReactNode
 }) {
+
+
   return (
       <ThemeRegistry>
           <html lang="en">
