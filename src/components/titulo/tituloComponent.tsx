@@ -9,7 +9,7 @@ export default function TituloComponent({titulo='Titulo'}){
                alignItems="center">
             <Box>
                 <h2>{titulo}</h2>
-                <Breadcrumbs aria-label="breadcrumb">
+                {/*<Breadcrumbs aria-label="breadcrumb">
                     <Link underline="hover" color="inherit" href="/">
                         Inicio
                     </Link>
@@ -17,7 +17,7 @@ export default function TituloComponent({titulo='Titulo'}){
                         Movimientos
                     </Link>
                     <Typography color="text.primary">{titulo}</Typography>
-                </Breadcrumbs>
+                </Breadcrumbs>*/}
             </Box>
             <Box>
                 

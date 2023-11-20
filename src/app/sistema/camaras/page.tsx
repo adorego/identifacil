@@ -9,11 +9,11 @@ export default function Page(){
 
     return(
         <Box>
-            <TituloComponent titulo='Camaras'/>
+            {/*<TituloComponent titulo='Camaras'/>*/}
             <Box mt={4}>
                 <CustomTable
                     options={{
-                        /*title: 'Lista de camaras',*/
+                        title: 'Camaras',
                         pagination:true,
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/camaras/crear'

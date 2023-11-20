@@ -95,23 +95,27 @@ function CustomTable({
 
     const slicedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+    const stackStyle = {
+        padding: (options.title || options.newRecord ) ? '20px' : '0px',
+        // Aquí puedes agregar más estilos si es necesario
+    };
+
     return (
         <Box>
 
             <TableContainer component={Paper}>
 
-                    <Stack direction='row'
+                <Stack direction='row'
                            justifyContent="space-between"
                            alignItems="center"
                            spacing={2}
-                           /*sx={{
-                               margin: '20px 10px',
-                           }}*/
+                           sx={stackStyle}
+
                     >
                         <Box>
                             {options.title ?
                                 (
-                                    <Typography variant='h6' >
+                                    <Typography variant='h5' display='block'>
                                         {options.title}
                                     </Typography>
                                 )

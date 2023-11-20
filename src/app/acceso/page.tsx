@@ -18,7 +18,7 @@ import {
 export default function Page() {
 
     return (
-        <Box>
+        <Box mt={4}>
             <Paper elevation={1} sx={{p: '20px'}}>
                 <Typography variant='h5' sx={{
                     fontWeight: '700',

@@ -19,7 +19,7 @@ nav.MuiList-root.MuiList-padding {
   color: #637381;
 }
 .MuiListItemIcon-root {
-  min-width: 40px;
+  min-width: 40px !important;
 }
 
 .container-main{

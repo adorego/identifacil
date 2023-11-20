@@ -28,7 +28,7 @@ const GlobalContext = createContext<ContextProps>({
 export const GlobalContextProvider = ({children}) =>{
     const[userId, setUserId] = useState('');
     const[data,setData] = useState<[], DataType[]>([])
-    const[sidebarStatus,setSidebarStatus] = useState(false)
+    const[sidebarStatus,setSidebarStatus] = useState(true)
 
     /* Variables que van a estar accesible de forma global */
     return(

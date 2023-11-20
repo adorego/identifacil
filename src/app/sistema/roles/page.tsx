@@ -9,11 +9,11 @@ export default function Page(){
 
     return(
         <Box>
-            <TituloComponent titulo='Roles'/>
+            {/*<TituloComponent titulo='Roles'/>*/}
             <Box mt={4}>
                 <CustomTable
                     options={{
-                        /*title: 'Lista de roles',*/
+                        title: 'Roles',
                         pagination:true,
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/roles/crear'

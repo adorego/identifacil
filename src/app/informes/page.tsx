@@ -16,7 +16,7 @@ export default function Page() {
     return (
         <Box >
             <Grid container>
-                <Grid item xs={12} mx={4}>
+                <Grid item xs={12} >
                     <h1>Informes</h1>
                     <Grid container spacing={2}>
 

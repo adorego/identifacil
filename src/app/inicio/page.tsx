@@ -1,5 +1,5 @@
-'use client'
-
+'use client';
+// TODO: ver la forma de remover el use client para que no afecte la estructura del grid del home que se desmoloda al quitar la propiedad
 import {Suspense, useEffect, useState} from "react"
 
 import Loading from "./loading"
@@ -13,18 +13,15 @@ export default function Main() {
 
     return (
         <Suspense fallback={<Loading/>}>
-            <Grid container>
-                <Grid item xs={12} mx={4}>
+            <Grid container spacing={2}>
+                <Grid item xs={12}>
                     <h1>Panel</h1>
-                    <Grid container spacing={2}>
-
-                        <CardBlock name={'Ingresos'}  image={ingresosIMG.src} link='/inicio/registro/ppl'/>
-                        <CardBlock name={'Movimientos'} image={trasladosIMG.src} link='/movimientos'/>
-                        <CardBlock name={'Informes'} image={penalesIMG.src} link='/informes'/>
-
-                    </Grid>
 
                 </Grid>
+                <CardBlock name={'Ingresos'}  image={ingresosIMG.src} link='/inicio/registro/ppl'/>
+                <CardBlock name={'Movimientos'} image={trasladosIMG.src} link='/movimientos'/>
+                <CardBlock name={'Informes'} image={penalesIMG.src} link='/informes'/>
+
             </Grid>
         </Suspense>
     )
