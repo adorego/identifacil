@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
 import {useGlobalContext} from "../app/Context/store";
 import {useEffect} from "react";
+import {Next13ProgressBar} from "next13-progressbar";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -196,6 +197,7 @@ export default function TopNav() {
 
     return (
         <Box sx={{flexGrow: 1}} color='red'>
+
             <AppBar position="static"
                     sx={{
                         backgroundColor: '#FFF', color: '#000',

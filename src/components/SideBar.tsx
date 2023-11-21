@@ -5,20 +5,12 @@ import styles from "./sidebar.module.css";
 import SidebarItems from "./sidebar/sidebarItems";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import {
-    AccountBalance,
-    AirportShuttle,
-    BarChart, CameraIndoor,
-    ExpandLess,
-    ExpandMore,
-    Fingerprint, Hail, Key, ManageAccounts,
-    Mood,
-    People,
-    PermIdentity, Settings
-} from "@mui/icons-material";
+import {AccountBalance, AirportShuttle, BarChart, CameraIndoor, ExpandLess, ExpandMore, Fingerprint, Hail, Key, ManageAccounts, Mood, 
+    People, PermIdentity, Settings } from "@mui/icons-material";
 import * as React from "react";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
+import {useGlobalContext} from "../app/Context/store";
 
 
 
@@ -27,6 +19,7 @@ import {usePathname, useRouter} from "next/navigation";
 const titulo = "IDENTIFACIL";
 
 export default function SideBar() {
+
 
 
     const [openMenus, setOpenMenus] = useState({
@@ -48,14 +41,15 @@ export default function SideBar() {
         router.push(url);
     }
 
-    const [toggleSidebar, setToggleSidebar] =  useState(false);
+
+    const { sidebarStatus, setSidebarStatus} = useGlobalContext();
 
     const handleSidebar = () =>{
-        setToggleSidebar(!toggleSidebar);
+        setSidebarStatus(!sidebarStatus);
     }
 
     return (
-        <nav className={styles.sidebar}>
+        <nav className={`${styles.sidebar} ${sidebarStatus? 'sidebarOpen' : 'sidebarClosed'}`}>
 
             <Box sx={{bgcolor: "#FFFFFF", textAlign: 'center', minHeight: '100vh'}}>
 
@@ -99,7 +93,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <AirportShuttle />
                             </ListItemIcon>
-                            <ListItemText primary={'Panel'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Panel'} hidden={sidebarStatus}/>
                         </ListItemButton>
                         {/*</ListItem>*/}
 
@@ -109,7 +103,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Fingerprint/>
                             </ListItemIcon>
-                            <ListItemText primary={'Registro de Accesos'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Registro de Accesos'} hidden={sidebarStatus}/>
                             {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
                         </ListItemButton>
 
@@ -120,24 +114,26 @@ export default function SideBar() {
 
                                         <PermIdentity/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Ingreso PPL" hidden={toggleSidebar}/>
+                                    <ListItemText primary="Ingreso PPL" hidden={sidebarStatus}/>
                                 </ListItemButton>
 
                                 <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
                                     <ListItemIcon>
                                         <People/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Acceso al Penal" hidden={toggleSidebar}/>
+                                    <ListItemText primary="Acceso al Penal" hidden={sidebarStatus}/>
                                 </ListItemButton>
                             </List>
                         </Collapse>
 
 
-                        <ListItemButton onClick={(e) => handleNavigation('/ppl')}>
+                        <ListItemButton
+                            className={pathname === '/ppl' ? 'active' : ''}
+                            onClick={(e) => handleNavigation('/ppl')}>
                             <ListItemIcon>
                                 <Mood/>
                             </ListItemIcon>
-                            <ListItemText primary={'Gestión PPLs'}  hidden={toggleSidebar}/>
+                            <ListItemText primary={'Gestión PPLs'}  hidden={sidebarStatus}/>
                         </ListItemButton>
 
                         <ListItemButton
@@ -146,7 +142,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <AirportShuttle/>
                             </ListItemIcon>
-                            <ListItemText primary={'Movimientos'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Movimientos'} hidden={sidebarStatus}/>
                         </ListItemButton>
 
                         {/* Menu de Reportes */}
@@ -157,7 +153,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <BarChart  />
                             </ListItemIcon>
-                            <ListItemText primary={'Reportes'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Reportes'} hidden={sidebarStatus}/>
                         </ListItemButton>
 
 
@@ -167,7 +163,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Hail/>
                             </ListItemIcon>
-                            <ListItemText primary={'Gestión de Visitas'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Gestión de Visitas'} hidden={sidebarStatus}/>
 
                         </ListItemButton>
 
@@ -177,14 +173,14 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <AccountBalance/>
                             </ListItemIcon>
-                            <ListItemText primary={'Defensoría'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Defensoría'} hidden={sidebarStatus}/>
                         </ListItemButton>
 
                         <ListItemButton disabled>
                             <ListItemIcon>
                                 <Key/>
                             </ListItemIcon>
-                            <ListItemText primary={'Autorizaciones'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Autorizaciones'} hidden={sidebarStatus}/>
                         </ListItemButton>
 
 
@@ -196,25 +192,29 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Settings/>
                             </ListItemIcon>
-                            <ListItemText primary={'Sistema'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Sistema'} hidden={sidebarStatus}/>
                             {openMenus.sistema ? <ExpandLess/> : <ExpandMore/>}
                         </ListItemButton>
 
                         <Collapse in={openMenus.sistema} timeout="auto" unmountOnExit>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
 
-                                <ListItemButton onClick={(e) => handleNavigation('/sistema/camaras')}>
+                                <ListItemButton
+                                    className={pathname === '/sistema/camaras' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/camaras')}>
                                     <ListItemIcon>
                                         <CameraIndoor/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Camaras" hidden={toggleSidebar}/>
+                                    <ListItemText primary="Camaras" hidden={sidebarStatus}/>
                                 </ListItemButton>
 
-                                <ListItemButton onClick={(e) => handleNavigation('/sistema/roles')}>
+                                <ListItemButton
+                                    className={pathname === '/sistema/roles' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/roles')}>
                                     <ListItemIcon>
                                         <ManageAccounts/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Roles" hidden={toggleSidebar}/>
+                                    <ListItemText primary="Roles" hidden={sidebarStatus}/>
                                 </ListItemButton>
                             </List>
                         </Collapse>
@@ -222,7 +222,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <ManageAccounts/>
                             </ListItemIcon>
-                            <ListItemText primary={'Gestión de Funcionarios'} hidden={toggleSidebar}/>
+                            <ListItemText primary={'Gestión de Funcionarios'} hidden={sidebarStatus}/>
                         </ListItemButton>
 
                     </List>

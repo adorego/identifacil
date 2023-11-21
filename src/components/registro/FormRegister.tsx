@@ -1,22 +1,7 @@
 'use client'
 
-import {
-    Box,
-    Button,
-    Divider,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Grid,
-    Radio,
-    RadioGroup,
-    Snackbar,
-    Step,
-    StepLabel,
-    Stepper,
-    TextField,
-    Typography
-} from "@mui/material";
+import {Box, Button, Divider, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Snackbar, Step,
+    StepLabel, Stepper, TextField, Typography } from "@mui/material";
 import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";

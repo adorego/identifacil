@@ -2,11 +2,14 @@
 
 import { Accordion, AccordionDetails, AccordionSummary, Box, Breadcrumbs, Button, Grid, Link, Step, StepLabel, Stepper, Typography } from "@mui/material"
 
-import BloqueEducacion from '@/app/cuestionario/components/BloqueEducacion';
-import BloqueFamiliares from '@/app/cuestionario/components/BloqueFamiliares';
-import BloqueJudicial from '@/app/cuestionario/components/BloqueJudicial';
-import BloqueSalud from '@/app/cuestionario/components/BloqueSalud';
-import BloqueSeguridad from '@/app/cuestionario/components/BloqueSeguridad';
+import BloqueEducacion from '@/app/(sistema)/cuestionario/components/BloqueEducacion';
+import BloqueFamiliares from '@/app/(sistema)/cuestionario/components/BloqueFamiliares';
+import BloqueJudicial from '@/app/(sistema)/cuestionario/components/BloqueJudicial';
+import BloqueSalud from '@/app/(sistema)/cuestionario/components/BloqueSalud';
+import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSeguridad';
+
+
+
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useState } from "react";
 
