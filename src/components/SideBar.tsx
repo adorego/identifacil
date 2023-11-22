@@ -1,26 +1,32 @@
 'use client';
 
-import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
-import styles from "./sidebar.module.css";
-import SidebarItems from "./sidebar/sidebarItems";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
+import * as React from "react";
+
 import {
     AccountBalance,
     AirportShuttle,
-    BarChart, CameraIndoor,
+    BarChart,
+    CameraIndoor,
     ExpandLess,
     ExpandMore,
-    Fingerprint, Hail, Key, ManageAccounts,
+    FaceOutlined,
+    Fingerprint,
+    Hail,
+    Key,
+    ManageAccounts,
     Mood,
     People,
-    PermIdentity, Settings
+    PermIdentity,
+    Settings
 } from "@mui/icons-material";
-import * as React from "react";
-import {useState} from "react";
+import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
 import {usePathname, useRouter} from "next/navigation";
 
-
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import SidebarItems from "./sidebar/sidebarItems";
+import styles from "./sidebar.module.css";
+import {useState} from "react";
 
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 
@@ -128,6 +134,12 @@ export default function SideBar() {
                                         <People/>
                                     </ListItemIcon>
                                     <ListItemText primary="Acceso al Penal" hidden={toggleSidebar}/>
+                                </ListItemButton>
+                                <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
+                                    <ListItemIcon>
+                                        <FaceOutlined/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Identificación" hidden={toggleSidebar}/>
                                 </ListItemButton>
                             </List>
                         </Collapse>

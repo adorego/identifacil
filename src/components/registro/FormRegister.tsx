@@ -83,22 +83,19 @@ export default function FormRegister(){
         
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
-        const url = "http://localhost:4001/api/registro/";
-        if(process.env.NEXT_PUBLIC_SERVER_URL){
-              // const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/registro/'
-              
-              const result = await fetch(url,{
-                method:'POST',
-                body:formData
-              })
-              const data = await result.json();
-              if(!result.ok){
-                console.log('Ocurrio un error', data);
-              }
+        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/registro/`;
+        const result = await fetch(url,{
+          method:'POST',
+          body:formData
+        })
+        const data = await result.json();
+        if(!result.ok){
+          console.log('Ocurrio un error', data);
+        }
         
         }
-      }
     }
+    
 
     const mostrarRegistroFinal = (mostrar: boolean) => {
         // console.log("Se presiono Capturar", foto.current, identidad.current);
@@ -155,6 +152,7 @@ export default function FormRegister(){
             {activeStep === 1 && <FaceRecognition  
             agregar_reconocimiento={agregar_reconocimiento}
             notificacion={notificacionRegistro}
+            numero_de_capturas={3}
             />}
 
             {activeStep === 2 && <CuestionarioRegistro  /> }

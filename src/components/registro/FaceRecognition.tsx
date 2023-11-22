@@ -20,6 +20,7 @@ interface ErrorInt {
 export interface FaceRecognitionProps{
   agregar_reconocimiento:({}:IReconocimiento) => void;
   notificacion:string;
+  numero_de_capturas:number;
 }
 
 interface IRegisterProgress{
@@ -149,6 +150,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
                             videoElement={videoElementRef.current}
                             capturar_foto={capturarFoto}
                             reset_capturar_foto={reset_capturar_foto}
+                            numero_de_capturas={props.numero_de_capturas}
                             agregar_reconocimiento={props.agregar_reconocimiento}/>
                         {/* {capturarFoto ? 
                         <LinearProgressionWithLabel indicador={progress.indicador} estado={progress.estado} />
