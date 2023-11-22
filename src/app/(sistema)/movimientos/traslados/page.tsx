@@ -22,6 +22,7 @@ import QueryBlock from "../../../../components/blocks/QueryBlock";
 import {useRouter} from 'next/navigation';
 import SnackbarComponent from "../../../../components/snackback/SnackBarComponent";
 import { SnackbarContext } from '../../../../components/snackback/SnackbarContext';
+import {useGlobalContext} from "@/app/Context/store";
 
 type PPLType = {
     nombreApellido: string;
@@ -133,6 +134,7 @@ export default function Traslados() {
         }
     };
 
+    const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     const postTraslado = async () => {
@@ -152,7 +154,7 @@ export default function Traslados() {
             setLoading(false);
 
             if (response.ok) {
-
+                openSnackbar('It works');
                 router.push('/movimientos');
             }
             if (!response.ok) {
@@ -167,10 +169,13 @@ export default function Traslados() {
             console.error('Error:', error);
         }
     };
+
     // Manejador de envio
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         postTraslado();
+        // console.log(JSON.stringify(formData))
     };
 
 
@@ -206,7 +211,7 @@ export default function Traslados() {
     return (
         <Box>
             <h2>Movimientos</h2>
-            <Breadcrumbs aria-label="breadcrumb">
+            {/*<Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">
                     Inicio
                 </Link>
@@ -214,7 +219,7 @@ export default function Traslados() {
                     Movimientos
                 </Link>
                 <Typography color="text.primary">Traslados</Typography>
-            </Breadcrumbs>
+            </Breadcrumbs>*/}
 
             <QueryBlock/>
             <Card sx={{marginTop:"20px"}}>

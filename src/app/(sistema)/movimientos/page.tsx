@@ -53,12 +53,12 @@ export default function Ppl() {
     return (
         <div>
             <h2>Movimientos</h2>
-            <Breadcrumbs aria-label="breadcrumb">
+            {/*<Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">
                     Inicio
                 </Link>
                 <Typography color="text.primary">Movimientos</Typography>
-            </Breadcrumbs>
+            </Breadcrumbs>*/}
 
             <QueryBlock/>
 

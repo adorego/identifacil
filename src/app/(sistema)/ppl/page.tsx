@@ -18,7 +18,7 @@ export default function Page(){
         <div>
             <h2>Gestion de PPL</h2>
 
-            <Breadcrumbs aria-label="breadcrumb">
+            {/*<Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">
                     Inicio
                 </Link>
@@ -30,11 +30,11 @@ export default function Page(){
                     Gestion de PPL
                 </Link>
                 <Typography color="text.primary">Lista de PPL</Typography>
-            </Breadcrumbs>
+            </Breadcrumbs>*/}
 
 
             <Grid container>
-                <Grid item sm={12} mt={4}>
+                <Grid item sm={12}>
                     <DataTableComponent />
                 </Grid>
             </Grid>

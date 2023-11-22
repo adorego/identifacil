@@ -3,11 +3,12 @@
 import * as React from 'react';
 import TituloComponent from "../../../../../components/titulo/tituloComponent";
 import {Box, Button, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useGlobalContext} from "../../../../Context/store";
 
 export default function Crear(){
-    const {userId, setUserId, data, setData} = useGlobalContext();
+    const [stateForm, setStateForm] = useState();
+    const {userId, setUserId, data, setData, openSnackbar} = useGlobalContext();
 
     useEffect(()=>{
         setUserId('2');
@@ -18,6 +19,23 @@ export default function Crear(){
         ])
     },[])
 
+    const handleChange = (e) =>{
+        const {name, value} = e.target;
+
+        setStateForm(prev =>(
+            {
+                ...stateForm,
+            [name]: value,
+            }
+        ))
+    }
+    const handleClick = () =>{
+        openSnackbar('hola');
+    }
+
+    const handleSubmit = () =>{
+        console.log(JSON.stringify(stateForm))
+    }
     return(
         <>
             <TituloComponent titulo='Nuevo rol' />
@@ -41,14 +59,18 @@ export default function Crear(){
                         <Grid item sm={6}>
                             <TextField
                                 fullWidth
-                                name="outlined-basic"
+                                onChange={handleChange}
+                                name="establecimiento"
+                                id="establecimiento"
                                 label="Establecimiento penitenciario"
                                 variant="outlined" />
                         </Grid>
                         <Grid item sm={6}>
                             <TextField
                                 fullWidth
-                                name="outlined-basic2"
+                                onChange={handleChange}
+                                name="numeroIp"
+                                id="numeroIp"
                                 label="Ip de la rol"
                                 variant="outlined" />
                         </Grid>
@@ -56,7 +78,7 @@ export default function Crear(){
                     <Grid item sm={12} mt={4}>
                         <Stack direction='row' spacing={2}>
 
-                            <Button variant='contained'>
+                            <Button variant='contained' onClick={handleSubmit}>
                                 Guardar
                             </Button>
                             <Button variant='outlined'>

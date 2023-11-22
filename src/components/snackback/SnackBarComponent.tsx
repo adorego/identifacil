@@ -1,9 +1,12 @@
+'use client';
+
 import React, { useContext } from 'react';
 import { Snackbar } from '@mui/material';
-import { SnackbarContext } from './SnackbarContext';
+import { useGlobalContext} from "@/app/Context/store";
+
 
 const SnackbarComponent = () => {
-    const { snackbar, closeSnackbar } = useContext(SnackbarContext);
+    const { snackbar, openSnackbar, closeSnackbar} = useGlobalContext();
 
     return (
         <Snackbar

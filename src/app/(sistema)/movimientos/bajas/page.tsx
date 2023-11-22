@@ -60,7 +60,7 @@ export default function Page(){
     // Manejador de envio
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(formData);
+        // console.log(formData);
         console.log(JSON.stringify(formData));
     };
 
@@ -68,7 +68,7 @@ export default function Page(){
     return(
         <Box>
             <h2>Movimientos</h2>
-            <Breadcrumbs aria-label="breadcrumb">
+            {/*<Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">
                     Inicio
                 </Link>
@@ -76,7 +76,7 @@ export default function Page(){
                     Movimientos
                 </Link>
                 <Typography color="text.primary">Bajas</Typography>
-            </Breadcrumbs>
+            </Breadcrumbs>*/}
 
             <QueryBlock />
 

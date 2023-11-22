@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import '@/app/globals.css';
 import {Inter} from 'next/font/google';
 import ThemeRegistry from "@/../theme/ThemeRegistry";
-import {GlobalContextProvider} from "@/app/Context/store";
+import {GlobalContextProvider, useGlobalContext} from "@/app/Context/store";
 import AlternateLayout from "@/app/(sistema)/layouts/AlternateLayout";
+import SnackbarComponent from "@/components/snackback/SnackBarComponent";
 const inter = Inter({subsets: ['latin']});
 
 export const metadata = {
@@ -19,12 +20,15 @@ export default function RootLayout({children,}: {
 }) {
 
 
+
   return (
       <ThemeRegistry>
           <html lang="en">
             <body className={inter.className} suppressHydrationWarning={true}>
 
                 <GlobalContextProvider>
+                    <SnackbarComponent />
+
                     <AlternateLayout>
                         {children}
                     </AlternateLayout>

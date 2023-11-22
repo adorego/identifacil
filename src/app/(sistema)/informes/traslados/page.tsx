@@ -20,7 +20,7 @@ export default  function Page(){
         <>
             <Box>
                 <h2>Informe de Traslados</h2>
-                <Breadcrumbs aria-label="breadcrumb" mb={2}>
+                {/*<Breadcrumbs aria-label="breadcrumb" mb={2}>
                     <Link underline="hover" color="inherit" href="/">
                         Inicio
                     </Link>
@@ -28,7 +28,7 @@ export default  function Page(){
                         Informes
                     </Link>
                     <Typography color="text.primary">Ingresos</Typography>
-                </Breadcrumbs>
+                </Breadcrumbs>*/}
                 <PenitenciariaFilter/>
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>
