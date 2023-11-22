@@ -1,18 +1,33 @@
 'use client';
 
-import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
-import styles from "./sidebar.module.css";
-import SidebarItems from "./sidebar/sidebarItems";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import {AccountBalance, AirportShuttle, BarChart, CameraIndoor, ExpandLess, ExpandMore, Fingerprint, Hail, Key, ManageAccounts, Mood, 
-    People, PermIdentity, Settings } from "@mui/icons-material";
 import * as React from "react";
+
+import {
+    AccountBalance,
+    AirportShuttle,
+    BarChart,
+    CameraIndoor,
+    ExpandLess,
+    ExpandMore,
+    FaceOutlined,
+    Fingerprint,
+    Hail,
+    Key,
+    ManageAccounts,
+    Mood,
+    People,
+    PermIdentity,
+    Settings
+} from "@mui/icons-material";
+import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
 import {useContext, useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
+
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import SidebarItems from "./sidebar/sidebarItems";
+import styles from "./sidebar.module.css";
 import {useGlobalContext} from "../app/Context/store";
-
-
 
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 
@@ -122,6 +137,12 @@ export default function SideBar() {
                                         <People/>
                                     </ListItemIcon>
                                     <ListItemText primary="Acceso al Penal" hidden={sidebarStatus}/>
+                                </ListItemButton>
+                                <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
+                                    <ListItemIcon>
+                                        <FaceOutlined/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Identificación" hidden={sidebarStatus}/>
                                 </ListItemButton>
                             </List>
                         </Collapse>

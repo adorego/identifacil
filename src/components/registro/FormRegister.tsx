@@ -39,52 +39,51 @@ export default function FormRegister(){
     
     const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
       // console.log("Entro en agregar_reconocimiento");
-      setNotificacionRegistro('Registrando PPL...');
+      // setNotificacionRegistro('Registrando PPL...');
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
-        const datos = {
-          tipo_identificacion:'cedula',
-          numero_identificacion:identidad.current?.cedula_identidad,
-          nombres:identidad.current?.nombres,
-          apellidos:identidad.current?.apellidos,
-          genero:identidad.current?.codigo_genero,
-          foto1:reconocimientos.current[0].foto,
-          descriptor1:reconocimientos.current[0].descriptor,
-          foto2:reconocimientos.current[1].foto,
-          descriptor2: reconocimientos.current[1].descriptor,
-          foto3: reconocimientos.current[2].foto,
-          descriptor3: reconocimientos.current[2].descriptor
-        }
-        contadorReconocimiento.current = 0;
-        console.log("Datos a enviar:", datos);
-        if(process.env.NEXT_PUBLIC_SERVER_URL){
-          const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/registro/'
-          const result = await fetch(url,{
-            method:'POST',
-            headers:{
-              Accept: 'application.json',
-              'Content-Type': 'application/json'
-            },
-            body:JSON.stringify(datos)
-          })
-          if(!result.ok){
-            console.log('Ocurrio un error');
-          }
-          const data:RegistroResponse = await result.json();
-          console.log(data);
-          setNotificacionRegistro("PPL Registrado, avance al cuestionario final");
-          if(data.success){
-            setNotificacionRegistro("PPL Registrado, avance al cuestionario final");
-          }
-          
-          
-        }
+        await generar_request_enviar();
       }
     }
 
+    const generar_request_enviar = async () =>{
+      if(identidad.current != null && identidad.current.cedula_identidad){
+        const formData = new FormData();
+        formData.append('tipo_identificacion','1');
+        formData.append('numero_identificacion', identidad.current.cedula_identidad);
+        formData.append('nombres', identidad.current.nombres);
+        formData.append('apellidos', identidad.current.apellidos);
+        formData.append('genero', identidad.current.codigo_genero);
+        formData.append('fechaDeNacimiento', identidad.current.fecha_nacimiento);
+        formData.append('foto1', reconocimientos.current[0].foto);
+        formData.append('descriptorFacial1', reconocimientos.current[0].descriptor.toString());
+        formData.append('foto2', reconocimientos.current[1].foto);
+        formData.append('descriptorFacial2', reconocimientos.current[1].descriptor.toString());
+        formData.append('foto3', reconocimientos.current[2].foto);
+        formData.append('descriptorFacial3', reconocimientos.current[2].descriptor.toString());
+        // for(const entry of formData.entries()){
+        //   console.log(entry);
+        // }
+        
+        contadorReconocimiento.current = 0;
+        //Sin Kubernetes
+        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/registro/`;
+        const result = await fetch(url,{
+          method:'POST',
+          body:formData
+        })
+        const data = await result.json();
+        if(!result.ok){
+          console.log('Ocurrio un error', data);
+        }
+        
+        }
+    }
+    
+
     const mostrarRegistroFinal = (mostrar: boolean) => {
-        console.log("Se presiono Capturar", foto.current, identidad.current);
+        // console.log("Se presiono Capturar", foto.current, identidad.current);
         setDesplegarRegistroFinal(mostrar);
     }
 
@@ -138,6 +137,7 @@ export default function FormRegister(){
             {activeStep === 1 && <FaceRecognition  
             agregar_reconocimiento={agregar_reconocimiento}
             notificacion={notificacionRegistro}
+            numero_de_capturas={3}
             />}
 
             {activeStep === 2 && <CuestionarioRegistro  /> }

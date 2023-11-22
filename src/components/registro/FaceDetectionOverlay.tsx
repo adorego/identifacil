@@ -13,12 +13,14 @@ interface FaceDetectionOverlayProps{
   agregar_reconocimiento:({}:IReconocimiento) => void;
   capturar_foto:boolean;
   reset_capturar_foto:() => void;
+  numero_de_capturas:number;
   
 }
 
 interface IDetection{
   box:faceapi.Box;
   canvas:HTMLCanvasElement;
+  
 }
 const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> = 
 ({
@@ -27,7 +29,8 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   iniciar_deteccion,
   agregar_reconocimiento, 
   capturar_foto, 
-  reset_capturar_foto
+  reset_capturar_foto,
+  numero_de_capturas
 }) =>{
   const intervalId = useRef<any>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -53,10 +56,15 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   useEffect(
     () =>{
       if(capturar_foto && currentDetectionRef.current){
-        capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas,"foto1");
-        setTimeout(capturar_rostro_y_enviar, 200, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto2");
-        setTimeout(capturar_rostro_y_enviar,400, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto3");
-        reset_capturar_foto();
+        if(numero_de_capturas === 3){
+          capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas,"foto1");
+          setTimeout(capturar_rostro_y_enviar, 200, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto2");
+          setTimeout(capturar_rostro_y_enviar,400, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto3");
+          reset_capturar_foto();
+        }else{
+          capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas,"foto1");
+          reset_capturar_foto();
+        }
       }
     },[capturar_foto]
   )
@@ -65,7 +73,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   const detectFaces = async () =>{
     try{
         if(videoElement){
-          const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions());
+          const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
           if(detectionResult){
             if(overlayRef.current){
               const canvas = overlayRef.current;
@@ -75,7 +83,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
               const context = canvas.getContext('2d');
               if(context){
                 context.clearRect(0,0,canvas.width, canvas.height);
-                const {box} = detectionForSize;
+                const {box} = detectionForSize.detection;
                 faceapi.draw.drawDetections(canvas, detectionForSize);
                 currentDetectionRef.current = {
                   box:box,
@@ -107,9 +115,10 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   
   const capturar_rostro_y_enviar = async (box:faceapi.Box, canvas:HTMLCanvasElement, nombreArchivo:string) =>{
     if(videoElement){
+      const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
       const fotoCanvas = faceapi.createCanvas(videoElement);
       const fotoContext = fotoCanvas.getContext('2d');
-      if(fotoCanvas && fotoContext){
+      if(fotoCanvas && fotoContext && detectionResult){
         const _x = box.x;
         const _y = box.y;
         const _width = box.width;
@@ -121,7 +130,8 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
           async (foto) =>{
               if(foto){
                 const file = new File([foto],nombreArchivo);
-                const descriptor = await faceapi.computeFaceDescriptor(fotoCanvas);
+                const descriptor = detectionResult.descriptor;
+                console.log("descriptor:", descriptor);
                 agregar_reconocimiento({foto:file, descriptor:descriptor})
               } 
           }

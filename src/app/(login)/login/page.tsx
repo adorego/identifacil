@@ -6,7 +6,6 @@ import splash from '../../../common/images/logo-sippy.png';
 import styles from './layout.module.css'
 import {useRouter} from 'next/navigation';
 
-
 export default function Login() {
     const router = useRouter();
 

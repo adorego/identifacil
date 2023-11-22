@@ -1,19 +1,23 @@
 'use client'
 
 import * as React from 'react';
-import CheckIcon from '@mui/icons-material/Check';
+
 import {
-    Box, Button,
+    Box,
+    Button,
     Divider,
     FormControl,
     Grid,
     InputLabel,
     MenuItem,
     Paper,
-    Select, Stack,
+    Select,
+    Stack,
     TextField,
     Typography
 } from "@mui/material";
+
+import CheckIcon from '@mui/icons-material/Check';
 
 export default function Page() {
 
@@ -27,7 +31,7 @@ export default function Page() {
                 </Typography>
                 <Divider sx={{mt: '10px',}}/>
                 <Grid container spacing={2} mt={2}>
-                    <Grid item sm='2' sx={{borderRight: '1px solid lightgray' }}>
+                    <Grid item sm={2} sx={{borderRight: '1px solid lightgray' }}>
                         <Box sx={{
                             bgcolor: 'lightgray',
                             borderRadius: '10px',
@@ -38,7 +42,7 @@ export default function Page() {
 
                         </Box>
                     </Grid>
-                    <Grid item sm='10' sx={{
+                    <Grid item sm={10} sx={{
 
                         background: '#FFF !important',
                     }}>
