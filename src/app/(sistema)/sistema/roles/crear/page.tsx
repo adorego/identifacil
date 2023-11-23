@@ -30,7 +30,7 @@ export default function Crear(){
         ))
     }
     const handleClick = () =>{
-        openSnackbar('hola');
+        openSnackbar("Chofer creado correctamente.", "success");
     }
 
     const handleSubmit = () =>{

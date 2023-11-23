@@ -2,36 +2,21 @@
 
 import * as React from "react";
 
-import {
-    AccountBalance,
-    AirportShuttle,
-    BarChart,
-    CameraIndoor,
-    ExpandLess,
-    ExpandMore,
-    FaceOutlined,
-    Fingerprint,
-    Hail,
-    Key,
-    ManageAccounts,
-    Mood,
-    People,
-    PermIdentity,
-    Settings
-} from "@mui/icons-material";
+import { AccountBalance,  AirportShuttle,  BarChart,  CameraIndoor,  ExpandLess,  ExpandMore,  FaceOutlined,
+    Fingerprint,  Hail,  Key,  ManageAccounts,  Mood,  People,  PermIdentity,  Settings } from "@mui/icons-material";
 import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
-import {useContext, useState} from "react";
+import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
 
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import SidebarItems from "./sidebar/sidebarItems";
 import styles from "./sidebar.module.css";
-import {useGlobalContext} from "../app/Context/store";
+import {useGlobalContext} from "@/app/Context/store";
 
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 
-const titulo = "IDENTIFACIL";
+const titulo : string = "IDENTIFACIL";
 
 export default function SideBar() {
 
@@ -46,11 +31,13 @@ export default function SideBar() {
     const router = useRouter();
     const pathname = usePathname()
 
-    const handleClick = (menu) => {
-        setOpenMenus((prevOpenMenus) => ({
-            ...prevOpenMenus,
-            [menu]: !prevOpenMenus[menu]
-        }));
+    const handleClick = (menu:string) => {
+        setOpenMenus((prevOpenMenus) => {
+            return {
+                ...prevOpenMenus,
+                [menu]: !prevOpenMenus[menu]
+            };
+        });
     };
 
     const handleNavigation = (url: string) => {
@@ -274,22 +261,23 @@ export default function SideBar() {
                                 </ListItemButton>
 
                                 <ListItemButton
-                                    className={pathname === '/sistema/chofer' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/chofer')}>
+                                    className={pathname === '/sistema/personal' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/personal')}>
                                     <ListItemIcon>
                                         <Settings/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Choferes" hidden={sidebarStatus}/>
+                                    <ListItemText primary="Personal" hidden={sidebarStatus}/>
                                 </ListItemButton>
 
-                                {/*<ListItemButton
-                                    className={pathname === '/sistema/roles' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/roles')}>
+                                <ListItemButton
+                                    className={pathname === '/sistema/vehiculo' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/vehiculo')}>
                                     <ListItemIcon>
                                         <Settings/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Roles" hidden={sidebarStatus}/>
-                                </ListItemButton>*/}
+                                    <ListItemText primary="Vehiculo" hidden={sidebarStatus}/>
+                                </ListItemButton>
+
                             </List>
                         </Collapse>
 

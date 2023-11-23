@@ -32,7 +32,8 @@ interface Data {
 interface CustomTableProps {
     data: Data[];
     headers: Header[];
-    targetURL: string;
+    showId: boolean;
+    options: object;
 }
 
 

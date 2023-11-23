@@ -1,46 +1,8 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-
-import {
-    Button,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Grid,
-    InputLabel,
-    OutlinedInput,
-    Radio,
-    RadioGroup,
-    Typography
-} from "@mui/material";
-import {ChangeEvent, useState} from "react";
-
-
-interface MyState{
-    cabezaFamilia: boolean;
-    circuloFamiliar: boolean;
-    familia: object;
-    tieneConcubino: boolean;
-    concubinoDocumento: string;
-    concubinoNombre: string;
-    concubinoApellido: string;
-    tieneHijos: boolean;
-    hijos: object;
-}
-
-const initialState: MyState = {
-    cabezaFamilia: false,
-    circuloFamiliar: false,
-    familia: {},
-    tieneConcubino: false,
-    concubinoDocumento: '',
-    concubinoNombre: '',
-    concubinoApellido: '',
-    tieneHijos: false,
-    hijos: {},
-}
+import { Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, OutlinedInput, Radio, RadioGroup, Typography } from "@mui/material";
+import { ChangeEvent, useState } from "react";
 
 interface Familiar {
     nombre: string;
@@ -55,7 +17,35 @@ interface Hijos {
     lugar: string;
 }
 
-export default function BloqueFamiliares (handleFormSubmit){
+interface MyState {
+    cabezaFamilia: boolean;
+    circuloFamiliar: boolean;
+    familia: Familiar[];
+    tieneConcubino: boolean;
+    concubinoDocumento: string;
+    concubinoNombre: string;
+    concubinoApellido: string;
+    tieneHijos: boolean;
+    hijos: Hijos[];
+}
+
+const initialState: MyState = {
+    cabezaFamilia: false,
+    circuloFamiliar: false,
+    familia: [],
+    tieneConcubino: false,
+    concubinoDocumento: '',
+    concubinoNombre: '',
+    concubinoApellido: '',
+    tieneHijos: false,
+    hijos: [],
+}
+
+interface BloqueFamiliaresProps {
+    onCloseAccordion: () => void;
+}
+
+const BloqueFamiliares: React.FC<BloqueFamiliaresProps> = ({ onCloseAccordion }) =>{
     const [state, setState] = useState<MyState>(initialState);
 
     // Captura cada cambio de estado de los elementos del form y guarda en el state
@@ -81,7 +71,6 @@ export default function BloqueFamiliares (handleFormSubmit){
         })
     }
 
-
     // Estado para poder hacer dinamico el campo familia
     const [familiares, setFamiliares] = useState<Familiar[]>([
         { nombre: '', vinculo: '', sistema: '', reclusion: '' }
@@ -101,36 +90,39 @@ export default function BloqueFamiliares (handleFormSubmit){
         setHijos([...hijos, { nombre: '', edad: 0, lugar: '' }]);
     };
 
-
     // Manejador para Inputs field
     const handleInputChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-
         const { name, value } = event.target;
-        const nuevosFamiliares = [...familiares];
-        nuevosFamiliares[index][name] = value;
-
-        setFamiliares(nuevosFamiliares);
-
-        setState({
-            ...state,
-            familia: [...familiares],
-        })
+        setState((prevState) => {
+            // Realiza una copia profunda para evitar mutaciones
+            const updatedFamiliares = prevState.familia.map((familiar, i) =>
+                i === index ? { ...familiar, [name]: value } : familiar
+            );
+            return {
+                ...prevState,
+                familia: updatedFamiliares,
+            };
+        });
     };
+
 
     const handleInputChangeHijos = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-
         const { name, value } = event.target;
-        const nuevosHijos = [...hijos];
-        nuevosHijos[index][name] = value;
-
-        setHijos(nuevosHijos);
-
-        setState({
-            ...state,
-            hijos: [...hijos],
-        })
+        setState((prevState) => {
+            // Realiza una copia profunda para evitar mutaciones
+            const updatedHijos = prevState.hijos.map((hijo, i) =>
+                i === index ? { ...hijo, [name]: name === 'edad' ? parseInt(value, 10) : value } : hijo
+            );
+            return {
+                ...prevState,
+                hijos: updatedHijos,
+            };
+        });
     };
 
+    const handleFormSubmit = () =>{
+
+    }
     // Manejador para enviar el formulario
     const handleSubmit = (event: any) =>{
         setState({
@@ -407,7 +399,6 @@ export default function BloqueFamiliares (handleFormSubmit){
                                     <InputLabel htmlFor="datoLugarSistemaHijo">Lugar(Dentro del sistema penitenciario</InputLabel>
                                     <OutlinedInput
                                         name="lugar"
-                                        onChange={handleInputChangeHijos}
                                         value={hijos.lugar}
                                         onChange={(event) => handleInputChangeHijos(index, event)}
                                     />
@@ -436,3 +427,5 @@ export default function BloqueFamiliares (handleFormSubmit){
         </>
     )
 }
+
+export default  BloqueFamiliares;

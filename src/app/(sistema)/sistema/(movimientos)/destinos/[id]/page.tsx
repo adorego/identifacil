@@ -41,7 +41,7 @@ export default function Page({ params }: { params: { id: number } }){
             setLoading(false);
 
             if (response.ok) {
-                openSnackbar('Motivo de traslado creada correctamente.');
+                openSnackbar("Chofer creado correctamente.", "success");
                 router.push('/sistema/motivos-traslado');
             }
             if (!response.ok) {

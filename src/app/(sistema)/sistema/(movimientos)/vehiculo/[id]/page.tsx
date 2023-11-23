@@ -2,23 +2,49 @@
 
 import * as React from 'react';
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {Box, Button, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
 import {useState} from 'react';
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
+interface MyState {
+    id: number;
+    chapa: string;
+    modelo: string;
+    lastUpdate: string;
+
+}
+const initialState: MyState = {
+    id: 0,
+    chapa: "",
+    modelo: "",
+    lastUpdate: ""
+}
 export default function Page({ params }: { params: { id: number } }){
-    const [stateForm, setStateForm] = useState();
+    const [stateForm, setStateForm] = useState<MyState>(initialState);
     const [loading, setLoading] = React.useState(false);
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
 
-    const handleChange = (e) =>{
+    const handleChange = (e: any) =>{
         const {name, value} = e.target;
 
-        setStateForm(() =>(
+
+        setStateForm((prevState) =>(
             {
-                ...stateForm,
+                ...prevState,
             [name]: value,
             }
         ))
@@ -30,7 +56,7 @@ export default function Page({ params }: { params: { id: number } }){
 
             // await delay(5000);
 
-            const response = await fetch('http://localhost:5000/motivosTraslados', {
+            const response = await fetch('http://localhost:5000/vehiculo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -41,15 +67,15 @@ export default function Page({ params }: { params: { id: number } }){
             setLoading(false);
 
             if (response.ok) {
-                openSnackbar('Motivo de traslado creada correctamente.');
-                router.push('/sistema/motivos-traslado');
+                openSnackbar('Personal creado correctamente.', 'success');
+                router.push('/sistema/vehiculo');
             }
             if (!response.ok) {
                 throw new Error('Error en la petición');
             }
 
             const data = await response.json();
-            console.log('Traslado creado:', data);
+            console.log('Personal creado:', data);
         } catch (error) {
             setLoading(false);
 
@@ -59,12 +85,12 @@ export default function Page({ params }: { params: { id: number } }){
 
     const handleSubmit = () =>{
         postTraslado();
-        console.log(JSON.stringify(stateForm))
+        // console.log(JSON.stringify(stateForm))
     }
 
     return(
         <>
-            <TituloComponent titulo='Nueva Motivo de traslado' />
+            <TituloComponent titulo='Nuevo vehiculo' />
             <Box mt={2}>
                 <Paper elevation={1} sx={{
                     p: "20px",
@@ -74,9 +100,20 @@ export default function Page({ params }: { params: { id: number } }){
                             <TextField
                                 fullWidth
                                 onChange={handleChange}
-                                name="descripcion"
-                                id="descripcion"
-                                label="Motivos de traslado"
+                                name="chapa"
+                                value={stateForm.chapa}
+                                id="chapa"
+                                label="Chapa"
+                                variant="outlined" />
+                        </Grid>
+                        <Grid item sm={6}>
+                            <TextField
+                                fullWidth
+                                onChange={handleChange}
+                                name="modelo"
+                                value={stateForm.modelo}
+                                id="modelo"
+                                label="Modelo"
                                 variant="outlined" />
                         </Grid>
                     </Grid>

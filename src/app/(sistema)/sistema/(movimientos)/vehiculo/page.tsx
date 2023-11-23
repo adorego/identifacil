@@ -1,9 +1,9 @@
 'use client'
 
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {Box, CircularProgress} from "@mui/material";
 import CustomTable from "@/components/CustomTable";
-import {useEffect, useState} from "react";
 
 export default function Page(){
 
@@ -12,18 +12,21 @@ export default function Page(){
     // Datos para armar el header de la tabla
     const header = [
         { id: 'id', label: 'ID' },
-        { id: 'descripcion', label: 'Descripcion' },
+        { id: 'chapa', label: 'Chapa' },
+        { id: 'modelo', label: 'Modelo' },
+        { id: 'lastUpdate', label: 'Ultima actualización' },
     ]
 
+    // TODO: Si viene vacio o da error no mostrar la tabla por que explota
     async function fetchData() {
-        // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5000/chofer');
+            const response = await fetch('http://localhost:5000/vehiculo');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const data = await response.json();
-            return data;
+            // const data = await response.json();
+            // return data
+            return await response.json();
         } catch (error) {
             console.error('Error al realizar la solicitud fetch:', error);
             return null; // o manejar el error de manera adecuada
@@ -60,11 +63,11 @@ export default function Page(){
                     headers={header}
                     data={data}
                     options={{
-                        title: 'Choferes',
+                        title: 'Vehiculos del establecimiento penitenciario',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/chofer/crear',
-                        targetURL:`/sistema/chofer/`,
+                        newRecord: '/sistema/vehiculo/crear',
+                        targetURL:`/sistema/vehiculo/`,
                     }}
                 />
 

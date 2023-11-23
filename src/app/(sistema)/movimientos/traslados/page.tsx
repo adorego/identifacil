@@ -155,7 +155,7 @@ export default function Traslados() {
             setLoading(false);
 
             if (response.ok) {
-                openSnackbar('It works');
+                openSnackbar("Chofer creado correctamente.", "success");
                 router.push('/movimientos');
             }
             if (!response.ok) {

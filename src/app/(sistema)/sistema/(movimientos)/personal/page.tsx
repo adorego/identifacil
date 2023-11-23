@@ -12,13 +12,15 @@ export default function Page(){
     // Datos para armar el header de la tabla
     const header = [
         { id: 'id', label: 'ID' },
-        { id: 'descripcion', label: 'Descripcion' },
+        { id: 'nombre', label: 'Nombre y apellido' },
+        { id: 'tipo', label: 'Tipo personal' },
+        { id: 'lastUpdate', label: 'Ultima actualizacion' },
     ]
 
     async function fetchData() {
         // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5000/motivosTraslados');
+            const response = await fetch('http://localhost:5000/personal');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -54,18 +56,17 @@ export default function Page(){
     return(
 
         <Box>
-            {console.log(data)}
             <Box mt={4}>
                 <CustomTable
                     showId={true}
                     headers={header}
                     data={data}
                     options={{
-                        title: 'Motivos de traslado',
+                        title: 'Personales del establecimiento penitenciario',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/motivos-traslado/crear',
-                        targetURL:`/sistema/motivos-traslado/`,
+                        newRecord: '/sistema/personal/crear',
+                        targetURL:`/sistema/personal/`,
                     }}
                 />
 

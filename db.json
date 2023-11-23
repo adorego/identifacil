@@ -290,9 +290,49 @@
   ],
   "personal": [
     {
-      "tipo": "N/D",
-      "nombre": "N/D",
-      "id": 0
+      "id": 1,
+      "nombre": "Carlos Martinez",
+      "tipo": "chofer",
+      "lastUpdate": "01/01/2023 22:00"
+    },
+    {
+      "id": 2,
+      "nombre": "Roberto Lopez",
+      "tipo": "chofer",
+      "lastUpdate": "01/01/2023 22:00"
+    },
+    {
+      "id": 3,
+      "nombre": "Felipez Ayala",
+      "tipo": "custodio",
+      "lastUpdate": "01/01/2023 22:00"
+    },
+    {
+      "id": 4,
+      "nombre": "Gustavo Caceres",
+      "tipo": "custodio",
+      "lastUpdate": "01/01/2023 22:00"
+    },
+    {
+      "id": 5,
+      "nombre": "Marcelo Castro",
+      "tipo": "custodio",
+      "lastUpdate": ""
+    }
+  ],
+  "vehiculo": [
+    {
+      "id": 1,
+      "chapa": "ABC 123",
+      "modelo": "Mercedez Sprinter",
+      "lastUpdate": "01/01/2023 22:00"
+    },
+    {
+      "id": 6,
+      "chapa": "ABC 1234",
+      "modelo": "Mercerdez Sprint 2008",
+      "lastUpdate": "01/01/2023 22:00",
+      "nombre": "B"
     }
   ]
 }

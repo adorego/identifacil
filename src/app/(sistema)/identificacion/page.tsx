@@ -32,7 +32,7 @@ export default function Identificacion(){
       console.log('Ocurrio un error:', data);
     }else{
       const esPPL = data.esPPL ? "SI" : "NO";
-      openSnackbar(`Persona Reconocida, nombre:${data.nombres}, apellido:${data.apellidos}, esPPL:${esPPL}`);
+      openSnackbar("Chofer creado correctamente.", "success");
     }
   }
 
