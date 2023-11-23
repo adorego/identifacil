@@ -73,6 +73,7 @@ export default function Traslados() {
         motivo: '',
         fechaTraslado: '',
     };
+
     const initialFormData: FormData = {
         documento: '',
         fechaDocumento: '',
@@ -91,6 +92,7 @@ export default function Traslados() {
     };
 
     const [formData, setFormData] = React.useState<FormData>(initialFormData);
+
     const [loading, setLoading] = React.useState(false);
 
 
@@ -111,6 +113,7 @@ export default function Traslados() {
         {id:'4', nombre: 'Roberto Britez', alias: 'N/D', motivo: 'Expulsion', destino: 'Tacumbu'},
 
     ];
+
     // Manejadores para inputs fields
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -135,7 +138,9 @@ export default function Traslados() {
     };
 
     const {openSnackbar} = useGlobalContext();
+
     const router = useRouter();
+
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     const postTraslado = async () => {
@@ -179,9 +184,9 @@ export default function Traslados() {
         // console.log(JSON.stringify(formData))
     };
 
-
     // ************ Agrgar PPLS A TRASLADOS Logica MODAL *********
     const [open, setOpen] = React.useState(false);
+
     const [modalPPL, setModalPPL] = React.useState(initialPPL);
 
     const handleOpen = () => {
@@ -207,7 +212,6 @@ export default function Traslados() {
         handleClose();
         setModalPPL(initialPPL); // Resetear el formulario del modal
     };
-
 
     return (
         <Box>
@@ -470,8 +474,6 @@ export default function Traslados() {
             </Modal>
 
         </Box>
-
-
     );
 };
 

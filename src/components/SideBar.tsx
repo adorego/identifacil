@@ -14,30 +14,29 @@ import SidebarItems from "./sidebar/sidebarItems";
 import styles from "./sidebar.module.css";
 import {useGlobalContext} from "@/app/Context/store";
 
-// TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 
 const titulo : string = "IDENTIFACIL";
+type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos';
 
+
+
+// TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 export default function SideBar() {
 
-
-
-    const [openMenus, setOpenMenus] = useState({
+    const [openMenus, setOpenMenus] = useState<Record<OpenMenusKeys, boolean>>({
         registroAccesos: false,
         sistema: false,
         datosMovimientos: false,
-        // Puedes agregar más menús aquí en el futuro
     });
+
     const router = useRouter();
     const pathname = usePathname()
 
-    const handleClick = (menu:string) => {
-        setOpenMenus((prevOpenMenus) => {
-            return {
-                ...prevOpenMenus,
-                [menu]: !prevOpenMenus[menu]
-            };
-        });
+    const handleClick = (menu: OpenMenusKeys) => {
+        setOpenMenus((prevOpenMenus) => ({
+            ...prevOpenMenus,
+            [menu]: !prevOpenMenus[menu]
+        }));
     };
 
     const handleNavigation = (url: string) => {
@@ -252,8 +251,8 @@ export default function SideBar() {
 
 
                                 <ListItemButton
-                                    className={pathname === '/sistema/motivos-traslado' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/motivos-traslado')}>
+                                    className={pathname === '/sistema/motivos-traslados' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/motivos-traslados')}>
                                     <ListItemIcon>
                                         <Settings/>
                                     </ListItemIcon>

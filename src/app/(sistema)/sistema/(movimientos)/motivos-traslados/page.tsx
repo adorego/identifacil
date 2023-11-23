@@ -1,9 +1,9 @@
 'use client'
 
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {Box, CircularProgress} from "@mui/material";
 import CustomTable from "@/components/CustomTable";
-import {useEffect, useState} from "react";
 
 export default function Page(){
 
@@ -12,18 +12,20 @@ export default function Page(){
     // Datos para armar el header de la tabla
     const header = [
         { id: 'id', label: 'ID' },
-        { id: 'descripcion', label: 'Descripcion' },
+        { id: 'descripcion', label: 'Motivos de traslados' },
+        { id: 'lastUpdate', label: 'Ultima actualización' },
     ]
 
+    // TODO: Si viene vacio o da error no mostrar la tabla por que explota
     async function fetchData() {
-        // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5000/motivosTraslados');
+            const response = await fetch('http://localhost:5000/motivoTraslados');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            const data = await response.json();
-            return data;
+            // const data = await response.json();
+            // return data
+            return await response.json();
         } catch (error) {
             console.error('Error al realizar la solicitud fetch:', error);
             return null; // o manejar el error de manera adecuada
@@ -54,18 +56,17 @@ export default function Page(){
     return(
 
         <Box>
-            {console.log(data)}
             <Box mt={4}>
                 <CustomTable
                     showId={true}
                     headers={header}
                     data={data}
                     options={{
-                        title: 'Motivos de traslado',
+                        title: 'Motivos de Traslados',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/motivos-traslado/crear',
-                        targetURL:`/sistema/motivos-traslado/`,
+                        newRecord: '/sistema/motivos-traslados/crear',
+                        targetURL:`/sistema/motivos-traslados/`,
                     }}
                 />
 

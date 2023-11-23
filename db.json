@@ -167,7 +167,7 @@
       "id": 8
     }
   ],
-  "medidasSeguridad": [
+  "medidaSeguridad": [
     {
       "medidaSeguridad": "Prision preventiva",
       "id": 1
@@ -272,9 +272,14 @@
     },
     {
       "id": 27
+    },
+    {
+      "id": 28,
+      "medidasSeguridad": "Medida prueba 10",
+      "lastUpdate": ""
     }
   ],
-  "motivosTraslados": [
+  "motivoTraslados": [
     {
       "descripcion": "Prision preventiva",
       "id": 1
@@ -286,6 +291,17 @@
     {
       "descripcion": "Mudanza a un establecimiento mas seguro",
       "id": 3
+    },
+    {
+      "id": 4,
+      "medidasSeguridad": "",
+      "lastUpdate": "",
+      "descripcion": "Medida 4"
+    },
+    {
+      "id": 5,
+      "descripcion": "Motivo 5",
+      "lastUpdate": ""
     }
   ],
   "personal": [

@@ -2,23 +2,46 @@
 
 import * as React from 'react';
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {Box, Button, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    Stack,
+    TextField,
+    Typography
+} from "@mui/material";
 import {useState} from 'react';
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
+interface MyState {
+    id: number;
+    descripcion: string;
+    lastUpdate: string;
+
+}
+const initialState: MyState = {
+    id: 0,
+    descripcion: "",
+    lastUpdate: ""
+}
 export default function Page({ params }: { params: { id: number } }){
-    const [stateForm, setStateForm] = useState();
+    const [stateForm, setStateForm] = useState<MyState>(initialState);
     const [loading, setLoading] = React.useState(false);
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
 
-    const handleChange = (e) =>{
+    const handleChange = (e: any) =>{
         const {name, value} = e.target;
 
-        setStateForm(() =>(
+        setStateForm((prevState) =>(
             {
-                ...stateForm,
+                ...prevState,
             [name]: value,
             }
         ))
@@ -30,7 +53,7 @@ export default function Page({ params }: { params: { id: number } }){
 
             // await delay(5000);
 
-            const response = await fetch('http://localhost:5000/motivosTraslados', {
+            const response = await fetch('http://localhost:5000/motivoTraslados', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -41,15 +64,15 @@ export default function Page({ params }: { params: { id: number } }){
             setLoading(false);
 
             if (response.ok) {
-                openSnackbar("Chofer creado correctamente.", "success");
-                router.push('/sistema/motivos-traslado');
+                openSnackbar('Motivo de traslado creada correctamente.', 'success');
+                router.push('/sistema/motivos-traslados');
             }
             if (!response.ok) {
                 throw new Error('Error en la petición');
             }
 
             const data = await response.json();
-            console.log('Traslado creado:', data);
+            console.log('Motivo creado:', data);
         } catch (error) {
             setLoading(false);
 
@@ -59,12 +82,12 @@ export default function Page({ params }: { params: { id: number } }){
 
     const handleSubmit = () =>{
         postTraslado();
-        console.log(JSON.stringify(stateForm))
+        // console.log(JSON.stringify(stateForm))
     }
 
     return(
         <>
-            <TituloComponent titulo='Nueva Motivo de traslado' />
+            <TituloComponent titulo='Medida de seguridad' />
             <Box mt={2}>
                 <Paper elevation={1} sx={{
                     p: "20px",
@@ -75,8 +98,9 @@ export default function Page({ params }: { params: { id: number } }){
                                 fullWidth
                                 onChange={handleChange}
                                 name="descripcion"
-                                id="descripcion"
-                                label="Motivos de traslado"
+                                value={stateForm.descripcion}
+                                id="chapa"
+                                label="Descripción"
                                 variant="outlined" />
                         </Grid>
                     </Grid>
