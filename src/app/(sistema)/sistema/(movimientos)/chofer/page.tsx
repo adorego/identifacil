@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import {Box, CircularProgress} from "@mui/material";
-import CustomTable from "../../../../components/CustomTable";
+import CustomTable from "@/components/CustomTable";
 import {useEffect, useState} from "react";
 
 export default function Page(){
@@ -18,7 +18,7 @@ export default function Page(){
     async function fetchData() {
         // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5000/motivosTraslados');
+            const response = await fetch('http://localhost:5000/chofer');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -54,18 +54,17 @@ export default function Page(){
     return(
 
         <Box>
-            {console.log(data)}
             <Box mt={4}>
                 <CustomTable
                     showId={true}
                     headers={header}
                     data={data}
                     options={{
-                        title: 'Motivos de traslado',
+                        title: 'Choferes',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/motivos-traslado/crear',
-                        targetURL:`/sistema/motivos-traslado/`,
+                        newRecord: '/sistema/chofer/crear',
+                        targetURL:`/sistema/chofer/`,
                     }}
                 />
 

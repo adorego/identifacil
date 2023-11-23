@@ -210,6 +210,68 @@
     },
     {
       "id": 11
+    },
+    {
+      "medidaSeguridad": "medida 7",
+      "id": 12
+    },
+    {
+      "medidaSeguridad": "asdasd",
+      "id": 13
+    },
+    {
+      "medidaSeguridad": "asdas2",
+      "id": 14
+    },
+    {
+      "medidaSeguridad": "aasdasdasd5",
+      "id": 15
+    },
+    {
+      "medidaSeguridad": "12312312",
+      "id": 16
+    },
+    {
+      "medidaSeguridad": "asdasdadasdasd",
+      "id": 17
+    },
+    {
+      "medidaSeguridad": "asdasdasd",
+      "id": 18
+    },
+    {
+      "medidaSeguridad": "asdasdasdasdasdasdasd",
+      "id": 19
+    },
+    {
+      "medidaSeguridad": "asdasdasd",
+      "id": 20
+    },
+    {
+      "medidaSeguridad": "asdasdasdasdads",
+      "id": 21
+    },
+    {
+      "medidaSeguridad": "asdasdasdasdasd",
+      "id": 22
+    },
+    {
+      "medidaSeguridad": "asdasdsd",
+      "id": 23
+    },
+    {
+      "medidaSeguridad": "asdasdasdad",
+      "id": 24
+    },
+    {
+      "medidaSeguridad": "asdasd",
+      "id": 25
+    },
+    {
+      "id": 26
+    },
+    {
+      "id": 27
     }
   ],
   "motivosTraslados": [
@@ -224,6 +286,13 @@
     {
       "descripcion": "Mudanza a un establecimiento mas seguro",
       "id": 3
+    }
+  ],
+  "personal": [
+    {
+      "tipo": "N/D",
+      "nombre": "N/D",
+      "id": 0
     }
   ]
 }

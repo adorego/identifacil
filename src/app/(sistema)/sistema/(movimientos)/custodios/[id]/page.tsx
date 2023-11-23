@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import TituloComponent from "../../../../../components/titulo/tituloComponent";
+import TituloComponent from "@/components/titulo/tituloComponent";
 import {Box, Button, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
 import {useState} from 'react';
 import {useGlobalContext} from "@/app/Context/store";
@@ -23,16 +23,14 @@ export default function Page({ params }: { params: { id: number } }){
             }
         ))
     }
-    const handleClick = () =>{
-        openSnackbar('hola');
-    }
+
     const postTraslado = async () => {
         try {
             setLoading(true);
 
             // await delay(5000);
 
-            const response = await fetch('http://localhost:5000/medidasSeguridad', {
+            const response = await fetch('http://localhost:5000/motivosTraslados', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -43,8 +41,8 @@ export default function Page({ params }: { params: { id: number } }){
             setLoading(false);
 
             if (response.ok) {
-                openSnackbar('Medida de seguridad creada correctamente.', 'success');
-                router.push('/sistema/medidas-seguridad');
+                openSnackbar('Motivo de traslado creada correctamente.');
+                router.push('/sistema/motivos-traslado');
             }
             if (!response.ok) {
                 throw new Error('Error en la petición');
@@ -66,7 +64,7 @@ export default function Page({ params }: { params: { id: number } }){
 
     return(
         <>
-            <TituloComponent titulo='Nueva Medida de seguridad' />
+            <TituloComponent titulo='Nueva Motivo de traslado' />
             <Box mt={2}>
                 <Paper elevation={1} sx={{
                     p: "20px",
@@ -76,9 +74,9 @@ export default function Page({ params }: { params: { id: number } }){
                             <TextField
                                 fullWidth
                                 onChange={handleChange}
-                                name="medidaSeguridad"
-                                id="medidaSeguridad"
-                                label="Medida de seguridad"
+                                name="descripcion"
+                                id="descripcion"
+                                label="Motivos de traslado"
                                 variant="outlined" />
                         </Grid>
                     </Grid>

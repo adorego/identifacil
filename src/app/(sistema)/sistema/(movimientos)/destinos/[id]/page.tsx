@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import TituloComponent from "../../../../../components/titulo/tituloComponent";
+import TituloComponent from "@/components/titulo/tituloComponent";
 import {Box, Button, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
 import {useState} from 'react';
 import {useGlobalContext} from "@/app/Context/store";

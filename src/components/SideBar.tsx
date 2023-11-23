@@ -273,6 +273,15 @@ export default function SideBar() {
                                     <ListItemText primary="Motivos traslado" hidden={sidebarStatus}/>
                                 </ListItemButton>
 
+                                <ListItemButton
+                                    className={pathname === '/sistema/chofer' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/chofer')}>
+                                    <ListItemIcon>
+                                        <Settings/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Choferes" hidden={sidebarStatus}/>
+                                </ListItemButton>
+
                                 {/*<ListItemButton
                                     className={pathname === '/sistema/roles' ? 'active' : ''}
                                     onClick={(e) => handleNavigation('/sistema/roles')}>

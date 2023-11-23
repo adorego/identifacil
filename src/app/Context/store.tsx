@@ -42,8 +42,9 @@ export const GlobalContextProvider = ({children}) =>{
     const[snackbar, setSnackbar] = useState(true)
 
     const openSnackbar = (message, severity) => {
-        console.log(message);
-        setSnackbar({ open: true, message});
+        const computedSeverity = severity ? severity : 'info';
+        console.log('store ' + computedSeverity)
+        setSnackbar({ open: true, message, severity: computedSeverity});
     };
 
     const closeSnackbar = () => {

@@ -29,8 +29,10 @@ const initialState: MyState = {
     nombreOficio: '',
     ultimoTrabajo: '',
 };
-
-export default function BloqueEducacion({ onCloseAccordion }) {
+interface BloqueEducacionProps {
+    onCloseAccordion: () => void; // A function that takes no arguments and returns nothing
+}
+const BloqueEducacion: React.FC<BloqueEducacionProps> = ({ onCloseAccordion }) => {
     const [state, setState] = useState<MyState>(initialState);
 
     const handleSubmit = (event: FormEvent) => {
@@ -198,3 +200,5 @@ export default function BloqueEducacion({ onCloseAccordion }) {
         </>
     )
 }
+
+export default BloqueEducacion;
