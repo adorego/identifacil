@@ -221,7 +221,7 @@ export default function TopNav() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        MUI - { sidebarStatus ? 'TRUE' : 'false'}
+                        {/*MUI - { sidebarStatus ? 'TRUE' : 'false'}*/}
                     </Typography>
                     <Search>
                         <SearchIconWrapper>

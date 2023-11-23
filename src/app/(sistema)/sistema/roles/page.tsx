@@ -16,7 +16,7 @@ export default function Page(){
                         title: 'Roles',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/roles/crear'
+                        newRecord: '/sistema/roles/[id]'
                     }}
                 />
 

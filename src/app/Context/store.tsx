@@ -41,7 +41,8 @@ export const GlobalContextProvider = ({children}) =>{
     const[sidebarStatus,setSidebarStatus] = useState(true)
     const[snackbar, setSnackbar] = useState(true)
 
-    const openSnackbar = (message) => {
+    const openSnackbar = (message, severity) => {
+        console.log(message);
         setSnackbar({ open: true, message});
     };
 

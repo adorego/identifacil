@@ -40,6 +40,7 @@ export default function SideBar() {
     const [openMenus, setOpenMenus] = useState({
         registroAccesos: false,
         sistema: false,
+        datosMovimientos: false,
         // Puedes agregar más menús aquí en el futuro
     });
     const router = useRouter();
@@ -239,6 +240,52 @@ export default function SideBar() {
                                 </ListItemButton>
                             </List>
                         </Collapse>
+
+                        {/* ------------------------- Menu de Sistema movimiento------------------------- */}
+
+                        <ListItemButton onClick={() => handleClick('datosMovimientos')}>
+                            <ListItemIcon>
+                                <Settings/>
+                            </ListItemIcon>
+                            <ListItemText primary={'Datos de movimientos'} hidden={sidebarStatus}/>
+                            {openMenus.datosMovimientos ? <ExpandLess/> : <ExpandMore/>}
+                        </ListItemButton>
+
+                        <Collapse in={openMenus.datosMovimientos} timeout="auto" unmountOnExit>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+
+                                <ListItemButton
+                                    className={pathname === '/sistema/medidas-seguridad' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/medidas-seguridad')}>
+                                    <ListItemIcon>
+                                        <Settings/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Medidas de seguridad" hidden={sidebarStatus}/>
+                                </ListItemButton>
+
+
+                                <ListItemButton
+                                    className={pathname === '/sistema/motivos-traslado' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/motivos-traslado')}>
+                                    <ListItemIcon>
+                                        <Settings/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Motivos traslado" hidden={sidebarStatus}/>
+                                </ListItemButton>
+
+                                {/*<ListItemButton
+                                    className={pathname === '/sistema/roles' ? 'active' : ''}
+                                    onClick={(e) => handleNavigation('/sistema/roles')}>
+                                    <ListItemIcon>
+                                        <Settings/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Roles" hidden={sidebarStatus}/>
+                                </ListItemButton>*/}
+                            </List>
+                        </Collapse>
+
+
+
                         <ListItemButton disabled>
                             <ListItemIcon>
                                 <ManageAccounts/>

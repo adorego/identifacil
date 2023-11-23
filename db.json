@@ -166,5 +166,64 @@
       "PPLs": [],
       "id": 8
     }
+  ],
+  "medidasSeguridad": [
+    {
+      "medidaSeguridad": "Prision preventiva",
+      "id": 1
+    },
+    {
+      "medidaSeguridad": "Mal comportamiento",
+      "id": 2
+    },
+    {
+      "medidaSeguridad": "Escoltas adicionales",
+      "id": 3
+    },
+    {
+      "medidaSeguridad": "Escolta policial",
+      "id": 4
+    },
+    {
+      "medidaSeguridad": "Medida de prueba",
+      "id": 5
+    },
+    {
+      "medidaSeguridad": "Medida 3",
+      "id": 6
+    },
+    {
+      "medidaSeguridad": "Medida 54",
+      "id": 7
+    },
+    {
+      "medidaSeguridad": "medida 56",
+      "id": 8
+    },
+    {
+      "medidaSeguridad": "medida 7",
+      "id": 9
+    },
+    {
+      "medidaSeguridad": "asdasd",
+      "id": 10
+    },
+    {
+      "id": 11
+    }
+  ],
+  "motivosTraslados": [
+    {
+      "descripcion": "Prision preventiva",
+      "id": 1
+    },
+    {
+      "descripcion": "Mudanza",
+      "id": 2
+    },
+    {
+      "descripcion": "Mudanza a un establecimiento mas seguro",
+      "id": 3
+    }
   ]
 }

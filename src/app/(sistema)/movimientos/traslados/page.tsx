@@ -137,6 +137,7 @@ export default function Traslados() {
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
     const postTraslado = async () => {
         try {
             setLoading(true);

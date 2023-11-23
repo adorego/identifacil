@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import {
     Table,
@@ -36,6 +38,9 @@ interface CustomTableProps {
 
 const { headersCustom, rowsCustom } = dummyData();
 
+const rowStyle = {
+    width: '100px',
+}
 
 function CustomTable({
                          showId= false,
@@ -102,7 +107,7 @@ function CustomTable({
 
     return (
         <Box>
-
+            {console.log(data)}
             <TableContainer component={Paper}>
 
                 <Stack direction='row'
@@ -139,7 +144,7 @@ function CustomTable({
                     <TableHead>
                         <TableRow>
                             {headers.map((header) => {
-                                if (header.id === 'id') return null;
+                                if (header.id === 'id' && !showId) return null;
                                 return(
                                     <TableCell key={header.id}>
                                         <TableSortLabel
@@ -154,7 +159,7 @@ function CustomTable({
                                 )
                             })}
                             {options.targetURL ?
-                                <TableCell>Acciones</TableCell>
+                                <TableCell >Acciones</TableCell>
                                 : ''
                             }
 
@@ -165,18 +170,19 @@ function CustomTable({
                             slicedData.map((row) => (
                                 <TableRow key={row.id as number}>
                                     {headers.map((header) => {
-                                        if (header.id === 'id') return null;
+                                        if (header.id === 'id' && !showId) return null;
 
-                                        return <TableCell key={header.id}>{row[header.id]}</TableCell>;
+                                        return <TableCell sx={(header.id == 'id' ? rowStyle : {})} key={header.id}>{row[header.id]}</TableCell>;
                                     })}
                                     {options.targetURL ? (
-                                        <TableCell>
+                                        <TableCell sx={rowStyle}>
                                             <IconButton
+
                                                 color="primary"
                                                 aria-label="Edit"
                                                 component={Link}
-                                                href={`${options.targetURL}`}
-                                                // href={`${options.targetURL}/edit/${row.id}`}
+                                                //href={`${options.targetURL}`}
+                                                href={`${options.targetURL}/${row.id}`}
                                                 onClick={() => handleCellClick(row.id as number)}
                                             >
                                                 <EditIcon />

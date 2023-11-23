@@ -16,7 +16,7 @@ export default function Page(){
                         title: 'Camaras',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/camaras/crear'
+                        newRecord: '/sistema/camaras/[id]'
                     }}
                 />
 
