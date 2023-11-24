@@ -1,27 +1,13 @@
 'use client'
 
-
-import * as React from 'react';
-
-import {
-    Button,
-    Card,
-    CircularProgress,
-    CardContent,
-    Grid,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Typography, IconButton, Box, Modal, Breadcrumbs, Link,
-} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Button,  Card,  CircularProgress,  CardContent,  Grid,  TextField,  FormControl,  InputLabel,  Select,
+    MenuItem,  Typography, IconButton, Box, Modal, } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import {FileUploadOutlined} from "@mui/icons-material";
-import CustomTable from "../../../../components/CustomTable";
-import QueryBlock from "../../../../components/blocks/QueryBlock";
+import CustomTable from "@/components/CustomTable";
+import QueryBlock from "@/components/blocks/QueryBlock";
 import {useRouter} from 'next/navigation';
-import SnackbarComponent from "../../../../components/snackback/SnackBarComponent";
-import { SnackbarContext } from '../../../../components/snackback/SnackbarContext';
 import {useGlobalContext} from "@/app/Context/store";
 
 type PPLType = {
@@ -30,6 +16,17 @@ type PPLType = {
     motivo: string;
     fechaTraslado: string;
 };
+
+
+interface Motivo {
+    id: string; // O número, según tu API
+    descripcion: string;
+}
+
+interface Medidas {
+    id: string; // O número, según tu API
+    medidaSeguridad: string;
+}
 
 type FormData = {
     documento: string;
@@ -44,7 +41,7 @@ type FormData = {
     chapaVehiculo: string;
     modeloVehiculo: string;
     destinoTraslado: string;
-    documentoAdjunto: string;
+    documentoAdjunto: any;
     PPLs: PPLType[];
 };
 
@@ -60,59 +57,88 @@ const styleModal = {
     p: 4,
 };
 
+const initialPPL: PPLType = {
+    nombreApellido: '',
+    alias: '',
+    motivo: '',
+    fechaTraslado: '',
+};
+
+const initialFormData: FormData = {
+    documento: '',
+    fechaDocumento: '',
+    fechaTraslado: '',
+    autorizo: '',
+    motivoTraslado: '',
+    medidasSeguridad: '',
+    descripcionMotivo: '',
+    custodia: '',
+    chofer: '',
+    chapaVehiculo: '',
+    modeloVehiculo: '',
+    destinoTraslado: '',
+    documentoAdjunto: '',
+    PPLs: [],
+};
+
+// Datos para traslados nombre;alias;motivo;fechaTraslado;
+const headersPPL = [
+    { id: 'id', label: 'ID' },
+    { id: 'nombreApellido', label: 'Nombre y apellido' },
+    { id: 'alias', label: 'Alias' },
+    { id: 'motivo', label: 'Motivo de Traslado' },
+    { id: 'fechaTraslado', label: 'Fecha traslado' },
+];
+
+const URL_ENDPOINT = 'http://localhost:5000/motivoTraslados';
+const URL_ENDPOINT_MEDIDAS = 'http://localhost:5000/medidaSeguridad\n';
 // TODO: Cuando se envia el submit se debe bloquear el boton de guardado
 // TODO: Luego de enviar la peticion se debe mostrar una alerta de que se guardo correctamente
+// TODO: hacer un spinner que bloquee toda la pantalla cuando carga o guarda los datos
 
 export default function Traslados() {
 
+    const [motivos, setMotivos] = useState<Motivo[]>([]);
+    const [medidas, setMedidas] = useState<Medidas[]>([]);
 
+    const [formData, setFormData] = useState<FormData>(initialFormData);
 
-    const initialPPL: PPLType = {
-        nombreApellido: '',
-        alias: '',
-        motivo: '',
-        fechaTraslado: '',
-    };
+    const [loading, setLoading] = useState(false);
 
-    const initialFormData: FormData = {
-        documento: '',
-        fechaDocumento: '',
-        fechaTraslado: '',
-        autorizo: '',
-        motivoTraslado: '',
-        medidasSeguridad: '',
-        descripcionMotivo: '',
-        custodia: '',
-        chofer: '',
-        chapaVehiculo: '',
-        modeloVehiculo: '',
-        destinoTraslado: '',
-        documentoAdjunto: '',
-        PPLs: [],
-    };
+    // Función para cargar los motivos desde el endpoint
+    useEffect(() => {
+        async function cargarMotivos() {
+            try {
+                const respuesta = await fetch(URL_ENDPOINT);
+                if (respuesta.ok) {
+                    const datos = await respuesta.json();
+                    setMotivos(datos);
+                } else {
+                    throw new Error(`Error: ${respuesta.status}`);
+                }
+            } catch (error) {
+                console.error('Error al cargar los motivos:', error);
+            }
+        }
 
-    const [formData, setFormData] = React.useState<FormData>(initialFormData);
+        const fetchMedidas = async () => {
+            try {
+                const respuesta = await fetch(URL_ENDPOINT_MEDIDAS);
+                if (respuesta.ok) {
+                    const datos = await respuesta.json();
+                    setMedidas(datos);
 
-    const [loading, setLoading] = React.useState(false);
+                } else {
+                    throw new Error(`Error: ${respuesta.status}`);
+                }
+            } catch (error) {
+                console.error('Error al cargar los medidas:', error);
+            }
+        };
 
-
-
-    // Datos para traslados nombre;alias;motivo;fechaTraslado;
-    const headersPPL = [
-        { id: 'id', label: 'ID' },
-        { id: 'nombreApellido', label: 'Nombre y apellido' },
-        { id: 'alias', label: 'Alias' },
-        { id: 'motivo', label: 'Motivo de Traslado' },
-        { id: 'fechaTraslado', label: 'Fecha traslado' },
-    ];
-
-    const dataPPL = [
-        {id:'1', nombre: 'Juan Jose Perez', alias: 'N/D', motivo: 'Expulsion', destino: 'Tacumbu'},
-        {id:'2', nombre: 'Maria Jose Perez', alias: 'N/D', motivo: 'Expulsion', destino: 'Tacumbu'},
-        {id:'3', nombre: 'Pablo Torres', alias: 'N/D', motivo: 'Expulsion', destino: 'Tacumbu'},
-        {id:'4', nombre: 'Roberto Britez', alias: 'N/D', motivo: 'Expulsion', destino: 'Tacumbu'},
-
-    ];
+        cargarMotivos();
+        fetchMedidas();
+    }, []);
 
     // Manejadores para inputs fields
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -121,7 +147,7 @@ export default function Traslados() {
     };
 
     // Manejador para actualizar selects
-    const handleSelectChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const handleSelectChange = (event: SelectChangeEvent<string>) => {
         const name = event.target.name as keyof typeof formData;
         setFormData({
             ...formData,
@@ -160,7 +186,7 @@ export default function Traslados() {
             setLoading(false);
 
             if (response.ok) {
-                openSnackbar("Chofer creado correctamente.", "success");
+                openSnackbar("Traslado creado correctamente.", "success");
                 router.push('/movimientos');
             }
             if (!response.ok) {
@@ -179,9 +205,8 @@ export default function Traslados() {
     // Manejador de envio
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         postTraslado();
-        // console.log(JSON.stringify(formData))
+        console.log(JSON.stringify(formData))
     };
 
     // ************ Agrgar PPLS A TRASLADOS Logica MODAL *********
@@ -199,11 +224,15 @@ export default function Traslados() {
         setOpen(false);
     };
 
-    const handleModalChange = (field: keyof PPLType) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
+    const handleSelectModalChange = (field: keyof PPLType) => (event: SelectChangeEvent) => {
+        const value = event.target.value as string;
         setModalPPL(prev => ({ ...prev, [field]: value }));
     };
 
+    const handleTextModalChange = (field: keyof PPLType) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        setModalPPL(prev => ({ ...prev, [field]: value }));
+    };
     const addPPLToState = () => {
         setFormData(prevState => ({
             ...prevState,
@@ -216,6 +245,7 @@ export default function Traslados() {
     return (
         <Box>
             <h2>Movimientos</h2>
+
             {/*<Breadcrumbs aria-label="breadcrumb">
                 <Link underline="hover" color="inherit" href="/">
                     Inicio
@@ -230,7 +260,7 @@ export default function Traslados() {
             <Card sx={{marginTop:"20px"}}>
                 <CardContent>
                     <Typography variant='h6' mb={2}>Traslados</Typography>
-                        <form noValidate autoComplete="off">
+                    <form noValidate autoComplete="off" onSubmit={handleSubmit}>
                             <Grid container spacing={3}>
                                 {/* Nro. del documento */}
                                 <Grid item xs={4}>
@@ -282,8 +312,11 @@ export default function Traslados() {
                                             name="medidasSeguridad"
                                         >
                                             {/* Replace these menu items with your options */}
-                                            <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                            <MenuItem value="option2">Medida de seguridad 2</MenuItem>
+                                            {medidas.map(medida => (
+                                                <MenuItem key={medida.id} value={medida.id}>
+                                                    {medida.medidaSeguridad}
+                                                </MenuItem>
+                                            ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -297,9 +330,12 @@ export default function Traslados() {
                                                 onChange={handleSelectChange}
                                                 name="motivoTraslado"
                                         >
-                                            {/* Replace these menu items with your options */}
-                                            <MenuItem value="option1">Traslado 1</MenuItem>
-                                            <MenuItem value="option2">Traslado 2</MenuItem>
+                                            <MenuItem value="">Seleccione un motivo</MenuItem>
+                                            {motivos.map(motivo => (
+                                                <MenuItem key={motivo.id} value={motivo.id}>
+                                                    {motivo.descripcion}
+                                                </MenuItem>
+                                            ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -355,28 +391,27 @@ export default function Traslados() {
                                 {/* Documento adjunto */}
                                 <Grid item xs={6}>
 
-                                        <TextField
-                                            variant="outlined"
-                                            type="text"
-                                            label='Documento adjunto'
-                                            fullWidth
-                                            value={formData.documentoAdjunto ? formData.documentoAdjunto.name : ''}
-                                            InputProps={{
-                                                endAdornment: (
-                                                    <IconButton component="label" >
-                                                        <FileUploadOutlined />
-                                                        <input
-                                                            styles={{display:"none"}}
-                                                            type="file"
-                                                            hidden
-                                                            onChange={handleFileChange}
-                                                            name="documentoAdjunto"
-                                                            label='Documento adjunto'
-                                                        />
-                                                    </IconButton>
-                                                ),
-                                            }}
-                                        />
+                                    <TextField
+                                        variant="outlined"
+                                        type="text"
+                                        label='Documento adjunto'
+                                        fullWidth
+                                        value={formData.documentoAdjunto ? formData.documentoAdjunto.name : ''}
+                                        InputProps={{
+                                            endAdornment: (
+                                                <IconButton component="label" >
+                                                    <FileUploadOutlined />
+                                                    <input
+                                                        style={{display:"none"}}
+                                                        type="file"
+                                                        hidden
+                                                        onChange={handleFileChange}
+                                                        name="documentoAdjunto"
+                                                    />
+                                                </IconButton>
+                                            ),
+                                        }}
+                                    />
 
                                 </Grid>
 
@@ -385,7 +420,7 @@ export default function Traslados() {
                                     <Button
                                         variant="contained"
                                         color="primary"
-                                        onClick={handleSubmit}
+                                        type="submit" // Cambiar a type="submit"
                                     >
                                         {loading ? <CircularProgress color='success' size={24} /> : "Guardar Cambios"}
                                     </Button>
@@ -426,7 +461,7 @@ export default function Traslados() {
                                 <InputLabel>PPL</InputLabel>
                                 <Select
                                     value={modalPPL.nombreApellido}
-                                    onChange={handleModalChange('nombreApellido')}
+                                    onChange={handleSelectModalChange('nombreApellido')}
                                 >
                                     {/* Aquí puedes agregar los PPLs precargados */}
                                     <MenuItem value="Juan Jose Martinez">Juan Jose Martinez</MenuItem>
@@ -441,7 +476,7 @@ export default function Traslados() {
                                 label="Alias"
                                 variant="outlined"
                                 value={modalPPL.alias}
-                                onChange={handleModalChange('alias')}
+                                onChange={handleTextModalChange('alias')}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -450,7 +485,7 @@ export default function Traslados() {
                                 label="Motivo"
                                 variant="outlined"
                                 value={modalPPL.motivo}
-                                onChange={handleModalChange('motivo')}
+                                onChange={handleTextModalChange('motivo')}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -460,7 +495,7 @@ export default function Traslados() {
                                 type="date"
                                 variant="outlined"
                                 value={modalPPL.fechaTraslado}
-                                onChange={handleModalChange('fechaTraslado')}
+                                onChange={handleTextModalChange('fechaTraslado')}
                                 InputLabelProps={{ shrink: true }}
                             />
                         </Grid>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Table,
     TableBody,
@@ -26,35 +26,44 @@ interface Header {
 }
 
 interface Data {
-    [key: string]: string | number;
+    [key: string]: string | number | null;
+}
+
+interface TableOptions {
+    rowsPerPageCustom: number;
+    pagination: boolean;
+    title?: string;
+    targetURL?: string;
+    expandedList?: string;
+    newRecord?: string;
 }
 
 interface CustomTableProps {
     data: Data[];
     headers: Header[];
-    showId: boolean;
-    options: object;
+    showId?: boolean;
+    options?: TableOptions;
 }
 
-
-const { headersCustom, rowsCustom } = dummyData();
+const {headersCustom, rowsCustom} = dummyData();
 
 const rowStyle = {
     width: '100px',
 }
 
 function CustomTable({
-                         showId= false,
-                         data=rowsCustom,
-                         headers=headersCustom,
-                         options={
-                             rowsPerPageCustom:5,
-                             pagination:true,
+                         showId = false,
+                         data = rowsCustom,
+                         headers = headersCustom,
+                         options = {
+                             rowsPerPageCustom: 5,
+                             pagination: true,
                              title: '',
-                             targetURL:"",
+                             targetURL: '',
                              expandedList: '',
                              newRecord: '',
-                         }}: CustomTableProps): JSX.Element {
+                         }
+                     }: CustomTableProps): JSX.Element {
 
 
     const [page, setPage] = useState(0);
@@ -75,6 +84,11 @@ function CustomTable({
         const aValue = a[property];
         const bValue = b[property];
 
+        // Manejar casos donde los valores son null
+        if (aValue === null) return isAsc ? 1 : -1;
+        if (bValue === null) return isAsc ? -1 : 1;
+
+        // Ahora sabemos que ninguno de los valores es null
         if (typeof aValue === 'number' && typeof bValue === 'number') {
             return isAsc ? aValue - bValue : bValue - aValue;
         } else {
@@ -102,43 +116,42 @@ function CustomTable({
     const slicedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
     const stackStyle = {
-        padding: (options.title || options.newRecord ) ? '20px' : '0px',
+        padding: (options.title || options.newRecord) ? '20px' : '0px',
         // Aquí puedes agregar más estilos si es necesario
     };
 
     return (
         <Box>
-            {console.log(data)}
+
             <TableContainer component={Paper}>
 
                 <Stack direction='row'
-                           justifyContent="space-between"
-                           alignItems="center"
-                           spacing={2}
-                           sx={stackStyle}
+                       justifyContent="space-between"
+                       alignItems="center"
+                       spacing={2}
+                       sx={stackStyle}
 
-                    >
-                        <Box>
-                            {options.title ?
-                                (
-                                    <Typography variant='h5' display='block'>
-                                        {options.title}
-                                    </Typography>
-                                )
-                                : ''}
-                        </Box>
-                        <Box>
-                            {options.newRecord ?
-                                (
-                                    <Button variant='contained' href={options.newRecord}>
-                                        Agregar
-                                    </Button>
-                                )
-                                : ''}
+                >
+                    <Box>
+                        {options.title ?
+                            (
+                                <Typography variant='h5' display='block'>
+                                    {options.title}
+                                </Typography>
+                            )
+                            : ''}
+                    </Box>
+                    <Box>
+                        {options.newRecord ?
+                            (
+                                <Button variant='contained' href={options.newRecord}>
+                                    Agregar
+                                </Button>
+                            )
+                            : ''}
 
-                        </Box>
-                    </Stack>
-
+                    </Box>
+                </Stack>
 
 
                 <Table>
@@ -146,7 +159,7 @@ function CustomTable({
                         <TableRow>
                             {headers.map((header) => {
                                 if (header.id === 'id' && !showId) return null;
-                                return(
+                                return (
                                     <TableCell key={header.id}>
                                         <TableSortLabel
                                             active={orderBy === header.id}
@@ -160,7 +173,7 @@ function CustomTable({
                                 )
                             })}
                             {options.targetURL ?
-                                <TableCell >Acciones</TableCell>
+                                <TableCell>Acciones</TableCell>
                                 : ''
                             }
 
@@ -173,7 +186,8 @@ function CustomTable({
                                     {headers.map((header) => {
                                         if (header.id === 'id' && !showId) return null;
 
-                                        return <TableCell sx={(header.id == 'id' ? rowStyle : {})} key={header.id}>{row[header.id]}</TableCell>;
+                                        return <TableCell sx={(header.id == 'id' ? rowStyle : {})}
+                                                          key={header.id}>{row[header.id]}</TableCell>;
                                     })}
                                     {options.targetURL ? (
                                         <TableCell sx={rowStyle}>
@@ -186,7 +200,7 @@ function CustomTable({
                                                 href={`${options.targetURL}/${row.id}`}
                                                 onClick={() => handleCellClick(row.id as number)}
                                             >
-                                                <EditIcon />
+                                                <EditIcon/>
                                             </IconButton>
                                         </TableCell>
                                     ) : (
@@ -198,7 +212,7 @@ function CustomTable({
                     </TableBody>
                 </Table>
                 <>
-                    {options.pagination?
+                    {options.pagination ?
                         (
                             <TablePagination
                                 rowsPerPageOptions={[5, 10, 25]}
@@ -209,7 +223,7 @@ function CustomTable({
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                             />
-                        ):''}
+                        ) : ''}
                     {
                         options.expandedList ?
                             (
@@ -224,7 +238,8 @@ function CustomTable({
                                             height: '20px',
                                             fontWeight: '600',
                                         }}
-                                        color='inherit' href={options.expandedList} underline="none">Ver mas <ChevronRightIcon /></Link>
+                                        color='inherit' href={options.expandedList} underline="none">Ver
+                                        mas <ChevronRightIcon/></Link>
                                 </Box>
                             )
                             : ''
