@@ -25,7 +25,7 @@ interface ContextProps {
 const SnackInitialState: SnackType = {
     open: false,
     message: '',
-    severity: '',
+    severity: 'success',
 };
 
 // Proporcionar valores predeterminados de acuerdo con el tipo ContextProps

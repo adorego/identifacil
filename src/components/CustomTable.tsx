@@ -18,7 +18,9 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import {dummyData} from "../app/dummyData/data";
+import {dummyData} from "@/app/dummyData/data";
+import ModalBorrado from "@/components/modal/ModalBorrado";
+
 
 interface Header {
     id: string;
@@ -36,6 +38,11 @@ interface TableOptions {
     targetURL?: string;
     expandedList?: string;
     newRecord?: string;
+    deleteOption: boolean;
+}
+interface DeleteRecordArgs {
+    id: number;
+    [key: string]: any; // Permite cualquier otra propiedad adicional
 }
 
 interface CustomTableProps {
@@ -43,17 +50,20 @@ interface CustomTableProps {
     headers: Header[];
     showId?: boolean;
     options?: TableOptions;
+    deleteRecord: (args: DeleteRecordArgs) => void;
 }
 
 const {headersCustom, rowsCustom} = dummyData();
 
 const rowStyle = {
     width: '100px',
+
 }
 
 function CustomTable({
                          showId = false,
                          data = rowsCustom,
+                         deleteRecord,
                          headers = headersCustom,
                          options = {
                              rowsPerPageCustom: 5,
@@ -62,6 +72,7 @@ function CustomTable({
                              targetURL: '',
                              expandedList: '',
                              newRecord: '',
+                             deleteOption: false,
                          }
                      }: CustomTableProps): JSX.Element {
 
@@ -109,8 +120,9 @@ function CustomTable({
         setPage(0);
     };
 
-    const handleCellClick = (id: number): void => {
-        console.log('Clicked cell with ID:', id);
+    const handleCellClick = (row:Data): void => {
+        // @ts-ignore
+        deleteRecord(row);
     };
 
     const slicedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
@@ -119,6 +131,8 @@ function CustomTable({
         padding: (options.title || options.newRecord) ? '20px' : '0px',
         // Aquí puedes agregar más estilos si es necesario
     };
+
+
 
     return (
         <Box>
@@ -135,7 +149,7 @@ function CustomTable({
                     <Box>
                         {options.title ?
                             (
-                                <Typography variant='h5' display='block'>
+                                <Typography variant='h6' display='block'>
                                     {options.title}
                                 </Typography>
                             )
@@ -189,23 +203,47 @@ function CustomTable({
                                         return <TableCell sx={(header.id == 'id' ? rowStyle : {})}
                                                           key={header.id}>{row[header.id]}</TableCell>;
                                     })}
-                                    {options.targetURL ? (
+                                    {(options.targetURL || options.deleteOption) ? (
                                         <TableCell sx={rowStyle}>
-                                            <IconButton
+                                            <Stack direction='row'>
+                                                {options.targetURL ? (
+                                                    <IconButton
 
-                                                color="primary"
-                                                aria-label="Edit"
-                                                component={Link}
-                                                //href={`${options.targetURL}`}
-                                                href={`${options.targetURL}/${row.id}`}
-                                                onClick={() => handleCellClick(row.id as number)}
-                                            >
-                                                <EditIcon/>
-                                            </IconButton>
+                                                        color="primary"
+                                                        aria-label="Edit"
+                                                        component={Link}
+                                                        //href={`${options.targetURL}`}
+                                                        href={`${options.targetURL}/${row.id}`}
+                                                        /*onClick={() => handleCellClick(row.id as number)}*/
+                                                    >
+                                                        <EditIcon/>
+                                                    </IconButton>
+                                                ) : (
+                                                    ''
+                                                )}
+                                                {options.deleteOption ? (
+
+                                                    <IconButton
+
+                                                        color="primary"
+                                                        aria-label="Edit"
+                                                        component={Link}
+                                                        //href={`${options.targetURL}`}
+                                                        /*href={`${options.deleteRecord}/${row.id}`}*/
+                                                        onClick={() => handleCellClick(row)}
+                                                    >
+                                                        <DeleteIcon/>
+                                                    </IconButton>
+
+                                                ) : (
+                                                    ''
+                                                )}
+                                            </Stack>
                                         </TableCell>
                                     ) : (
                                         ''
                                     )}
+
                                 </TableRow>
                             ))
                         }
@@ -247,6 +285,8 @@ function CustomTable({
                 </>
 
             </TableContainer>
+
+
         </Box>
 
 

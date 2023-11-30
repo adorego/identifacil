@@ -22,6 +22,7 @@ export const metadata = {
 
 
 
+// @ts-ignore
 const AlternateLayout = ({ children }) => {
 
 
@@ -33,17 +34,8 @@ const AlternateLayout = ({ children }) => {
                 </Box>
                 <Box width='100%' sx={{bgcolor: '#F6FAFF'}}>
                     <TopNav/>
+                    <Box mx={4} mt={4}>
 
-
-
-                    <Grid container>
-                        <Grid item>
-                            <Box mx={4} mt={4}>
-                                <StatusNav/>
-                            </Box>
-                        </Grid>
-                    </Grid>
-                    <Box mx={4}>
                         {children}
                     </Box>
 

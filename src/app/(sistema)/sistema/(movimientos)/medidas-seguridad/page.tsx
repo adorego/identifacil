@@ -4,19 +4,29 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {Box, CircularProgress} from "@mui/material";
 import CustomTable from "@/components/CustomTable";
+import {deleteRecord} from "@/app/api";
+import {useGlobalContext} from "@/app/Context/store";
+import ModalBorrado from "@/components/modal/ModalBorrado";
+import TituloComponent from "@/components/titulo/tituloComponent";
+
+// Datos para armar el header de la tabla
+const header = [
+    { id: 'id', label: 'ID' },
+    { id: 'medidaSeguridad', label: 'Medida de seguridad' },
+    { id: 'lastUpdate', label: 'Ultima actualización' },
+]
 
 export default function Page(){
-
+    const { openSnackbar } = useGlobalContext();
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
     const [data, setData] = useState(null);
 
-    // Datos para armar el header de la tabla
-    const header = [
-        { id: 'id', label: 'ID' },
-        { id: 'medidaSeguridad', label: 'Medida de seguridad' },
-        { id: 'lastUpdate', label: 'Ultima actualización' },
-    ]
 
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
+    // TODO: Convertir en server side
+
+    // Se obtiene datos de la API
     async function fetchData() {
         try {
             const response = await fetch('http://localhost:5000/medidaSeguridad');
@@ -32,12 +42,50 @@ export default function Page(){
         }
     }
 
+    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
         fetchData()
             .then(fetchedData => {
                 setData(fetchedData);
             });
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+
+
+    const handleDelete = async (id:number) => {
+        const result = await deleteRecord(`/medidaSeguridad/${id}`);
+
+        if (result.success) {
+            openSnackbar(result.message, "success");
+        } else {
+            openSnackbar(result.message, "error");
+        }
+    };
+
+    const handleDeleteRecord = (id:number)=>{
+
+
+        // @ts-ignore
+        //Actualiza el store local con el ID que se obtuvo dentro de CustomTable
+        const datosActualizados = data.filter((item: { id: number; }) => item.id !== id);
+        setData(datosActualizados)
+
+        // Borra el registro de la BD con el ID que toma de la lista
+        handleDelete(id);
+
+    }
+
+    const handleOpenModal = (row: { id:number, medidaSeguridad: string }) => {
+
+        setModalOpen(true);
+        setSelectedData({
+            id: row.id,
+            name: row.medidaSeguridad,
+        });
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
 
     if (!data) {
         return (
@@ -53,23 +101,28 @@ export default function Page(){
         );
     }
 
+
     return(
 
         <Box>
+            <TituloComponent titulo='Medidas de seguridad' />
             <Box mt={4}>
                 <CustomTable
                     showId={true}
                     headers={header}
                     data={data}
+                    // @ts-ignore
+                    deleteRecord={handleOpenModal}
                     options={{
-                        title: 'Medidas de seguridad',
+                        title: 'Lista de medidas de seguridad',
                         pagination:true,
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/medidas-seguridad/crear',
                         targetURL:`/sistema/medidas-seguridad/`,
+                        deleteOption: true,
                     }}
                 />
-
+                <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
             </Box>
 
         </Box>

@@ -1,26 +1,60 @@
-import {Breadcrumbs, Button, Link, Stack, Typography, Box} from "@mui/material";
+'use client'
+
+import {Stack, Typography, Box, Grid} from "@mui/material";
 import * as React from "react";
+import StatusNav from "@/components/StatusNav";
+import {useEffect, useState} from "react";
+import {getRecord} from "@/app/api";
+import {useGlobalContext} from "@/app/Context/store";
 
-export default function TituloComponent({titulo='Titulo'}){
+interface propsType {
+    titulo: string;
+    url?: string;
+}
 
-    // TODO: Hacer un componente dinamico que recorra un objeto o array de la estructura del Breadcrumb
-    return(
-        <Stack direction="row" spacing={2}   justifyContent="space-between"
+
+
+export default function TituloComponent({titulo, url}: propsType) {
+    const [datos, setDatos] = useState<{ id: number, medidaSeguridad: string }>({id: 0, medidaSeguridad: ''});
+    const {openSnackbar} = useGlobalContext();
+
+
+    useEffect(() => {
+
+            if(url){
+                const fetchData = async () => {
+                    const result = await getRecord(url);
+                    if (result.success) {
+                        setDatos(result.data);
+                    } else {
+                        //console.log(result.message)
+                        // @ts-ignore
+                        openSnackbar(result.message, "error");
+                    }
+                };
+                fetchData();
+            }
+
+    }, [url, ]);
+
+    // TODO: en el status nav no se pasan datos dinamicos porque solo funciona con medidas de seguridad y no con cualquiera
+    return (
+        <Stack direction="row" spacing={2} justifyContent="space-between"
                alignItems="center">
             <Box>
-                <h2>{titulo}</h2>
-                {/*<Breadcrumbs aria-label="breadcrumb">
-                    <Link underline="hover" color="inherit" href="/">
-                        Inicio
-                    </Link>
-                    <Link underline="hover" color="inherit" href="/movimientos">
-                        Movimientos
-                    </Link>
-                    <Typography color="text.primary">{titulo}</Typography>
-                </Breadcrumbs>*/}
+                <Typography variant='h4' sx={{
+                    textTransform: 'math-auto',
+                }}>{titulo ? titulo : datos.medidaSeguridad}</Typography>
+                <Grid container>
+                    <Grid item>
+                        <Box mt={2}>
+                            <StatusNav lastItem={datos.medidaSeguridad ? datos.medidaSeguridad  : titulo}/>
+                        </Box>
+                    </Grid>
+                </Grid>
             </Box>
             <Box>
-                
+
             </Box>
         </Stack>
 

@@ -21,9 +21,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
-import {useGlobalContext} from "../app/Context/store";
+import {useGlobalContext} from "@/app/Context/store";
 import {useEffect} from "react";
-import {Next13ProgressBar} from "next13-progressbar";
+
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -88,7 +88,6 @@ export default function TopNav() {
     };
 
     const handleSidebar = (event: React.MouseEvent<HTMLElement>) => {
-        console.log('holaaa');
         setSidebarStatus(!sidebarStatus);
     };
 
@@ -105,15 +104,8 @@ export default function TopNav() {
         setMobileMoreAnchorEl(event.currentTarget);
     };
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNav(event.currentTarget);
-    };
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
-    };
-
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
     };
 
     const handleCloseUserMenu = () => {

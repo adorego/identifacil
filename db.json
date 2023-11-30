@@ -254,10 +254,6 @@
       "id": 1
     },
     {
-      "medidaSeguridad": "Mal comportamiento",
-      "id": 2
-    },
-    {
       "medidaSeguridad": "Escoltas adicionales",
       "id": 3
     },
@@ -266,75 +262,8 @@
       "id": 4
     },
     {
-      "medidaSeguridad": "Medida de prueba",
-      "id": 5
-    },
-    {
-      "medidaSeguridad": "Medida 3",
-      "id": 6
-    },
-    {
-      "medidaSeguridad": "Medida 54",
-      "id": 7
-    },
-    {
-      "medidaSeguridad": "medida 56",
-      "id": 8
-    },
-    {
-      "medidaSeguridad": "medida 7",
-      "id": 9
-    },
-    {
       "medidaSeguridad": "asdasd",
       "id": 10
-    },
-    {
-      "id": 11
-    },
-    {
-      "medidaSeguridad": "medida 7",
-      "id": 12
-    },
-    {
-      "medidaSeguridad": "asdasd",
-      "id": 13
-    },
-    {
-      "medidaSeguridad": "asdas2",
-      "id": 14
-    },
-    {
-      "medidaSeguridad": "aasdasdasd5",
-      "id": 15
-    },
-    {
-      "medidaSeguridad": "12312312",
-      "id": 16
-    },
-    {
-      "medidaSeguridad": "asdasdadasdasd",
-      "id": 17
-    },
-    {
-      "medidaSeguridad": "asdasdasd",
-      "id": 18
-    },
-    {
-      "medidaSeguridad": "asdasdasdasdasdasdasd",
-      "id": 19
-    },
-    {
-      "medidaSeguridad": "asdasdasd",
-      "id": 20
-    },
-    {
-      "medidaSeguridad": "asdasdasdasdads",
-      "id": 21
-    },
-    {
-      "medidaSeguridad": "asdasdasdasdasd",
-      "id": 22
     },
     {
       "medidaSeguridad": "asdasdsd",
@@ -385,8 +314,763 @@
       "descripcion": "Medida 4"
     },
     {
-      "id": 5,
-      "descripcion": "Motivo 5",
+      "id": 6,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 7,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 8,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 9,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 10,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 11,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 12,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 13,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 14,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 15,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 16,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 17,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 18,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 19,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 20,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 21,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 22,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 23,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 24,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 25,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 26,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 27,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 28,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 29,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 30,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 31,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 32,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 33,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 34,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 35,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 36,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 37,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 38,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 39,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 40,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 41,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 42,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 43,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 44,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 45,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 46,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 47,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 48,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 49,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 50,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 51,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 52,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 53,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 54,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 55,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 56,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 57,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 58,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 59,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 60,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 61,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 62,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 63,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 64,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 65,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 66,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 67,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 68,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 69,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 70,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 71,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 72,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 73,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 74,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 75,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 76,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 77,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 78,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 79,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 80,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 81,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 82,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 83,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 84,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 85,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 86,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 87,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 88,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 89,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 90,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 91,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 92,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 93,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 94,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 95,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 96,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 97,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 98,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 99,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 100,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 101,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 102,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 103,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 104,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 105,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 106,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 107,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 108,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 109,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 110,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 111,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 112,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 113,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 114,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 115,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 116,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 117,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 118,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 119,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 120,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 121,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 122,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 123,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 124,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 125,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 126,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 127,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 128,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 129,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 130,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 131,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 132,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 133,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 134,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 135,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 136,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 137,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 138,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 139,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 140,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 141,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 142,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 143,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 144,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 145,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 146,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 147,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 148,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 149,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 150,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 151,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 152,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 153,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 154,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 155,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 156,
+      "descripcion": "",
+      "lastUpdate": ""
+    },
+    {
+      "id": 157,
+      "descripcion": "",
       "lastUpdate": ""
     }
   ],
@@ -414,12 +1098,6 @@
       "nombre": "Gustavo Caceres",
       "tipo": "custodio",
       "lastUpdate": "01/01/2023 22:00"
-    },
-    {
-      "id": 5,
-      "nombre": "Marcelo Castro",
-      "tipo": "custodio",
-      "lastUpdate": ""
     }
   ],
   "vehiculo": [

@@ -4,15 +4,27 @@ import * as React from "react";
 
 import { AccountBalance,  AirportShuttle,  BarChart,  CameraIndoor,  ExpandLess,  ExpandMore,  FaceOutlined,
     Fingerprint,  Hail,  Key,  ManageAccounts,  Mood,  People,  PermIdentity,  Settings } from "@mui/icons-material";
-import {Box, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Stack, Typography} from "@mui/material";
+import {
+    Box,
+    Collapse,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Stack,
+    Typography
+} from "@mui/material";
 import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
+import Link from 'next/link'
 
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import SidebarItems from "./sidebar/sidebarItems";
+import SidebarItems from "./sidebar/sidebarItem";
 import styles from "./sidebar.module.css";
 import {useGlobalContext} from "@/app/Context/store";
+import SidebarItem from "./sidebar/sidebarItem";
 
 
 const titulo : string = "IDENTIFACIL";
@@ -66,7 +78,6 @@ export default function SideBar() {
                         m: '0 20px',
 
                     }}>
-
                         <Stack  spacing={1} direction='row' alignItems='center' justifyContent='space-between' width='100%'>
 
                             <Typography variant="h6" className={styles.title} color={'#AAA'} >
@@ -87,17 +98,16 @@ export default function SideBar() {
                     <List aria-labelledby="nested-list-subheader" component="nav">
 
 
-                        {/*<ListItem disablePadding >*/}
-                        <ListItemButton
-                            className={pathname === '/inicio' ? 'active' : ''}
-                            onClick={(e) => handleNavigation('/inicio')}
-                        >
-                            <ListItemIcon>
-                                <AirportShuttle />
-                            </ListItemIcon>
-                            <ListItemText primary={'Panel'} hidden={sidebarStatus}/>
-                        </ListItemButton>
-                        {/*</ListItem>*/}
+                        {/*<ListItem disablePadding >
+                        </ListItem>*/}
+
+                        {/* Menu de Dashboard */}
+                        <SidebarItem
+                            icon={<AirportShuttle />}
+                            label="Dashboard"
+                            path="/inicio"
+                            isActive={pathname === '/inicio'}
+                        />
 
 
                         {/* <ListItem disablePadding> */}
@@ -111,9 +121,9 @@ export default function SideBar() {
 
                         <Collapse in={openMenus.registroAccesos} timeout="auto" unmountOnExit>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+
                                 <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
                                     <ListItemIcon>
-
                                         <PermIdentity/>
                                     </ListItemIcon>
                                     <ListItemText primary="Ingreso PPL" hidden={sidebarStatus}/>
@@ -134,37 +144,30 @@ export default function SideBar() {
                             </List>
                         </Collapse>
 
+                        {/* Menu de PPL */}
+                        <SidebarItem
+                            icon={<Mood/>}
+                            label="PPL"
+                            path="/ppl"
+                            isActive={pathname === '/ppl'}
+                        />
 
-                        <ListItemButton
-                            className={pathname === '/ppl' ? 'active' : ''}
-                            onClick={(e) => handleNavigation('/ppl')}>
-                            <ListItemIcon>
-                                <Mood/>
-                            </ListItemIcon>
-                            <ListItemText primary={'Gestión PPLs'}  hidden={sidebarStatus}/>
-                        </ListItemButton>
+                        {/* Menu de Movimientos */}
+                        <SidebarItem
+                            icon={<AirportShuttle />}
+                            label="Movimientos"
+                            path="/movimientos"
+                            isActive={pathname === '/movimientos'}
+                        />
 
-                        <ListItemButton
-                            className={pathname === '/movimientos' ? 'active' : ''}
-                            onClick={(e) => handleNavigation('/movimientos')}>
-                            <ListItemIcon>
-                                <AirportShuttle/>
-                            </ListItemIcon>
-                            <ListItemText primary={'Movimientos'} hidden={sidebarStatus}/>
-                        </ListItemButton>
 
                         {/* Menu de Reportes */}
-                        <ListItemButton
-                            className={pathname === '/informes' ? 'active' : ''}
-                            onClick={(e) => handleNavigation('/informes')}
-                        >
-                            <ListItemIcon>
-                                <BarChart  />
-                            </ListItemIcon>
-                            <ListItemText primary={'Reportes'} hidden={sidebarStatus}/>
-                        </ListItemButton>
-
-
+                        <SidebarItem
+                            icon={<BarChart/>}
+                            label="Informes"
+                            path="/informes"
+                            isActive={pathname === '/informes'}
+                        />
 
                         {/* Menu de Bloqueados */}
                         <ListItemButton disabled>
@@ -174,8 +177,6 @@ export default function SideBar() {
                             <ListItemText primary={'Gestión de Visitas'} hidden={sidebarStatus}/>
 
                         </ListItemButton>
-
-
 
                         <ListItemButton disabled>
                             <ListItemIcon>
@@ -191,7 +192,6 @@ export default function SideBar() {
                             <ListItemText primary={'Autorizaciones'} hidden={sidebarStatus}/>
                         </ListItemButton>
 
-
                         {/* ------------------------- Menu de Sistema ------------------------- */}
                         <Typography variant='overline' display="block" align="left" pl='16px'>
                             Sistema
@@ -206,24 +206,19 @@ export default function SideBar() {
 
                         <Collapse in={openMenus.sistema} timeout="auto" unmountOnExit>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Camaras"
+                                    path="/sistema/camaras"
+                                    isActive={pathname === '/sistema/camaras'}
+                                />
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Roles"
+                                    path="/sistema/roles"
+                                    isActive={pathname === '/sistema/roles'}
+                                />
 
-                                <ListItemButton
-                                    className={pathname === '/sistema/camaras' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/camaras')}>
-                                    <ListItemIcon>
-                                        <CameraIndoor/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Camaras" hidden={sidebarStatus}/>
-                                </ListItemButton>
-
-                                <ListItemButton
-                                    className={pathname === '/sistema/roles' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/roles')}>
-                                    <ListItemIcon>
-                                        <ManageAccounts/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Roles" hidden={sidebarStatus}/>
-                                </ListItemButton>
                             </List>
                         </Collapse>
 
@@ -239,48 +234,38 @@ export default function SideBar() {
 
                         <Collapse in={openMenus.datosMovimientos} timeout="auto" unmountOnExit>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Medidas de seguridad"
+                                    path="/sistema/medidas-seguridad"
+                                    isActive={pathname === '/sistema/medidas-seguridad'}
+                                />
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Motivos de traslados"
+                                    path="/sistema/motivos-traslados"
+                                    isActive={pathname === '/sistema/motivos-traslados'}
+                                />
 
-                                <ListItemButton
-                                    className={pathname === '/sistema/medidas-seguridad' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/medidas-seguridad')}>
-                                    <ListItemIcon>
-                                        <Settings/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Medidas de seguridad" hidden={sidebarStatus}/>
-                                </ListItemButton>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Personal"
+                                    path="/sistema/personal"
+                                    isActive={pathname === '/sistema/personal'}
+                                />
 
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Vehiculo"
+                                    path="sistema/vehiculo"
+                                    isActive={pathname === '/sistema/vehiculo'}
+                                />
 
-                                <ListItemButton
-                                    className={pathname === '/sistema/motivos-traslados' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/motivos-traslados')}>
-                                    <ListItemIcon>
-                                        <Settings/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Motivos traslado" hidden={sidebarStatus}/>
-                                </ListItemButton>
-
-                                <ListItemButton
-                                    className={pathname === '/sistema/personal' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/personal')}>
-                                    <ListItemIcon>
-                                        <Settings/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Personal" hidden={sidebarStatus}/>
-                                </ListItemButton>
-
-                                <ListItemButton
-                                    className={pathname === '/sistema/vehiculo' ? 'active' : ''}
-                                    onClick={(e) => handleNavigation('/sistema/vehiculo')}>
-                                    <ListItemIcon>
-                                        <Settings/>
-                                    </ListItemIcon>
-                                    <ListItemText primary="Vehiculo" hidden={sidebarStatus}/>
-                                </ListItemButton>
 
                             </List>
                         </Collapse>
 
-
+                        {/* ------------------------- Fin de movimientos ------------------------- */}
 
                         <ListItemButton disabled>
                             <ListItemIcon>
