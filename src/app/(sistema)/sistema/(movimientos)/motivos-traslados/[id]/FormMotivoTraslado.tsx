@@ -60,32 +60,29 @@ export default function FormMotivoTraslado({params} : { params: { id: number } }
     const postTraslado = async () => {
         try {
             setLoading(true);
+            const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
+            const url = isEditMode !== 'crear'
+                ? `http://localhost:5000/motivoTraslados/${params.id}`
+                : 'http://localhost:5000/motivoTraslados';
 
-            // await delay(5000);
-
-            const response = await fetch('http://localhost:5000/motivoTraslados', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(stateForm) // formData contiene los datos de tu formulario
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(stateForm),
             });
 
             setLoading(false);
-
             if (response.ok) {
-                openSnackbar('Motivo de traslado creada correctamente.', 'success');
+                const message = isEditMode !== 'crear'
+                    ? 'Medida de seguridad actualizada correctamente.'
+                    : 'Medida de seguridad creada correctamente.';
+                openSnackbar(message, 'success');
                 router.push('/sistema/motivos-traslados');
-            }
-            if (!response.ok) {
+            } else {
                 throw new Error('Error en la petición');
             }
-
-            const data = await response.json();
-            console.log('Motivo creado:', data);
         } catch (error) {
             setLoading(false);
-
             console.error('Error:', error);
         }
     };
@@ -99,7 +96,7 @@ export default function FormMotivoTraslado({params} : { params: { id: number } }
     }
 
     const handleCancelar = () =>{
-        router.push('/sistema/motivos-traslado');
+        router.push('/sistema/motivos-traslados');
     }
 
     return(

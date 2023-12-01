@@ -22,14 +22,20 @@ const initialState: MyState = {
 }
 export default function FormMedidasSeguridad({params} : { params: { id: number } }){
     const [stateForm, setStateForm] = useState<MyState>(initialState);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
     const router = useRouter();
     const isEditMode = params && params.id;
 
+    const handleLoading = (value:boolean):void =>{
+        // console.log('ahora ' + value);
+        setLoading(value);
+        // console.log('edit:' + isEditMode)
+    }
     // Cargar datos para edición
     useEffect(() => {
         if (isEditMode) {
+            handleLoading(true);
             fetch(`http://localhost:5000/medidaSeguridad?id=${params.id}`)
                 .then(response => response.json())
                 .then(data => {
@@ -43,6 +49,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
                     }
                 })
                 .catch(error => console.error('Error:', error));
+            handleLoading(false);
         }
     }, [isEditMode, params.id]);
 
@@ -61,8 +68,11 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
     const postTraslado = async () => {
         try {
             setLoading(true);
-            const method = isEditMode ? 'PUT' : 'POST';
-            const url = isEditMode
+
+            const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
+            console.log('metodo: ' + isEditMode)
+
+            const url = isEditMode !== 'crear'
                 ? `http://localhost:5000/medidaSeguridad/${params.id}`
                 : 'http://localhost:5000/medidaSeguridad';
 
@@ -74,7 +84,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
 
             setLoading(false);
             if (response.ok) {
-                const message = isEditMode
+                const message = (isEditMode !== 'crear')
                     ? 'Medida de seguridad actualizada correctamente.'
                     : 'Medida de seguridad creada correctamente.';
                 openSnackbar(message, 'success');
@@ -93,7 +103,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
         // console.log(JSON.stringify(stateForm))
     }
 
-        if (stateForm.id == 0) {
+    if (loading) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -105,6 +115,10 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
                 <CircularProgress />
             </Box>
         );
+    }
+
+    const handleCancelar = () =>{
+        router.push('/sistema/medidas-seguridad');
     }
 
     return(
@@ -127,7 +141,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
                     <Button variant='contained' onClick={handleSubmit}>
                         Guardar
                     </Button>
-                    <Button variant='outlined'>
+                    <Button variant='outlined' onClick={handleCancelar}>
                         Cancelar
                     </Button>
                 </Stack>

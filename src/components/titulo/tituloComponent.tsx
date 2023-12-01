@@ -13,17 +13,18 @@ interface propsType {
 }
 
 
-
-export default function TituloComponent({titulo, url}: propsType) {
+export default function TituloComponent({titulo, url = ""}: propsType) {
     const [datos, setDatos] = useState<{ id: number, medidaSeguridad: string }>({id: 0, medidaSeguridad: ''});
     const {openSnackbar} = useGlobalContext();
 
 
-    useEffect(() => {
 
-            if(url){
+    useEffect(() => {
+        if (!url.includes("/crear" && url)) {
+
                 const fetchData = async () => {
                     const result = await getRecord(url);
+                    {console.log(result)}
                     if (result.success) {
                         setDatos(result.data);
                     } else {
@@ -33,22 +34,28 @@ export default function TituloComponent({titulo, url}: propsType) {
                     }
                 };
                 fetchData();
-            }
 
-    }, [url, ]);
+        }
+
+
+    }, [url]);
 
     // TODO: en el status nav no se pasan datos dinamicos porque solo funciona con medidas de seguridad y no con cualquiera
     return (
         <Stack direction="row" spacing={2} justifyContent="space-between"
                alignItems="center">
             <Box>
+
                 <Typography variant='h4' sx={{
                     textTransform: 'math-auto',
-                }}>{titulo ? titulo : datos.medidaSeguridad}</Typography>
+                }}>
+                    {titulo ? titulo : datos.medidaSeguridad}
+                </Typography>
+
                 <Grid container>
                     <Grid item>
                         <Box mt={2}>
-                            <StatusNav lastItem={datos.medidaSeguridad ? datos.medidaSeguridad  : titulo}/>
+                            <StatusNav lastItem={datos.medidaSeguridad ? datos.medidaSeguridad : titulo}/>
                         </Box>
                     </Grid>
                 </Grid>

@@ -24,6 +24,7 @@ interface Motivo {
 }
 
 interface Medidas {
+    tipo: string;
     id: string; // O número, según tu API
     medidaSeguridad: string;
 }
@@ -91,7 +92,8 @@ const headersPPL = [
 ];
 
 const URL_ENDPOINT = 'http://localhost:5000/motivoTraslados';
-const URL_ENDPOINT_MEDIDAS = 'http://localhost:5000/medidaSeguridad\n';
+const URL_ENDPOINT_MEDIDAS = 'http://localhost:5000/medidaSeguridad';
+const URL_ENDPOINT_PERSONAL = 'http://localhost:5000/personal';
 // TODO: Cuando se envia el submit se debe bloquear el boton de guardado
 // TODO: Luego de enviar la peticion se debe mostrar una alerta de que se guardo correctamente
 // TODO: hacer un spinner que bloquee toda la pantalla cuando carga o guarda los datos
@@ -100,9 +102,9 @@ export default function Traslados() {
 
     const [motivos, setMotivos] = useState<Motivo[]>([]);
     const [medidas, setMedidas] = useState<Medidas[]>([]);
+    const [personal, setPersonal] = useState<Medidas[]>([]);
 
     const [formData, setFormData] = useState<FormData>(initialFormData);
-
     const [loading, setLoading] = useState(false);
 
     // Función para cargar los motivos desde el endpoint
@@ -135,9 +137,24 @@ export default function Traslados() {
                 console.error('Error al cargar los medidas:', error);
             }
         };
+        const fetchPersonal = async () => {
+            try {
+                const respuesta = await fetch(URL_ENDPOINT_PERSONAL);
+                if (respuesta.ok) {
+                    const datos = await respuesta.json();
+                    setPersonal(datos);
+
+                } else {
+                    throw new Error(`Error: ${respuesta.status}`);
+                }
+            } catch (error) {
+                console.error('Error al cargar los medidas:', error);
+            }
+        };
 
         cargarMotivos();
         fetchMedidas();
+        fetchPersonal();
     }, []);
 
     // Manejadores para inputs fields
@@ -350,18 +367,54 @@ export default function Traslados() {
 
                                 {/* Persona que custodia */}
                                 <Grid item xs={6}>
-                                    <TextField fullWidth label="Persona que custodia" variant="outlined"
+                                    {/*<TextField fullWidth label="Persona que custodia" variant="outlined"
                                                value={formData.custodia}
                                                name="custodia"
-                                               onChange={handleInputChange}/>
+                                               onChange={handleInputChange}/>*/}
+
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel>Personal de custodia</InputLabel>
+                                        <Select
+                                            value={formData.custodia}
+                                            onChange={handleSelectChange}
+                                            label="Personal de custodia"
+                                            name="custodia"
+                                        >
+                                            {/* Replace these menu items with your options */}
+                                            {personal.filter(row => row.tipo === 'custodio').map(row => (
+                                                <MenuItem key={row.id} value={row.id}>
+                                                    {row.nombre}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
                                 </Grid>
 
                                 {/* Chofer */}
                                 <Grid item xs={6}>
-                                    <TextField fullWidth label="Chofer" variant="outlined"
+{/*                                    <TextField fullWidth label="Chofer" variant="outlined"
                                                value={formData.chofer}
                                                name="chofer"
-                                               onChange={handleInputChange}/>
+                                               onChange={handleInputChange}/>*/}
+
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel>chofer</InputLabel>
+                                        <Select
+                                            value={formData.chofer}
+                                            onChange={handleSelectChange}
+                                            label="chofer"
+                                            name="chofer"
+                                        >
+                                            {/* Replace these menu items with your options */}
+                                            {personal.filter(row => row.tipo === 'chofer').map(row => (
+                                                <MenuItem key={row.id} value={row.id}>
+                                                    {row.nombre}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+
                                 </Grid>
 
                                 {/* Chapa del vehículo */}

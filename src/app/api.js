@@ -20,7 +20,7 @@ export const deleteRecord = async (id) => {
 };
 
 export const getRecord = async (url) => {
-    console.log('la ulti: ' + url)
+
     try {
         const response = await fetch(url);
         if (!response.ok) {

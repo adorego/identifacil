@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import {
-    Breadcrumbs, Button,
+    Breadcrumbs, Button, CircularProgress,
     FormControl,
     Grid,
     InputLabel,
@@ -32,12 +32,39 @@ import SalidasTransitorias from "./salidasTransitorias/SalidasTransitorias";
 import {dataBajas, dataSalidasEspeciales, dataTraslados} from "../../dummyData/movimientosDummyData";
 import tabTitle from "./components/tabTitle";
 import TabTitle from "./components/tabTitle";
+import TituloComponent from "@/components/titulo/tituloComponent";
+import {useEffect, useState} from "react";
 
+const header = [
+    { id: "id", label: "id" },
+    { id: "documento" , label: "documento" },
+    { id: "fechaDocumento" , label: "fechaDocumento" },
+    { id: "fechaTraslado" , label: "fechaTraslado" },
+    { id: "autorizo" , label: "autorizo" },
+    { id: "motivoTraslado" , label: "motivoTraslado" },
+    { id: "medidasSeguridad" , label: "medidasSeguridad" },
+    { id: "descripcionMotivo" , label: "descripcionMotivo" },
+    { id: "custodia" , label: "custodia" },
+    { id: "chofer" , label: "chofer" },
+    { id: "chapaVehiculo" , label: "chapaVehiculo" },
+    { id: "modeloVehiculo" , label: "modeloVehiculo" },
+    { id: "destinoTraslado" , label: "destinoTraslado" },
+    { id: "documentoAdjunto" , label: "documentoAdjunto" },
+    { id: 'ppl', label: "PPLs"}
+]
+const header2 = [
+    { id: 'id', label: 'ID' },
+    { id: 'documento', label: 'Nro. documento' },
+    { id: 'fechaDocumento', label: 'Fecha Documento' },
+    { id: 'fechaTraslado', label: 'Fecha Traslado' },
+    { id: 'destinoTraslado', label: 'Destino' },
+]
 
 
 export default function Ppl() {
     const [value, setValue] = React.useState('1');
     const [tabName, settabName] = React.useState('Traslados');
+    const [data, setData] = useState(null);
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         settabName(event.target.name);
@@ -50,17 +77,49 @@ export default function Ppl() {
     const dummySalidasEspeciales = dataSalidasEspeciales();
     const dummyTraslados = dataTraslados();
 
+    async function fetchData() {
+        try {
+            const response = await fetch('http://localhost:5000/traslados');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // const data = await response.json();
+            // return data
+            return await response.json();
+        } catch (error) {
+            console.error('Error al realizar la solicitud fetch:', error);
+            return null; // o manejar el error de manera adecuada
+        }
+    }
+
+    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
+    useEffect(() => {
+        fetchData()
+            .then(fetchedData => {
+
+                setData(fetchedData);
+            });
+    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+    if (!data) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '75vh',
+            }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
     return (
         <div>
-            <h2>Movimientos</h2>
-            {/*<Breadcrumbs aria-label="breadcrumb">
-                <Link underline="hover" color="inherit" href="/">
-                    Inicio
-                </Link>
-                <Typography color="text.primary">Movimientos</Typography>
-            </Breadcrumbs>*/}
 
-            <QueryBlock/>
+
+            <TituloComponent titulo='Movimiento' url='' />
+
+            {/*<QueryBlock/>*/}
 
             <Grid container>
                 <Grid item sm={12} mt={4}>
@@ -110,12 +169,16 @@ export default function Ppl() {
                                                         marginTop: '20px',
                                                     }}>
                                                         <CustomTable
-                                                            data={dummyTraslados.data}
-                                                            headers={dummyTraslados.header}
+                                                            data={data}
+                                                            headers={header2}
+                                                            showId={true}
                                                             options={{
+
                                                                 targetURL: '/movimientos/traslados',
                                                                 rowsPerPageCustom: 5,
                                                                 pagination:true,
+                                                                deleteOption: true,
+
                                                             }}
                                                         />
                                                     </Grid>

@@ -31,7 +31,6 @@ const titulo : string = "IDENTIFACIL";
 type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos';
 
 
-
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
 export default function SideBar() {
 
@@ -63,7 +62,8 @@ export default function SideBar() {
     }
 
     return (
-        <nav className={`${styles.sidebar} ${sidebarStatus? 'sidebarOpen' : 'sidebarClosed'}`}>
+        /*<nav className={`${styles.sidebar} ${sidebarStatus? 'sidebarOpen' : 'sidebarClosed'}`}>*/
+        <nav className={`${styles.sidebar} sidebarOpen`}>
 
             <Box sx={{bgcolor: "#FFFFFF", textAlign: 'center', minHeight: '100vh'}}>
 
@@ -115,7 +115,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Fingerprint/>
                             </ListItemIcon>
-                            <ListItemText primary={'Registro de Accesos'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Registro de Accesos'} hidden={false}/>
                             {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
                         </ListItemButton>
 
@@ -126,20 +126,20 @@ export default function SideBar() {
                                     <ListItemIcon>
                                         <PermIdentity/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Ingreso PPL" hidden={sidebarStatus}/>
+                                    <ListItemText primary="Ingreso PPL" hidden={false}/>
                                 </ListItemButton>
 
                                 <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
                                     <ListItemIcon>
                                         <People/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Acceso al Penal" hidden={sidebarStatus}/>
+                                    <ListItemText primary="Acceso al Penal" hidden={false}/>
                                 </ListItemButton>
                                 <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
                                     <ListItemIcon>
                                         <FaceOutlined/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Identificación" hidden={sidebarStatus}/>
+                                    <ListItemText primary="Identificación" hidden={false}/>
                                 </ListItemButton>
                             </List>
                         </Collapse>
@@ -174,7 +174,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Hail/>
                             </ListItemIcon>
-                            <ListItemText primary={'Gestión de Visitas'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Gestión de Visitas'} hidden={false}/>
 
                         </ListItemButton>
 
@@ -182,14 +182,14 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <AccountBalance/>
                             </ListItemIcon>
-                            <ListItemText primary={'Defensoría'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Defensoría'} hidden={false}/>
                         </ListItemButton>
 
                         <ListItemButton disabled>
                             <ListItemIcon>
                                 <Key/>
                             </ListItemIcon>
-                            <ListItemText primary={'Autorizaciones'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Autorizaciones'} hidden={false}/>
                         </ListItemButton>
 
                         {/* ------------------------- Menu de Sistema ------------------------- */}
@@ -200,7 +200,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Settings/>
                             </ListItemIcon>
-                            <ListItemText primary={'Sistema'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Sistema'} hidden={false}/>
                             {openMenus.sistema ? <ExpandLess/> : <ExpandMore/>}
                         </ListItemButton>
 
@@ -228,7 +228,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <Settings/>
                             </ListItemIcon>
-                            <ListItemText primary={'Datos de movimientos'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Datos de movimientos'} hidden={false}/>
                             {openMenus.datosMovimientos ? <ExpandLess/> : <ExpandMore/>}
                         </ListItemButton>
 
@@ -257,7 +257,7 @@ export default function SideBar() {
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Vehiculo"
-                                    path="sistema/vehiculo"
+                                    path="/sistema/vehiculo"
                                     isActive={pathname === '/sistema/vehiculo'}
                                 />
 
@@ -271,7 +271,7 @@ export default function SideBar() {
                             <ListItemIcon>
                                 <ManageAccounts/>
                             </ListItemIcon>
-                            <ListItemText primary={'Gestión de Funcionarios'} hidden={sidebarStatus}/>
+                            <ListItemText primary={'Gestión de Funcionarios'} hidden={false}/>
                         </ListItemButton>
 
                     </List>
