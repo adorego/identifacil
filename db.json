@@ -306,9 +306,9 @@
   "vehiculo": [
     {
       "id": 1,
-      "chapa": "ABC 123",
       "modelo": "Mercedez Sprinter",
-      "lastUpdate": "01/01/2023 22:00"
+      "chapa": "ABC 12334444",
+      "lastUpdate": ""
     },
     {
       "id": 6,
@@ -316,6 +316,18 @@
       "modelo": "Mercerdez Sprint 2008",
       "lastUpdate": "01/01/2023 22:00",
       "nombre": "B"
+    },
+    {
+      "id": 7,
+      "chapa": "ABC 12334444",
+      "modelo": "Mercedez Sprinter",
+      "lastUpdate": ""
+    },
+    {
+      "id": 8,
+      "chapa": "CCC 55555",
+      "modelo": "Hyundai",
+      "lastUpdate": ""
     }
   ]
 }

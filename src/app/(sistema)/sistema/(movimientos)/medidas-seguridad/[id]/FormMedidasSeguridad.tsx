@@ -20,12 +20,14 @@ const initialState: MyState = {
     medidaSeguridad: "",
     lastUpdate: ""
 }
+
+// TODO: Corregir errores de Tyepescrit en is edit mode
 export default function FormMedidasSeguridad({params} : { params: { id: number } }){
     const [stateForm, setStateForm] = useState<MyState>(initialState);
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
     const router = useRouter();
-    const isEditMode = params && params.id;
+    const isEditMode = params.id !== undefined && params.id !== null;
 
     const handleLoading = (value:boolean):void =>{
         // console.log('ahora ' + value);
@@ -47,9 +49,16 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
                             lastUpdate: '' // Asegúrate de definir un valor por defecto para las propiedades faltantes
                         });
                     }
-                })
-                .catch(error => console.error('Error:', error));
-            handleLoading(false);
+                }).then( ()=>{
+                    handleLoading(false);
+            })
+                .catch(error => {
+                    handleLoading(true);
+                    console.error('Error:', error)
+                }).finally(()=>{
+                handleLoading(false);
+            });
+
         }
     }, [isEditMode, params.id]);
 
@@ -69,9 +78,11 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
         try {
             setLoading(true);
 
+            // @ts-ignore
             const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
             console.log('metodo: ' + isEditMode)
 
+            // @ts-ignore
             const url = isEditMode !== 'crear'
                 ? `http://localhost:5000/medidaSeguridad/${params.id}`
                 : 'http://localhost:5000/medidaSeguridad';
@@ -84,6 +95,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
 
             setLoading(false);
             if (response.ok) {
+                // @ts-ignore
                 const message = (isEditMode !== 'crear')
                     ? 'Medida de seguridad actualizada correctamente.'
                     : 'Medida de seguridad creada correctamente.';

@@ -13,13 +13,18 @@ interface MyState {
     lastUpdate: string;
 
 }
+
 const initialState: MyState = {
     id: 0,
     descripcion: "",
     lastUpdate: ""
 }
 
-export default function FormMotivoTraslado({params} : { params: { id: number } }){
+export default function FormMotivoTraslado({params}: {
+    params: {
+        id: number
+    }
+}) {
     const [stateForm, setStateForm] = useState<MyState>(initialState);
     const [loading, setLoading] = React.useState(false);
     const {openSnackbar} = useGlobalContext();
@@ -46,10 +51,10 @@ export default function FormMotivoTraslado({params} : { params: { id: number } }
         }
     }, [isEditMode, params.id]);
 
-    const handleChange = (e: any) =>{
+    const handleChange = (e: any) => {
         const {name, value} = e.target;
 
-        setStateForm((prevState) =>(
+        setStateForm((prevState) => (
             {
                 ...prevState,
                 [name]: value,
@@ -58,21 +63,25 @@ export default function FormMotivoTraslado({params} : { params: { id: number } }
     }
 
     const postTraslado = async () => {
+        setLoading(true);
+
         try {
-            setLoading(true);
+            // @ts-ignore
             const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
+            // @ts-ignore
             const url = isEditMode !== 'crear'
                 ? `http://localhost:5000/motivoTraslados/${params.id}`
                 : 'http://localhost:5000/motivoTraslados';
 
             const response = await fetch(url, {
                 method: method,
-                headers: { 'Content-Type': 'application/json' },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(stateForm),
             });
 
-            setLoading(false);
+
             if (response.ok) {
+                // @ts-ignore
                 const message = isEditMode !== 'crear'
                     ? 'Medida de seguridad actualizada correctamente.'
                     : 'Medida de seguridad creada correctamente.';
@@ -84,47 +93,46 @@ export default function FormMotivoTraslado({params} : { params: { id: number } }
         } catch (error) {
             setLoading(false);
             console.error('Error:', error);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const handleSubmit = () =>{
-
-            postTraslado();
-
-
+    const handleSubmit = () => {
+        postTraslado();
         // console.log(JSON.stringify(stateForm))
     }
 
-    const handleCancelar = () =>{
+    const handleCancelar = () => {
         router.push('/sistema/motivos-traslados');
     }
 
-    return(
+    return (
         <>
 
             <Grid container spacing={2} mt={2}>
-                    <Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            onChange={handleChange}
-                            name="descripcion"
-                            value={stateForm.descripcion}
-                            id="chapa"
-                            label="Descripción"
-                            variant="outlined" />
-                    </Grid>
+                <Grid item sm={6}>
+                    <TextField
+                        fullWidth
+                        onChange={handleChange}
+                        name="descripcion"
+                        value={stateForm.descripcion}
+                        id="chapa"
+                        label="Descripción"
+                        variant="outlined"/>
                 </Grid>
+            </Grid>
             <Grid item sm={12} mt={4}>
-                    <Stack direction='row' spacing={2}>
+                <Stack direction='row' spacing={2}>
 
-                        <Button variant='contained' onClick={handleSubmit}>
-                            Guardar
-                        </Button>
-                        <Button variant='outlined'onClick={handleCancelar}>
-                            Cancelar
-                        </Button>
-                    </Stack>
-                </Grid>
+                    <Button variant='contained' onClick={handleSubmit}>
+                        Guardar
+                    </Button>
+                    <Button variant='outlined' onClick={handleCancelar}>
+                        Cancelar
+                    </Button>
+                </Stack>
+            </Grid>
 
         </>
     )

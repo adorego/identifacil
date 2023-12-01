@@ -33,3 +33,19 @@ export const getRecord = async (url) => {
     }
 };
 
+
+export const sendRequest = async (endpoint, data, id, isEditMode) => {
+
+    const method = isEditMode == 'crear' ? 'POST' : 'PUT';
+    const url = isEditMode !== 'crear'
+        ? `http://localhost:5000/${endpoint}/${id}`
+        : `http://localhost:5000/${endpoint}`;
+    console.log('kesesto: ' + isEditMode)
+    const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    });
+
+    return response;
+};
