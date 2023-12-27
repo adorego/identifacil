@@ -38,8 +38,8 @@ export const sendRequest = async (endpoint, data, id, isEditMode) => {
 
     const method = isEditMode == 'crear' ? 'POST' : 'PUT';
     const url = isEditMode !== 'crear'
-        ? `http://localhost:5000/${endpoint}/${id}`
-        : `http://localhost:5000/${endpoint}`;
+        ? `${process.env.NEXT_PUBLIC_API_URL}${endpoint}/${id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
     console.log('kesesto: ' + isEditMode)
     const response = await fetch(url, {
         method: method,

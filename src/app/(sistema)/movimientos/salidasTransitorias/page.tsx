@@ -1,26 +1,29 @@
 'use client'
 
 import * as React from 'react';
-
 import {CircularProgress, Paper} from "@mui/material";
 import Box from '@mui/material/Box';
-
 import CustomTable from "../../../../components/CustomTable";
 import FiltrosTables from "../components/filtrosTables";
-import { dataSalidasEspeciales} from "@/app/dummyData/movimientosDummyData";
+import {dataBajas, dataSalidasEspeciales, dataTraslados} from "@/app/dummyData/movimientosDummyData";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 
+const headers = [
+    { id: 'id', label: 'ID' },
+    { id: 'nombre', label: 'Nombre y apellido' },
+    { id: 'salidaFecha', label: 'Fecha salida' },
+    { id: 'entradaFecha', label: 'Fecha entrada' },
+    { id: 'estado', label: 'Estado' },
+]
 
 export default function Ppl() {
     const [data, setData] = useState(null);
 
-    // Datos Dummy
-    const dummySalidasEspeciales = dataSalidasEspeciales();
 
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/traslados');
+            const response = await fetch('http://localhost:5000/salidasTransitorias');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -58,29 +61,23 @@ export default function Ppl() {
     }
 
     return (
-        <Box>
-            <Box mb={3}>
-                <TituloComponent titulo='Salidas especiales' url='/movimientos/salidasEspeciales' newEntry='/movimientos/salidasEspeciales/crear' />
-            </Box>
-            <Paper elevation={1}>
-                <Box p={3}>
-                    <FiltrosTables/>
-                </Box>
-                <CustomTable
-                    data={dummySalidasEspeciales.data}
-                    headers={dummySalidasEspeciales.header}
-                    showId={true}
-                    options={{
-
-                        targetURL: '/movimientos/salidasEspeciales',
-                        rowsPerPageCustom: 5,
+        <div>
+            <TituloComponent titulo='Salidas transitorias' url=''/>
+            <Box mt={3}>
+                <Paper elevation={1}>
+                    <Box p={3}>
+                        <FiltrosTables/>
+                    </Box>
+                    <CustomTable headers={headers} data={data} showId={true} options={{
                         pagination: true,
                         deleteOption: true,
-                    }}
-                />
-            </Paper>
+                        rowsPerPageCustom: 5,
+                        targetURL: '/movimientos/salidasTransitorias',
 
+                    }}/>
+                </Paper>
+            </Box>
 
-        </Box>
+        </div>
     )
 }

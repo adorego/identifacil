@@ -2,14 +2,11 @@
 
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import {Breadcrumbs, Grid, Link, Stack, Step, StepLabel, Stepper, Box} from "@mui/material";
+import {Breadcrumbs, Grid, Link, Stack, Box} from "@mui/material";
 import {Tabs, Tab} from "@mui/material";
-import {TabContext, TabList, TabPanel} from "@mui/lab";
-
-/*import DataTableComponent from "../../../components/blocks/DataTableComponent";*/
-/*import DataVizWidget from "../../../components/blocks/DataVizWidget";*/
-import CustomTable from "../../../../components/CustomTable";
-import {proximaAudienciaData, visitaData} from "../../../dummyData/data";
+import {TabContext} from "@mui/lab";
+import CustomTable from "@/components/CustomTable";
+import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
 
 
@@ -18,7 +15,6 @@ interface TabPanelProps {
     index: number;
     value: number;
 }
-
 
 
 const audienciasDummy = proximaAudienciaData();
@@ -53,7 +49,7 @@ function a11yProps(index: number) {
 }
 
 
-export default function Detalle() {
+export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -202,7 +198,7 @@ export default function Detalle() {
                 </Grid>*/}
 
                 {/* Tablas */}
-                <CustomTabPanel value={value} index={0} >
+                <CustomTabPanel value={value} index={0}>
                     <Grid container spacing={2}>
                         <Grid item xs={8}>
 
@@ -247,7 +243,7 @@ export default function Detalle() {
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
 
-                    <NestedInformacionPreso />
+                    <NestedInformacionPreso/>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={2}>
                     Item Three

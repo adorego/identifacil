@@ -2,8 +2,11 @@ import {Button, Grid, Stack} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
 
-
-export default function TabTitle({tabName, targetURL}){
+interface tabType{
+    tabName?: string;
+    targetURL?: string;
+}
+export default function TabTitle({tabName, targetURL} : tabType){
 
 
     return(

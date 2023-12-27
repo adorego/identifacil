@@ -46,11 +46,11 @@ interface DeleteRecordArgs {
 }
 
 interface CustomTableProps {
-    data: Data[];
-    headers: Header[];
+    data?: Data[];
+    headers?: Header[];
     showId?: boolean;
     options?: TableOptions;
-    deleteRecord: (args: DeleteRecordArgs) => void;
+    deleteRecord?: (args: DeleteRecordArgs) => void;
 }
 
 const {headersCustom, rowsCustom} = dummyData();
@@ -135,7 +135,7 @@ function CustomTable({
 
 
     return (
-        <Box>
+        <Box className={'customTable'}>
 
             <TableContainer component={Paper}>
 
@@ -144,7 +144,6 @@ function CustomTable({
                        alignItems="center"
                        spacing={2}
                        sx={stackStyle}
-
                 >
                     <Box>
                         {options.title ?

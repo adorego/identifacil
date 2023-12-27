@@ -1,16 +1,300 @@
 {
-  "posts": [
+  "PPL": [
     {
       "id": 1,
-      "title": "json-server",
-      "author": "typicode"
-    }
-  ],
-  "comments": [
+      "nombre": "Fernando José",
+      "apellido": "Mendez Murino",
+      "alias": "Pistolita",
+      "esExtranjero": false,
+      "edad": 37,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 123 456",
+      "direccion": "Mcal Lopez c/ Madam Lynch",
+      "lugarNacimiento": "San José de los Arroyos",
+      "fechaNacimiento": "24/07/1987",
+      "estadoCivil": "soltero",
+      "nroDocumento": "2545982",
+      "sexo": "Masculino",
+      "barrio": "Ciudad Nueva",
+      "Compañia": "-",
+      "nroContacto": "+595 981 123 456",
+      "domicilio": "Mcal Lopez c/ Peru",
+      "estadoPerfil": "completo",
+      "fechasVisitas": ["Sabados", "Domingos"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "25/12/2023",
+          "salidaHora": "10:08:05",
+          "entradaFecha": "27/12/2023",
+          "entradaHora": "20:13:12",
+          "estado": "Activo"
+        },
+        {
+          "id": 2,
+          "salidaFecha": "25/12/2023",
+          "salidaHora": "10:08:05",
+          "entradaFecha": "27/12/2023",
+          "entradaHora": "20:13:12",
+          "estado": "Activo"
+        },
+        {
+          "id": 3,
+          "salidaFecha": "25/12/2023",
+          "salidaHora": "10:08:05",
+          "entradaFecha": "27/12/2023",
+          "entradaHora": "20:13:12",
+          "estado": "Revocado"
+        }
+      ]
+    },
     {
-      "id": 1,
-      "body": "some comment",
-      "postId": 1
+      "id": 2,
+      "nombre": "María Eugenia",
+      "apellido": "González López",
+      "alias": "La Gata",
+      "esExtranjero": false,
+      "edad": 28,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 234 567",
+      "direccion": "Avda. Eusebio Ayala c/ España",
+      "lugarNacimiento": "Asunción",
+      "fechaNacimiento": "15/09/1994",
+      "estadoCivil": "casada",
+      "nroDocumento": "3254781",
+      "sexo": "Femenino",
+      "barrio": "Villa Morra",
+      "Compañia": "ABC S.A.",
+      "nroContacto": "+595 981 234 567",
+      "domicilio": "Avda. Eusebio Ayala c/ España",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Viernes", "Sábados"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "20/01/2023",
+          "salidaHora": "08:30:00",
+          "entradaFecha": "22/01/2023",
+          "entradaHora": "18:45:30",
+          "estado": "Activo"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "nombre": "Luis Alberto",
+      "apellido": "Vera Mendoza",
+      "alias": "El Chino",
+      "esExtranjero": false,
+      "edad": 42,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 345 678",
+      "direccion": "Avda. San Martín c/ Gral. Aquino",
+      "lugarNacimiento": "Villa Hayes",
+      "fechaNacimiento": "10/03/1980",
+      "estadoCivil": "divorciado",
+      "nroDocumento": "4785963",
+      "sexo": "Masculino",
+      "barrio": "Obrero",
+      "Compañia": "XYZ S.A.",
+      "nroContacto": "+595 981 345 678",
+      "domicilio": "Avda. San Martín c/ Gral. Aquino",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Lunes", "Miércoles"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "15/06/2023",
+          "salidaHora": "12:45:20",
+          "entradaFecha": "17/06/2023",
+          "entradaHora": "22:10:05",
+          "estado": "Activo"
+        },
+        {
+          "id": 2,
+          "salidaFecha": "15/06/2023",
+          "salidaHora": "12:45:20",
+          "entradaFecha": "17/06/2023",
+          "entradaHora": "22:10:05",
+          "estado": "Activo"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "nombre": "Ana Beatriz",
+      "apellido": "Martínez Benítez",
+      "alias": "La Peluquera",
+      "esExtranjero": false,
+      "edad": 35,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 456 789",
+      "direccion": "Cerro Corá c/ Mcal. Estigarribia",
+      "lugarNacimiento": "Coronel Oviedo",
+      "fechaNacimiento": "02/11/1987",
+      "estadoCivil": "viuda",
+      "nroDocumento": "6325418",
+      "sexo": "Femenino",
+      "barrio": "Ñemby",
+      "Compañia": "PQR S.A.",
+      "nroContacto": "+595 981 456 789",
+      "domicilio": "Cerro Corá c/ Mcal. Estigarribia",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Martes", "Jueves"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "08/09/2023",
+          "salidaHora": "14:20:45",
+          "entradaFecha": "10/09/2023",
+          "entradaHora": "23:05:30",
+          "estado": "Activo"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "nombre": "Carlos Daniel",
+      "apellido": "Rodríguez Giménez",
+      "alias": "El Loco",
+      "esExtranjero": false,
+      "edad": 45,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 567 890",
+      "direccion": "Gral. Santos c/ Colón",
+      "lugarNacimiento": "Encarnación",
+      "fechaNacimiento": "12/05/1978",
+      "estadoCivil": "soltero",
+      "nroDocumento": "7458962",
+      "sexo": "Masculino",
+      "barrio": "Luque",
+      "Compañia": "LMN S.A.",
+      "nroContacto": "+595 981 567 890",
+      "domicilio": "Gral. Santos c/ Colón",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Viernes", "Sábados"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "05/02/2023",
+          "salidaHora": "09:15:30",
+          "entradaFecha": "07/02/2023",
+          "entradaHora": "19:30:10",
+          "estado": "Activo"
+        },
+        {
+          "id": 2,
+          "salidaFecha": "05/02/2023",
+          "salidaHora": "09:15:30",
+          "entradaFecha": "07/02/2023",
+          "entradaHora": "19:30:10",
+          "estado": "Activo"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "nombre": "Laura Mercedes",
+      "apellido": "Fernández Gómez",
+      "alias": "La Flaca",
+      "esExtranjero": false,
+      "edad": 30,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 678 901",
+      "direccion": "4to. Proyectadas c/ Carlos Antonio López",
+      "lugarNacimiento": "Pedro Juan Caballero",
+      "fechaNacimiento": "18/04/1992",
+      "estadoCivil": "soltera",
+      "nroDocumento": "8967541",
+      "sexo": "Femenino",
+      "barrio": "San Lorenzo",
+      "Compañia": "OPQ S.A.",
+      "nroContacto": "+595 981 678 901",
+      "domicilio": "4to. Proyectadas c/ Carlos Antonio López",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Lunes", "Miércoles"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "12/11/2023",
+          "salidaHora": "11:40:15",
+          "entradaFecha": "14/11/2023",
+          "entradaHora": "21:55:00",
+          "estado": "Activo"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "nombre": "Juan Ramón",
+      "apellido": "Díaz García",
+      "alias": "El Rulo",
+      "esExtranjero": false,
+      "edad": 38,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 789 012",
+      "direccion": "Capitán Figari c/ Gral. Díaz",
+      "lugarNacimiento": "Itauguá",
+      "fechaNacimiento": "30/08/1985",
+      "estadoCivil": "casado",
+      "nroDocumento": "5478963",
+      "sexo": "Masculino",
+      "barrio": "Fernando de la Mora",
+      "Compañia": "RST S.A.",
+      "nroContacto": "+595 981 789 012",
+      "domicilio": "Capitán Figari c/ Gral. Díaz",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Martes", "Jueves"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "02/07/2023",
+          "salidaHora": "13:25:40",
+          "entradaFecha": "04/07/2023",
+          "entradaHora": "23:40:25",
+          "estado": "Activo"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "nombre": "Silvia Noemí",
+      "apellido": "López Martínez",
+      "alias": "La Tía",
+      "esExtranjero": false,
+      "edad": 50,
+      "nacionalidad": "Paraguaya",
+      "tipoDocumento": "CIP",
+      "celular": "+595981 890 123",
+      "direccion": "Avda. España c/ Gral. Bruguez",
+      "lugarNacimiento": "Ypacaraí",
+      "fechaNacimiento": "05/12/1972",
+      "estadoCivil": "soltera",
+      "nroDocumento": "3652147",
+      "sexo": "Femenino",
+      "barrio": "Capiatá",
+      "Compañia": "UVW S.A.",
+      "nroContacto": "+595 981 890 123",
+      "domicilio": "Avda. España c/ Gral. Bruguez",
+      "estadoPerfil":  "completo",
+      "fechasVisitas": ["Viernes", "Sábados"],
+      "salidasTransitorias": [
+        {
+          "id": 1,
+          "salidaFecha": "18/03/2023",
+          "salidaHora": "10:55:00",
+          "entradaFecha": "20/03/2023",
+          "entradaHora": "21:10:45",
+          "estado": "Activo"
+        }
+      ]
     }
   ],
   "profile": {
@@ -18,38 +302,20 @@
   },
   "traslados": [
     {
-      "id": 1,
-      "documento": "3636681",
-      "fechaDocumento": "2023-07-20",
-      "fechaTraslado": "2023-12-01",
-      "autorizo": "Director",
-      "motivoTraslado": "option1",
-      "medidasSeguridad": "option1",
-      "descripcionMotivo": "Descripcion del motivo del trasladoMotivo del traslado",
-      "custodia": "Oficial Perez",
-      "chofer": "Oficial Ramirez",
-      "chapaVehiculo": "ABC 123",
-      "modeloVehiculo": "Mercedes Benz - Sprinter",
-      "destinoTraslado": "Tacumbu",
-      "documentoAdjunto": {},
-      "PPLs": []
-    },
-    {
+      "id": 2,
       "documento": "1232465",
       "fechaDocumento": "2023-08-21",
       "fechaTraslado": "2023-12-02",
       "autorizo": "Director",
-      "motivoTraslado": "option2",
-      "medidasSeguridad": "option2",
+      "motivoTraslado": 1,
+      "medidasSeguridad": 1,
       "descripcionMotivo": "Descripcion del motivo del trasladoMotivo del traslado 2",
-      "custodia": "Oficial Perez 2",
-      "chofer": "Oficial Ramirez 2",
-      "chapaVehiculo": "ABC 123 2",
-      "modeloVehiculo": "Mercedes Benz - Sprinter 2",
+      "custodia": 3,
+      "chofer": 2,
+      "vehiculoId": 6,
       "destinoTraslado": "Tacumbu 2",
-      "documentoAdjunto": {},
-      "PPLs": [],
-      "id": 2
+      "documentoAdjunto": "",
+      "lastUpdate": ""
     },
     {
       "documento": "as",
@@ -61,42 +327,27 @@
       "descripcionMotivo": "asdasdasdasd",
       "custodia": "asdasdasd",
       "chofer": "asdadasd",
-      "chapaVehiculo": "adasdas",
-      "modeloVehiculo": "asdasd",
+      "vehiculoId": "adasdas",
       "destinoTraslado": "asdasdas",
       "documentoAdjunto": {},
       "PPLs": [],
       "id": 3
     },
     {
+      "id": 6,
       "documento": "1233156465",
       "fechaDocumento": "2222-02-01",
       "fechaTraslado": "2221-02-22",
       "autorizo": "Director6",
-      "motivoTraslado": "option2",
-      "medidasSeguridad": "option1",
+      "motivoTraslado": 1,
+      "medidasSeguridad": 1,
       "descripcionMotivo": "Descripcion 2",
-      "custodia": "asdad",
-      "chofer": "adadsa",
-      "chapaVehiculo": "abc 123",
-      "modeloVehiculo": "sprinter",
+      "custodia": 4,
+      "chofer": 2,
+      "vehiculoId": "abc 123",
       "destinoTraslado": "Tacumbu",
-      "documentoAdjunto": {},
-      "PPLs": [
-        {
-          "nombreApellido": "Juan Jose Martinez",
-          "alias": "asdasd",
-          "motivo": "traslados.png",
-          "fechaTraslado": "2023-11-17"
-        },
-        {
-          "nombreApellido": "Roberto Caceres",
-          "alias": "asdasd",
-          "motivo": "asdasd",
-          "fechaTraslado": "2023-11-17"
-        }
-      ],
-      "id": 6
+      "documentoAdjunto": "",
+      "lastUpdate": ""
     },
     {
       "documento": "1231313123",
@@ -108,8 +359,7 @@
       "descripcionMotivo": "asdasdsadasdasd",
       "custodia": "123123",
       "chofer": "12313",
-      "chapaVehiculo": "12313",
-      "modeloVehiculo": "1232123",
+      "vehiculoId": "12313",
       "destinoTraslado": "123123",
       "documentoAdjunto": {},
       "PPLs": [],
@@ -125,8 +375,7 @@
       "descripcionMotivo": "MOtivo 2",
       "custodia": "custodio martinez",
       "chofer": "chofer perez",
-      "chapaVehiculo": "abc 123",
-      "modeloVehiculo": "sprinet 1",
+      "vehiculoId": "abc 123",
       "destinoTraslado": "Tacumbu",
       "documentoAdjunto": "",
       "PPLs": [],
@@ -137,13 +386,12 @@
       "fechaDocumento": "2023-01-01",
       "fechaTraslado": "2024-01-02",
       "autorizo": "asd",
-      "motivoTraslado": "option1",
-      "medidasSeguridad": "option2",
-      "descripcionMotivo": "asdasdasd desc",
-      "custodia": "custodio",
-      "chofer": "choferoso",
-      "chapaVehiculo": "chapaso",
-      "modeloVehiculo": "modeloso",
+      "motivoTraslado": 1,
+      "medidasSeguridad": 1,
+      "descripcionMotivo": "Descripcion 2",
+      "custodia": 4,
+      "chofer": 2,
+      "vehiculoId": "chapaso",
       "destinoTraslado": "traslasdaosdaosd",
       "documentoAdjunto": {},
       "PPLs": [
@@ -172,8 +420,7 @@
       "descripcionMotivo": "asdadasd",
       "custodia": "asdasdasdsa",
       "chofer": "asdadasdasdas",
-      "chapaVehiculo": "adasdasd",
-      "modeloVehiculo": "asdasd",
+      "vehiculoId": "adasdasd",
       "destinoTraslado": "asdasdasd",
       "documentoAdjunto": {},
       "PPLs": [],
@@ -189,8 +436,7 @@
       "descripcionMotivo": "",
       "custodia": "",
       "chofer": "",
-      "chapaVehiculo": "",
-      "modeloVehiculo": "",
+      "vehiculoId": "",
       "destinoTraslado": "",
       "documentoAdjunto": "",
       "PPLs": [],
@@ -206,12 +452,43 @@
       "descripcionMotivo": "",
       "custodia": "",
       "chofer": "",
-      "chapaVehiculo": "",
-      "modeloVehiculo": "",
+      "vehiculoId": "",
       "destinoTraslado": "",
       "documentoAdjunto": "",
       "PPLs": [],
       "id": 12
+    },
+    {
+      "id": 13,
+      "documento": "123456",
+      "fechaDocumento": "99999-09-09",
+      "fechaTraslado": "0099-09-09",
+      "autorizo": "999999",
+      "motivoTraslado": 1,
+      "medidasSeguridad": 1,
+      "descripcionMotivo": "asd",
+      "custodia": 4,
+      "chofer": 2,
+      "vehiculoId": "asdasd",
+      "destinoTraslado": "asdasdasd",
+      "documentoAdjunto": {},
+      "PPLs": [
+        {
+          "id": "3",
+          "nombreApellido": "",
+          "alias": "",
+          "motivo": "",
+          "fechaTraslado": ""
+        },
+        {
+          "id": "2",
+          "nombreApellido": "",
+          "alias": "",
+          "motivo": "",
+          "fechaTraslado": ""
+        }
+      ],
+      "lastUpdate": ""
     }
   ],
   "medidaSeguridad": [
@@ -228,37 +505,8 @@
       "id": 4
     },
     {
-      "id": 10,
-      "medidaSeguridad": "Medida en vivo",
-      "lastUpdate": ""
-    },
-    {
-      "medidaSeguridad": "asdasdasdad",
-      "id": 24
-    },
-    {
-      "medidaSeguridad": "asdasd",
-      "id": 25
-    },
-    {
-      "id": 26
-    },
-    {
-      "id": 27
-    },
-    {
-      "id": 28,
-      "medidasSeguridad": "Medida prueba 10",
-      "lastUpdate": ""
-    },
-    {
-      "id": 29,
-      "medidasSeguridad": "Medida 6",
-      "lastUpdate": ""
-    },
-    {
-      "id": 30,
-      "medidaSeguridad": "medida 7aaaaaaa",
+      "id": 5,
+      "medidaSeguridad": "Carros blindados",
       "lastUpdate": ""
     }
   ],
@@ -329,5 +577,35 @@
       "modelo": "Hyundai",
       "lastUpdate": ""
     }
+  ],
+  "salidasTransitorias": [
+    {
+      "id": 1,
+      "nombre": "Juan Jose Perez",
+      "salidaFecha": "25/12/2023",
+      "salidaHora": "10:08:05",
+      "entradaFecha":  "27/12/2023",
+      "entradaHora": "20:13:12",
+      "estado": "Activo"
+    },
+    {
+      "id": 2,
+      "nombre": "Roberto Martinez",
+      "salidaFecha": "25/12/2023",
+      "salidaHora": "10:08:05",
+      "entradaFecha":  "27/12/2023",
+      "entradaHora": "20:13:12",
+      "estado": "Activo"
+    },
+    {
+      "id": 3,
+      "nombre": "Roberto Martinez",
+      "salidaFecha": "25/12/2023",
+      "salidaHora": "10:08:05",
+      "entradaFecha":  "27/12/2023",
+      "entradaHora": "20:13:12",
+      "estado": "Revocado"
+    }
+
   ]
 }

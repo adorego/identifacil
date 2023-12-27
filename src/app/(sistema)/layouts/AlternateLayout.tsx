@@ -34,7 +34,7 @@ const AlternateLayout = ({ children }) => {
                 </Box>
                 <Box width='100%' sx={{bgcolor: '#F6FAFF'}}>
                     <TopNav/>
-                    <Box mx={4} mt={4}>
+                    <Box mx={6} mt={4}>
 
                         {children}
                     </Box>

@@ -1,34 +1,21 @@
 'use client'
 
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
+
 import {
     Breadcrumbs, Button, CircularProgress,
     FormControl,
     Grid,
-    InputLabel,
-    Link,
-    MenuItem, Stack,
-    Step,
-    StepLabel,
-    Stepper,
-    TextField
 } from "@mui/material";
-import DataTableComponent from "../../../components/blocks/DataTableComponent";
-import QueryBlock from "../../../components/blocks/QueryBlock";
+
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import dayjs, {Dayjs} from "dayjs";
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs';
-import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
-import {DatePicker} from "@mui/x-date-pickers";
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import CustomTable from "../../../components/CustomTable";
 import FiltrosTables from "./components/filtrosTables";
-import SalidasTransitorias from "./salidasTransitorias/SalidasTransitorias";
+import Page from "./salidasTransitorias/[id]/page";
 import {dataBajas, dataSalidasEspeciales, dataTraslados} from "../../dummyData/movimientosDummyData";
 import tabTitle from "./components/tabTitle";
 import TabTitle from "./components/tabTitle";
@@ -52,6 +39,7 @@ const header = [
     { id: "documentoAdjunto" , label: "documentoAdjunto" },
     { id: 'ppl', label: "PPLs"}
 ]
+
 const header2 = [
     { id: 'id', label: 'ID' },
     { id: 'documento', label: 'Nro. documento' },
@@ -60,22 +48,18 @@ const header2 = [
     { id: 'destinoTraslado', label: 'Destino' },
 ]
 
-
 export default function Ppl() {
     const [value, setValue] = React.useState('1');
     const [tabName, settabName] = React.useState('Traslados');
     const [data, setData] = useState(null);
+    const [filterData, setFilterData] = useState(null);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-        settabName(event.target.name);
-        setValue(newValue);
-    };
 
 
     // Datos Dummy
     const dummyBajas = dataBajas();
     const dummySalidasEspeciales = dataSalidasEspeciales();
-    const dummyTraslados = dataTraslados();
+
 
     async function fetchData() {
         try {
@@ -100,6 +84,11 @@ export default function Ppl() {
                 setData(fetchedData);
             });
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+
+    const handleFitros = (value : any) =>{
+        setFilterData(value)
+    }
+
     if (!data) {
         return (
             <Box sx={{
@@ -113,10 +102,9 @@ export default function Ppl() {
             </Box>
         );
     }
+
     return (
         <div>
-
-
             <TituloComponent titulo='Movimiento' url='' />
 
             {/*<QueryBlock/>*/}
@@ -132,7 +120,7 @@ export default function Ppl() {
                                 <Box sx={{width: '100%'}}>
                                     <TabContext value={value}>
                                         <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                                            <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                            {/*<TabList onChange={handleChange} aria-label="lab API tabs example">
                                                 <Tab
                                                     label="Traslados"
                                                     name="Traslados"
@@ -149,7 +137,7 @@ export default function Ppl() {
                                                     label="Bajas"
                                                     name="Bajas"
                                                     value="4"/>
-                                            </TabList>
+                                            </TabList>*/}
                                         </Box>
 
                                         <TabPanel value="1" sx={{paddingTop:'20px',}}>
@@ -159,9 +147,9 @@ export default function Ppl() {
                                                     marginTop: '20px',
                                                 }}>
 
-                                                    <TabTitle tabName={tabName} targetURL={'/movimientos/traslados'} />
+                                                    <TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />
                                                     {/*Elemento de tabla de traslados filtros */}
-                                                    <FiltrosTables />
+                                                    <FiltrosTables dataSinFiltro={data} handleFiltro={handleFitros}/>
 
                                                     {/* Elemento Tabla de Traslado*/}
                                                     <Grid item sx={{
@@ -169,7 +157,7 @@ export default function Ppl() {
                                                         marginTop: '20px',
                                                     }}>
                                                         <CustomTable
-                                                            data={data}
+                                                            data={filterData? filterData : data}
                                                             headers={header2}
                                                             showId={true}
                                                             options={{
@@ -208,6 +196,7 @@ export default function Ppl() {
                                                                 targetURL: '/movimientos/salidasEspeciales',
                                                                 rowsPerPageCustom: 5,
                                                                 pagination:true,
+                                                                deleteOption: true,
                                                             }}
                                                         />
                                                     </Grid>
@@ -224,7 +213,7 @@ export default function Ppl() {
                                                     marginTop: '20px',
                                                 }}>
                                                     <TabTitle tabName={tabName}  />
-                                                    <SalidasTransitorias />
+                                                    <Page />
                                                     {/*<CustomTable data={dataTransitorias} headers={headersTransitorias} targetURL={'/movimientos/salidasTransitorias'}/>*/}
                                                 </Grid>
 
@@ -249,6 +238,8 @@ export default function Ppl() {
                                                             rowsPerPageCustom: 3,
                                                             title: 'Por motivo de medida',
                                                             targetURL: '/movimientos/bajas',
+                                                            deleteOption: true,
+                                                            pagination: true
                                                         }
                                                         }
                                                         />

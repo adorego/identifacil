@@ -27,8 +27,8 @@ import {useGlobalContext} from "@/app/Context/store";
 import SidebarItem from "./sidebar/sidebarItem";
 
 
-const titulo : string = "IDENTIFACIL";
-type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos';
+const titulo : string = "SiPPy";
+type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos';
 
 
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
@@ -38,6 +38,7 @@ export default function SideBar() {
         registroAccesos: false,
         sistema: false,
         datosMovimientos: false,
+        movimientos: false,
     });
 
     const router = useRouter();
@@ -153,13 +154,50 @@ export default function SideBar() {
                         />
 
                         {/* Menu de Movimientos */}
-                        <SidebarItem
+                        {/*<SidebarItem
                             icon={<AirportShuttle />}
                             label="Movimientos"
                             path="/movimientos"
                             isActive={pathname === '/movimientos'}
-                        />
+                        />*/}
+                        {/* ------------------------- Menu de Sistema ------------------------- */}
+                        <ListItemButton onClick={() => handleClick('movimientos')}>
+                            <ListItemIcon>
+                                <AirportShuttle/>
+                            </ListItemIcon>
+                            <ListItemText primary={'Movimientos'} hidden={false}/>
+                            {openMenus.movimientos ? <ExpandLess/> : <ExpandMore/>}
+                        </ListItemButton>
 
+                        <Collapse in={openMenus.movimientos} timeout="auto" unmountOnExit>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Traslados"
+                                    path="/movimientos/traslados"
+                                    isActive={pathname === '/movimientos/traslados'}
+                                />
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Salidas especiales"
+                                    path="/movimientos/salidasEspeciales"
+                                    isActive={pathname === '/movimientos/salidasEspeciales'}
+                                />
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Salidas Transitorias"
+                                    path="/movimientos/salidasTransitorias"
+                                    isActive={pathname === '/movimientos/salidasTransitorias'}
+                                />
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Bajas"
+                                    path="/movimientos/bajas"
+                                    isActive={pathname === '/movimientos/bajas'}
+                                />
+
+                            </List>
+                        </Collapse>
 
                         {/* Menu de Reportes */}
                         <SidebarItem

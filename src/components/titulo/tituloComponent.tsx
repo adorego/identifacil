@@ -1,19 +1,22 @@
 'use client'
 
-import {Stack, Typography, Box, Grid} from "@mui/material";
+import {Stack, Typography, Box, Grid, Button} from "@mui/material";
 import * as React from "react";
 import StatusNav from "@/components/StatusNav";
 import {useEffect, useState} from "react";
 import {getRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
+import Link from "next/link";
+import AddIcon from "@mui/icons-material/Add";
 
 interface propsType {
     titulo: string;
     url?: string;
+    newEntry?: string;
 }
 
 
-export default function TituloComponent({titulo, url = ""}: propsType) {
+export default function TituloComponent({titulo, url = "", newEntry = ""}: propsType) {
     const [datos, setDatos] = useState<{ id: number, medidaSeguridad: string }>({id: 0, medidaSeguridad: ''});
     const {openSnackbar} = useGlobalContext();
 
@@ -61,7 +64,18 @@ export default function TituloComponent({titulo, url = ""}: propsType) {
                 </Grid>
             </Box>
             <Box>
+                {newEntry
+                    ? (
+                        <Link href={newEntry}>
+                            <Button variant='contained' startIcon={<AddIcon />}>
 
+                                    Agregar {titulo}
+
+                            </Button>
+                        </Link>
+                    )
+                    :''
+                }
             </Box>
         </Stack>
 

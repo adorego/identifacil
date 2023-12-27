@@ -22,12 +22,12 @@ const initialState: MyState = {
 }
 
 // TODO: Corregir errores de Tyepescrit en is edit mode
-export default function FormMedidasSeguridad({params} : { params: { id: number } }){
+export default function FormMedidasSeguridad({params} : { params: { id: number | string } }){
     const [stateForm, setStateForm] = useState<MyState>(initialState);
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
     const router = useRouter();
-    const isEditMode = params.id !== undefined && params.id !== null;
+    const isEditMode = params && params.id;
 
     const handleLoading = (value:boolean):void =>{
         // console.log('ahora ' + value);
@@ -38,7 +38,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number }
     useEffect(() => {
         if (isEditMode) {
             handleLoading(true);
-            fetch(`http://localhost:5000/medidaSeguridad?id=${params.id}`)
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}?id=${params.id}`)
                 .then(response => response.json())
                 .then(data => {
                     // Asegúrate de que el array no esté vacío y de que el objeto tenga las propiedades necesarias
