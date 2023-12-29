@@ -28,7 +28,7 @@ import SidebarItem from "./sidebar/sidebarItem";
 
 
 const titulo : string = "SiPPy";
-type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos';
+type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales';
 
 
 // TODO: Cuando se entra en una pagina interna se debe seguir marcando la pagina principal.
@@ -39,6 +39,7 @@ export default function SideBar() {
         sistema: false,
         datosMovimientos: false,
         movimientos: false,
+        datosPenales: false,
     });
 
     const router = useRouter();
@@ -160,7 +161,44 @@ export default function SideBar() {
                             path="/movimientos"
                             isActive={pathname === '/movimientos'}
                         />*/}
-                        {/* ------------------------- Menu de Sistema ------------------------- */}
+
+                        {/* ------------------------- Menu Penales ------------------------- */}
+                        <ListItemButton onClick={() => handleClick('datosPenales')}>
+                            <ListItemIcon>
+                                <AccountBalance/>
+                            </ListItemIcon>
+                            <ListItemText primary={'Datos penales'} hidden={false}/>
+                            {openMenus.datosPenales ? <ExpandLess/> : <ExpandMore/>}
+                        </ListItemButton>
+ 
+                        <Collapse in={openMenus.datosPenales} timeout="auto" unmountOnExit>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Causas"
+                                    path="/datos-penales/causas"
+                                    isActive={pathname === '/datos-penales/causas'}
+                                />
+                            </List>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Audiencias"
+                                    path="/datos-penales/audiencias"
+                                    isActive={pathname === '/datos-penales/audiencias'}
+                                />
+                            </List>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Libertades"
+                                    path="/datos-penales/libertades"
+                                    isActive={pathname === '/datos-penales/libertades'}
+                                />
+                            </List>
+                        </Collapse>
+
+                        {/* ------------------------- Menu Movimientos ------------------------- */}
                         <ListItemButton onClick={() => handleClick('movimientos')}>
                             <ListItemIcon>
                                 <AirportShuttle/>

@@ -3,64 +3,31 @@
 import * as React from 'react';
 
 import {
-    CircularProgress,
-
-    Grid, Paper,
+    CircularProgress, Paper,
 } from "@mui/material";
 
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
 import CustomTable from "../../../../components/CustomTable";
-import Page from "../salidasTransitorias/[id]/page";
-import {dataBajas, dataSalidasEspeciales, dataTraslados} from "../../../dummyData/movimientosDummyData";
-import TabTitle from "../components/tabTitle";
+import {dataBajas, dataSalidasEspeciales, dataTraslados} from "@/app/dummyData/movimientosDummyData";
+
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 
-const header = [
-    {id: "id", label: "id"},
-    {id: "documento", label: "documento"},
-    {id: "fechaDocumento", label: "fechaDocumento"},
-    {id: "fechaTraslado", label: "fechaTraslado"},
-    {id: "autorizo", label: "autorizo"},
-    {id: "motivoTraslado", label: "motivoTraslado"},
-    {id: "medidasSeguridad", label: "medidasSeguridad"},
-    {id: "descripcionMotivo", label: "descripcionMotivo"},
-    {id: "custodia", label: "custodia"},
-    {id: "chofer", label: "chofer"},
-    {id: "chapaVehiculo", label: "chapaVehiculo"},
-    {id: "modeloVehiculo", label: "modeloVehiculo"},
-    {id: "destinoTraslado", label: "destinoTraslado"},
-    {id: "documentoAdjunto", label: "documentoAdjunto"},
-    {id: 'ppl', label: "PPLs"}
-]
+
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'documento', label: 'Nro. documento'},
-    {id: 'fechaDocumento', label: 'Fecha Documento'},
-    {id: 'fechaTraslado', label: 'Fecha Traslado'},
+    {id: 'documento', label: 'Orden judicial'},
+    {id: 'fechaDocumento', label: 'Fecha documento'},
+    {id: 'fechaTraslado', label: 'Fecha traslado'},
+    {id: 'destinoTraslado', label: 'Origen'},
     {id: 'destinoTraslado', label: 'Destino'},
 ]
 
 export default function Ppl() {
-    const [value, setValue] = React.useState('1');
-    const [tabName, settabName] = React.useState('Traslados');
     const [data, setData] = useState(null);
     const [filterData, setFilterData] = useState(null);
-
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-        settabName(event.target.name);
-        setValue(newValue);
-    };
-
-    // Datos Dummy
-    const dummyBajas = dataBajas();
-    const dummySalidasEspeciales = dataSalidasEspeciales();
 
 
     async function fetchData() {
@@ -87,7 +54,7 @@ export default function Ppl() {
             });
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
-    const handleFitros = (value) => {
+    const handleFitros = (value : any) => {
         console.log(value)
         setFilterData(value)
     }
