@@ -17,13 +17,12 @@ const header = [
     { id: 'situacionProcesal', label: 'Situación procesal' },
 ]
 
-const ENDPOINT = 'http://localhost:5000/causas'
 export default function Page(){
 
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        const apiUrl = ENDPOINT; // Puedes cambiar la URL según tus necesidades
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/causas';
         fetchData(apiUrl)
             .then(fetchedData => {
                 setData(fetchedData);

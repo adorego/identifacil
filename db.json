@@ -946,5 +946,42 @@
       "estado": "Completado",
       "pplVinculados": []
     }
+  ],
+  "libertades": [
+    {
+      "id": 1,
+      "nroOficio": "1234/2023",
+      "caratula": "Nombre caratula 1",
+      "fechaLibertad": "15/08/2023",
+      "tipoLibertad": "Libertad condicional"
+    },
+    {
+      "id": 2,
+      "nroOficio": "1234/2023",
+      "caratula": "Nombre caratula 1",
+      "fechaLibertad": "15/08/2023",
+      "tipoLibertad": "Libertad condicional"
+    },
+    {
+      "id": 3,
+      "nroOficio": "1234/2023",
+      "caratula": "Nombre caratula 1",
+      "fechaLibertad": "15/08/2023",
+      "tipoLibertad": "Libertad condicional"
+    },
+    {
+      "id": 4,
+      "nroOficio": "1234/2023",
+      "caratula": "Nombre caratula 1",
+      "fechaLibertad": "15/08/2023",
+      "tipoLibertad": "Libertad condicional"
+    },
+    {
+      "id": 5,
+      "nroOficio": "1234/2023",
+      "caratula": "Nombre caratula 1",
+      "fechaLibertad": "15/08/2023",
+      "tipoLibertad": "Libertad condicional"
+    }
   ]
 }

@@ -1,7 +1,7 @@
+'use client'
 
+import * as React from 'react';
 import dayjs from 'dayjs';
-
-
 
 /*export default deleteRecord = async (id) => {
     try {
@@ -26,6 +26,7 @@ import dayjs from 'dayjs';
  * Recibe los datos de la enpoint y retorna en una promesa
  * @param {url} Endpoint de la informacion.
  */
+
 export async function fetchData(url : string) {
     try {
         const response = await fetch(url);
@@ -68,7 +69,7 @@ export default function OtraPagina() {
  * @param {string} dateField Nombre del campo en el objeto que contiene la fecha.
  * @returns {Array} Array filtrado.
  */
-export const filterByDateRange = (data, startDate, endDate, dateField) => {
+export const filterByDateRange = (data: any[], startDate: string | number | Date | dayjs.Dayjs | null | undefined, endDate: string | number | Date | dayjs.Dayjs | null | undefined, dateField: string) => {
     return data.filter(item => {
         const itemDate = dayjs(item[dateField]);
         const start = dayjs(startDate);
