@@ -32,7 +32,7 @@ type CausaType = {
 };
 
 
-type  audienciaType = {
+export type  audienciaType = {
     id: number;
     causa: string;
     nroOficio: string;
@@ -46,4 +46,14 @@ type  audienciaType = {
     archivoJudicial: string;
     notaPedido: string;
 
+}
+export type libertadesType = {
+    nroOficio: string;
+    fechaOficio: string;
+    caratula: string;
+    fechaLibertad: string;
+    fechaCompurgamiento: string;
+    tipoLibertad: string;
+    comentarios: string;
+    adjunto: string;
 }
