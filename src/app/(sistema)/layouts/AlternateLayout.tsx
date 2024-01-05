@@ -6,11 +6,7 @@ import ThemeRegistry from "@/../theme/ThemeRegistry";
 import {Box, Grid, Stack} from "@mui/material";
 import SideBar from "@/components/SideBar";
 import TopNav from "@/components/TopNav";
-import StatusNav from "@/components/StatusNav";
-import NextNProgress from 'nextjs-progressbar';
-import {Next13ProgressBar} from "next13-progressbar";
-import SnackbarComponent from "@/components/snackback/SnackBarComponent";
-import {useGlobalContext} from "@/app/Context/store";
+
 
 
 const inter = Inter({subsets: ['latin']});

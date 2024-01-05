@@ -1,43 +1,11 @@
 import * as React from "react";
-import {FormEvent, useState} from 'react';
+import {useState} from 'react';
 
-import {
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Radio,
-    RadioGroup,
-    Grid,
-    Box,
-    InputLabel,
-    OutlinedInput, Button, Typography, TextField, Select, MenuItem, Stack
+import { FormControl, Grid, Box, InputLabel, OutlinedInput, Button, Typography, TextField, Select, MenuItem, Stack
 } from "@mui/material";
+import pplSalud from "@/components/utils/pplTypes";
 
-
-interface MyState {
-    nombre: string;
-    apellido: string;
-    apodo: string;
-    estadoCivil: string;
-    fechaNacimiento: string;
-    nacionalidad: string;
-    lugarNacimiento: string;
-    sexo: string;
-    tipoDocument: string;
-    numeroDocumento: string;
-    direccion: string;
-    barrio: string;
-    compania: string;
-    numeroContacto: string;
-    contactoEmergencia1: string;
-    contactoEmergencia2: string;
-    puebloIndigena: boolean;
-    nombreEtnia: string;
-    grupoLgbti: string;
-
-}
-
-const initialState: MyState = {
+const initialState: pplSalud = {
     nombre: '',
     apellido: '',
     apodo: '',
@@ -60,15 +28,12 @@ const initialState: MyState = {
 
 }
 
-
 export default function BloqueDatosPersonales(){
 
-    const [state, setState] = useState<MyState>(initialState);
-    const [formData, setFormData] = useState<MyState>(initialState);
-
+    const [formData, setFormData] = useState<pplSalud>(initialState);
 
     // Manejador para actualizar selects
-    const handleSelectChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
+    const handleSelectChange = (event: { target: { name: string; value: any; }; }) => {
         const name = event.target.name as keyof typeof formData;
         setFormData({
             ...formData,
@@ -76,8 +41,7 @@ export default function BloqueDatosPersonales(){
         });
     };
 
-
-    // Captura cambio de estados de inputs que no sean booleanos y guardan en el state
+    // Captura cambio de estados de inputs que no sean booleanos y guardan en el formData
     const handleChange = (event: any) => {
 
         const inputName: string = event.target.name;
@@ -85,12 +49,16 @@ export default function BloqueDatosPersonales(){
 
         inputValue = event.target.value;
 
-
-        setState({
-            ...state,
+        setFormData({
+            ...formData,
             [inputName]: inputValue,
         });
     }
+
+    const handleSubmit = () =>{
+        console.log(formData)
+    }
+
     return(
         <>
             <Box>
@@ -106,7 +74,7 @@ export default function BloqueDatosPersonales(){
                             <OutlinedInput
                                 label="Nombre"
                                 name="nombre"
-                                value={state.nombre}
+                                value={formData.nombre}
                                 onChange={handleChange}
                             />
                         </FormControl>
@@ -119,7 +87,7 @@ export default function BloqueDatosPersonales(){
                             <OutlinedInput
                                 label="Apellido"
                                 name="apellido"
-                                value={state.apellido}
+                                value={formData.apellido}
                                 onChange={handleChange}
                             />
                         </FormControl>
@@ -132,7 +100,7 @@ export default function BloqueDatosPersonales(){
                             <OutlinedInput
                                 label="Apodo"
                                 name="apodo"
-                                value={state.apodo}
+                                value={formData.apodo}
                                 onChange={handleChange}
                             />
                         </FormControl>
@@ -143,7 +111,7 @@ export default function BloqueDatosPersonales(){
                                 fullWidth
                                 label="Estado civil"
                                 name="estadoCivil"
-                                value={state.estadoCivil}
+                                value={formData.estadoCivil}
                                 onChange={handleChange}
                                 InputLabelProps={{ shrink: true }}
                             />
@@ -156,11 +124,37 @@ export default function BloqueDatosPersonales(){
                                 label="Fecha de nacimiento"
                                 name="fechaNacimiento"
                                 type='date'
-                                value={state.fechaNacimiento}
+                                value={formData.fechaNacimiento}
                                 onChange={handleChange}
                                 InputLabelProps={{ shrink: true }}
                             />
                         </FormControl>
+                    </Grid>
+                    <Grid item sm={12}>
+                        <Grid container spacing={2}>
+                            <Grid item>
+                                <FormControl fullWidth={true}>
+                                    <TextField
+                                        fullWidth
+                                        label="Tipo documento"
+                                        name="tipoDocument"
+                                        value={formData.tipoDocument}
+                                        onChange={handleChange}
+                                    />
+                                </FormControl>
+                            </Grid>
+                            <Grid item>
+                                <FormControl fullWidth={true}>
+                                    <TextField
+                                        fullWidth
+                                        label="Nro. documento"
+                                        name="numeroDocumento"
+                                        value={formData.numeroDocumento}
+                                        onChange={handleChange}
+                                    />
+                                </FormControl>
+                            </Grid>
+                        </Grid>
                     </Grid>
                     <Grid item xs={6}>
                         <FormControl fullWidth variant="outlined">
@@ -197,7 +191,7 @@ export default function BloqueDatosPersonales(){
                             fullWidth
                             label="Direccion"
                             name="direccion"
-                            value={state.direccion}
+                            value={formData.direccion}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -236,7 +230,7 @@ export default function BloqueDatosPersonales(){
                             fullWidth
                             label="Numero de contacto"
                             name="numeroContacto"
-                            value={state.numeroContacto}
+                            value={formData.numeroContacto}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -297,7 +291,7 @@ export default function BloqueDatosPersonales(){
                             fullWidth
                             label="Nombre de la etnia"
                             name="nombreEtnia"
-                            value={state.nombreEtnia}
+                            value={formData.nombreEtnia}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -324,7 +318,7 @@ export default function BloqueDatosPersonales(){
                     </Grid>
                     <Grid item sm={12}>
                         <Stack direction="row" spacing={2}>
-                            <Button variant='contained'>
+                            <Button variant='contained' onClick={handleSubmit}>
                                 Guardar
                             </Button>
                             <Button variant='outlined'>

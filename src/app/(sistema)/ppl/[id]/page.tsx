@@ -8,6 +8,8 @@ import {TabContext} from "@mui/lab";
 import CustomTable from "@/components/CustomTable";
 import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
+import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
+import TituloComponent from "@/components/titulo/tituloComponent";
 
 
 interface TabPanelProps {
@@ -48,34 +50,30 @@ function a11yProps(index: number) {
     };
 }
 
-
 export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState(0);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    const handleChange = (event: React.SyntheticEvent, newValue: any) => {
         setValue(newValue);
     };
 
+    // @ts-ignore
+    // @ts-ignore
+    // @ts-ignore
     return (
         <Box>
-            <Typography variant='h4' mt={0}>PPL</Typography>
-
-            <Breadcrumbs aria-label="breadcrumb">
-                <Link underline="hover" color="inherit" href="/">
-                    Inicio
-                </Link>
-                <Link
-                    underline="hover"
-                    color="inherit"
-                    href="/material-ui/getting-started/installation/"
-                >
-                    Gestion de PPL
-                </Link>
-                <Typography color="text.primary">Juan Jose Perez Gomez</Typography>
-            </Breadcrumbs>
-
+            <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2}>
+                <TituloComponent titulo='PPL' />
+                <Box className='tabPills'>
+                    <Tabs indicatorColor="none" value={value} onChange={handleChange} aria-label="Tab Pills">
+                        <Tab label="Perfil" {...a11yProps(0)} />
+                        <Tab label="Información" {...a11yProps(1)} />
+                        <Tab label="Datos penales" {...a11yProps(2)} />
+                    </Tabs>
+                </Box>
+            </Stack>
+             {/*@ts-ignore*/}
             <TabContext value={value}>
-
                 {/* Header */}
                 <Grid container sx={{
                     bgcolor: "#FFF",
@@ -85,11 +83,9 @@ export default function Page({ params }: { params: { id: number } }) {
                 }}>
                     <Grid item xs={12}>
                         <Grid container>
-                            <Grid item xs={12}>
-                                <Grid container m={2}>
-                                    <Grid item sm={6}>
-                                        <Stack direction='row'>
-                                            <div className='imageContainer' m={2} sx={{marginRight: '40px'}}>
+                            <Grid p={3} item sm={12}>
+                                <Stack direction='row'>
+                                    <Box className='imageContainer' sx={{marginRight: '40px'}}>
 
                                                 <img
                                                     src='https://source.unsplash.com/collection/1118917/480x480'
@@ -100,19 +96,18 @@ export default function Page({ params }: { params: { id: number } }) {
                                                         borderRadius: '10px',
                                                     }}
                                                 />
-                                            </div>
-                                            <Stack
-                                                justifyContent='center'
-                                                sx={{}}
-                                                marginLeft={2}>
-                                                <Typography variant="overline" display="block" mb={0}>
-                                                    Nombre y apellido
-                                                </Typography>
-                                                <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
-                                                    Juan Jos Perez Gomez (Jose'i)
-                                                </Typography>
+                                            </Box>
+                                    <Stack direction='column' justifyContent='center'>
                                                 <Grid container mt={1} spacing={2}>
-                                                    <Grid item>
+                                                    <Grid item m={0}>
+                                                        <Typography variant="overline" display="block" mb={0}>
+                                                            Nombre y apellido
+                                                        </Typography>
+                                                        <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
+                                                            Juan Jos Perez Gomez (Jose'i)
+                                                        </Typography>
+                                                    </Grid>
+                                                    <Grid item pt={0}>
                                                         <Typography variant="overline" display="block" mb={0}>
                                                             Estado Procesal
                                                         </Typography>
@@ -121,7 +116,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                                             Condenado
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item>
+                                                    <Grid item pt={0}>
                                                         <Typography variant="overline" display="block" mb={0}>
                                                             Fecha de ingreso
                                                         </Typography>
@@ -130,7 +125,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                                             01/01/2023
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item>
+                                                    <Grid item pt={0}>
                                                         <Typography variant="overline" display="block" mb={0}>
                                                             Penitenciaria
                                                         </Typography>
@@ -140,37 +135,25 @@ export default function Page({ params }: { params: { id: number } }) {
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-
                                             </Stack>
-                                        </Stack>
-
-                                    </Grid>
-                                </Grid>
-
+                                </Stack>
                             </Grid>
                         </Grid>
-                        <Grid className="tabProfileNavigator" container sx={{
+                        {/*<Grid className="tabProfileNavigator" container sx={{
                             borderTop: '1px solid #e0e0e0',
                         }}>
-
                             <Grid xs={12} item>
                                 <Stack alignItems="flex-end">
                                     <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-
                                         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                                             <Tab label="Perfil" {...a11yProps(0)} />
                                             <Tab label="Información" {...a11yProps(1)} />
                                             <Tab label="Datos penales" {...a11yProps(2)} />
-                                            <Tab label="Fotografias" {...a11yProps(3)} />
-                                            <Tab label="Documentos" {...a11yProps(4)} />
                                         </Tabs>
                                     </Box>
-
-
                                 </Stack>
-
                             </Grid>
-                        </Grid>
+                        </Grid>*/}
                     </Grid>
                 </Grid>
 
@@ -208,6 +191,8 @@ export default function Page({ params }: { params: { id: number } }) {
                                 title: 'Ultimos documentos judiciales/penales/etc',
                                 targetURL: '/',
                                 rowsPerPageCustom: 10,
+                                deleteOption: false,
+                                pagination: false,
                                 expandedList: '/'
                             }}/>
 
@@ -221,6 +206,8 @@ export default function Page({ params }: { params: { id: number } }) {
                                     options={{
                                         title: 'Proximas audiencias',
                                         rowsPerPageCustom: 3,
+                                        deleteOption: false,
+                                        pagination: false,
                                         expandedList: '/',
                                         targetURL: '/',
                                     }}
@@ -233,7 +220,9 @@ export default function Page({ params }: { params: { id: number } }) {
                                     options={{
                                         title: 'Ultimas visitas',
                                         rowsPerPageCustom: 3,
+                                        deleteOption: false,
                                         expandedList: '/',
+                                        pagination: false,
                                         targetURL: '/',
                                     }}
                                 />
@@ -246,13 +235,13 @@ export default function Page({ params }: { params: { id: number } }) {
                     <NestedInformacionPreso/>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={2}>
-                    Item Three
+                    <TabDatosPersonales />
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={3}>
                     Item Three
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={4}>
-                    Item Three
+                    4
                 </CustomTabPanel>
             </TabContext>
         </Box>

@@ -22,7 +22,7 @@ export default function Page(){
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/causas';
+        const apiUrl = 'http://localhost:5000' + '/causas';
         fetchData(apiUrl)
             .then(fetchedData => {
                 setData(fetchedData);

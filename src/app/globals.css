@@ -37,12 +37,8 @@ thead tr th.MuiTableCell-root {
   color: #637381;
 }
 .imageContainer {
-  width: 150px;
-  height: 150px;
-  background: #F3f3f3;
+  width: 120px;
   border-radius: 10px;
-  border: 1px solid #e3e3e3;
-  margin: 10px;
 }
 .cardContainer{
   background-color: #FFF;
@@ -59,6 +55,17 @@ thead tr th.MuiTableCell-root {
 }
 .customTable th, .customTable td{
   padding: 24px;
+}
+.tabPills button {
+  border: 1px solid #212121;
+  border-radius: 40px;
+  margin-left: 10px;
+}
+
+.tabPills button.Mui-selected {
+  border-color: green !important;
+  color: #fff !important;
+  background: green;
 }
 /* :root {
   --max-width: 1100px;
