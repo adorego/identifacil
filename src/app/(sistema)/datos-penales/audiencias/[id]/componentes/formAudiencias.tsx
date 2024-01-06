@@ -4,6 +4,7 @@ import {Button, Grid, Stack, TextField, Typography} from "@mui/material";
 import {useState} from "react";
 import {handleInputChange} from "@/components/utils/formUtils";
 import * as React from "react";
+import {audienciaType} from "@/components/utils/penalesType";
 
 const initialDataForm = {
     id: 0,

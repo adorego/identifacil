@@ -47,14 +47,14 @@ export type  audienciaType = {
     notaPedido: string;
 
 }
-export type  libertadType = {
-    id: number;
-    nroOficio:  string;
-    fechaOficio:  string;
-    fechaLibertad:  string;
-    fechaCompurgamiento:  string;
-    tipoLibertad:  string;
-    comentarios:  string;
-    adjunto:  string;
 
+export type libertadesType = {
+    nroOficio: string;
+    fechaOficio: string;
+    caratula: string;
+    fechaLibertad: string;
+    fechaCompurgamiento: string;
+    tipoLibertad: string;
+    comentarios: string;
+    adjunto: string;
 }
