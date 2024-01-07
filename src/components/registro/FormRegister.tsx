@@ -1,20 +1,39 @@
 'use client'
 
-import {Box, Button, Divider, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Snackbar, Step,
-    StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import {
+    Box,
+    Button,
+    Divider,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Grid,
+    Radio,
+    RadioGroup,
+    Snackbar,
+    Step,
+    StepLabel,
+    Stepper,
+    TextField,
+    Typography
+} from "@mui/material";
 import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";
 
-import ConfirmacionRegistro from "./ConfrimacionRegistro";
+import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
+import ConfirmacionRegistro from "./ConfirmacionRegistro";
 import CuestionarioRegistro from "./CuestionarioRegistro";
 import FaceRecognition from "./FaceRecognition";
+import FaceRecognitionWithLayout from "./FaceRecognitionWithLayout";
 import { IReconocimiento } from "./FaceDetectionOverlay";
 import NotificacionRegistro from "./NotificacionRegistro";
 import PPLRegistration from "./PPLRegistration";
+import RegistrationData from "./RegistrationData";
 import style from "./FormRegister.module.css";
 
 const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
+export const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo'];
 
 export interface RegistroResponse{
   success:boolean;
@@ -29,7 +48,10 @@ export default function FormRegister(){
   const reconocimientos = useRef<Array<IReconocimiento>>([])
   const foto = useRef<string | null>(null);
   const contadorReconocimiento = useRef<number>(0);
-  const [notificacionRegistro, setNotificacionRegistro] = useState("");
+  const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
+  const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
+  const [mensaje, setMensaje] = useState("");
+  
 
     const setIdentificacion = (identificacion: IdentificacionForm) => {
         // console.log("Datos de identificacion:", identificacion);
@@ -38,8 +60,6 @@ export default function FormRegister(){
 
     
     const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
-      // console.log("Entro en agregar_reconocimiento");
-      // setNotificacionRegistro('Registrando PPL...');
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
@@ -69,6 +89,7 @@ export default function FormRegister(){
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
         const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/registro/`;
+        setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{
           method:'POST',
           body:formData
@@ -76,6 +97,11 @@ export default function FormRegister(){
         const data = await result.json();
         if(!result.ok){
           console.log('Ocurrio un error', data);
+          setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
+        }else{
+          setProgresoRegistro(EstadosProgreso[3]);
+          setMensaje("Registro realizado coreectamente");
+
         }
         
         }
@@ -103,11 +129,15 @@ export default function FormRegister(){
       setActiveStep(activeStep-1);
     }
   }
-  // if(desplegarRegistroFinal){
-  //   return(
-  //     // <NotificacionRegistro foto={foto.current} open={true}/>
-  //   )
-  // }
+  
+  const actualizar_progreso = (progreso:number) =>{
+    setProgresoRegistro(EstadosProgreso[progreso]);
+  }
+
+  const cerrar_dialogo = () =>{
+    setProgresoRegistro(EstadosProgreso[0]);
+  }
+  
   return(
         <Box sx={{padding:'20px'}}>
           <FormControl className={style.form}>
@@ -130,50 +160,54 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-            {activeStep === 0 && <IdentificationForm 
-            habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
-            actualizarIdentificacion={setIdentificacion}
-            /> }
-            {activeStep === 1 && <FaceRecognition  
-            agregar_reconocimiento={agregar_reconocimiento}
-            notificacion={notificacionRegistro}
-            numero_de_capturas={3}
-            />}
+                    {/* {activeStep === 0 && <IdentificationForm 
+                    habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
+                    actualizarIdentificacion={setIdentificacion}
+                    /> }
+                    {activeStep === 1 && <FaceRecognitionWithLayout 
+                      etiquetaLabel="Capturar"
+                      showSpinner={showSpinner}
+                      progresoRegistro={progresoRegistro}
+                      mensaje={mensaje}
+                      cerrar_dialogo={cerrar_dialogo}
+                      agregar_reconocimiento={agregar_reconocimiento}
+                      actualizar_progreso={actualizar_progreso} />
+                    } */}
+                    
+                    {activeStep === 0 && <CuestionarioRegistro numeroDeIdentificacion="1130650" /> }
 
-            {activeStep === 2 && <CuestionarioRegistro  /> }
-
-            {activeStep === 3 && <ConfirmacionRegistro />}
+                    {/* {activeStep === 3 && <ConfirmacionRegistro />} */}
             
             
-            {activeStep !== 0 ? 
-              <Grid container  spacing={5} mt={1}>
-                <Grid item xs={'auto'}>
-                  <Button variant="contained" 
-                  onClick={onStepBackward} 
-                  startIcon={<KeyboardArrowLeft />}>
-                    Anterior
-                  </Button>
-                </Grid> 
-                <Grid item xs={'auto'}>
-                  <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                    Siguiente
-                  </Button>
-                </Grid>
-              </Grid>
-            : 
-              <Grid container spacing={5} mt={1}>
-                <Grid item xs='auto'>
-                    <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                      Siguiente
-                    </Button>
-                </Grid>
-              </Grid>
-            }
-              
-            
-            </Box>
-          </FormControl>
-        </Box>
+                    {/* {activeStep !== 0 ? 
+                        <Grid container  spacing={5} mt={1}>
+                          <Grid item xs={'auto'}>
+                            <Button variant="contained" 
+                            onClick={onStepBackward} 
+                            startIcon={<KeyboardArrowLeft />}>
+                              Anterior
+                            </Button>
+                          </Grid> 
+                          <Grid item xs={'auto'}>
+                            <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                              Siguiente
+                            </Button>
+                          </Grid>
+                        </Grid>
+                      : 
+                        <Grid container spacing={5} mt={1}>
+                          <Grid item xs='auto'>
+                              <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                                Siguiente
+                              </Button>
+                          </Grid>
+                        </Grid>
+                      } */}
+                        
+                      
+                      </Box>
+                    </FormControl>
+                  </Box>
 
     )
 }

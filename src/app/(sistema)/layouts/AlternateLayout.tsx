@@ -1,17 +1,15 @@
-import React from "react";
-import { Suspense } from 'react'
+'use client'
 
-import {Inter} from 'next/font/google';
-import ThemeRegistry from "@/../theme/ThemeRegistry";
 import {Box, Grid, Stack} from "@mui/material";
-import SideBar from "@/components/SideBar";
-import TopNav from "@/components/TopNav";
-import StatusNav from "@/components/StatusNav";
-import NextNProgress from 'nextjs-progressbar';
-import {Next13ProgressBar} from "next13-progressbar";
-import SnackbarComponent from "@/components/snackback/SnackBarComponent";
-import {useGlobalContext} from "@/app/Context/store";
 
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import {Inter} from 'next/font/google';
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import React from "react";
+import SideBar from "@/components/SideBar";
+import StatusNav from "@/components/StatusNav";
+import ThemeRegistry from "@/../theme/ThemeRegistry";
+import TopNav from "@/components/TopNav";
 
 const inter = Inter({subsets: ['latin']});
 
@@ -26,6 +24,7 @@ const AlternateLayout = ({ children }) => {
 
 
     return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeRegistry>
             <Stack direction='row'>
                 <Box>
@@ -50,6 +49,7 @@ const AlternateLayout = ({ children }) => {
                 </Box>
             </Stack>
         </ThemeRegistry>
+        </LocalizationProvider>
     )
 }
 

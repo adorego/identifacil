@@ -1,339 +1,448 @@
-import * as React from "react";
-import {FormEvent, useState} from 'react';
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material";
+import { ChangeEvent, FC, useEffect, useState } from "react";
+import { DatePicker, DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
+import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
 
-import {
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Radio,
-    RadioGroup,
-    Grid,
-    Box,
-    InputLabel,
-    OutlinedInput, Button, Typography, TextField, Select, MenuItem, Stack
-} from "@mui/material";
+import { Dayjs } from "dayjs";
+import { FieldChangeHandlerContext } from "@mui/x-date-pickers/internals";
+import { request } from "@/lib/api-request";
 
-
-interface MyState {
-    nombre: string;
-    apellido: string;
-    apodo: string;
-    estadoCivil: string;
-    fechaNacimiento: string;
-    nacionalidad: string;
-    lugarNacimiento: string;
-    sexo: string;
-    tipoDocument: string;
-    numeroDocumento: string;
-    direccion: string;
-    barrio: string;
-    compania: string;
-    numeroContacto: string;
-    contactoEmergencia1: string;
-    contactoEmergencia2: string;
-    puebloIndigena: boolean;
-    nombreEtnia: string;
-    grupoLgbti: string;
-
-}
-
-const initialState: MyState = {
-    nombre: '',
-    apellido: '',
-    apodo: '',
-    estadoCivil: '',
-    fechaNacimiento: '',
-    nacionalidad: '',
-    lugarNacimiento: '',
-    sexo: '',
-    tipoDocument: '',
-    numeroDocumento: '',
-    direccion: '',
-    barrio: '',
-    compania: '',
-    numeroContacto: '',
-    contactoEmergencia1: '',
-    contactoEmergencia2: '',
-    puebloIndigena: false,
-    nombreEtnia: '',
-    grupoLgbti: '',
+interface datosPersonales {
+  nombre: string;
+  nombre_modificado:boolean;
+  apellido: string;
+  apellido_modificado:boolean;
+  apodo: string;
+  apodo_modificado:boolean;
+  estadoCivil: string;
+  estadoCivil_modificado:boolean;
+  fechaNacimiento: Dayjs | null;
+  fechaNacimiento_modificado:boolean;
+  nacionalidad: string;
+  nacionalidad_modificado:boolean;
+  lugarNacimiento: string;
+  lugarNacimiento_modificado:boolean;
+  sexo: string;
+  sexo_modificado:boolean;
+  tipoDeDocumento: string;
+  tipoDeDocumento_modificado:boolean;
+  numeroDocumento: string;
+  numeroDocumento_modificado:boolean;
+  direccion: string;
+  direccion_modificado:boolean;
+  barrio: string;
+  barrio_modificado:boolean;
+  compania: string;
+  compania_modificado:boolean;
+  numeroDeContacto: string;
+  numeroDeContacto_modificado:boolean;
+  contactoDeEmergencia1: string;
+  contactoDeEmergencia1_modificado:boolean;
+  contactoDeEmergencia2: string;
+  contactoDeEmergencia2_modificado:boolean;
+  puebloIndigena: boolean;
+  puebloIndigena_modificado:boolean;
+  nombreEtnia: string;
+  nombreEtnia_modificado:boolean;
+  pertenece_a_comunidad_lgbti:boolean;
+  pertenece_a_comunidad_lgbti_modificado:boolean;
+  grupoLgbti: string;
+  grupoLgbti_modificado:boolean;
 
 }
 
+const datosPersonalesInicial: datosPersonales = {
+  nombre: '',
+  apellido: '',
+  apodo: '',
+  estadoCivil: '',
+  fechaNacimiento: null,
+  nacionalidad: '',
+  lugarNacimiento: '',
+  sexo: '',
+  tipoDeDocumento: '',
+  numeroDocumento: '',
+  direccion: '',
+  barrio: '',
+  compania: '',
+  numeroDeContacto: '',
+  contactoDeEmergencia1: '',
+  contactoDeEmergencia2: '',
+  puebloIndigena: false,
+  nombreEtnia: '',
+  nombre_modificado: false,
+  apellido_modificado: false,
+  apodo_modificado: false,
+  estadoCivil_modificado: false,
+  fechaNacimiento_modificado: false,
+  nacionalidad_modificado: false,
+  lugarNacimiento_modificado: false,
+  sexo_modificado: false,
+  tipoDeDocumento_modificado: false,
+  numeroDocumento_modificado: false,
+  direccion_modificado: false,
+  barrio_modificado: false,
+  compania_modificado: false,
+  numeroDeContacto_modificado: false,
+  contactoDeEmergencia1_modificado: false,
+  contactoDeEmergencia2_modificado: false,
+  puebloIndigena_modificado: false,
+  nombreEtnia_modificado: false,
+  grupoLgbti: '',
+  grupoLgbti_modificado: false,
+  pertenece_a_comunidad_lgbti:false,
+  pertenece_a_comunidad_lgbti_modificado:false,
+}
+export interface BloqueDatosPersonalesProps{
+  datosPersonalesAlmacenados?:datosPersonales;
+}
 
-export default function BloqueDatosPersonales(){
 
-    const [state, setState] = useState<MyState>(initialState);
-    const [formData, setFormData] = useState<MyState>(initialState);
+const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAlmacenados = datosPersonalesInicial}) =>{
+  const [datosPersonalesState, setDatosPersonalesState] = useState(datosPersonalesAlmacenados);
+  const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+  console.log(datosPersonalesState);
 
+  useEffect(
+    () =>{
 
-    // Manejador para actualizar selects
-    const handleSelectChange = (event: React.ChangeEvent<{ name?: string; value: unknown }>) => {
-        const name = event.target.name as keyof typeof formData;
-        setFormData({
-            ...formData,
-            [name]: event.target.value,
-        });
-    };
+      const getNacionalidades = async () =>{
+        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/registro/nacionalidades`;
+        try{
+          const respuesta:NacionalidadesDTO = await request<NacionalidadesDTO>(url,{
+            method:'GET',
+            headers:{
+              'Content-type':'application/json'
+            }
+          });
+          console.log("Respuesta:", respuesta);
+          if(respuesta.success && respuesta.nacionalidades){
+            setNacionalidades(respuesta.nacionalidades);
+          }
+          
+        }catch(error){
 
+        }
+        
+        
+        
+      }
 
-    // Captura cambio de estados de inputs que no sean booleanos y guardan en el state
-    const handleChange = (event: any) => {
+      console.log("Consultando nacionalidades");
+      getNacionalidades();
+      
+    },[]
+  )
+  const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.target.name);
+      setDatosPersonalesState(
+        (previus) =>{
+          return(
+            {
+              ...previus,
+              [event.target.name]:event.target.value,
+              [`${event.target.name}_modificado`]:true
 
-        const inputName: string = event.target.name;
-        let inputValue: any = '';
+            }
+          )
+        }
+      )
+  }
 
-        inputValue = event.target.value;
+  const onDatoSelectChange = (event:SelectChangeEvent) =>{
+    setDatosPersonalesState(
+      (previus) =>{
+        return(
+          {
+            ...previus,
+            [event.target.name]:event.target.value,
+            [`${event.target.name}_modificado`]:true
 
-
-        setState({
-            ...state,
-            [inputName]: inputValue,
-        });
-    }
-    return(
-        <>
-            <Box>
-                <Typography variant='h6'>
-                    Datos Personales
-                </Typography>
-                <Grid container spacing={2} my={2}>
-                    <Grid item sm={6}>
-                        <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="grupoSanguineo">
-                                Nombre
-                            </InputLabel>
-                            <OutlinedInput
-                                label="Nombre"
-                                name="nombre"
-                                value={state.nombre}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
-                        <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="grupoSanguineo">
-                                Apellido
-                            </InputLabel>
-                            <OutlinedInput
-                                label="Apellido"
-                                name="apellido"
-                                value={state.apellido}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={4}>
-                        <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="apodo">
-                                Apodo
-                            </InputLabel>
-                            <OutlinedInput
-                                label="Apodo"
-                                name="apodo"
-                                value={state.apodo}
-                                onChange={handleChange}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={4}>
-
-                            <TextField
-                                fullWidth
-                                label="Estado civil"
-                                name="estadoCivil"
-                                value={state.estadoCivil}
-                                onChange={handleChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
-
-                    </Grid>
-                    <Grid item sm={4}>
-                        <FormControl fullWidth={true}>
-                            <TextField
-                                fullWidth
-                                label="Fecha de nacimiento"
-                                name="fechaNacimiento"
-                                type='date'
-                                value={state.fechaNacimiento}
-                                onChange={handleChange}
-                                InputLabelProps={{ shrink: true }}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Nacionalidad</InputLabel>
-                            <Select
-                                value={formData.nacionalidad}
-                                onChange={handleSelectChange}
-                                label="Nacionalidad"
-                                name="nacionalidad"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Lugar de nacimiento</InputLabel>
-                            <Select
-                                value={formData.lugarNacimiento}
-                                onChange={handleSelectChange}
-                                label="Luagar de nacimiento"
-                                name="lugarNacimiento"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Direccion"
-                            name="direccion"
-                            value={state.direccion}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={3}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Barrio</InputLabel>
-                            <Select
-                                value={formData.compania}
-                                onChange={handleSelectChange}
-                                label="Barrio"
-                                name="compania"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={3}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Compañia</InputLabel>
-                            <Select
-                                value={formData.compania}
-                                onChange={handleSelectChange}
-                                label="Compañia"
-                                name="compania"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={4}>
-                        <TextField
-                            fullWidth
-                            label="Numero de contacto"
-                            name="numeroContacto"
-                            value={state.numeroContacto}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Contacto de emergencia 1</InputLabel>
-                            <Select
-                                value={formData.contactoEmergencia1}
-                                onChange={handleSelectChange}
-                                label="Contacto de emergencia 1"
-                                name="contactoEmergencia1"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Contacto de emergencia 2</InputLabel>
-                            <Select
-                                value={formData.contactoEmergencia2}
-                                onChange={handleSelectChange}
-                                label="Contacto de emergencia 2"
-                                name="contactoEmergencia2"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-
-                    {/* ------------------------ Pueblo Indigena -------------------------------------*/}
-                    <Grid item sm={12}>
-                        <Typography variant='h6'>
-                            Pueblo indigenas
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Pertenece a un pueblo indigena</InputLabel>
-                            <Select
-                                value={formData.puebloIndigena}
-                                onChange={handleSelectChange}
-                                label="Pertenece a un pueblo indigena"
-                                name="puebloIndigena"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Nombre de la etnia"
-                            name="nombreEtnia"
-                            value={state.nombreEtnia}
-                            onChange={handleChange}
-                        />
-                    </Grid>
-                    {/* ------------------------ Comunidad LGBTI -------------------------------------*/}
-                    <Grid item sm={12}>
-                        <Typography variant='h6'>
-                            Comunidad LGBTI
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={4}>
-                        <FormControl fullWidth variant="outlined">
-                            <InputLabel>Pertenece a la comunidad</InputLabel>
-                            <Select
-                                value={formData.grupoLgbti}
-                                onChange={handleSelectChange}
-                                label="Pertenece a la comunidad"
-                                name="grupoLgbti"
-                            >
-                                {/* Replace these menu items with your options */}
-                                <MenuItem value="option1">Medida de seguridad 1</MenuItem>
-                                <MenuItem value="option2">Medida de seguridad 2</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={12}>
-                        <Stack direction="row" spacing={2}>
-                            <Button variant='contained'>
-                                Guardar
-                            </Button>
-                            <Button variant='outlined'>
-                                Cancelar
-                            </Button>
-                        </Stack>
-                    </Grid>
-                </Grid>
-            </Box>
-        </>
+          }
+        )
+      }
     )
+  }
+
+  const onOptionSelectChange = (event:ChangeEvent<HTMLInputElement>) =>{
+    console.log("Name of event:", event.target.name);
+    setDatosPersonalesState(
+      (previus) =>{
+        return(
+          {
+            ...previus,
+            [event.target.name]:(event.target.value === 'true'),
+            [`${event.target.name}_modificado`]:true
+          }
+        )
+      }
+    )
+  }
+
+  const onFechaNacimientoChange = (value:Dayjs|null , context:PickerChangeHandlerContext<DateValidationError>) =>{
+    console.log(value);
+    setDatosPersonalesState(
+      (previus) =>{
+        return(
+          {
+            ...previus,
+            fechaNacimiento:value,
+            fechaNacimiento_modificado:true
+            
+
+          }
+        )
+      }
+    )
+  }
+
+  return(
+    <Box>
+      <Typography variant='h6'>
+        Datos Personales
+      </Typography>
+      <Grid container spacing={2} my={2}>
+        <Grid item sm={6}>
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="nombre">
+                Nombre
+            </InputLabel>
+            <OutlinedInput
+              label="Nombre"
+              name="nombre"
+              value={datosPersonalesState.nombre}
+              onChange={onDatoChange}
+            />
+          </FormControl>
+        </Grid>
+        <Grid item sm={6}>
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="apellido">
+                Apellido
+            </InputLabel>
+            <OutlinedInput
+              label="Apellido"
+              name="apellido"
+              value={datosPersonalesState.apellido}
+              onChange={onDatoChange}/>
+          </FormControl>
+        </Grid>
+        <Grid item sm={4}>
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="apodo">
+              Apodo
+            </InputLabel>
+            <OutlinedInput
+              label="Apodo"
+              name="apodo"
+              value={datosPersonalesState.apodo}
+               onChange={onDatoChange}/>
+          </FormControl>
+        </Grid>
+        <Grid item sm={4}>
+          <FormControl fullWidth={true}>
+            <InputLabel htmlFor="estado_civil">
+                Estado Civil
+            </InputLabel>
+            <Select
+              id="estado_civil_id"
+              name="estadoCivil"
+              value={datosPersonalesState.estadoCivil}
+              onChange={onDatoSelectChange}
+              >
+                <MenuItem value={'Soltero/a'}>Soltero/a</MenuItem>
+                <MenuItem value={'Divorciado/a'}>Divorciado/a</MenuItem>
+                <MenuItem value={'Concubinado/a'}>Concubinado/a</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item sm={4}>
+          <FormControl fullWidth={true}>
+            <DatePicker 
+                  value={datosPersonalesState.fechaNacimiento} 
+                  format="DD/MM/YYYY"
+                  onChange={onFechaNacimientoChange}
+                  label={"Fecha de nacimiento"} 
+                  />    
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Nacionalidad</InputLabel>
+              <Select
+                value={datosPersonalesState.nacionalidad}
+                onChange={onDatoSelectChange}
+                label="Nacionalidad"
+                name="nacionalidad"
+              >
+                {nacionalidades.map(
+                  (data, id) =>{
+                    return(
+                      <MenuItem key={id} value={data.nacionalidad}>{data.nacionalidad}</MenuItem>
+                    )
+                  }
+                )}
+              
+              
+              </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl fullWidth variant="outlined">
+              <InputLabel>Lugar de nacimiento</InputLabel>
+              <OutlinedInput
+                name="lugarNacimiento"
+                value={datosPersonalesState.lugarNacimiento}
+                onChange={onDatoChange}
+                label="Lugar de Nacimiento"
+              />
+          </FormControl>
+        </Grid>
+        <Grid item sm={6}>
+          <TextField
+            fullWidth
+            label="Direccion"
+            name="direccion"
+            value={datosPersonalesState.direccion}
+            onChange={onDatoChange}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Barrio</InputLabel>
+            <OutlinedInput
+                name="barrio"
+                value={datosPersonalesState.barrio}
+                onChange={onDatoChange}
+                label="Barrio"
+              />
+          </FormControl>
+        </Grid>
+        <Grid item xs={3}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Compañia</InputLabel>
+            <OutlinedInput
+                name="compania"
+                value={datosPersonalesState.compania}
+                onChange={onDatoChange}
+                label="Compañia"
+              />            
+          </FormControl>
+        </Grid>
+        <Grid item sm={4}>
+          <TextField
+            fullWidth
+            label="Numero de contacto"
+            name="numeroContacto"
+            value={datosPersonalesState.numeroDeContacto}
+            onChange={onDatoChange}
+          />
+        </Grid>
+        <Grid item xs={4}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Contacto de emergencia 1</InputLabel>
+            <TextField
+            fullWidth
+            name="contactoDeEmergencia1"
+            value={datosPersonalesState.contactoDeEmergencia1}
+            onChange={onDatoChange}
+          />
+          </FormControl>
+        </Grid>
+        <Grid item xs={4}>
+          <FormControl fullWidth variant="outlined">
+            <InputLabel>Contacto de emergencia 2</InputLabel>
+            <TextField
+            fullWidth
+            name="contactoDeEmergencia2"
+            value={datosPersonalesState.contactoDeEmergencia2}
+            onChange={onDatoChange}
+          />
+          </FormControl>
+        </Grid>
+        <Grid item sm={12}>
+          <Typography variant='h6'>
+            Pueblo indigenas
+          </Typography>
+        </Grid>
+        <Grid item xs={6}>
+          <FormControl fullWidth variant="outlined">
+            <FormLabel>Pertenece a un pueblo indigena</FormLabel>
+            <RadioGroup
+                value={datosPersonalesState.puebloIndigena}
+                onChange={onOptionSelectChange}
+                row
+                aria-labelledby="gestioacion"
+                name="puebloIndigena">                 
+                  <FormControlLabel 
+                    value={true}
+                    control={<Radio  /> } 
+                    label="Si"/>
+                  <FormControlLabel 
+                    value={false}
+                    control={<Radio  /> } 
+                    label="No"/>
+            </RadioGroup>             
+          </FormControl>
+        </Grid>
+        <Grid item sm={6}>
+          <TextField
+            fullWidth
+            label="Nombre de la etnia"
+            name="nombreEtnia"
+            value={datosPersonalesState.nombreEtnia}
+            onChange={onDatoChange}
+            disabled={!datosPersonalesState.puebloIndigena}
+          />
+        </Grid>
+        <Grid item sm={12}>
+          <Typography variant='h6'>
+            Comunidad LGBTI
+          </Typography>
+        </Grid>
+        <Grid item xs={4}>
+          <FormControl fullWidth variant="outlined">
+            <FormLabel>Pertenece a la comunidad</FormLabel>
+            <RadioGroup
+                value={datosPersonalesState.pertenece_a_comunidad_lgbti}
+                onChange={onOptionSelectChange}
+                row
+                aria-labelledby="gestioacion"
+                name="pertenece_a_comunidad_lgbti">                 
+                  <FormControlLabel 
+                    value={true}
+                    control={<Radio  /> } 
+                    label="Si"/>
+                  <FormControlLabel 
+                    value={false}
+                    control={<Radio  /> } 
+                    label="No"/>
+            </RadioGroup>    
+          </FormControl>
+        </Grid>
+        <Grid item sm={6}>
+          <TextField
+            fullWidth
+            label="Nombre de la etnia"
+            name="nombreEtnia"
+            value={datosPersonalesState.nombreEtnia}
+            onChange={onDatoChange}
+            disabled={!datosPersonalesState.pertenece_a_comunidad_lgbti}
+          />
+        </Grid>
+        <Grid item sm={12}>
+          <Stack direction="row" spacing={2}>
+            <Button variant='contained'>
+              Guardar
+            </Button>
+            <Button variant='outlined'>
+              Cancelar
+            </Button>
+          </Stack>
+        </Grid>
+      </Grid>
+    </Box>
+  )
 }
+
+export default BloqueDatosPersonales;

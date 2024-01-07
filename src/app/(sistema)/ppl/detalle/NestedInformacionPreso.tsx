@@ -1,14 +1,16 @@
 'use client'
 
 import * as React from 'react';
-import {Box, Paper, Tabs, Tab, Grid} from "@mui/material";
+
+import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
+
+import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales.tsx.back";
+import BloqueEducacion from "../../cuestionario/components/BloqueEducacion.tsx.back";
+import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliares.tsx.back";
+import BloqueJudicial from "../../cuestionario/components/BloqueJudicial.tsx.back";
+import BloqueSalud from "../../cuestionario/components/BloqueSalud.tsx.back";
+import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad.tsx.back";
 import Typography from '@mui/material/Typography';
-import BloqueSalud from "../../cuestionario/components/BloqueSalud";
-import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
-import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
-import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliares";
-import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
-import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
 
 interface TabPanelProps {
     children?: React.ReactNode;

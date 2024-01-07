@@ -16,14 +16,14 @@ import Menu from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreIcon from '@mui/icons-material/MoreVert';
+import {Next13ProgressBar} from "next13-progressbar";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import SearchIcon from '@mui/icons-material/Search';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
-import {useGlobalContext} from "../app/Context/store";
 import {useEffect} from "react";
-import {Next13ProgressBar} from "next13-progressbar";
+import {useGlobalContext} from "../app/Context/store";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -221,7 +221,7 @@ export default function TopNav() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        MUI - { sidebarStatus ? 'TRUE' : 'false'}
+                        {/* MUI - { sidebarStatus ? 'TRUE' : 'false'} */}
                     </Typography>
                     <Search>
                         <SearchIconWrapper>

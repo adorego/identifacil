@@ -7,11 +7,14 @@ import {
     AirportShuttle,
     BarChart,
     CameraIndoor,
+    ContactMail,
+    DirectionsWalk,
     ExpandLess,
     ExpandMore,
     FaceOutlined,
     Fingerprint,
     Hail,
+    HowToReg,
     Key,
     ManageAccounts,
     Mood,
@@ -127,17 +130,33 @@ export default function SideBar() {
                                 <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
                                     <ListItemIcon>
 
-                                        <PermIdentity/>
+                                        <HowToReg/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Registro PPL" hidden={sidebarStatus}/>
+                                </ListItemButton>
+                                
+                                <ListItemButton onClick={(e) => handleNavigation('/acceso/ingreso-ppl/')}>
+                                    <ListItemIcon>
+
+                                        <DirectionsWalk/>
                                     </ListItemIcon>
                                     <ListItemText primary="Ingreso PPL" hidden={sidebarStatus}/>
                                 </ListItemButton>
 
                                 <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
                                     <ListItemIcon>
+                                        <ContactMail/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Registro Visitante" hidden={sidebarStatus}/>
+                                </ListItemButton>
+
+                                <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
+                                    <ListItemIcon>
                                         <People/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Acceso al Penal" hidden={sidebarStatus}/>
+                                    <ListItemText primary="Ingreso Visitante" hidden={sidebarStatus}/>
                                 </ListItemButton>
+
                                 <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
                                     <ListItemIcon>
                                         <FaceOutlined/>

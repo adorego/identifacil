@@ -12,6 +12,7 @@ interface FaceDetectionOverlayProps{
   iniciar_deteccion:boolean;
   agregar_reconocimiento:({}:IReconocimiento) => void;
   capturar_foto:boolean;
+  progreso:(progreso:number) => void;
   reset_capturar_foto:() => void;
   numero_de_capturas:number;
   
@@ -30,11 +31,12 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   agregar_reconocimiento, 
   capturar_foto, 
   reset_capturar_foto,
+  progreso,
   numero_de_capturas
 }) =>{
   const intervalId = useRef<any>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
-  const currentDetectionRef = useRef<IDetection>(null);
+  const currentDetectionRef = useRef<IDetection>();
   
 
   // console.log('Capturar foto:', capturar_foto);
@@ -56,6 +58,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   useEffect(
     () =>{
       if(capturar_foto && currentDetectionRef.current){
+        progreso(1);
         if(numero_de_capturas === 3){
           capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas,"foto1");
           setTimeout(capturar_rostro_y_enviar, 200, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto2");
