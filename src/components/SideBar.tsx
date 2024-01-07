@@ -2,8 +2,23 @@
 
 import * as React from "react";
 
-import { AccountBalance,  AirportShuttle,  BarChart,  CameraIndoor,  ExpandLess,  ExpandMore,  FaceOutlined,
-    Fingerprint,  Hail,  Key,  ManageAccounts,  Mood,  People,  PermIdentity,  Settings } from "@mui/icons-material";
+import {
+    AccountBalance,
+    AirportShuttle,
+    BarChart,
+    CameraIndoor,
+    ExpandLess,
+    ExpandMore,
+    FaceOutlined,
+    Fingerprint,
+    Hail,
+    Key,
+    ManageAccounts,
+    Mood,
+    People,
+    PermIdentity,
+    Settings
+} from "@mui/icons-material";
 import {
     Box,
     Collapse,
@@ -15,17 +30,16 @@ import {
     Stack,
     Typography
 } from "@mui/material";
-import {useState} from "react";
 import {usePathname, useRouter} from "next/navigation";
-import Link from 'next/link'
 
 import IconButton from "@mui/material/IconButton";
+import Link from 'next/link'
 import MenuIcon from "@mui/icons-material/Menu";
+import SidebarItem from "./sidebar/sidebarItem";
 import SidebarItems from "./sidebar/sidebarItem";
 import styles from "./sidebar.module.css";
 import {useGlobalContext} from "@/app/Context/store";
-import SidebarItem from "./sidebar/sidebarItem";
-
+import {useState} from "react";
 
 const titulo : string = "SiPPy";
 type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales';

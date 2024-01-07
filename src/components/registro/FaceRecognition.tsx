@@ -5,9 +5,9 @@ import {Alert, Box, Button, Grid, Typography} from "@mui/material";
 import {FC, Suspense, useEffect, useRef, useState} from "react";
 import FaceDetectionOverlay, { IReconocimiento } from "./FaceDetectionOverlay";
 
+import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
 import {IdentificacionForm} from "./IdentificationForm";
 import JSMpeg from "@cycjimmy/jsmpeg-player";
-import LinearProgressionWithLabel from "@/common/LinearProgressionWithLabel";
 import VideoPlayer from "./VideoPlayer";
 import { blue } from "@mui/material/colors";
 import styles from "./FaceRecognition.module.css";
@@ -21,6 +21,8 @@ export interface FaceRecognitionProps{
   agregar_reconocimiento:({}:IReconocimiento) => void;
   notificacion:string;
   numero_de_capturas:number;
+  etiqueta_boton:string;
+  progreso:(progreso:number) => void;
 }
 
 interface IRegisterProgress{
@@ -37,7 +39,6 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const [capturarFoto,setCapturarFoto] = useState<boolean>(false);
   const [iniciarDeteccion, setIniciarDeteccion] = useState<boolean>(false);
-  const [progress, setProgress] = useState<IRegisterProgress>(progressInitialState);
   
   const conectar_con_camaraIP = () =>{
     try{
@@ -134,7 +135,8 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
 
                     <Alert severity="info" sx={{
                         position: 'absolute',
-                        top: '90px',
+                        mb:'20px',
+                        top: '0px',
                     }}>Por favor situe a la persona frente a la camara y presione el botón "Capturar" para el registro</Alert>
                    
                     <div className={styles.video_container}>
@@ -149,6 +151,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
                             iniciar_deteccion={iniciarDeteccion}
                             videoElement={videoElementRef.current}
                             capturar_foto={capturarFoto}
+                            progreso={props.progreso}
                             reset_capturar_foto={reset_capturar_foto}
                             numero_de_capturas={props.numero_de_capturas}
                             agregar_reconocimiento={props.agregar_reconocimiento}/>
@@ -159,7 +162,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
                           {props.notificacion}
                         </Typography>
                         <Button onClick={onFotoCapture} className={styles.capturePhotoButton} variant={"contained"}
-                                endIcon={<AddAPhoto/>}>Capturar</Button>
+                                endIcon={<AddAPhoto/>}>{props.etiqueta_boton}</Button>
                     </div>
                   </Box>
             </Grid>

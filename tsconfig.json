@@ -28,6 +28,6 @@
       }
     ]
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(sistema)/cuestionario/components/BloqueSalud.tsx.back", "src/app/(sistema)/cuestionario/components/BloqueDatosPersonales.tsx.back", "src/app/(sistema)/cuestionario/components/BloqueEducacion.tsx.back", "src/app/(sistema)/cuestionario/components/BloqueFamiliares.tsx.back", "src/app/(sistema)/cuestionario/components/BloqueSeguridad.tsx.back", "src/app/(sistema)/cuestionario/components/BloqueJudicial.tsx.back"],
   "exclude": ["node_modules"]
 }

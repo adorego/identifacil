@@ -21,9 +21,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
-import {useGlobalContext} from "@/app/Context/store";
 import {useEffect} from "react";
-
+import {useGlobalContext} from "@/app/Context/store";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -213,7 +212,7 @@ export default function TopNav() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
-                        {/*MUI - { sidebarStatus ? 'TRUE' : 'false'}*/}
+                        MUI - { sidebarStatus ? 'TRUE' : 'false'}
                     </Typography>
                     <Search>
                         <SearchIconWrapper>
