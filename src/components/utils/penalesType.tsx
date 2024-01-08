@@ -49,6 +49,7 @@ export type  audienciaType = {
 }
 
 export type libertadesType = {
+    id: number;
     nroOficio: string;
     fechaOficio: string;
     caratula: string;

@@ -647,7 +647,9 @@
       "linkDeNoticia": "http://noticias1.com",
       "defensor": "Privado",
       "nombreDelDefensor": "Abogado Ejemplo 1",
-      "telefonoDelDefensor": "+595 321 654 987"
+      "telefonoDelDefensor": "+595 321 654 987",
+      "fechaHecho": "",
+      "lugarHecho": ""
     },
     {
       "id": 2,
@@ -953,7 +955,9 @@
       "nroOficio": "1234/2023",
       "caratula": "Nombre caratula 1",
       "fechaLibertad": "15/08/2023",
-      "tipoLibertad": "Libertad condicional"
+      "tipoLibertad": "Libertad condicional",
+      "comentarios": "",
+      "adjunto": ""
     },
     {
       "id": 2,

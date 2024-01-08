@@ -6,8 +6,7 @@ import {useEffect, useState} from "react";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 import {FormSkeleton} from "@/components/skeletons/FormSkeleton";
-
-
+import log from "loglevel";
 
 interface MyState {
     id: number;
@@ -34,27 +33,26 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
         setLoading(value);
         // console.log('edit:' + isEditMode)
     }
+
     // Cargar datos para edición
     useEffect(() => {
         if (isEditMode) {
             handleLoading(true);
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}?id=${params.id}`)
+            fetch(`${process.env.NEXT_PUBLIC_API_URL}/medidaSeguridad?id=${params.id}`)
                 .then(response => response.json())
                 .then(data => {
                     // Asegúrate de que el array no esté vacío y de que el objeto tenga las propiedades necesarias
-                    if (data.length > 0 && data[0].medidaSeguridad) {
-                        setStateForm({
-                            id: data[0].id,
-                            medidaSeguridad: data[0].medidaSeguridad,
-                            lastUpdate: '' // Asegúrate de definir un valor por defecto para las propiedades faltantes
-                        });
+                    if (data.length > 0) {
+                        // Los nombress de form y atributos del state deben ser lo mismo que el endpoint
+                        // o sino deberian hacer una normalizacion
+                        setStateForm(data[0]);
                     }
                 }).then( ()=>{
                     handleLoading(false);
             })
                 .catch(error => {
                     handleLoading(true);
-                    console.error('Error:', error)
+                    log.error('Error:', error)
                 }).finally(()=>{
                 handleLoading(false);
             });

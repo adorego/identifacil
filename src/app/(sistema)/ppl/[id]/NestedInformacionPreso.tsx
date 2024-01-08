@@ -1,15 +1,13 @@
 'use client'
 
 import * as React from 'react';
-
 import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
-
-import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales.tsx.back";
-import BloqueEducacion from "../../cuestionario/components/BloqueEducacion.tsx.back";
-import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliares.tsx.back";
-import BloqueJudicial from "../../cuestionario/components/BloqueJudicial.tsx.back";
-import BloqueSalud from "../../cuestionario/components/BloqueSalud.tsx.back";
-import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad.tsx.back";
+import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
+import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
+import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliar";
+import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
+import BloqueSalud from "../../cuestionario/components/BloqueSalud";
+import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
 import Typography from '@mui/material/Typography';
 
 interface TabPanelProps {
@@ -31,7 +29,7 @@ function CustomTabPanel(props: TabPanelProps) {
         >
             {value === index && (
                 <Box sx={{ p: 3, backgroundColor: '#FFF', }}>
-                    <Typography>{children}</Typography>
+                    {children}
                 </Box>
             )}
         </div>
@@ -56,7 +54,7 @@ export default function NestedInformacionPreso(){
     };
 
     return(
-        <>
+        <Box pt={3}>
             <Paper elevation={1}>
                 <Box p={2}>
                         <Grid container>
@@ -74,7 +72,7 @@ export default function NestedInformacionPreso(){
                                 </Tabs>
                             </Grid>
                             <Grid item sm={10}>
-                                <CustomTabPanel value={value} index={0}>
+                               <CustomTabPanel value={value} index={0}>
                                     <BloqueDatosPersonales />
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={1}>
@@ -101,6 +99,6 @@ export default function NestedInformacionPreso(){
                 </Box>
 
             </Paper>
-        </>
+        </Box>
     )
 }

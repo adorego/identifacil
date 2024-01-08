@@ -1,10 +1,13 @@
 'use client'
 
-import {Button, Grid, Stack, TextField, Typography} from "@mui/material";
-import {useState} from "react";
+import {Box, Button, CircularProgress, Grid, Stack, TextField, Typography} from "@mui/material";
+import {useEffect, useState} from "react";
 import {handleInputChange} from "@/components/utils/formUtils";
 import * as React from "react";
 import {audienciaType} from "@/components/utils/penalesType";
+import {useGlobalContext} from "@/app/Context/store";
+import {useRouter} from "next/navigation";
+import {fetchFormData} from "@/components/utils/utils";
 
 const initialDataForm = {
     id: 0,
@@ -22,10 +25,18 @@ const initialDataForm = {
 }
 
 // TODO: Hacer autocompletado cuando es upadte
-export default function FormAudiencias(){
+export default function FormAudiencias({ params }: { params: { id: number } }){
     const [datosFormulario, setDatosFormularios] = useState<audienciaType>(initialDataForm);
+    const [loading, setLoading] = useState(true);
+    const { openSnackbar } = useGlobalContext();
+    const router = useRouter();
+    const isEditMode = params && params.id;
 
-    const handleChange = (event : any) => {
+    const handleLoading = (value:boolean):void => {
+        setLoading(value);
+    }
+
+        const handleChange = (event : any) => {
         handleInputChange(event, datosFormulario, setDatosFormularios);
     };
 
@@ -33,8 +44,39 @@ export default function FormAudiencias(){
         console.log(datosFormulario)
     }
 
+    useEffect(() => {
+        if (isEditMode) {
+            setLoading(true);
+            fetchFormData(params.id, 'audiencias') // Usa la función importada
+                .then((data) => {
+                    if (data) {
+                        setDatosFormularios(data);
+                    }
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [isEditMode, params.id]);
+
+    // Si el ID del estate es 0 es porque esta el dato inicializado del state y todavia no cargo del ENDPOINT
+    if (datosFormulario.id == 0) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '75vh',
+            }}>
+                <CircularProgress/>
+            </Box>
+        );
+    }
+
     return(
         <>
+
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6'>

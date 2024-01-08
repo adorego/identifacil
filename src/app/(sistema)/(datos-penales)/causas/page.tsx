@@ -46,7 +46,7 @@ export default function Page(){
     return(
         <>
             <Box mb={3}>
-                <TituloComponent titulo='Causas' newEntry={'/datos-penales/causas/crear'}/>
+                <TituloComponent titulo='Causas' />
             </Box>
             <Paper>
                 <Box>
@@ -61,7 +61,7 @@ export default function Page(){
                             rowsPerPageCustom:5,
                             deleteOption: false,
                             pagination: true,
-                            targetURL: '/datos-penales/causas'
+                            targetURL: '/causas'
                         }}
                     />
                 </Box>

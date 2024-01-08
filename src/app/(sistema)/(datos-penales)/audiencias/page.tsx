@@ -59,7 +59,7 @@ export default function Page(){
                             headers={header}
                             options={{
                                 deleteOption: false,
-                                targetURL: '/datos-penales/audiencias',
+                                targetURL: '/audiencias',
                                 pagination: true,
                                 rowsPerPageCustom: 10,
                             }}

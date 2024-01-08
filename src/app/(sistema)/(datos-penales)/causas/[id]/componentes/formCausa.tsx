@@ -1,47 +1,30 @@
 'use client'
 
 import * as React from 'react';
-import {Box, Button, Grid, Stack, TextField, Typography} from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from 'react';
+import {Box, Button, CircularProgress, Grid, Stack, TextField, Typography} from "@mui/material";
 import {handleInputChange} from "@/components/utils/formUtils";
+import {CausaType} from "@/components/utils/penalesType";
+import {initialDataForm} from '@/components/utils/initialData';
+import {fetchData, fetchFormData} from "@/components/utils/utils";
+import {useGlobalContext} from "@/app/Context/store";
+import {useRouter} from "next/navigation";
 
-
-const initialDataForm = {
-    id: 0,
-    nroCausa: '',
-    ano: '',
-    fechaAprension: '',
-    caratula: '',
-    hechoPunible: '',
-    situacionProcesal: '',
-    condenado: '',
-    tiempoDeCondenaAnos: 0,
-    compurgamiento: '',
-    tiempoDeCondenaMeses: 0,
-    anosExtrasDeCondenaPorMedidaDeSeguridad: false,
-    anosDeCondenaPorMedidasDeSeguridad: 0,
-    mesesDeCondenaPorMedidasDeSeguridad: 0,
-    sentenciaDefinitiva: '',
-    sentenciaDescripcion: '',
-    fechaCompurgamientoCalculada: '',
-    circunscripcion: '',
-    secretaria: '',
-    fechaHecho: '',
-    juzgadoDeEjecucionOSentencia: '',
-    nombreDelFamiliar: '',
-    telefonoDelFamiliar: '',
-    lugarHecho: '',
-    linkDeNoticia: '',
-    defensor: '',
-    nombreDelDefensor: '',
-    telefonoDelDefensor: ''
-
-};
-
+const ENDPOINT  = 'http://localhost:5000/causas/1'
 
 // TODO: Hacer completado de form cuando es update o /crear
-export default function FormCausa(){
+export default function FormCausa({params} : { params: { id: number | string } }){
     const [datosFormulario, setDatosFormularios] = useState<CausaType>(initialDataForm);
+    const [loading, setLoading] = useState(true);
+    const { openSnackbar } = useGlobalContext();
+    const router = useRouter();
+    const isEditMode = params && params.id;
+
+    const handleLoading = (value:boolean):void =>{
+        // console.log('ahora ' + value);
+        setLoading(value);
+        // console.log('edit:' + isEditMode)
+    }
 
     const handleChange = (event : any) => {
         handleInputChange(event, datosFormulario, setDatosFormularios);
@@ -51,9 +34,47 @@ export default function FormCausa(){
         console.log(datosFormulario)
     }
 
+    /*useEffect(() => {
+
+        fetchData(ENDPOINT)
+            .then(fetchedData => {
+                setDatosFormularios(fetchedData);
+            });
+    }, []);*/
+
+    useEffect(() => {
+        if (isEditMode) {
+            setLoading(true);
+            fetchFormData(params.id, 'causas') // Usa la función importada
+                .then((data) => {
+                    if (data) {
+                        setDatosFormularios(data);
+                    }
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
+    }, [isEditMode, params.id]);
+
+    if (datosFormulario.id == 0) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '75vh',
+            }}>
+                <CircularProgress/>
+            </Box>
+        );
+    }
+
     return(
 
         <Box>
+
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6'>

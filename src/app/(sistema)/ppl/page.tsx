@@ -1,11 +1,11 @@
 'use client'
 
 import * as React from 'react';
+import {useEffect, useState} from 'react';
 import {Box, CircularProgress, Grid, Paper} from "@mui/material";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 
 const ENDPOINT : string = 'http://localhost:5000/PPL'
@@ -23,8 +23,8 @@ export default function Page(){
 
 
     useEffect(() => {
-        const apiUrl = ENDPOINT; // Puedes cambiar la URL según tus necesidades
-        fetchData(apiUrl)
+         // Puedes cambiar la URL según tus necesidades
+        fetchData(ENDPOINT)
             .then(fetchedData => {
                 setData(fetchedData);
             });

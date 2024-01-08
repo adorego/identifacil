@@ -39,6 +39,26 @@ export async function fetchData(url : string) {
         return null; // o manejar el error de manera adecuada
     }
 }
+
+export async function fetchFormData(id: any, entity: string) {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${entity}?id=${id}`);
+        if (!response.ok) {
+            throw new Error('Error en la petición');
+        }
+
+        const data = await response.json();
+        if (data.length > 0) {
+            return data[0];
+        }
+
+        return null; // Devuelve null si no se encuentra ningún dato válido
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
+}
+
 /*
 Como recibir del otro lado el fetch
 // OtraPagina.js

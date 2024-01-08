@@ -191,23 +191,23 @@ export default function SideBar() {
                                     icon={<Settings/>}
                                     label="Causas"
                                     path="/datos-penales/causas"
-                                    isActive={pathname === '/datos-penales/causas'}
+                                    isActive={pathname === '/(datos-penales)/causas'}
                                 />
                             </List>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Audiencias"
-                                    path="/datos-penales/audiencias"
-                                    isActive={pathname === '/datos-penales/audiencias'}
+                                    path="/audiencias"
+                                    isActive={pathname === '/audiencias'}
                                 />
                             </List>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Libertades"
-                                    path="/datos-penales/libertades"
-                                    isActive={pathname === '/datos-penales/libertades'}
+                                    path="/libertades"
+                                    isActive={pathname === '/libertades'}
                                 />
                             </List>
                         </Collapse>

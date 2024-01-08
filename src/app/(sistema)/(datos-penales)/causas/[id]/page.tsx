@@ -1,24 +1,22 @@
 
 import * as React from 'react'
 import TituloComponent from "@/components/titulo/tituloComponent";
-
 import {Box, Paper} from "@mui/material";
-import FormLibertades from "@/app/(sistema)/datos-penales/libertades/[id]/componentes/formLibertades";
-
+import FormCausa from "@/app/(sistema)/(datos-penales)/causas/[id]/componentes/formCausa";
 
 export default function Page({ params }: { params: { id: number } }) {
 
-
     return(
         <>
-            <TituloComponent titulo='Libertad otorgada' />
+            <TituloComponent titulo='Causa' />
             <Box mt={3}>
-                <Paper elevation={1}>
-
+                <Paper>
                     <Box p={3}>
-                        <FormLibertades />
-                    </Box></Paper>
+                        <FormCausa params={params}/>
+                    </Box>
+                </Paper>
             </Box>
         </>
     )
+
 }

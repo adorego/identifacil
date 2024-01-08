@@ -1,7 +1,7 @@
 import * as React from 'react'
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {Box, Paper} from "@mui/material";
-import FormAudiencias from "@/app/(sistema)/datos-penales/audiencias/[id]/componentes/formAudiencias";
+import FormAudiencias from "@/app/(sistema)/(datos-penales)/audiencias/[id]/componentes/formAudiencias";
 
 export default function Page({ params }: { params: { id: number } }) {
 
@@ -13,7 +13,7 @@ export default function Page({ params }: { params: { id: number } }) {
             </Box>
             <Paper elevation={1}>
                 <Box p={3}>
-                    <FormAudiencias />
+                    <FormAudiencias params={params} />
                 </Box>
             </Paper>
         </>

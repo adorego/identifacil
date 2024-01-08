@@ -57,7 +57,7 @@ export default function Page(){
                         showId={true}
                         options={{
                             deleteOption: false,
-                            targetURL: '/datos-penales/libertades',
+                            targetURL: '/libertades',
                             rowsPerPageCustom: 5,
                             pagination: true,
                         }}

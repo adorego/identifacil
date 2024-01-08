@@ -115,6 +115,7 @@ interface saludActions{
   type:SALUD_ACTIONS;
   payload:any;
 }
+
 const datosSaludInicial:datosSalud = {
   numeroDeIdentificacion:null,
   tieneAfeccionADrogas_modificado:false,
