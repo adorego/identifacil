@@ -27,8 +27,8 @@ export default function Identificacion(){
    
    
    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
-    const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/identificacion/`;
-    // console.log('url:', url);
+    const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/identificacion/`;
+    console.log('url:', url);
     const dataToSend = {
       descriptorFacial:reconocimiento.descriptor
     }

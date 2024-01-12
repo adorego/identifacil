@@ -1,13 +1,16 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Stack, TextField, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Snackbar, Stack, TextField, Typography } from "@mui/material";
 import { ChangeEvent, FC, useEffect, useState } from "react";
 import { DatePicker, DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
 import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
+import { RequestResponse, api_request } from "@/lib/api-request";
 
 import { Dayjs } from "dayjs";
 import { FieldChangeHandlerContext } from "@mui/x-date-pickers/internals";
-import { request } from "@/lib/api-request";
+import log from "loglevel";
+import { useGlobalContext } from "@/app/Context/store";
 
 interface datosPersonales {
+  numeroDeIdentificacion:string;
   nombre: string;
   nombre_modificado:boolean;
   apellido: string;
@@ -52,6 +55,7 @@ interface datosPersonales {
 }
 
 const datosPersonalesInicial: datosPersonales = {
+  numeroDeIdentificacion:"",
   nombre: '',
   apellido: '',
   apodo: '',
@@ -94,34 +98,38 @@ const datosPersonalesInicial: datosPersonales = {
   pertenece_a_comunidad_lgbti_modificado:false,
 }
 export interface BloqueDatosPersonalesProps{
+  numeroDeIdentificacion:string;
   datosPersonalesAlmacenados?:datosPersonales;
 }
 
 
-const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAlmacenados = datosPersonalesInicial}) =>{
+const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({numeroDeIdentificacion,datosPersonalesAlmacenados = datosPersonalesInicial}) =>{
   const [datosPersonalesState, setDatosPersonalesState] = useState(datosPersonalesAlmacenados);
   const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
-  console.log(datosPersonalesState);
+  const {openSnackbar} = useGlobalContext();
 
+  console.log("Numero de identificación:", numeroDeIdentificacion);
   useEffect(
     () =>{
 
       const getNacionalidades = async () =>{
-        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/registro/nacionalidades`;
+        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/registro/nacionalidades`;
         try{
-          const respuesta:NacionalidadesDTO = await request<NacionalidadesDTO>(url,{
+          const respuesta:RequestResponse = await api_request<NacionalidadesDTO>(url,{
             method:'GET',
             headers:{
               'Content-type':'application/json'
             }
           });
           console.log("Respuesta:", respuesta);
-          if(respuesta.success && respuesta.nacionalidades){
-            setNacionalidades(respuesta.nacionalidades);
+          if(respuesta.success && respuesta.datos){
+            setNacionalidades(respuesta.datos.nacionalidades);
+          }else{
+            openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
           }
           
         }catch(error){
-
+          openSnackbar(`Error en la consulta de datos:${error}`, "error");
         }
         
         
@@ -194,6 +202,32 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAl
         )
       }
     )
+  }
+  const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    
+    const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/datos_personales`;
+    const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
+    datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+    console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+    const respuesta = await api_request(url,{
+      method:'POST',
+      body:JSON.stringify(datosDelFormulario),
+      headers: {
+          'Content-Type': 'application/json'
+      }
+
+    })
+    if(respuesta.success){
+      openSnackbar("Datos guardados correctamente","success")
+    }else{
+      if(respuesta.error){
+        openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+      }
+    }
+
+    console.log("Respuesta:", respuesta);
   }
 
   return(
@@ -333,15 +367,15 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAl
           <TextField
             fullWidth
             label="Numero de contacto"
-            name="numeroContacto"
+            name="numeroDeContacto"
             value={datosPersonalesState.numeroDeContacto}
             onChange={onDatoChange}
           />
         </Grid>
         <Grid item xs={4}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel>Contacto de emergencia 1</InputLabel>
             <TextField
+            label="Contacto de emergencia 1"
             fullWidth
             name="contactoDeEmergencia1"
             value={datosPersonalesState.contactoDeEmergencia1}
@@ -351,8 +385,8 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAl
         </Grid>
         <Grid item xs={4}>
           <FormControl fullWidth variant="outlined">
-            <InputLabel>Contacto de emergencia 2</InputLabel>
             <TextField
+            label="Contacto de emergencia 2"
             fullWidth
             name="contactoDeEmergencia2"
             value={datosPersonalesState.contactoDeEmergencia2}
@@ -423,7 +457,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAl
         <Grid item sm={6}>
           <TextField
             fullWidth
-            label="Nombre de la etnia"
+            label="Nombre de la comunidad"
             name="nombreEtnia"
             value={datosPersonalesState.nombreEtnia}
             onChange={onDatoChange}
@@ -432,12 +466,12 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAl
         </Grid>
         <Grid item sm={12}>
           <Stack direction="row" spacing={2}>
-            <Button variant='contained'>
+            <Button variant='contained' onClick={onDatosPersonalesSubmit}>
               Guardar
             </Button>
-            <Button variant='outlined'>
+            {/* <Button variant='outlined'>
               Cancelar
-            </Button>
+            </Button> */}
           </Stack>
         </Grid>
       </Grid>
@@ -446,3 +480,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosPersonalesAl
 }
 
 export default BloqueDatosPersonales;
+
+function openSnackbar(arg0: string, arg1: string) {
+  throw new Error("Function not implemented.");
+}

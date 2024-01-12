@@ -1,23 +1,29 @@
+interface error{
+  code:string;
+  message:string
+}
 export interface RequestResponse{
-  sucess:boolean;
-  respuesta:any;
+  success:boolean;
+  error:error | null;
+  datos:any
 }
 export async function api_request<T>(
   url:string,
   config: RequestInit
 ): Promise<RequestResponse>{
-    console.log("Antes de la consulta....")
-    const response = await fetch(url, config);
+    // console.log("Antes de la consulta....")
+    const response:Response = await fetch(url, config);
     const respuesta:RequestResponse = {
-      sucess:false,
-      respuesta:{}
+      success:false,
+      error: null,
+      datos:{}
     }
     if(!response.ok){
-      respuesta.sucess = false;
-      respuesta.respuesta = await response.json();
+      respuesta.success = false;
+      respuesta.error = await response.json();
     }else{
-      respuesta.sucess = true;
-      respuesta.respuesta = await response.json();
+      respuesta.success = true;
+      respuesta.datos = await response.json();
     }
     
 

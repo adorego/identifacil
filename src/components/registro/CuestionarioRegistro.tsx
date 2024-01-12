@@ -23,7 +23,7 @@ interface CuestionarioRegistroProps{
 }
 const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificacion}) =>{
   const [expanded, setExpanded] = useState('');
-
+  
 
     const handleAccordionChange = (panel:string) => (_:any,isExpanded:boolean) => {
         setExpanded(isExpanded ? panel : '');
@@ -65,7 +65,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueDatosPersonales  />
+                    <BloqueDatosPersonales numeroDeIdentificacion={numeroDeIdentificacion}  />
                 </AccordionDetails>
 
             </Accordion>

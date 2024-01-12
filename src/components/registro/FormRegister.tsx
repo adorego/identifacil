@@ -88,7 +88,7 @@ export default function FormRegister(){
         
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
-        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/registro/`;
+        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/registro/`;
         setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{
           method:'POST',
@@ -100,7 +100,7 @@ export default function FormRegister(){
           setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
         }else{
           setProgresoRegistro(EstadosProgreso[3]);
-          setMensaje("Registro realizado coreectamente");
+          setMensaje("Registro realizado correctamente");
 
         }
         
@@ -160,7 +160,7 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {/* {activeStep === 0 && <IdentificationForm 
+                    {activeStep === 0 && <IdentificationForm 
                     habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
@@ -172,14 +172,14 @@ export default function FormRegister(){
                       cerrar_dialogo={cerrar_dialogo}
                       agregar_reconocimiento={agregar_reconocimiento}
                       actualizar_progreso={actualizar_progreso} />
-                    } */}
+                    }
                     
-                    {activeStep === 0 && <CuestionarioRegistro numeroDeIdentificacion="1130650" /> }
+                    {activeStep === 2 && identidad.current?.cedula_identidad && <CuestionarioRegistro numeroDeIdentificacion={identidad.current?.cedula_identidad} /> }
 
-                    {/* {activeStep === 3 && <ConfirmacionRegistro />} */}
+                    {activeStep === 3 && <ConfirmacionRegistro />}
             
             
-                    {/* {activeStep !== 0 ? 
+                    {activeStep !== 0 ? 
                         <Grid container  spacing={5} mt={1}>
                           <Grid item xs={'auto'}>
                             <Button variant="contained" 
@@ -202,7 +202,7 @@ export default function FormRegister(){
                               </Button>
                           </Grid>
                         </Grid>
-                      } */}
+                      }
                         
                       
                       </Box>

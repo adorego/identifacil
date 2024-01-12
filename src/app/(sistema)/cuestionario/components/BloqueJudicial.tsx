@@ -191,7 +191,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
     )
   }
 
-  console.log(estadoFormularioJudicial);
+  
   
   return(
     <Box
