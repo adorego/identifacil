@@ -82,9 +82,7 @@ export default function FormRegister(){
         formData.append('descriptorFacial2', reconocimientos.current[1].descriptor.toString());
         formData.append('foto3', reconocimientos.current[2].foto);
         formData.append('descriptorFacial3', reconocimientos.current[2].descriptor.toString());
-        // for(const entry of formData.entries()){
-        //   console.log(entry);
-        // }
+        formData.append('esPPL','true');
         
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
@@ -114,31 +112,31 @@ export default function FormRegister(){
     }
 
 
-    const onStepForward = () => {
+const onStepForward = () => {
         if (activeStep === 3) {
             setActiveStep(0);
         } else {
             setActiveStep(activeStep + 1);
         }
-    }
+}
 
-  const onStepBackward = () =>{
+const onStepBackward = () =>{
     if(activeStep === 0){
       setActiveStep(3);
     }else{
       setActiveStep(activeStep-1);
     }
-  }
+}
   
-  const actualizar_progreso = (progreso:number) =>{
-    setProgresoRegistro(EstadosProgreso[progreso]);
-  }
+const actualizar_progreso = (progreso:number) =>{
+  setProgresoRegistro(EstadosProgreso[progreso]);
+}
 
-  const cerrar_dialogo = () =>{
-    setProgresoRegistro(EstadosProgreso[0]);
-  }
+const cerrar_dialogo = () =>{
+  setProgresoRegistro(EstadosProgreso[0]);
+}
   
-  return(
+return(
         <Box sx={{padding:'20px'}}>
           <FormControl className={style.form}>
             <Typography variant="h6">Registro PPL</Typography>
@@ -160,7 +158,7 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {activeStep === 0 && <IdentificationForm 
+                    {/* {activeStep === 0 && <IdentificationForm 
                     habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
@@ -172,11 +170,19 @@ export default function FormRegister(){
                       cerrar_dialogo={cerrar_dialogo}
                       agregar_reconocimiento={agregar_reconocimiento}
                       actualizar_progreso={actualizar_progreso} />
-                    }
+                    } */}
                     
-                    {activeStep === 2 && identidad.current?.cedula_identidad && <CuestionarioRegistro numeroDeIdentificacion={identidad.current?.cedula_identidad} /> }
-
-                    {activeStep === 3 && <ConfirmacionRegistro />}
+                    {/* {activeStep === 0 && identidad.current?.cedula_identidad && <CuestionarioRegistro datosDeIdentidad={identidad.current} /> } */}
+                    {activeStep === 0 && <CuestionarioRegistro datosDeIdentidad={
+                      {
+                        nombres:"ANDRES",
+                        apellidos:"DO REGO BARROS",
+                        fecha_nacimiento:"21-07-1975",
+                        codigo_genero:"2"
+                      }
+                    } />
+                  }
+                    {activeStep === 1 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />}
             
             
                     {activeStep !== 0 ? 

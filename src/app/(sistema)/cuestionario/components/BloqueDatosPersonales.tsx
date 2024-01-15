@@ -3,9 +3,10 @@ import { ChangeEvent, FC, useEffect, useState } from "react";
 import { DatePicker, DateValidationError, PickerChangeHandlerContext } from "@mui/x-date-pickers";
 import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
 import { RequestResponse, api_request } from "@/lib/api-request";
+import dayjs, { Dayjs } from "dayjs";
 
-import { Dayjs } from "dayjs";
 import { FieldChangeHandlerContext } from "@mui/x-date-pickers/internals";
+import { IdentificacionForm } from "@/components/registro/IdentificationForm";
 import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
@@ -98,17 +99,19 @@ const datosPersonalesInicial: datosPersonales = {
   pertenece_a_comunidad_lgbti_modificado:false,
 }
 export interface BloqueDatosPersonalesProps{
-  numeroDeIdentificacion:string;
+  datosDeIdentificacion:IdentificacionForm;
   datosPersonalesAlmacenados?:datosPersonales;
 }
 
 
-const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({numeroDeIdentificacion,datosPersonalesAlmacenados = datosPersonalesInicial}) =>{
-  const [datosPersonalesState, setDatosPersonalesState] = useState(datosPersonalesAlmacenados);
+const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion,datosPersonalesAlmacenados = datosPersonalesInicial}) =>{
+  const [datosPersonalesState, setDatosPersonalesState] = useState({
+    ...datosPersonalesAlmacenados
+  });
   const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
   const {openSnackbar} = useGlobalContext();
 
-  console.log("Numero de identificación:", numeroDeIdentificacion);
+  
   useEffect(
     () =>{
 
@@ -205,29 +208,30 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({numeroDeIdentific
   }
   const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
-    
-    const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/datos_personales`;
-    const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
-    datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
-    console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-    const respuesta = await api_request(url,{
-      method:'POST',
-      body:JSON.stringify(datosDelFormulario),
-      headers: {
-          'Content-Type': 'application/json'
+    if(datosDeIdentificacion.cedula_identidad){
+      const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/datos_personales`;
+      const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
+      datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
+      console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+      })
+      if(respuesta.success){
+        openSnackbar("Datos guardados correctamente","success")
+      }else{
+        if(respuesta.error){
+          openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+          log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+        }
       }
 
-    })
-    if(respuesta.success){
-      openSnackbar("Datos guardados correctamente","success")
-    }else{
-      if(respuesta.error){
-        openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
-        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-      }
+      console.log("Respuesta:", respuesta);
     }
-
-    console.log("Respuesta:", respuesta);
   }
 
   return(
@@ -242,8 +246,10 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({numeroDeIdentific
                 Nombre
             </InputLabel>
             <OutlinedInput
+              readOnly={true}
               label="Nombre"
               name="nombre"
+              defaultValue={datosDeIdentificacion.nombres}
               value={datosPersonalesState.nombre}
               onChange={onDatoChange}
             />
@@ -255,6 +261,8 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({numeroDeIdentific
                 Apellido
             </InputLabel>
             <OutlinedInput
+              defaultValue={datosDeIdentificacion.apellidos}
+              readOnly={true}
               label="Apellido"
               name="apellido"
               value={datosPersonalesState.apellido}
@@ -293,6 +301,8 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({numeroDeIdentific
         <Grid item sm={4}>
           <FormControl fullWidth={true}>
             <DatePicker 
+                  readOnly={true}
+                  defaultValue={dayjs(datosDeIdentificacion.fecha_nacimiento)}
                   value={datosPersonalesState.fechaNacimiento} 
                   format="DD/MM/YYYY"
                   onChange={onFechaNacimientoChange}

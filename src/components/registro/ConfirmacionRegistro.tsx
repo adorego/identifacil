@@ -1,10 +1,16 @@
 import { Box, Typography } from "@mui/material"
 
-const ConfirmacionRegistro = () =>{
+import { FC } from "react";
+
+export interface ConfirmacionRegistroProps{
+  mensaje:string;
+}
+const ConfirmacionRegistro:FC<ConfirmacionRegistroProps> = ({mensaje}:ConfirmacionRegistroProps) =>{
+  console.log("Mensaje:", mensaje);
   return(
     <Box>
       <Typography variant="h5">
-          Registro de PPL exitoso!
+          {mensaje}
       </Typography>
     </Box>
   )

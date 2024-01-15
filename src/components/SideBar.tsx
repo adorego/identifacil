@@ -11,13 +11,17 @@ import {
     ExpandMore,
     FaceOutlined,
     Fingerprint,
+    Group,
     Hail,
+    HowToReg,
     Key,
     ManageAccounts,
     Mood,
     People,
     PermIdentity,
-    Settings
+    PersonAdd,
+    Settings,
+    TransferWithinAStation
 } from "@mui/icons-material";
 import {
     Box,
@@ -140,16 +144,29 @@ export default function SideBar() {
 
                                 <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
                                     <ListItemIcon>
-                                        <PermIdentity/>
+                                        <HowToReg/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Ingreso PPL" hidden={false}/>
+                                    <ListItemText primary="Registro PPL" hidden={false}/>
+                                </ListItemButton>
+
+                                <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/visitante')}>
+                                    <ListItemIcon>
+                                        <PersonAdd/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Registro Visitante" hidden={false}/>
                                 </ListItemButton>
 
                                 <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
                                     <ListItemIcon>
-                                        <People/>
+                                        <TransferWithinAStation/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Acceso al Penal" hidden={false}/>
+                                    <ListItemText primary="Ingreso PPL" hidden={false}/>
+                                </ListItemButton>
+                                <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
+                                    <ListItemIcon>
+                                        <Group/>
+                                    </ListItemIcon>
+                                    <ListItemText primary="Ingreso Visitante" hidden={false}/>
                                 </ListItemButton>
                                 <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
                                     <ListItemIcon>

@@ -11,6 +11,7 @@ import BloqueJudicial from "@/app/(sistema)/cuestionario/components/BloqueJudici
 import BloqueSalud from '@/app/(sistema)/cuestionario/components/BloqueSalud';
 import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSeguridad';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IdentificacionForm } from "./IdentificationForm";
 
 // const steps = [
 //   'Reconocimiento',
@@ -19,9 +20,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 //   'confirmacion',
 // ];
 interface CuestionarioRegistroProps{
-    numeroDeIdentificacion:string;
+    datosDeIdentidad:IdentificacionForm;
 }
-const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificacion}) =>{
+const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) =>{
   const [expanded, setExpanded] = useState('');
   
 
@@ -51,8 +52,8 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                     <Typography sx={{fontWeight:'bold'}}>Preguntas de salud</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueSalud numeroDeIdentificacion={numeroDeIdentificacion}  />
+                    
+                   <BloqueSalud numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""} />
                 </AccordionDetails>
             </Accordion>
             <Accordion expanded={expanded === "personal"} onChange={handleAccordionChange('personal')}>
@@ -65,7 +66,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueDatosPersonales numeroDeIdentificacion={numeroDeIdentificacion}  />
+                    <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad}  />
                 </AccordionDetails>
 
             </Accordion>
