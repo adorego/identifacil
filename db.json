@@ -21,7 +21,25 @@
       "nroContacto": "+595 981 123 456",
       "domicilio": "Mcal Lopez c/ Peru",
       "estadoPerfil": "completo",
-      "fechasVisitas": ["Sabados", "Domingos"],
+      "fechasVisitas": [
+        "Sabados",
+        "Domingos"
+      ],
+      "datosPersonales": {
+        "pueblosIndigenas": {
+          "puebloIndigena": false,
+          "nombreEtenia": ""
+        },
+        "comunidadLGBTI": {
+          "perteneceComunidad": false,
+          "detalle": ""
+        }
+      },
+      "datosSalud": {},
+      "datosSeguridad": {},
+      "datosEducacion": {},
+      "datosFamiliares": {},
+      "datosJudiciales": {},
       "salidasTransitorias": [
         {
           "id": 1,
@@ -69,8 +87,11 @@
       "Compañia": "ABC S.A.",
       "nroContacto": "+595 981 234 567",
       "domicilio": "Avda. Eusebio Ayala c/ España",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Viernes", "Sábados"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Viernes",
+        "Sábados"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -102,8 +123,11 @@
       "Compañia": "XYZ S.A.",
       "nroContacto": "+595 981 345 678",
       "domicilio": "Avda. San Martín c/ Gral. Aquino",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Lunes", "Miércoles"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Lunes",
+        "Miércoles"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -143,8 +167,11 @@
       "Compañia": "PQR S.A.",
       "nroContacto": "+595 981 456 789",
       "domicilio": "Cerro Corá c/ Mcal. Estigarribia",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Martes", "Jueves"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Martes",
+        "Jueves"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -176,8 +203,11 @@
       "Compañia": "LMN S.A.",
       "nroContacto": "+595 981 567 890",
       "domicilio": "Gral. Santos c/ Colón",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Viernes", "Sábados"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Viernes",
+        "Sábados"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -217,8 +247,11 @@
       "Compañia": "OPQ S.A.",
       "nroContacto": "+595 981 678 901",
       "domicilio": "4to. Proyectadas c/ Carlos Antonio López",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Lunes", "Miércoles"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Lunes",
+        "Miércoles"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -250,8 +283,11 @@
       "Compañia": "RST S.A.",
       "nroContacto": "+595 981 789 012",
       "domicilio": "Capitán Figari c/ Gral. Díaz",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Martes", "Jueves"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Martes",
+        "Jueves"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -283,8 +319,11 @@
       "Compañia": "UVW S.A.",
       "nroContacto": "+595 981 890 123",
       "domicilio": "Avda. España c/ Gral. Bruguez",
-      "estadoPerfil":  "completo",
-      "fechasVisitas": ["Viernes", "Sábados"],
+      "estadoPerfil": "completo",
+      "fechasVisitas": [
+        "Viernes",
+        "Sábados"
+      ],
       "salidasTransitorias": [
         {
           "id": 1,
@@ -594,7 +633,7 @@
       "nombre": "Juan Jose Perez",
       "salidaFecha": "25/12/2023",
       "salidaHora": "10:08:05",
-      "entradaFecha":  "27/12/2023",
+      "entradaFecha": "27/12/2023",
       "entradaHora": "20:13:12",
       "estado": "Activo"
     },
@@ -603,7 +642,7 @@
       "nombre": "Roberto Martinez",
       "salidaFecha": "25/12/2023",
       "salidaHora": "10:08:05",
-      "entradaFecha":  "27/12/2023",
+      "entradaFecha": "27/12/2023",
       "entradaHora": "20:13:12",
       "estado": "Activo"
     },
@@ -612,11 +651,10 @@
       "nombre": "Roberto Martinez",
       "salidaFecha": "25/12/2023",
       "salidaHora": "10:08:05",
-      "entradaFecha":  "27/12/2023",
+      "entradaFecha": "27/12/2023",
       "entradaHora": "20:13:12",
       "estado": "Revocado"
     }
-
   ],
   "causas": [
     {
@@ -629,14 +667,14 @@
       "situacionProcesal": "Condenado",
       "condenado": "Condenado Ejemplo 1",
       "tiempoDeCondenaAnos": 5,
-      "compurgamiento":"20/12/2029",
+      "compurgamiento": "20/12/2029",
       "fechaCompurgamientoCalculada": "15/01/2024",
       "tiempoDeCondenaMeses": 0,
       "anosExtrasDeCondenaPorMedidaDeSeguridad": true,
       "anosDeCondenaPorMedidasDeSeguridad": 2,
       "mesesDeCondenaPorMedidasDeSeguridad": 0,
       "sentenciaDefinitiva": "DEF-12345",
-      "sentenciaDescripcion":  "asd",
+      "sentenciaDescripcion": "asd",
       "circunscripcion": "Circunscripción de San Pedro",
       "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 1",
@@ -661,16 +699,16 @@
       "situacionProcesal": "Condenado",
       "condenado": "Condenado Ejemplo 2",
       "tiempoDeCondenaAnos": 3,
-      "compurgamiento":"20/12/2029",
+      "compurgamiento": "20/12/2029",
       "fechaCompurgamientoCalculada": "16/02/2024",
       "tiempoDeCondenaMeses": 6,
       "anosExtrasDeCondenaPorMedidaDeSeguridad": false,
       "anosDeCondenaPorMedidasDeSeguridad": 0,
       "mesesDeCondenaPorMedidasDeSeguridad": 0,
       "sentenciaDefinitiva": "DEF-67890",
-      "sentenciaDescripcion":  "",
+      "sentenciaDescripcion": "",
       "circunscripcion": "Circunscripción de Capital",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 2",
       "nombreDelFamiliar": "María López",
       "telefonoDelFamiliar": "+595 987 123 456",
@@ -691,7 +729,7 @@
       "situacionProcesal": "Condenado",
       "condenado": "Condenado Ejemplo 3",
       "tiempoDeCondenaAnos": 2,
-      "compurgamiento":"20/12/2029",
+      "compurgamiento": "20/12/2029",
       "fechaCompurgamientoCalculada": "17/03/2024",
       "tiempoDeCondenaMeses": 3,
       "anosExtrasDeCondenaPorMedidaDeSeguridad": true,
@@ -700,7 +738,7 @@
       "sentenciaDefinitiva": "DEF-24680",
       "sentenciaDescripcion": "",
       "circunscripcion": "Circunscripción de Este",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 3",
       "nombreDelFamiliar": "Carlos Gómez",
       "telefonoDelFamiliar": "+595 321 987 654",
@@ -730,7 +768,7 @@
       "sentenciaDefinitiva": "DEF-13579",
       "sentenciaDescripcion": "",
       "circunscripcion": "Circunscripción de Oeste",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 4",
       "nombreDelFamiliar": "Luisa Fernández",
       "telefonoDelFamiliar": "+595 654 789 321",
@@ -751,16 +789,16 @@
       "situacionProcesal": "Condenado",
       "condenado": "Condenado Ejemplo 5",
       "tiempoDeCondenaAnos": 8,
-      "compurgamiento":"20/12/2029",
+      "compurgamiento": "20/12/2029",
       "fechaCompurgamientoCalculada": "19/05/2024",
       "tiempoDeCondenaMeses": 4,
       "anosExtrasDeCondenaPorMedidaDeSeguridad": true,
       "anosDeCondenaPorMedidasDeSeguridad": 3,
       "mesesDeCondenaPorMedidasDeSeguridad": 6,
       "sentenciaDefinitiva": "DEF-10293",
-      "sentenciaDescripcion":  "asd",
+      "sentenciaDescripcion": "asd",
       "circunscripcion": "Circunscripción de Sur",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 5",
       "nombreDelFamiliar": "Ana Martínez",
       "telefonoDelFamiliar": "+595 789 321 654",
@@ -788,9 +826,9 @@
       "anosDeCondenaPorMedidasDeSeguridad": 3,
       "mesesDeCondenaPorMedidasDeSeguridad": 6,
       "sentenciaDefinitiva": "DEF-10293",
-      "sentenciaDescripcion":  "asd",
+      "sentenciaDescripcion": "asd",
       "circunscripcion": "Circunscripción de Sur",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 5",
       "nombreDelFamiliar": "Ana Martínez",
       "telefonoDelFamiliar": "+595 789 321 654",
@@ -818,9 +856,9 @@
       "anosDeCondenaPorMedidasDeSeguridad": 0,
       "mesesDeCondenaPorMedidasDeSeguridad": 0,
       "sentenciaDefinitiva": "DEF-45612",
-      "sentenciaDescripcion":  "asd",
+      "sentenciaDescripcion": "asd",
       "circunscripcion": "Circunscripción de Norte",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 6",
       "nombreDelFamiliar": "Roberto Carlos",
       "telefonoDelFamiliar": "+595 654 321 098",
@@ -850,7 +888,7 @@
       "sentenciaDefinitiva": "DEF-78901",
       "sentenciaDescripcion": "asd",
       "circunscripcion": "Circunscripción de Este",
-      "secretaria":  "",
+      "secretaria": "",
       "juzgadoDeEjecucionOSentencia": "Juzgado 7",
       "nombreDelFamiliar": "Marta Sanchez",
       "telefonoDelFamiliar": "+595 987 654 321",
@@ -860,6 +898,96 @@
       "defensor": "Privado",
       "nombreDelDefensor": "Abogado Ejemplo 7",
       "telefonoDelDefensor": "+595 987 654 321"
+    },
+    {
+      "id": 8,
+      "nroCausa": "1",
+      "ano": "2",
+      "fechaAprension": "3",
+      "caratula": "4",
+      "hechoPunible": "45",
+      "situacionProcesal": "5",
+      "condenado": "",
+      "tiempoDeCondenaAnos": "5",
+      "compurgamiento": "3",
+      "tiempoDeCondenaMeses": "4",
+      "anosExtrasDeCondenaPorMedidaDeSeguridad": false,
+      "anosDeCondenaPorMedidasDeSeguridad": 0,
+      "mesesDeCondenaPorMedidasDeSeguridad": "3",
+      "sentenciaDefinitiva": "",
+      "sentenciaDescripcion": "3",
+      "fechaCompurgamientoCalculada": "3",
+      "circunscripcion": "3",
+      "secretaria": "3",
+      "fechaHecho": "3",
+      "juzgadoDeEjecucionOSentencia": "3",
+      "nombreDelFamiliar": "3",
+      "telefonoDelFamiliar": "",
+      "lugarHecho": "3",
+      "linkDeNoticia": "3",
+      "defensor": "3",
+      "nombreDelDefensor": "3",
+      "telefonoDelDefensor": "3"
+    },
+    {
+      "id": 9,
+      "nroCausa": "6",
+      "ano": "6",
+      "fechaAprension": "6",
+      "caratula": "6",
+      "hechoPunible": "6",
+      "situacionProcesal": "6",
+      "condenado": "",
+      "tiempoDeCondenaAnos": "6",
+      "compurgamiento": "6",
+      "tiempoDeCondenaMeses": "6",
+      "anosExtrasDeCondenaPorMedidaDeSeguridad": false,
+      "anosDeCondenaPorMedidasDeSeguridad": "6",
+      "mesesDeCondenaPorMedidasDeSeguridad": "6",
+      "sentenciaDefinitiva": "6",
+      "sentenciaDescripcion": "6",
+      "fechaCompurgamientoCalculada": "6",
+      "circunscripcion": "6",
+      "secretaria": "6",
+      "fechaHecho": "6",
+      "juzgadoDeEjecucionOSentencia": "6",
+      "nombreDelFamiliar": "6",
+      "telefonoDelFamiliar": "6",
+      "lugarHecho": "6",
+      "linkDeNoticia": "66",
+      "defensor": "Uu",
+      "nombreDelDefensor": "u",
+      "telefonoDelDefensor": "u"
+    },
+    {
+      "id": 10,
+      "nroCausa": "aaa",
+      "ano": "j",
+      "fechaAprension": "j",
+      "caratula": "j",
+      "hechoPunible": "j",
+      "situacionProcesal": "j",
+      "condenado": "",
+      "tiempoDeCondenaAnos": "j",
+      "compurgamiento": "j",
+      "tiempoDeCondenaMeses": "j",
+      "anosExtrasDeCondenaPorMedidaDeSeguridad": "j",
+      "anosDeCondenaPorMedidasDeSeguridad": "j",
+      "mesesDeCondenaPorMedidasDeSeguridad": "j",
+      "sentenciaDefinitiva": "j",
+      "sentenciaDescripcion": "j",
+      "fechaCompurgamientoCalculada": "j",
+      "circunscripcion": "j",
+      "secretaria": "j",
+      "fechaHecho": "j",
+      "juzgadoDeEjecucionOSentencia": "j",
+      "nombreDelFamiliar": "j",
+      "telefonoDelFamiliar": "j",
+      "lugarHecho": "j",
+      "linkDeNoticia": "j",
+      "defensor": "j",
+      "nombreDelDefensor": "j",
+      "telefonoDelDefensor": "j"
     }
   ],
   "audiencias": [
@@ -877,7 +1005,7 @@
       "archivoJudicial": "expediente-2023-0001.pdf",
       "fechaAudiencia": "13/12/2023",
       "notaPedido": "nota-pedido-2023-0001.pdf",
-      "estado":"Completado",
+      "estado": "Completado",
       "pplVinculados": []
     },
     {
@@ -892,7 +1020,7 @@
       "transitoAdministrativo": true,
       "destinoAdministrativo": "Oficina Administrativa",
       "archivoJudicial": "expediente-2023-0002.pdf",
-      "fechaAudiencia":  "13/12/2023",
+      "fechaAudiencia": "13/12/2023",
       "notaPedido": "nota-pedido-2023-0002.pdf",
       "estado": "Completado",
       "pplVinculados": []
@@ -909,7 +1037,7 @@
       "transitoAdministrativo": false,
       "destinoAdministrativo": "Penitenciaría Estatal",
       "archivoJudicial": "expediente-2023-0003.pdf",
-      "fechaAudiencia":  "13/12/2023",
+      "fechaAudiencia": "13/12/2023",
       "notaPedido": "nota-pedido-2023-0003.pdf",
       "estado": "Completado",
       "pplVinculados": []
@@ -926,7 +1054,7 @@
       "transitoAdministrativo": true,
       "destinoAdministrativo": "Sede Administrativa",
       "archivoJudicial": "expediente-2023-0004.pdf",
-      "fechaAudiencia":  "13/12/2023",
+      "fechaAudiencia": "13/12/2023",
       "notaPedido": "nota-pedido-2023-0004.pdf",
       "estado": "Completado",
       "pplVinculados": []
@@ -943,7 +1071,7 @@
       "transitoAdministrativo": false,
       "destinoAdministrativo": "Reformatorio Juvenil",
       "archivoJudicial": "expediente-2023-0005.pdf",
-      "fechaAudiencia":  "13/12/2023",
+      "fechaAudiencia": "13/12/2023",
       "notaPedido": "nota-pedido-2023-0005.pdf",
       "estado": "Completado",
       "pplVinculados": []

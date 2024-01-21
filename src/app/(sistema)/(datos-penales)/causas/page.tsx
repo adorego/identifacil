@@ -46,7 +46,7 @@ export default function Page(){
     return(
         <>
             <Box mb={3}>
-                <TituloComponent titulo='Causas' />
+                <TituloComponent titulo='Causas' newEntry={'/causas/crear'}/>
             </Box>
             <Paper>
                 <Box>

@@ -190,8 +190,8 @@ export default function SideBar() {
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Causas"
-                                    path="/datos-penales/causas"
-                                    isActive={pathname === '/(datos-penales)/causas'}
+                                    path="/causas"
+                                    isActive={pathname === '/causas'}
                                 />
                             </List>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>

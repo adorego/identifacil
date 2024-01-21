@@ -6,7 +6,7 @@ import {Box, Button, CircularProgress, Grid, Stack, TextField, Typography} from 
 import {handleInputChange} from "@/components/utils/formUtils";
 import {CausaType} from "@/components/utils/penalesType";
 import {initialDataForm} from '@/components/utils/initialData';
-import {fetchData, fetchFormData} from "@/components/utils/utils";
+import {fetchData, fetchFormData, postEntity} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
@@ -20,6 +20,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
     const router = useRouter();
     const isEditMode = params && params.id;
 
+
     const handleLoading = (value:boolean):void =>{
         // console.log('ahora ' + value);
         setLoading(value);
@@ -32,6 +33,16 @@ export default function FormCausa({params} : { params: { id: number | string } }
 
     const handleSubmit = () => {
         console.log(datosFormulario)
+        postEntity(
+            isEditMode,
+            'causas',
+            'Causas',
+            params,
+            datosFormulario,
+            setLoading,
+            openSnackbar,
+            router
+        );
     }
 
     /*useEffect(() => {
@@ -43,7 +54,8 @@ export default function FormCausa({params} : { params: { id: number | string } }
     }, []);*/
 
     useEffect(() => {
-        if (isEditMode) {
+        if (isEditMode !== 'crear') {
+
             setLoading(true);
             fetchFormData(params.id, 'causas') // Usa la función importada
                 .then((data) => {
@@ -54,10 +66,12 @@ export default function FormCausa({params} : { params: { id: number | string } }
                 .finally(() => {
                     setLoading(false);
                 });
+        }else{
+
         }
     }, [isEditMode, params.id]);
 
-    if (datosFormulario.id == 0) {
+    if (datosFormulario.id == 0 && isEditMode !== 'crear') {
         return (
             <Box sx={{
                 display: 'flex',

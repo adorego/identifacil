@@ -98,3 +98,47 @@ export const filterByDateRange = (data: any[], startDate: string | number | Date
         return itemDate.isAfter(start) && itemDate.isBefore(end);
     });
 };
+
+
+export const postEntity = async (
+    isEditMode: string | number,
+    endpoint: string,
+    entityName: string,
+    params: { id: number | string; },
+    stateForm: any,
+    setLoading: (arg0: boolean) => void,
+    openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
+    router: any
+) => {
+    try {
+        setLoading(true);
+
+        const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
+        console.log(method)
+        const url = isEditMode !== 'crear'
+            ? `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}/${params.id}`
+            : `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`;
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(stateForm),
+        });
+
+        setLoading(false);
+
+        if (response.ok) {
+            const message = isEditMode
+                ? `${entityName} actualizada correctamente.`
+                : `${entityName} creada correctamente.`;
+
+            openSnackbar(message, 'success');
+            router.push(`/${endpoint}`);
+        } else {
+            throw new Error('Error en la petición');
+        }
+    } catch (error) {
+        setLoading(false);
+        console.error('Error:', error);
+    }
+};
