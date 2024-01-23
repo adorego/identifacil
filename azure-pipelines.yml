@@ -4,6 +4,8 @@
 
 trigger:
 - main
+- dev
+- test
 
 resources:
 - repo: self
@@ -37,3 +39,36 @@ stages:
         containerRegistry: $(dockerRegistryServiceConnection)
         tags: |
           $(tag)
+    - task: Kubernetes@1
+      displayName: Deploy to penitenciaria-dev
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'penitenciaria-dev'
+        namespace: 'penitenciaria-dev'
+        command: 'set'
+        arguments: 'image deployment/client client=crticplayground.azurecr.io/cliente:$(Build.BuildId)'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+    - task: Kubernetes@1
+      displayName: Deploy to penitenciatia-test
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/test'))
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'penitenciaria-test'
+        namespace: 'penitenciaria-test'
+        command: 'set'
+        arguments: 'image deployment/client client=crticplayground.azurecr.io/cliente:$(Build.BuildId)'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
+    - task: Kubernetes@1
+      displayName: Deploy to prenitenciaria-prod
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'penitenciaria-prod'
+        namespace: 'penitenciaria-prod'
+        command: 'set'
+        arguments: 'image deployment/client client=crticplayground.azurecr.io/cliente:$(Build.BuildId)'
+        secretType: 'dockerRegistry'
+        containerRegistryType: 'Azure Container Registry'
