@@ -6,7 +6,6 @@ import { FC, useState } from "react";
 import BloqueDatosPersonales from "@/app/(sistema)/cuestionario/components/BloqueDatosPersonales";
 import BloqueEducacion from "@/app/(sistema)/cuestionario/components/BloqueEducacion";
 import BloqueFamiliar from "@/app/(sistema)/cuestionario/components/BloqueFamiliar";
-import BloqueFamiliares from '@/app/(sistema)/cuestionario/components/BloqueFamiliar';
 import BloqueJudicial from "@/app/(sistema)/cuestionario/components/BloqueJudicial";
 import BloqueSalud from '@/app/(sistema)/cuestionario/components/BloqueSalud';
 import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSeguridad';
@@ -80,7 +79,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) 
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueEducacion  />
+                    <BloqueEducacion numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
                 </AccordionDetails>
 
             </Accordion>
@@ -94,7 +93,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) 
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueFamiliar  />
+                    <BloqueFamiliar numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""} />
                 </AccordionDetails>
 
             </Accordion>
@@ -108,7 +107,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) 
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueSeguridad  />
+                    <BloqueSeguridad numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
                 </AccordionDetails>
 
             </Accordion>
@@ -122,7 +121,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) 
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueJudicial  />
+                    <BloqueJudicial numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
                 </AccordionDetails>
 
             </Accordion>

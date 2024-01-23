@@ -22,6 +22,7 @@ export async function api_request<T>(
       respuesta.success = false;
       respuesta.error = await response.json();
     }else{
+      console.log("Response:", response);
       respuesta.success = true;
       respuesta.datos = await response.json();
     }

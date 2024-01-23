@@ -117,7 +117,6 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
     }
 
     const reset_capturar_foto = () =>{
-      console.log('Se resetea CapturarFoto');
       setCapturarFoto(false);
     }
 

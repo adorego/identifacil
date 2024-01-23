@@ -1,7 +1,7 @@
 
 export interface Nacionalidad{
   id:number;
-  nacionalidad:string;
+  nombre:string;
   pais:string;
 
 }

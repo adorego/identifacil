@@ -170,20 +170,24 @@ return(
                       cerrar_dialogo={cerrar_dialogo}
                       agregar_reconocimiento={agregar_reconocimiento}
                       actualizar_progreso={actualizar_progreso} />
-                    } */}
+                    }
                     
-                    {/* {activeStep === 0 && identidad.current?.cedula_identidad && <CuestionarioRegistro datosDeIdentidad={identidad.current} /> } */}
+                    {activeStep === 2 && identidad.current && <CuestionarioRegistro datosDeIdentidad={
+                      identidad.current
+                    } />}
+                  
+                    {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />} */}
+            
+                    {/* Para pruebas */}
                     {activeStep === 0 && <CuestionarioRegistro datosDeIdentidad={
                       {
+                        cedula_identidad:"1130650",
                         nombres:"ANDRES",
                         apellidos:"DO REGO BARROS",
                         fecha_nacimiento:"21-07-1975",
                         codigo_genero:"2"
                       }
-                    } />
-                  }
-                    {activeStep === 1 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />}
-            
+                    } />}
             
                     {activeStep !== 0 ? 
                         <Grid container  spacing={5} mt={1}>
