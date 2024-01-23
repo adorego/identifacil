@@ -8,11 +8,10 @@ import {
 
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
-import {dataBajas, dataSalidasEspeciales, dataTraslados} from "@/app/dummyData/movimientosDummyData";
-
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
+
 
 
 
@@ -76,6 +75,7 @@ export default function Ppl() {
     return (
         <Box>
 
+
             <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'/>
             <Paper elevation={1} sx={{
                 mt: '32px'
@@ -104,6 +104,7 @@ export default function Ppl() {
                 </Box>
 
             </Paper>
+
         </Box>
     )
 }
