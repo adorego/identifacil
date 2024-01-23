@@ -51,17 +51,6 @@ stages:
         secretType: 'dockerRegistry'
         containerRegistryType: 'Azure Container Registry'
     - task: Kubernetes@1
-      displayName: Deploy to penitenciatia-test
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/test'))
-      inputs:
-        connectionType: 'Kubernetes Service Connection'
-        kubernetesServiceEndpoint: 'penitenciaria-test'
-        namespace: 'penitenciaria-test'
-        command: 'set'
-        arguments: 'image deployment/client client=crticplayground.azurecr.io/cliente:$(Build.BuildId)'
-        secretType: 'dockerRegistry'
-        containerRegistryType: 'Azure Container Registry'
-    - task: Kubernetes@1
       displayName: Deploy to penitenciaria-prod
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
       inputs:
