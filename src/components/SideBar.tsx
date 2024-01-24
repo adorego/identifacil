@@ -156,17 +156,17 @@ export default function SideBar() {
                                     <ListItemText primary="Registro Visitante" hidden={false}/>
                                 </ListItemButton>
 
-                                <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
+                                <ListItemButton onClick={(e) => handleNavigation('/acceso/entrada-salida-ppl')}>
                                     <ListItemIcon>
                                         <TransferWithinAStation/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Ingreso PPL" hidden={false}/>
+                                    <ListItemText primary="Entrada/Salida PPL" hidden={false}/>
                                 </ListItemButton>
-                                <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
+                                <ListItemButton onClick={(e) => handleNavigation('/acceso/entrada-salida-visitante')}>
                                     <ListItemIcon>
                                         <Group/>
                                     </ListItemIcon>
-                                    <ListItemText primary="Ingreso Visitante" hidden={false}/>
+                                    <ListItemText primary="Entrada/Salida Visitante" hidden={false}/>
                                 </ListItemButton>
                                 <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
                                     <ListItemIcon>

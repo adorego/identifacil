@@ -109,7 +109,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
           .catch((error) => {
             console.log(error);
           })
-        }
+        },[]
     )
 
     const onFotoCapture = () => {

@@ -86,7 +86,8 @@ export default function FormRegister(){
         
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
-        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/registro/`;
+        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/`;
+        console.log('url:', url);
         setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{
           method:'POST',
@@ -112,31 +113,31 @@ export default function FormRegister(){
     }
 
 
-const onStepForward = () => {
-        if (activeStep === 3) {
-            setActiveStep(0);
-        } else {
-            setActiveStep(activeStep + 1);
-        }
-}
-
-const onStepBackward = () =>{
-    if(activeStep === 0){
-      setActiveStep(3);
-    }else{
-      setActiveStep(activeStep-1);
+    const onStepForward = () => {
+            if (activeStep === 3) {
+                setActiveStep(0);
+            } else {
+                setActiveStep(activeStep + 1);
+            }
     }
-}
-  
-const actualizar_progreso = (progreso:number) =>{
-  setProgresoRegistro(EstadosProgreso[progreso]);
-}
 
-const cerrar_dialogo = () =>{
-  setProgresoRegistro(EstadosProgreso[0]);
-}
-  
-return(
+    const onStepBackward = () =>{
+        if(activeStep === 0){
+          setActiveStep(3);
+        }else{
+          setActiveStep(activeStep-1);
+        }
+    }
+      
+    const actualizar_progreso = (progreso:number) =>{
+      setProgresoRegistro(EstadosProgreso[progreso]);
+    }
+
+    const cerrar_dialogo = () =>{
+      setProgresoRegistro(EstadosProgreso[0]);
+    }
+      
+    return(
         <Box sx={{padding:'20px'}}>
           <FormControl className={style.form}>
             <Typography variant="h6">Registro PPL</Typography>
@@ -158,7 +159,7 @@ return(
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {/* {activeStep === 0 && <IdentificationForm 
+                    {activeStep === 0 && <IdentificationForm 
                     habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
@@ -176,9 +177,9 @@ return(
                       identidad.current
                     } />}
                   
-                    {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />} */}
+                    {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />}
             
-                    {/* Para pruebas */}
+                    {/* Para pruebas
                     {activeStep === 0 && <CuestionarioRegistro datosDeIdentidad={
                       {
                         cedula_identidad:"1130650",
@@ -187,7 +188,7 @@ return(
                         fecha_nacimiento:"21-07-1975",
                         codigo_genero:"2"
                       }
-                    } />}
+                    } />} */}
             
                     {activeStep !== 0 ? 
                         <Grid container  spacing={5} mt={1}>
