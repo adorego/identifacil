@@ -129,7 +129,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
   useEffect(
     () =>{
       const getCausas = async (numeroDeIdentificacion:string) =>{
-          const url = `/api/registro/causas?ci=${numeroDeIdentificacion}`;
+          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/causas?ci=${numeroDeIdentificacion}`;
           const parameter = {
             numeroDeIdentificacion:numeroDeIdentificacion
           }

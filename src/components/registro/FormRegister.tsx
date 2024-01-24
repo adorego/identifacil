@@ -86,7 +86,7 @@ export default function FormRegister(){
         
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
-        const url = `/api/registro/`;
+        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/`;
         console.log('url:', url);
         setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{

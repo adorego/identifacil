@@ -76,7 +76,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
     event.preventDefault();
     if(numeroDeIdentificacion){
       try{
-        const url = `/api/registro/registro_educacion`;
+        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/registro_educacion`;
         const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
         datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
         console.log("Datos a enviar:", datosDelFormulario);

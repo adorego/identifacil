@@ -152,7 +152,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
   const onDatosFamiliaresSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     if(numeroDeIdentificacion){
-      const url = `/api/registro/datos_familiares`;
+      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_familiares`;
       const datosDelFormulario:datosFamiliares = Object.assign({},estadoFormularioDatosFamiliares);
       datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
