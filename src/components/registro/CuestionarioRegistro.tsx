@@ -6,11 +6,11 @@ import { FC, useState } from "react";
 import BloqueDatosPersonales from "@/app/(sistema)/cuestionario/components/BloqueDatosPersonales";
 import BloqueEducacion from "@/app/(sistema)/cuestionario/components/BloqueEducacion";
 import BloqueFamiliar from "@/app/(sistema)/cuestionario/components/BloqueFamiliar";
-import BloqueFamiliares from '@/app/(sistema)/cuestionario/components/BloqueFamiliar';
 import BloqueJudicial from "@/app/(sistema)/cuestionario/components/BloqueJudicial";
 import BloqueSalud from '@/app/(sistema)/cuestionario/components/BloqueSalud';
 import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSeguridad';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IdentificacionForm } from "./IdentificationForm";
 
 // const steps = [
 //   'Reconocimiento',
@@ -19,11 +19,11 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 //   'confirmacion',
 // ];
 interface CuestionarioRegistroProps{
-    numeroDeIdentificacion:string;
+    datosDeIdentidad:IdentificacionForm;
 }
-const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificacion}) =>{
+const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) =>{
   const [expanded, setExpanded] = useState('');
-
+  
 
     const handleAccordionChange = (panel:string) => (_:any,isExpanded:boolean) => {
         setExpanded(isExpanded ? panel : '');
@@ -51,8 +51,8 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                     <Typography sx={{fontWeight:'bold'}}>Preguntas de salud</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueSalud numeroDeIdentificacion={numeroDeIdentificacion}  />
+                    
+                   <BloqueSalud numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""} />
                 </AccordionDetails>
             </Accordion>
             <Accordion expanded={expanded === "personal"} onChange={handleAccordionChange('personal')}>
@@ -65,7 +65,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueDatosPersonales  />
+                    <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad}  />
                 </AccordionDetails>
 
             </Accordion>
@@ -79,7 +79,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueEducacion  />
+                    <BloqueEducacion numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
                 </AccordionDetails>
 
             </Accordion>
@@ -93,7 +93,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueFamiliar  />
+                    <BloqueFamiliar numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""} />
                 </AccordionDetails>
 
             </Accordion>
@@ -107,7 +107,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueSeguridad  />
+                    <BloqueSeguridad numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
                 </AccordionDetails>
 
             </Accordion>
@@ -121,7 +121,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({numeroDeIdentificac
                 </AccordionSummary>
                 <AccordionDetails>
                     {/* Bloque de formulario */}
-                    <BloqueJudicial  />
+                    <BloqueJudicial numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
                 </AccordionDetails>
 
             </Accordion>

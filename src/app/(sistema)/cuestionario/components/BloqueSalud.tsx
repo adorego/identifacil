@@ -24,10 +24,9 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { DatePicker } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
-import { NotificationContext } from "@/components/notiification/context";
-import SnackbarComponent from "@/components/snackback/SnackBarComponent";
 import { api_request } from "@/lib/api-request";
 import log from "loglevel";
+import {useGlobalContext} from "@/app/Context/store";
 
 interface datosSalud{
   numeroDeIdentificacion:string | null;
@@ -249,7 +248,7 @@ export interface BloqueSaludProps{
 const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenados = datosSaludInicial}) =>{
   const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer,datosAlmacenados);
   const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
-  
+  const {openSnackbar} = useGlobalContext();
   // console.log("Estado:", datosSaludFormState);
 
   const onAffecionDrogaChange = (event:React.ChangeEvent<HTMLInputElement>  ) =>{
@@ -391,7 +390,7 @@ const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenad
   const onDatosSaludSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     
-    const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/salud`;
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/salud`;
     const datosDelFormulario:datosSalud = Object.assign({},datosSaludFormState);
     datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
     const respuesta = await api_request(url,{
@@ -402,11 +401,11 @@ const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenad
       }
 
     })
-    if(respuesta.sucess){
-      
+    if(respuesta.success){
+      openSnackbar("Datos guardados correctamente","success")
     }else{
-      
-      log.error("Error al guardar los datos", respuesta.respuesta);
+      openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`,`error`);
+      log.error("Error al guardar los datos", respuesta.datos);
     }
 
     console.log("Respuesta:", respuesta);

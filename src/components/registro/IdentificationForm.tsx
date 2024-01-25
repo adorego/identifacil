@@ -81,9 +81,8 @@ const IdentificationForm:FC<IdentificationFormProps> = (props:IdentificationForm
   
   const onConsultarRegistroCivil = async () =>{
     setError({error:false, msg:""});
-    // const url = process.env.NEXT_PUBLIC_SERVER_URL + '/api/consultaci/';
-    const url = "http://localhost:4003/api/consultaci/"
-    // console.log(url);
+    const url = `${process.env.NEXT_PUBLIC_CONSULTACI_URL}/api/consultaci/get_datos_ci/`;
+    
     try{
       const headers = new Headers();
       headers.append('Content-Type','application/json');

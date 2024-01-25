@@ -1,0 +1,23 @@
+.form{
+  margin-top: 30px;
+  margin-left: 10px;
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width: 95%;
+  height: fit-content;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+}
+
+.ingresoAprovado{
+  margin: auto;
+  text-align: center;
+  border: 2px solid #FFFF;
+  border-radius: 50%;
+  background-color: green;
+  color: #FFFF;
+  width: 120px;
+  height: 120px;
+}

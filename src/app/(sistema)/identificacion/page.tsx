@@ -9,12 +9,14 @@ import IdentificationData from "@/components/registro/IdentificationData";
 import { useGlobalContext } from "@/app/Context/store";
 import { useState } from "react";
 
-interface IdentificationResponse{
+export interface IdentificationResponse{
+  numeroDeIdentificacion:string;
   nombres:string;
   apellidos:string;
   esPPL:boolean;
 }
-const initialResponse:IdentificationResponse = {
+export const initialResponse:IdentificationResponse = {
+  numeroDeIdentificacion:"",
   nombres:"",
   apellidos:"",
   esPPL:false
@@ -27,8 +29,8 @@ export default function Identificacion(){
    
    
    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
-    const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/api/identificacion/`;
-    // console.log('url:', url);
+    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/identificacion/`;
+    console.log('url:', url);
     const dataToSend = {
       descriptorFacial:reconocimiento.descriptor
     }
@@ -51,8 +53,10 @@ export default function Identificacion(){
       console.log('Ocurrio un error:', data);
     }else{
       const data:IdentificationResponse = await response.json();
+      console.log("Respuesta:", data);
       setProgresoReconocmiento(EstadosProgreso[3]);
       setIdentificationData({
+        numeroDeIdentificacion:data.numeroDeIdentificacion,
         nombres:data.nombres,
         apellidos:data.apellidos,
         esPPL: data.esPPL

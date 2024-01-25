@@ -1,7 +1,12 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, OutlinedInput, Radio, RadioGroup } from "@mui/material";
 import { FC, useState } from "react";
 
+import { api_request } from "@/lib/api-request";
+import log from "loglevel";
+import { useGlobalContext } from "@/app/Context/store";
+
 export interface datosEducacion {
+  numeroDeIdentificacion:string;
   nivelAcademico: string;
   nivelAcademico_modificado:boolean;
   institucionEducativa: string;
@@ -15,6 +20,7 @@ export interface datosEducacion {
 }
 
 const datosEducacionIniciales:datosEducacion = {
+  numeroDeIdentificacion:"",
   nivelAcademico:"",
   nivelAcademico_modificado:false,
   institucionEducativa: "",
@@ -28,11 +34,11 @@ const datosEducacionIniciales:datosEducacion = {
 } 
 
 export interface BloqueEducacionProps{
-  datosIniciales?:datosEducacion;
+  numeroDeIdentificacion:string;
 }
-const BloqueEducacion:FC<BloqueEducacionProps> = ({datosIniciales = datosEducacionIniciales}) =>{
-  const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosIniciales);
-  
+const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
+  const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosEducacionIniciales);
+  const {openSnackbar} = useGlobalContext();
   // console.log(estadoFormularioDeEducacion);
 
   const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
@@ -66,8 +72,40 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({datosIniciales = datosEducaci
     )
   }
 
-  const onGuardarClick = (event:React.MouseEvent<HTMLButtonElement>) =>{
-    event.preventDefault()
+  const onGuardarClick = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(numeroDeIdentificacion){
+      try{
+        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/registro_educacion`;
+        const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
+        datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+        console.log("Datos a enviar:", datosDelFormulario);
+        const respuesta = await api_request(url,{
+          method:'POST',
+          body:JSON.stringify(datosDelFormulario),
+          headers: {
+              'Content-Type': 'application/json'
+          }
+
+        });
+        console.log("Respuesta:", respuesta);
+        if(respuesta.success){
+          openSnackbar("Datos guardados correctamente","success")
+        }else{
+          if(respuesta.error){
+            openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+            log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+          }
+        }
+      }catch(error){
+        openSnackbar(`Error al guardar los datos:${error}`,"error");
+      }
+      
+
+      // console.log("Respuesta:", respuesta);
+    }else{
+      openSnackbar("Falta el número de identificación","error");
+    }
   }
   
   return(

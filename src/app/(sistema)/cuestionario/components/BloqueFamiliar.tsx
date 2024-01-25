@@ -1,9 +1,12 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, IconButton, InputLabel, OutlinedInput, Radio, RadioGroup, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, IconButton, InputLabel, OutlinedInput, Radio, RadioGroup, Stack, TextField } from "@mui/material";
 import { Delete, Save } from "@mui/icons-material";
 import { FC, useState } from "react";
 
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import { api_request } from "@/lib/api-request";
+import log from "loglevel";
 import style from "./BloqueFamiliar.module.css";
+import { useGlobalContext } from "@/app/Context/store";
 
 interface familiar{
   nombre:string;
@@ -13,27 +16,29 @@ interface familiar{
 
 }
 interface datosFamiliares{
+  numeroDeIdentificacion:string;
   esCabezaDeFamilia: boolean;
   esCabezaDeFamilia_modificado:boolean;
   tieneCirculoFamiliar:boolean;
   tieneCirculoFamiliar_modificado:boolean;
-  familiares:Array<familiar>;
+  familiares:Array<familiar> | null;
+  familiares_modificado:boolean;
   tieneConcubino:boolean;
-  concubino:datosConcubino;
+  tieneConcubino_modificado:boolean;
+  concubino:datosConcubino | null;
   concubino_modificado:boolean;
 }
 const estadoDatosFamiliaresInicial:datosFamiliares = {
+  numeroDeIdentificacion:"",
   esCabezaDeFamilia:false,
   esCabezaDeFamilia_modificado:false,
   tieneCirculoFamiliar:false,
   tieneCirculoFamiliar_modificado:false,
-  familiares:[],
+  familiares:null,
+  familiares_modificado:false,
   tieneConcubino:false,
-  concubino:{
-    nombre:"",
-    apellido:"",
-    cedula:""
-  },
+  tieneConcubino_modificado:false,
+  concubino:null,
   concubino_modificado:false,
 
 }
@@ -47,30 +52,17 @@ const familiarInicial:familiar = {
 
 interface BloqueFamiliarProps{
   datosFamiliaresIniciales?:datosFamiliares;
+  numeroDeIdentificacion:string;
 }
 
 
-const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = estadoDatosFamiliaresInicial}) =>{
+const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFamiliaresIniciales = estadoDatosFamiliaresInicial}) =>{
   const [estadoFormularioDatosFamiliares, setEstadoFormularioDatosFamiliares] = useState<datosFamiliares>(datosFamiliaresIniciales);
   const [familiarAAgregar,setFamiliarAAgregar] = useState<familiar>(familiarInicial);
   const [agregarFamiliar, setAgregarFamiliar] = useState<boolean>(false);
+  const {openSnackbar} = useGlobalContext();
   
-  const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    
-    setEstadoFormularioDatosFamiliares(
-      (previus) =>{
-        return(
-          {
-            ...previus,
-            [event.target.name]:event.target.value,
-            [`${event.target.name}_modificado`]:true
-
-          }
-        )
-      }
-    )
-  } 
-
+  
   const onSelectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     setEstadoFormularioDatosFamiliares(
       (previus) =>{
@@ -99,26 +91,32 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
     )
   }
 
-  const manejadorVerFormularioNuevoFamiliar = (event:React.MouseEvent<HTMLButtonElement>) =>{
-    setAgregarFamiliar(!agregarFamiliar);
-  }
+  
   const manejadorAgregarFamilia = (event:React.MouseEvent<HTMLButtonElement>) =>{
     setEstadoFormularioDatosFamiliares(
       (previus) => {
+        if(!previus.familiares){
+          previus.familiares = [];
+        }
         previus.familiares.push(familiarAAgregar);
         return(
           {
-            ...previus
+            ...previus,
+            familiares_modificado:true
             
           }
         )
       });
+      
       setFamiliarAAgregar(familiarInicial);
   }
 
   const eliminarFamiliares = (event:React.MouseEvent<HTMLButtonElement>, indice:number) =>{
     setEstadoFormularioDatosFamiliares(
       (previus) =>{
+        if(!previus.familiares){
+          previus.familiares = [];
+        }
         previus.familiares.splice(indice,1);
         return{
           ...previus,
@@ -129,7 +127,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
     )
   }
 
-  const onConcubinoCompleted = (concubino:datosConcubino):void =>{
+  const onConcubinoCompleted = (concubino:datosConcubino | null):void =>{
     setEstadoFormularioDatosFamiliares(
       (previus) =>{
         return{
@@ -139,6 +137,46 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
         }
       }
     )
+  }
+
+  const onEliminarConcubino = (event:React.MouseEvent<HTMLButtonElement>) =>{
+    setEstadoFormularioDatosFamiliares(
+      (previus) =>{
+        return{
+          ...previus,
+          concubino:null
+        }
+      }
+    )
+  }
+  const onDatosFamiliaresSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(numeroDeIdentificacion){
+      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_familiares`;
+      const datosDelFormulario:datosFamiliares = Object.assign({},estadoFormularioDatosFamiliares);
+      datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+      })
+      if(respuesta.success){
+        openSnackbar("Datos guardados correctamente","success")
+      }else{
+        if(respuesta.error){
+          openSnackbar(`Error al guardar los datos`,`error`);
+          log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+        }
+      }
+
+    }else{
+      openSnackbar("Falta el número de identificación","error");
+    }
+
   }
   
   return(
@@ -170,41 +208,30 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
                   </RadioGroup>
               </FormControl>
             </Grid>
-          </Grid>
-          <Grid item sm={12}>
-
-            <FormControl>
-              <FormLabel id="circuloFamiliarLabel">Tiene Círculo Familiar en el Sistema:</FormLabel>
-                <RadioGroup
-                  value={estadoFormularioDatosFamiliares.tieneCirculoFamiliar}
-                  onChange={onSelectChange}
-                  row
-                  aria-labelledby="circuloFamiliarLabel"
-                  name="tieneCirculoFamiliar" >
-                                <FormControlLabel 
-                                  value={true}
-                                  control={<Radio /> } 
-                                  label="Si"/>
-                                <FormControlLabel 
-                                  value={false} 
-                                  control={<Radio />} 
-                                  label="No"/>
-                </RadioGroup>
-              </FormControl>
+            <Grid item sm={12}>
+              <FormControl>
+                  <FormLabel id="circuloFamiliarLabel">Tiene Círculo Familiar en el Sistema:</FormLabel>
+                  <RadioGroup
+                    value={estadoFormularioDatosFamiliares.tieneCirculoFamiliar}
+                    onChange={onSelectChange}
+                    row
+                    aria-labelledby="circuloFamiliarLabel"
+                    name="tieneCirculoFamiliar" >
+                                  <FormControlLabel 
+                                    value={true}
+                                    control={<Radio /> } 
+                                    label="Si"/>
+                                  <FormControlLabel 
+                                    value={false} 
+                                    control={<Radio />} 
+                                    label="No"/>
+                  </RadioGroup>
+            </FormControl>
           </Grid>
           {estadoFormularioDatosFamiliares.tieneCirculoFamiliar && 
           <>
-            <Grid container spacing={2} component={'div'} >
-                <Grid item sm={12} >
-                  <Button variant="contained" 
-                    sx={{marginBottom:"10"}}
-                    startIcon={<PersonAddIcon />}
-                    onClick={manejadorAgregarFamilia}>
-                      Agregar familiar
-                  </Button>
-                </Grid>
-            
-                <Grid item sm={3}>
+          <Grid container spacing={2} component={'div'} >
+              <Grid item sm={3}>
                       <FormControl fullWidth={true} sx={{marginTop:"10px"}}>
                             <TextField
                               name="nombre"
@@ -212,8 +239,8 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
                               label='Nombre'
                               onChange={onFamiliarDatoChange} />
                       </FormControl>
-                </Grid>
-                <Grid item sm={3}>
+              </Grid>
+              <Grid item sm={3}>
                       <FormControl fullWidth={true} sx={{marginTop:"10px"}}>
                             <TextField
                               name="apellido"
@@ -221,8 +248,8 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
                               label='Apellido'
                               onChange={onFamiliarDatoChange} />
                       </FormControl>
-                </Grid>
-                <Grid item sm={3}>
+              </Grid>
+              <Grid item sm={3}>
                       <FormControl fullWidth={true} sx={{marginTop:"10px"}}>
                             <TextField
                               helperText="ej. Primo"
@@ -231,8 +258,8 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
                               value={familiarAAgregar.vinculo}
                               onChange={onFamiliarDatoChange} />
                       </FormControl>
-                </Grid>
-                <Grid item sm={3}>
+              </Grid>
+              <Grid item sm={3}>
                       <FormControl fullWidth={true} sx={{marginTop:"10px"}}>
                             <TextField
                               name="lugar"
@@ -241,12 +268,24 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
                               helperText={'Lugar del sistema, ej. Tacumbu'}
                               onChange={onFamiliarDatoChange} />
                       </FormControl>
-                </Grid>
               </Grid>
-              <BloqueCirculoFamiliar 
-              tieneCirculoFamiliar={true} 
-              listaDeFamiliares={estadoFormularioDatosFamiliares.familiares} 
-              onEliminarItem={eliminarFamiliares}/>
+              <Grid item sm={12} sx={{ml:"15px"}}>
+                      <Button variant="contained" 
+                        sx={{marginBottom:"10"}}
+                        startIcon={<PersonAddIcon />}
+                        onClick={manejadorAgregarFamilia}>
+                          Agregar familiar
+                      </Button>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item sm={12}>
+                <BloqueCirculoFamiliar 
+                tieneCirculoFamiliar={true} 
+                listaDeFamiliares={estadoFormularioDatosFamiliares.familiares} 
+                onEliminarItem={eliminarFamiliares}/>
+              </Grid>
+            </Grid>
             </>
 
           }
@@ -254,43 +293,58 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({datosFamiliaresIniciales = esta
           
         
         {/* CONCUBINO */}
-        <Grid item sm={12} mt={2}>
-          <FormControl>
-              <FormLabel id="datoLiderFamilia">Concubino</FormLabel>
-                <RadioGroup
-                  value={estadoFormularioDatosFamiliares.tieneConcubino}
-                  onChange={onSelectChange}
-                  row
-                  aria-labelledby="datoLiderFamilia"
-                  name="tieneConcubino">
-                  <FormControlLabel 
-                    value={true} 
-                    control={<Radio />} 
-                    label="Si"/>
-                  <FormControlLabel 
-                    value={false}
-                    control={<Radio/>} 
-                    label="No"/>
-                </RadioGroup>
-          </FormControl>
-        </Grid>
-        <ConcubinoForm 
-          mostrarFormularioConcubino={estadoFormularioDatosFamiliares.tieneConcubino}
-          onConcubinoFilled={onConcubinoCompleted} />
-        
-
-      </Box>      
+        <Grid container>
+          <Grid item sm={12} mt={2}>
+            <FormControl>
+                <FormLabel id="datoLiderFamilia">Concubino</FormLabel>
+                  <RadioGroup
+                    value={estadoFormularioDatosFamiliares.tieneConcubino}
+                    onChange={onSelectChange}
+                    row
+                    aria-labelledby="datoLiderFamilia"
+                    name="tieneConcubino">
+                    <FormControlLabel 
+                      value={true} 
+                      control={<Radio />} 
+                      label="Si"/>
+                    <FormControlLabel 
+                      value={false}
+                      control={<Radio/>} 
+                      label="No"/>
+                  </RadioGroup>
+            </FormControl>
+          </Grid>
+          <Grid item sm={12}>
+            <ConcubinoForm 
+              mostrarFormularioConcubino={estadoFormularioDatosFamiliares.tieneConcubino}
+              onConcubinoFilled={onConcubinoCompleted} 
+              concubinoAMostrar={estadoFormularioDatosFamiliares.concubino}
+              eliminarConcubino={onEliminarConcubino}/>
+          </Grid>
+          <Grid item sm={12}>
+            {/* <Stack direction="row" spacing={2}> */}
+              <Button variant='contained' onClick={onDatosFamiliaresSubmit}>
+                Guardar
+              </Button>
+              {/* <Button variant='outlined'>
+                Cancelar
+              </Button> */}
+            {/* </Stack> */}
+          </Grid>
+         </Grid> 
+      </Grid>
+    </Box>      
   )
 } 
 
 interface BloqueCirculoFamiliarProps{
   tieneCirculoFamiliar:boolean;
-  listaDeFamiliares:Array<familiar>;
+  listaDeFamiliares:Array<familiar> | null;
   onEliminarItem:(event:React.MouseEvent<HTMLButtonElement>, indice:number) => void;
 }
 const BloqueCirculoFamiliar:FC<BloqueCirculoFamiliarProps> = ({tieneCirculoFamiliar, listaDeFamiliares, onEliminarItem}) =>{
   return(
-    (tieneCirculoFamiliar && listaDeFamiliares.length > 0) ? 
+    (tieneCirculoFamiliar && listaDeFamiliares && listaDeFamiliares.length > 0) ? 
     <>
       <Grid container spacing={2} alignItems={"center"}>
                 <Grid item>
@@ -370,27 +424,32 @@ const ListaDeFamiliares:FC<ListaDeFamiliaresProps> = ({listaDeFamiliares, onElim
   )
 }
 interface datosConcubino{
-  cedula:string;
-  nombre:string;
-  apellido:string;
+  numeroDeIdentificacion:string;
+  nombres:string;
+  apellidos:string;
 
 }
 const datosConcubinoInicial = {
-  cedula:"",
-  nombre:"",
-  apellido:""
+  numeroDeIdentificacion:"",
+  nombres:"",
+  apellidos:""
 }
 
 interface ConcubinoFormProps{
   mostrarFormularioConcubino:boolean;
-  onConcubinoFilled:(concubino:datosConcubino) => void;
+  onConcubinoFilled:(concubino:datosConcubino | null) => void;
+  concubinoAMostrar:datosConcubino | null;
+  eliminarConcubino:(event:React.MouseEvent<HTMLButtonElement>) => void;
 }
-const ConcubinoForm:FC<ConcubinoFormProps> = ({mostrarFormularioConcubino,onConcubinoFilled}) =>{
+const ConcubinoForm:FC<ConcubinoFormProps> = 
+({mostrarFormularioConcubino,onConcubinoFilled, concubinoAMostrar, eliminarConcubino}) =>{
   const [concubino, setConcubino] = useState<datosConcubino>(datosConcubinoInicial);
 
   const verificarConcubino = () =>{
-    if(concubino.nombre && concubino.apellido && concubino.cedula){
+    if(concubino.nombres.length > 0 && concubino.apellidos.length > 0 && concubino.numeroDeIdentificacion.length > 0){
       onConcubinoFilled(concubino);
+    }else{
+      onConcubinoFilled(null);
     }
   }
   const onChangeHandler = (event:React.ChangeEvent<HTMLInputElement>) =>{
@@ -402,39 +461,93 @@ const ConcubinoForm:FC<ConcubinoFormProps> = ({mostrarFormularioConcubino,onConc
         })
       
     });
+    
+  }
+  const manejadorAgregarConcubino = (event:React.MouseEvent<HTMLButtonElement>) =>{
     verificarConcubino();
   }
   if(mostrarFormularioConcubino){
     return(
-    <Grid container spacing={2}>
-      <Grid item sm={4}>
-        <FormControl fullWidth={true}>
+    <>  
+      <Grid container spacing={2}>
+      
+        <Grid item sm={4}>
+          <FormControl fullWidth={true}>
+              <TextField
+                name="numeroDeIdentificacion"
+                value={concubino.numeroDeIdentificacion}
+                label="Nro. de documento"
+                onChange={onChangeHandler} />
+          </FormControl>
+        </Grid>                
+        <Grid item sm={4}>
+          <FormControl fullWidth={true}>
+            <TextField                              
+              name="nombres"
+              value={concubino.nombres}
+              label="Nombre"
+              onChange={onChangeHandler}/>
+          </FormControl>
+        </Grid>
+        <Grid item sm={4}>
+          <FormControl fullWidth={true}>
             <TextField
+              name="apellidos"
+              value={concubino.apellidos}
+              label="Apellido"
+              onChange={onChangeHandler}/>
+          </FormControl>
+        </Grid>
+        <Grid item sm={12} alignContent={'flex-end'}>
+          <Button variant="contained" 
+                      sx={{marginBottom:"10"}}
+                      startIcon={<PersonAddIcon />}
+                      onClick={manejadorAgregarConcubino}>
+                        Agregar Concubino
+          </Button>
+        </Grid>
+      </Grid>
+      <Grid container spacing={2} sm={12}>
+        <Grid item sm={12}>
+          <FormControl fullWidth={true} sx={{mt:"20px", mb:"20px"}}>
+            <FormLabel>Concubino Agregado</FormLabel>
+          </FormControl> 
+        </Grid>
+        {concubinoAMostrar != null  && 
+        <Grid container spacing={2}>
+          <Grid item sm={3}>
+              <TextField
+              disabled={true}
               name="cedula"
-              value={concubino.cedula}
+              value={concubinoAMostrar?.numeroDeIdentificacion}
               label="Nro. de documento"
-              onChange={onChangeHandler} />
-        </FormControl>
-      </Grid>                
-      <Grid item sm={4}>
-        <FormControl fullWidth={true}>
-          <TextField                              
-            name="nombre"
-            value={concubino.nombre}
-            label="Nombre"
-            onChange={onChangeHandler}/>
-        </FormControl>
+              />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+            disabled={true}
+            name="nombres"
+            value={concubinoAMostrar?.nombres}
+            label="Nombres"
+            />
+          </Grid>
+          <Grid item sm={3}>
+            <TextField
+            disabled={true}
+            name="apellidos"
+            value={concubinoAMostrar?.apellidos}
+            label="Apellidos"
+            />
+          </Grid>
+          <Grid item sm={1} alignSelf={'center'}>
+            <IconButton onClick={eliminarConcubino}>
+              <Delete />
+            </IconButton>
+          </Grid>
+        </Grid>
+        }
       </Grid>
-      <Grid item sm={4}>
-        <FormControl fullWidth={true}>
-          <TextField
-            name="apellido"
-            value={concubino.apellido}
-            label="Apellido"
-            onChange={onChangeHandler}/>
-        </FormControl>
-      </Grid>
-    </Grid>
+    </>
   
     )  
   }

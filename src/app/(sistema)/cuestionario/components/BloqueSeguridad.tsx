@@ -1,7 +1,12 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, OutlinedInput, Radio, RadioGroup } from "@mui/material";
 import { FC, useState } from "react";
 
+import { api_request } from "@/lib/api-request";
+import log from "loglevel";
+import { useGlobalContext } from "@/app/Context/store";
+
 interface datosSeguridad{
+  numeroDeIdentificacion:string | null;
   riesgoParaPersonal: boolean;
   riesgoParaPersonal_modificado:boolean;
   riesgoParaPersonalRespuesta: string;
@@ -29,6 +34,7 @@ interface datosSeguridad{
 }
 
 const datosSeguridadIniciales:datosSeguridad = {
+  numeroDeIdentificacion:null,
   riesgoParaPersonal: false,
   riesgoParaPersonal_modificado:false,
   riesgoParaPersonalRespuesta: "",
@@ -56,11 +62,12 @@ const datosSeguridadIniciales:datosSeguridad = {
 
 interface BloqueSeguridadProps{
   datosIniciales?:datosSeguridad;
+  numeroDeIdentificacion:string;
 }
 
-const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadIniciales}) =>{
+const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadIniciales, numeroDeIdentificacion}) =>{
   const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridad>(datosIniciales);
-  
+  const {openSnackbar} = useGlobalContext();
   // console.log(estadoBloqueSeguridadFormulario);
   const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     // console.log(event.target.name);
@@ -93,8 +100,33 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
     )
   }
 
-  const onFormSubmit = (event:React.MouseEvent<HTMLButtonElement>) =>{
+  const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
+    if(numeroDeIdentificacion){
+      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_seguridad`;
+      const datosDelFormulario:datosSeguridad = Object.assign({},estadoBloqueSeguridadFormulario);
+      datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+      })
+      if(respuesta.success){
+        openSnackbar("Datos guardados correctamente","success")
+      }else{
+        if(respuesta.error){
+          openSnackbar(`Error al guardar los datos`,`error`);
+          log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+        }
+      }
+
+    }else{
+      openSnackbar("Falta el número de identificación","error");
+    }
   }
   return(
     <Box
@@ -313,10 +345,10 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
           </FormControl>
         </Grid>
         <Grid item sm={12}>
-        <Button onClick={onFormSubmit} variant='contained'>
-          Guardar
-        </Button>
-      </Grid>
+          <Button onClick={onFormSubmit} variant='contained'>
+            Guardar
+          </Button>
+        </Grid>
       </Grid>
     </Box>
   )

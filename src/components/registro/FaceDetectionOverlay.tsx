@@ -134,7 +134,6 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
               if(foto){
                 const file = new File([foto],nombreArchivo);
                 const descriptor = detectionResult.descriptor;
-                console.log("descriptor:", descriptor);
                 agregar_reconocimiento({foto:file, descriptor:descriptor})
               } 
           }
