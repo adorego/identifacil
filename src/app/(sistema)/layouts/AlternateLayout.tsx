@@ -10,6 +10,8 @@ import SideBar from "@/components/SideBar";
 import StatusNav from "@/components/StatusNav";
 import ThemeRegistry from "@/../theme/ThemeRegistry";
 import TopNav from "@/components/TopNav";
+import sidebarDrawer from "@/components/sidebar/sidebarDrawer";
+import SidebarDrawer from "@/components/sidebar/sidebarDrawer";
 
 const inter = Inter({subsets: ['latin']});
 
@@ -29,7 +31,8 @@ const AlternateLayout = ({ children }) => {
         <ThemeRegistry>
             <Stack direction='row'>
                 <Box>
-                    <SideBar/>
+                    {/*<SideBar/>*/}
+                    <SidebarDrawer />
                 </Box>
                 <Box width='100%' sx={{bgcolor: '#F6FAFF'}}>
                     <TopNav/>

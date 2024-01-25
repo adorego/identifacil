@@ -74,8 +74,6 @@ export default function Ppl() {
 
     return (
         <Box>
-
-
             <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'/>
             <Paper elevation={1} sx={{
                 mt: '32px'

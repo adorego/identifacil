@@ -1115,5 +1115,23 @@
       "fechaLibertad": "15/08/2023",
       "tipoLibertad": "Libertad condicional"
     }
+  ],
+  "parteDiario": [
+    {
+      "id": 1,
+      "establecimiento": "Minga Guazu",
+      "fecha": "24/01/2024",
+      "datos": {
+        "capacidad": 1500,
+        "procesados": 1218,
+        "condenados": 305,
+        "salidasEspciales": 2,
+        "fugas": 0,
+        "fallecidos": 0,
+        "internados": 0,
+        "reposo": 0,
+        "comparecencia": 0
+      }
+    }
   ]
 }

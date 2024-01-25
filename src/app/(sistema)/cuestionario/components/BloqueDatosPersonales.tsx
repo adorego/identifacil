@@ -24,7 +24,7 @@ import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
 
 import {Dayjs} from "dayjs";
 import {FieldChangeHandlerContext} from "@mui/x-date-pickers/internals";
-import {request} from "@/lib/api-request";
+import {request from "@/lib/api-request";
 
 interface datosPersonales {
     nombre: string;
