@@ -52,7 +52,7 @@ const familiarInicial:familiar = {
 
 interface BloqueFamiliarProps{
   datosFamiliaresIniciales?:datosFamiliares;
-  numeroDeIdentificacion:string;
+  numeroDeIdentificacion?:string;
 }
 
 

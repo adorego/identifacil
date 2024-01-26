@@ -41,6 +41,7 @@ export default function Page() {
                             rowsPerPageCustom: 10,
                             title:'Por lugar de nacimiento',
                             pagination: true,
+                            deleteOption: false,
                         }}
 
                     />

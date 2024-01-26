@@ -1,9 +1,7 @@
 'use client'
-import * as React from 'React';
+
 import {Box, Breadcrumbs, Grid, Link, Paper} from "@mui/material";
-import Typography from "@mui/material/Typography";
-import QueryBlock from "../../../../components/blocks/QueryBlock";
-import {BarChart} from "@mui/x-charts/BarChart";
+
 import CustomTable from "../../../../components/CustomTable";
 import PenitenciariaFilter from "../components/penitenciariaFilter";
 import {destinosTrasladosData, motivosTrasladosData, rangoTiempoData, reclsusosData} from "../../../dummyData/data";

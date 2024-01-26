@@ -54,7 +54,7 @@ export default function Page(){
     return(
 
         <Box>
-            {console.log(data)}
+
             <Box mt={4}>
                 <CustomTable
                     showId={true}

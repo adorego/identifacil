@@ -28,7 +28,7 @@ const rows = [
 
 export default function DocumentosJudicialesTable() {
     return (
-        <div style={{ height: 400, width: '100%' }} sx={{bgcolor:'red' }}>
+        <div style={{ height: 400, width: '100%' }}>
             <DataGrid
                 rows={rows}
                 columns={columns}

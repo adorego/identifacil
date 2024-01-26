@@ -7,8 +7,9 @@ import {useEffect, useState} from 'react';
 import {useGlobalContext} from "../../../../Context/store";
 
 export default function Crear(){
-    const [stateForm, setStateForm] = useState();
-    const {userId, setUserId, data, setData, openSnackbar} = useGlobalContext();
+    const [stateForm, setStateForm] = useState({numeroIp: '', establecimiento: ''});
+    const {userId, setUserId, openSnackbar} = useGlobalContext();
+    const [data, setData] = useState([{firstName: ''}])
 
     useEffect(()=>{
         setUserId('2');
@@ -19,7 +20,7 @@ export default function Crear(){
         ])
     },[])
 
-    const handleChange = (e) =>{
+    const handleChange = (e: { target: { name: any; value: any; }; }) =>{
         const {name, value} = e.target;
 
         setStateForm(prev =>(

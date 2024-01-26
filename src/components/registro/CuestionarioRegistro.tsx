@@ -18,10 +18,13 @@ import { IdentificacionForm } from "./IdentificationForm";
 //   'Cuestionarios',
 //   'confirmacion',
 // ];
+
+//TODO: numeroDeIdentificacion ver que tipo debe ser y datos de identidad
 interface CuestionarioRegistroProps{
-    datosDeIdentidad:IdentificacionForm;
+    datosDeIdentidad?:IdentificacionForm | any ;
+    numeroDeIdentificacion?:any;
 }
-const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad}) =>{
+const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad, numeroDeIdentificacion}) =>{
   const [expanded, setExpanded] = useState('');
   
 

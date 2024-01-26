@@ -26,7 +26,7 @@ export default function FormVehiculo({params} : { params: { id: number } }){
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
     const router = useRouter();
-    const isEditMode = params && params.id;
+    const isEditMode : number | string = params && params.id;
 
     const handleLoading = (value:boolean):void =>{
         // console.log('ahora ' + value);
@@ -80,6 +80,7 @@ export default function FormVehiculo({params} : { params: { id: number } }){
 
         setLoading(false);
         if (response.ok) {
+            // @ts-ignore
             const message = isEditMode !== 'crear'
                 ? 'Vehiculo actualizado correctamente.'
                 : 'vehiculo agregado correctamente.';

@@ -61,7 +61,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                                 Nombre y apellido
                                             </Typography>
                                             <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
-                                                Juan Jos Perez Gomez (Jose'i)
+                                                Juan Jos Perez Gomez (Josei)
                                             </Typography>
                                         </Grid>
                                         <Grid item pt={0}>

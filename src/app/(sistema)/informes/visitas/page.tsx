@@ -1,9 +1,7 @@
 'use client'
-import * as React from 'React';
+
 import {Box, Breadcrumbs, Grid, Link, Paper} from "@mui/material";
-import Typography from "@mui/material/Typography";
-import QueryBlock from "../../../../components/blocks/QueryBlock";
-import {BarChart} from "@mui/x-charts/BarChart";
+
 import CustomTable from "../../../../components/CustomTable";
 import PenitenciariaFilter from "../components/penitenciariaFilter";
 import {visitaData} from "../../../dummyData/data";
@@ -18,15 +16,7 @@ export default  function Page(){
         <>
             <Box>
                 <h2>Informe de visitas</h2>
-                {/*<Breadcrumbs aria-label="breadcrumb" mb={2}>
-                    <Link underline="hover" color="inherit" href="/">
-                        Inicio
-                    </Link>
-                    <Link underline="hover" color="inherit" href="/informes">
-                        Informes
-                    </Link>
-                    <Typography color="text.primary">Visitas</Typography>
-                </Breadcrumbs>*/}
+
                 <PenitenciariaFilter/>
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>

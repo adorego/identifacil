@@ -8,12 +8,12 @@ import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
 export default function Page({ params }: { params: { id: number } }){
-    const [stateForm, setStateForm] = useState();
+    const [stateForm, setStateForm] = useState<{descripcion: string}>({descripcion: ''});
     const [loading, setLoading] = React.useState(false);
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
 
-    const handleChange = (e) =>{
+    const handleChange = (e: { target: { name: any; value: any; }; }) =>{
         const {name, value} = e.target;
 
         setStateForm(() =>(

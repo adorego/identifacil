@@ -1,13 +1,8 @@
 import {ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import {AirportShuttle} from "@mui/icons-material";
 import * as React from "react";
-import {Inter} from "next/font/google";
-import getConfig from "next/config";
-import styles from "./SideBar.module.css";
-import {useRouter} from "next/navigation";
 
-export default function MenuItem({name, link, children}) {
-    children: React.ReactNode
+export default function MenuItem({name="", link="", children=""}) {
+
     return (
         <ListItemButton sx={{}} className={'active'} href={link}>
             <ListItemIcon>
@@ -59,5 +54,5 @@ export default function MenuItem({name, link, children}) {
                         </ListItemIcon>
                         <ListItemText primary={'Autorizaciones'}/>
                     </ListItemButton>*/
-    )
+    );
 }

@@ -1,12 +1,13 @@
 import * as React from "react";
 import { Grid, Typography} from "@mui/material";
 
-export default function DataVizWidget({name, link,image}){
+
+export default function DataVizWidget(){
 
     return(
 
         <Grid item>
-            <Grid container  container spacing={2}>
+            <Grid container spacing={2}>
                 <Grid item>
                     {/* Data viz widget */}
                 </Grid>

@@ -14,7 +14,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 
 interface FiltrosTablesProps {
-    dataSinFiltro?: any[]; // Asegúrate de tener el tipo correcto aquí
+    dataSinFiltro?: {} | any; // Asegúrate de tener el tipo correcto aquí
     handleFiltro?: (dataFiltrada: any[]) => void; // Asegúrate de tener el tipo correcto aquí
 }
 export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTablesProps) {
@@ -43,13 +43,15 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTa
         setValueDateEnd(null);
 
         // Restaurar los datos originales
-        handleFiltro(dataSinFiltro);
+        if (handleFiltro) {
+            handleFiltro(dataSinFiltro);
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        let datosFiltrados = dataSinFiltro.filter(item => {
+        let datosFiltrados = dataSinFiltro.filter((item: { documento: string; destinoTraslado: string; }) => {
             const filtroBusqueda = busqueda ? item.documento.toLowerCase().includes(busqueda.toLowerCase()) : true;
             const filtroDestino = destino ? item.destinoTraslado === destino : true;
 
@@ -63,7 +65,9 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTa
             console.log('Sin filtro de fecha aplicado');
         }
 
-        handleFiltro(datosFiltrados);
+        if (handleFiltro) {
+            handleFiltro(datosFiltrados);
+        }
     }
 
     return(

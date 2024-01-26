@@ -11,5 +11,6 @@ const VideoPlayer = forwardRef(function (props, ref){
     <canvas id="player"  className={styles.player}></canvas>
   )
 })
-
+// Provide a displayName for your component
+VideoPlayer.displayName = "VideoPlayer";
 export default VideoPlayer;

@@ -7,7 +7,7 @@ export default function listDeFiltrosTabla(){
 
     return(
 
-        <Grid Container sm={4}>
+        <Grid container sm={4}>
             <Grid item>
                 asdasdasdds
             </Grid>

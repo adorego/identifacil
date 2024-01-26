@@ -1,3 +1,5 @@
+import {IdentificationResponse} from "@/app/(sistema)/identificacion/page";
+
 export const initialDataForm = {
     id: 0,
     nroCausa: '',
@@ -29,3 +31,11 @@ export const initialDataForm = {
     telefonoDelDefensor: ''
 
 };
+
+
+export const initialResponse: IdentificationResponse = {
+    numeroDeIdentificacion: "",
+    nombres: "",
+    apellidos: "",
+    esPPL: false
+}

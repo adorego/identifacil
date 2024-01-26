@@ -23,9 +23,8 @@ export default function Page(){
 
     return(
         <>
-            {console.log(state[0])}
 
-            <PDFDownloadLink document={<PDF />} fileName='myfirstped.pdf' >
+            {/*<PDFDownloadLink document={<PDF data={state} />} fileName='myfirstped.pdf' >
                 {
                     ({loading,error,url,blob}) => loading ? <button>
                         Loading Document
@@ -34,7 +33,7 @@ export default function Page(){
                             Descargar ahora
                         </button>
                 }
-            </PDFDownloadLink>
+            </PDFDownloadLink>*/}
             <Box sx={{
                 mt: 2,
             }}>

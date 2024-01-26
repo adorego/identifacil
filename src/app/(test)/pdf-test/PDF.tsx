@@ -41,7 +41,11 @@ const styles =  StyleSheet.create({
 
 // @ts-ignore
 export default function PDF({data}){
-    const [state, setState] = useState({})
+    const [state, setState] = useState({
+        establecimiento: '',
+        fecha: '',
+        datos: {}
+    })
 
     useEffect(() => {
         if (data){

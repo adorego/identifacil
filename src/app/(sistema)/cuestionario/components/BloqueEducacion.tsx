@@ -34,7 +34,7 @@ const datosEducacionIniciales:datosEducacion = {
 } 
 
 export interface BloqueEducacionProps{
-  numeroDeIdentificacion:string;
+  numeroDeIdentificacion?:string;
 }
 const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
   const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosEducacionIniciales);

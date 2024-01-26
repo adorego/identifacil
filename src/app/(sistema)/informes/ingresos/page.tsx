@@ -66,11 +66,9 @@ export default function Page(){
             <PenitenciariaFilter />
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={6}>
-                    <Paper
-                           width='100%'  elevation={2}>
+                    <Paper elevation={2}>
                         <Box p={3}>
                             <Typography variant='h6'>Por grado academico</Typography>
-                            <Typography variant='body'>Alguna informacion importante para destaca</Typography>
                             <div  className='lineBarChart'>
                                 <BarChart
                                     sx={{ width: '100%' }}
@@ -92,7 +90,8 @@ export default function Page(){
                                 rowsPerPageCustom: 4,
                                 title: 'Por lugar de nacimiento',
                                 pagination: false,
-                                expandedList: '/informes/ingresos/lugar-nacimiento'
+                                expandedList: '/informes/ingresos/lugar-nacimiento',
+                                deleteOption: false
                             }
                         }
                         data={data}
@@ -106,7 +105,8 @@ export default function Page(){
                                 rowsPerPageCustom: 4,
                                 title: 'Por rango etario',
                                 pagination: false,
-                                expandedList: '/informes/ingresos/rango-etario'
+                                expandedList: '/informes/ingresos/rango-etario',
+                                deleteOption: false
                             }
                         }
                         data={data}
@@ -121,7 +121,8 @@ export default function Page(){
                                 rowsPerPageCustom: 4,
                                 title: 'Más estadisticas',
                                 pagination: false,
-                                expandedList: '/informes/ingresos/mas-estadisticas'
+                                expandedList: '/informes/ingresos/mas-estadisticas',
+                                deleteOption: false
                             }
                         }
                         data={estadisticas.data}

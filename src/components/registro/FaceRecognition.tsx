@@ -7,6 +7,7 @@ import FaceDetectionOverlay, { IReconocimiento } from "./FaceDetectionOverlay";
 
 import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
 import {IdentificacionForm} from "./IdentificationForm";
+// @ts-ignore
 import JSMpeg from "@cycjimmy/jsmpeg-player";
 import VideoPlayer from "./VideoPlayer";
 import { blue } from "@mui/material/colors";
@@ -136,7 +137,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
                         position: 'absolute',
                         mb:'20px',
                         top: '0px',
-                    }}>Por favor situe a la persona frente a la camara y presione el botón "Capturar" para el registro</Alert>
+                    }}>Por favor situe a la persona frente a la camara y presione el botón Capturar para el registro</Alert>
                    
                     <div className={styles.video_container}>
                         <video className={styles.video}

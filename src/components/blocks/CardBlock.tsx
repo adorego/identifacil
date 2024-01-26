@@ -8,7 +8,7 @@ import {Button, Card, CardActions, CardContent, CardMedia, Grid, Typography, Lin
 import splash from '../../common/splash-img.png';
 
 
-export default function CardBlock({name, link, image, size=4}){
+export default function CardBlock({name="", link="", image="", size=4}){
     const router = useRouter();
 
     const handleNavigation = (url: string) => {

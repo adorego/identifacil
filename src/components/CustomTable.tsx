@@ -38,7 +38,7 @@ interface TableOptions {
     targetURL?: string;
     expandedList?: string;
     newRecord?: string;
-    deleteOption: boolean;
+    deleteOption?: boolean;
 }
 interface DeleteRecordArgs {
     id: number;

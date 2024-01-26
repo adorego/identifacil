@@ -3,23 +3,17 @@
 import * as React from 'react';
 import {
     Box,
-    Breadcrumbs, Button,
-    Card,
-    CardContent,
+    Button,
     FormControl,
     Grid, IconButton,
     InputLabel,
-    Link, MenuItem, Paper, Select,
+    MenuItem, Paper, Select,
     TextField,
     Typography
 } from "@mui/material";
 import QueryBlock from "@/components/blocks/QueryBlock";
 import {FileUploadOutlined} from "@mui/icons-material";
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import CustomTable from "@/components/CustomTable";
+
 
 
 // TODO: AGREGAR CAMPO para buscar PPL
@@ -32,7 +26,9 @@ export default function Page(){
         tipoBaja: '',
         personaAutoriza: '',
         observaciones: '',
-        adjunto: '',
+        adjunto: {
+            name: ''
+        },
     });
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,10 +44,10 @@ export default function Page(){
         }
     };
 
-    // Manejadro de Select
+    // Manejador de Select
     const handleSelectChange = (event: any) => {
         const name = event.target.name as keyof typeof formData;
-        console.log('valor ' . name);
+
         setFormData({
             ...formData,
             [name]: event.target.value,
@@ -59,7 +55,7 @@ export default function Page(){
     };
 
     // Manejador de envio
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         // console.log(formData);
         console.log(JSON.stringify(formData));
@@ -166,7 +162,7 @@ export default function Page(){
                                             <IconButton component="label" >
                                                 <FileUploadOutlined />
                                                 <input
-                                                    styles={{display:"none"}}
+                                                    style={{display:"none"}}
                                                     type="file"
                                                     hidden
                                                     onChange={handleFileChange}
@@ -180,7 +176,7 @@ export default function Page(){
                         </Grid>
 
                         <Grid item xs={12}>
-                            <Button variant="contained" color="primary" style={{ marginRight: '10px', marginTop: '10px' }} onClick={handleSubmit}>
+                            <Button variant="contained" onClick={handleSubmit}>
                                 Guardar
                             </Button>
                             <Button variant="outlined"  style={{ marginTop: '10px' }}>

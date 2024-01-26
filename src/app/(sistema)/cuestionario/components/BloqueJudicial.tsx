@@ -115,7 +115,7 @@ const datosJudicialesIniciales:datosJudiciales = {
 }
 interface BloqueJudicialProps{
   datosIniciales?:datosJudiciales;
-  numeroDeIdentificacion:string;
+  numeroDeIdentificacion?:any;
 }
 
 const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesIniciales, numeroDeIdentificacion}) =>{
@@ -211,6 +211,8 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
 
   const onObjectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     const names = event.target.name.split('.');
+    // @ts-ignore
+    // TODO: Tambien habia un error aqui de compilacion
     const objetoAModificar = estadoFormularioJudicial[names[0]];
     
     setEstadoFormularioJudicial(

@@ -2,7 +2,8 @@
 
 import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useState } from "react"
-import { IdentificationResponse, initialResponse } from "../../identificacion/page";
+import {initialResponse} from "@/components/utils/initialData";
+import { IdentificationResponse } from "../../identificacion/page";
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 
 import { Dayjs } from "dayjs";
@@ -12,7 +13,7 @@ import log from "loglevel";
 import style from "./page.module.css";
 import { useGlobalContext } from "@/app/Context/store";
 
-export const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo'];
+const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo'];
 
 interface pplAVisitar{
   cedula:string;

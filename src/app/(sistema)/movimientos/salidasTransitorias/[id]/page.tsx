@@ -8,30 +8,31 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CustomTable from "@/components/CustomTable";
 import TituloComponent from "@/components/titulo/tituloComponent";
+import {salidasTransitoriasType} from "@/components/utils/penalesType";
 
-
+const initialState = {
+    numeroDocumento: '',
+    fechaOficio: '',
+    documento: '',
+    horaSalida: '',
+    diasSalida: '',
+    horaLlegada: '',
+    diasLlegada: '',
+    estado: '',
+    tiempoPermiso: '',
+}
 
 export default function Page(){
-    const [formData, setFormData] = React.useState({
-        numeroDocumento: '',
-        fechaOficio: '',
-        documento: '',
-        horaSalida: '',
-        diasSalida: '',
-        horaLlegada: '',
-        diasLlegada: '',
-        estado: '',
-        tiempoPermiso: '',
-    });
+    const [formData, setFormData] = React.useState<salidasTransitoriasType>(initialState);
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: { target: { name: string; value: any; }; }) => {
         const { name, value } = event.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
 
 
     // Manejador de envio
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         console.log(formData);
         console.log(JSON.stringify(formData));
@@ -97,11 +98,11 @@ export default function Page(){
                                 <DemoContainer components={['TimePicker']}>
                                     <TimePicker sx={{width: '100%'}} label="Hora Salida"
                                                 value={formData.horaSalida}
-                                                onChange={(newValue) => setFormData({
+                                                onChange={(newValue : string | any) => setFormData({
                                                     ...formData,
                                                     horaSalida: newValue,
                                                 })}
-                                                name='horaSalida' />
+                                                />
                                 </DemoContainer>
                             </LocalizationProvider>
                         </Grid>
@@ -124,11 +125,10 @@ export default function Page(){
                                     <TimePicker sx={{width: '100%'}}
                                                 label="Hora llegada"
                                                 value={formData.horaLlegada}
-                                                onChange={(newValue) => setFormData({
+                                                onChange={(newValue : any ) => setFormData({
                                                     ...formData,
                                                     horaLlegada: newValue,
-                                                })}
-                                                name='horaLlegada' />
+                                                })}/>
                                 </DemoContainer>
                             </LocalizationProvider>
                         </Grid>

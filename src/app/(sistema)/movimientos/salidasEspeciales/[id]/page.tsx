@@ -29,12 +29,16 @@ export default  function Page(){
         chofer: '',
         modeloVehiculo: '',
         fechaHoraRegreso: '',
-        documentoAutorizacion: '',
-        documentoCumplimiento: '',
+        documentoAutorizacion: {
+            name: ''
+        },
+        documentoCumplimiento: {
+            name: ''
+        },
         observaciones: '',
     });
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: { target: { name: string; value: string; }; }) => {
         const { name, value } = event.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
@@ -49,7 +53,7 @@ export default  function Page(){
 
 
     // Manejador de envio
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         console.log(formData);
         console.log(JSON.stringify(formData));
@@ -90,9 +94,9 @@ export default  function Page(){
                                     onChange={handleChange}
                                     label="Tipo de salida"
                                 >
-                                    <MenuItem value=""><em>None</em></MenuItem>
+                                    <MenuItem value="0"><em>None</em></MenuItem>
                                     <MenuItem value="1">Emergencia Familiar</MenuItem>
-                                    {/* Aquí puedes agregar tus opciones */}
+
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -195,7 +199,7 @@ export default  function Page(){
                                             <IconButton component="label" >
                                                 <FileUploadOutlined />
                                                 <input
-                                                    styles={{display:"none"}}
+                                                    style={{display:"none"}}
                                                     type="file"
                                                     hidden
                                                     onChange={handleFileChange}
@@ -220,7 +224,7 @@ export default  function Page(){
                                         <IconButton component="label" >
                                             <FileUploadOutlined />
                                             <input
-                                                styles={{display:"none"}}
+                                                style={{display:"none"}}
                                                 type="file"
                                                 hidden
                                                 onChange={handleFileChange}
