@@ -1,0 +1,17 @@
+.tieneCirculoFamiliarClass{
+  visibility: visible;
+  /* border: 2px solid green; */
+}
+
+.noTieneCirculoFamiliarClass{
+  visibility: hidden;
+  /* border: 2px solid blue; */
+}
+
+.agregarNuevoFamiliarClass{
+  visibility: visible;
+}
+
+.noAgregarNuevoFamiliarClass{
+  visibility: hidden;
+}

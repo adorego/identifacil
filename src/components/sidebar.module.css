@@ -1,0 +1,32 @@
+.title{
+  font-size: 20px;
+  /* font-family: 'Inter'; */
+  font-weight: bold;
+}
+
+.navList{
+  /* border: 2px solid red; */
+  background-color: #E2E8F0;
+}
+
+.navItem{
+   border: 2px solid blue;
+  margin: auto;
+  max-width: 100%;
+}
+.sidebar {
+  background: #FFF;
+  border-right: 1px solid #E2E8F0;
+  width: 100%;
+}
+
+.sidebar  .MuiListItemIcon-root {
+  min-width: 40px;
+}
+@media screen and (max-width: 1200px) {
+  .sidebar .MuiListItemIcon-root {
+    padding-left: 0;
+    min-width: 30px;
+  }
+
+}
