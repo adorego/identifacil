@@ -7,9 +7,10 @@ import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel"
 import FaceRecognition from "@/components/registro/FaceRecognition";
 import { IReconocimiento } from "@/components/registro/FaceDetectionOverlay";
 import IdentificationData from "@/components/registro/IdentificationData";
+import log from "loglevel";
 import { useState } from "react";
 
-const EstadosProgreso:Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos','Datos disponibles'];
+const EstadosProgreso:Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos','Datos disponibles','Ocurrio un error'];
 export default function Identificacion(){
    const [progresoReconocimiento, setProgresoReconocmiento] = useState(EstadosProgreso[0]);
    const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
@@ -38,7 +39,9 @@ export default function Identificacion(){
     
     if(!response.ok){
       const data = await response.json();
-      console.log('Ocurrio un error:', data);
+      setProgresoReconocmiento(EstadosProgreso[4]);
+      log.error('Ocurrio un error:', data)
+      // console.log('Ocurrio un error:', data);
     }else{
       const data:IdentificationResponse = await response.json();
       console.log("Respuesta:", data);
