@@ -115,8 +115,8 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
     }
 
     return (
-        <Grid container>
-            <Grid item xs={12}>
+        <Grid container spacing={2}>
+            <Grid item xs={6} sm={12}>
                 <Box sx={{
                   // border:"2px solid blue",
                   display: "flex", 

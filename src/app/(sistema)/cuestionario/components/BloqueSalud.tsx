@@ -390,7 +390,7 @@ const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenad
   const onDatosSaludSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     
-    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/salud`;
+    const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`;
     const datosDelFormulario:datosSalud = Object.assign({},datosSaludFormState);
     datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
     const respuesta = await api_request(url,{

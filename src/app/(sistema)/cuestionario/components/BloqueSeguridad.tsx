@@ -103,7 +103,7 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
   const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     if(numeroDeIdentificacion){
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_seguridad`;
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_seguridad`;
       const datosDelFormulario:datosSeguridad = Object.assign({},estadoBloqueSeguridadFormulario);
       datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);

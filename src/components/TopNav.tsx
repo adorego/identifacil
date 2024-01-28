@@ -206,20 +206,20 @@ export default function TopNav() {
                     >
                         <MenuIcon/>
                     </IconButton>*/}
-                    <Typography
+                    {/* <Typography
                         variant="h6"
                         noWrap
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}
                     >
                         MUI - { sidebarStatus ? 'TRUE' : 'false'}
-                    </Typography>
+                    </Typography> */}
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon/>
                         </SearchIconWrapper>
                         <StyledInputBase
-                            placeholder="Search…"
+                            placeholder="Buscar…"
                             inputProps={{'aria-label': 'search'}}
                         />
                     </Search>

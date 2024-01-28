@@ -28,7 +28,7 @@ const AlternateLayout = ({ children }) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
         <ThemeRegistry>
             <Stack direction='row'>
-                <Box>
+                <Box sx={{bgcolor:"#FFFFFF"}}>
                     <SideBar/>
                 </Box>
                 <Box width='100%' sx={{bgcolor: '#F6FAFF'}}>

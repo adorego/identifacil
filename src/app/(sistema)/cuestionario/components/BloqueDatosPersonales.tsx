@@ -119,7 +119,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
     () =>{
 
       const getNacionalidades = async () =>{
-        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/nacionalidades`;
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/nacionalidades`;
         try{
           const respuesta:RequestResponse = await api_request<NacionalidadesDTO>(url,{
             method:'GET',
@@ -151,7 +151,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
   useEffect(
     () =>{
         const getEstadosCiviles = async () =>{
-          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/estados_civiles`;
+          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
           try{
             const respuesta:RequestResponse = await api_request<EstadoCivilDTO>(url,{
               method:'GET',
@@ -238,7 +238,7 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
   const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     if(datosDeIdentificacion.cedula_identidad){
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_personales`;
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
       const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
       datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
