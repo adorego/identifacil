@@ -191,8 +191,8 @@ export default function SideBar() {
                             isActive={pathname === '/movimientos'}
                         />*/}
 
-                        {/* ------------------------- Menu Penales ------------------------- */}
-                        <ListItemButton onClick={() => handleClick('datosPenales')}>
+                       {/* ------------------------- Menu Penales ------------------------- */}
+                       <ListItemButton onClick={() => handleClick('datosPenales')}>
                             <ListItemIcon>
                                 <AccountBalance/>
                             </ListItemIcon>
@@ -205,24 +205,24 @@ export default function SideBar() {
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Causas"
-                                    path="/datos-penales/causas"
-                                    isActive={pathname === '/datos-penales/causas'}
+                                    path="/causas"
+                                    isActive={pathname === '/causas'}
                                 />
                             </List>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Audiencias"
-                                    path="/datos-penales/audiencias"
-                                    isActive={pathname === '/datos-penales/audiencias'}
+                                    path="/audiencias"
+                                    isActive={pathname === '/audiencias'}
                                 />
                             </List>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                                 <SidebarItem
                                     icon={<Settings/>}
                                     label="Libertades"
-                                    path="/datos-penales/libertades"
-                                    isActive={pathname === '/datos-penales/libertades'}
+                                    path="/libertades"
+                                    isActive={pathname === '/libertades'}
                                 />
                             </List>
                         </Collapse>
