@@ -10,7 +10,7 @@ import IdentificationData from "@/components/registro/IdentificationData";
 import log from "loglevel";
 import { useState } from "react";
 
-const EstadosProgreso:Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos','Datos disponibles','Ocurrio un error'];
+const EstadosProgreso:Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos','Datos disponibles','El usuario debe estar registrado'];
 export default function Identificacion(){
    const [progresoReconocimiento, setProgresoReconocmiento] = useState(EstadosProgreso[0]);
    const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
@@ -39,7 +39,7 @@ export default function Identificacion(){
     
     if(!response.ok){
       const data = await response.json();
-      setProgresoReconocmiento(EstadosProgreso[4]);
+      setProgresoReconocmiento(EstadosProgreso[0]);
       log.error('Ocurrio un error:', data)
       // console.log('Ocurrio un error:', data);
     }else{
