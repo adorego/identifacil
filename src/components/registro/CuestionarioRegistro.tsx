@@ -1,7 +1,20 @@
 'use client'
 
-import { Accordion, AccordionDetails, AccordionSummary, Box, Breadcrumbs, Button, Grid, Link, Step, StepLabel, Stepper, Typography } from "@mui/material"
-import { FC, useState } from "react";
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    Breadcrumbs,
+    Button,
+    Grid,
+    Link,
+    Step,
+    StepLabel,
+    Stepper,
+    Typography
+} from "@mui/material"
+import {FC, useState} from "react";
 
 import BloqueDatosPersonales from "@/app/(sistema)/cuestionario/components/BloqueDatosPersonales";
 import BloqueEducacion from "@/app/(sistema)/cuestionario/components/BloqueEducacion";
@@ -10,7 +23,7 @@ import BloqueJudicial from "@/app/(sistema)/cuestionario/components/BloqueJudici
 import BloqueSalud from '@/app/(sistema)/cuestionario/components/BloqueSalud';
 import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSeguridad';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { IdentificacionForm } from "./IdentificationForm";
+import {IdentificacionForm} from "./IdentificationForm";
 
 // const steps = [
 //   'Reconocimiento',
@@ -20,117 +33,117 @@ import { IdentificacionForm } from "./IdentificationForm";
 // ];
 
 //TODO: numeroDeIdentificacion ver que tipo debe ser y datos de identidad
-interface CuestionarioRegistroProps{
-    datosDeIdentidad?:IdentificacionForm | any ;
-    numeroDeIdentificacion?:any;
+interface CuestionarioRegistroProps {
+    datosDeIdentidad?: IdentificacionForm | any;
+    numeroDeIdentificacion?: any;
 }
-const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad, numeroDeIdentificacion}) =>{
-  const [expanded, setExpanded] = useState('');
-  
 
-    const handleAccordionChange = (panel:string) => (_:any,isExpanded:boolean) => {
+const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad={}, numeroDeIdentificacion={}}) => {
+    const [expanded, setExpanded] = useState('');
+
+
+    const handleAccordionChange = (panel: string) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : '');
     };
 
-    
 
+    return (
+        <div>
+            <h2>Cuestionario de Ingreso</h2>
 
+            <Box className='cardContainer'>
+                {/* Acordeon Salud */}
+                <Accordion expanded={expanded === 'salud'} onChange={handleAccordionChange('salud')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas de salud</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
 
-    
+                        <BloqueSalud
+                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}/>
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion expanded={expanded === "personal"} onChange={handleAccordionChange('personal')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas personales</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {/* Bloque de formulario */}
+                        <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad}/>
+                    </AccordionDetails>
 
+                </Accordion>
+                <Accordion expanded={expanded === "educacion"} onChange={handleAccordionChange('educacion')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas sobre Educación</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {/* Bloque de formulario */}
+                        <BloqueEducacion
+                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}/>
+                    </AccordionDetails>
 
-  return(
-    <div>
-        <h2>Cuestionario de Ingreso</h2>
-       
-        <Box className='cardContainer'>
-            {/* Acordeon Salud */}
-            <Accordion expanded={expanded === 'salud'} onChange={handleAccordionChange('salud')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography sx={{fontWeight:'bold'}}>Preguntas de salud</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    
-                   <BloqueSalud numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""} />
-                </AccordionDetails>
-            </Accordion>
-            <Accordion expanded={expanded === "personal"} onChange={handleAccordionChange('personal')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography sx={{fontWeight:'bold'}}>Preguntas personales</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad}  />
-                </AccordionDetails>
+                </Accordion>
+                <Accordion expanded={expanded === "familiar"} onChange={handleAccordionChange('familiar')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas Familiares</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {/* Bloque de formulario */}
+                        <BloqueFamiliar
+                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}/>
+                    </AccordionDetails>
 
-            </Accordion>
-            <Accordion expanded={expanded === "educacion"} onChange={handleAccordionChange('educacion')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography sx={{fontWeight:'bold'}}>Preguntas sobre Educación</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueEducacion numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
-                </AccordionDetails>
+                </Accordion>
+                <Accordion expanded={expanded === "seguridad"} onChange={handleAccordionChange('seguridad')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas de Seguridad</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {/* Bloque de formulario */}
+                        <BloqueSeguridad
+                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}/>
+                    </AccordionDetails>
 
-            </Accordion>
-            <Accordion expanded={expanded === "familiar"} onChange={handleAccordionChange('familiar')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography sx={{fontWeight:'bold'}}>Preguntas Familiares</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueFamiliar numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""} />
-                </AccordionDetails>
+                </Accordion>
+                <Accordion expanded={expanded === "judicial"} onChange={handleAccordionChange('judicial')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas Judiciales</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {/* Bloque de formulario */}
+                        <BloqueJudicial
+                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}/>
+                    </AccordionDetails>
 
-            </Accordion>
-            <Accordion expanded={expanded === "seguridad"} onChange={handleAccordionChange('seguridad')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography sx={{fontWeight:'bold'}}>Preguntas de Seguridad</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueSeguridad numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
-                </AccordionDetails>
+                </Accordion>
 
-            </Accordion>
-            <Accordion expanded={expanded === "judicial"} onChange={handleAccordionChange('judicial')}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                >
-                    <Typography sx={{fontWeight:'bold'}}>Preguntas Judiciales</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    {/* Bloque de formulario */}
-                    <BloqueJudicial numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : ""}  />
-                </AccordionDetails>
-
-            </Accordion>
-
-            {/* Acordeon Fotografia */}
-            {/*<Accordion>
+                {/* Acordeon Fotografia */}
+                {/*<Accordion>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2a-content"
@@ -145,7 +158,7 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad, n
                     </Typography>
                 </AccordionDetails>
             </Accordion>*/}
-            {/* <Grid container spacing={2} mt={2}>
+                {/* <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <Button variant='contained' onClick={(event) => handleSubmitCuestionario(event, 'continuar')} sx={{marginRight: '20px',}}>
                         Continuar
@@ -156,9 +169,9 @@ const CuestionarioRegistro:FC<CuestionarioRegistroProps> = ({datosDeIdentidad, n
                     </Button>
                 </Grid>
             </Grid> */}
-        </Box>
-    </div>
-  )
+            </Box>
+        </div>
+    )
 }
 
 export default CuestionarioRegistro;

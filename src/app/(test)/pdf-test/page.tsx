@@ -10,8 +10,12 @@ import {fetchData} from "@/components/utils/utils";
 export default function Page(){
 
     const [state, setState] = useState('')
+    const [isClient, setIsClient] = useState(false)
+
 
     useEffect(() => {
+
+        setIsClient(true)
         const apiUrl = 'http://localhost:5000/parteDiario'; // Puedes cambiar la URL según tus necesidades
         fetchData(apiUrl)
             .then(fetchedData => {
@@ -34,6 +38,7 @@ export default function Page(){
                         </button>
                 }
             </PDFDownloadLink>*/}
+            { isClient ?
             <Box sx={{
                 mt: 2,
             }}>
@@ -41,7 +46,7 @@ export default function Page(){
                     <PDF data={state[0]} />
                 </PDFViewer>
             </Box>
-
+                : null}
         </>
     )
 }
