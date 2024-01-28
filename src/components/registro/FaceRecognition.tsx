@@ -5,7 +5,14 @@ import {Alert, Box, Button, Grid, Typography} from "@mui/material";
 import {FC, Suspense, useEffect, useRef, useState} from "react";
 import FaceDetectionOverlay, { IReconocimiento } from "./FaceDetectionOverlay";
 
+import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
+import {IdentificacionForm} from "./IdentificationForm";
+// @ts-ignore
+import JSMpeg from "@cycjimmy/jsmpeg-player";
+import VideoPlayer from "./VideoPlayer";
+import { blue } from "@mui/material/colors";
 import styles from "./FaceRecognition.module.css";
+import {testWebSocketConnection} from "@/common/testWebSocketConnection";
 
 interface ErrorInt {
     error: boolean;
@@ -34,30 +41,30 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
   const [capturarFoto,setCapturarFoto] = useState<boolean>(false);
   const [iniciarDeteccion, setIniciarDeteccion] = useState<boolean>(false);
   
-  // const conectar_con_camaraIP = () =>{
-  //   try{
-  //     const canvas = document.createElement('canvas');
-  //     const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
-  //     canvas: canvas as HTMLCanvasElement,
-  //     loop:true,
-  //     autoplay:true,
-  //     protocols:['mp2t'],
-  //     onSourceEstablished:(source:any) =>{
-  //       if(videoElementRef.current){
-  //         videoElementRef.current.srcObject = canvas.captureStream(); 
-  //         setIniciarDeteccion(true);
-  //       }
-  //     },
-  //     onEnded: (player:any) =>{
-  //       if(videoElementRef.current){
-  //         videoElementRef.current.srcObject = null;
-  //       }
-  //     }
-  //     });
-  //   }catch(error){
-  //     console.log(error);
-  //   }
-  // }
+  const conectar_con_camaraIP = () =>{
+    try{
+      const canvas = document.createElement('canvas');
+      const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
+      canvas: canvas as HTMLCanvasElement,
+      loop:true,
+      autoplay:true,
+      protocols:['mp2t'],
+      onSourceEstablished:(source:any) =>{
+        if(videoElementRef.current){
+          videoElementRef.current.srcObject = canvas.captureStream(); 
+          setIniciarDeteccion(true);
+        }
+      },
+      onEnded: (player:any) =>{
+        if(videoElementRef.current){
+          videoElementRef.current.srcObject = null;
+        }
+      }
+      });
+    }catch(error){
+      console.log(error);
+    }
+  }
 
   const conectar_con_webcam = () =>{
       try{
@@ -115,8 +122,8 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
     }
 
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={6} sm={12}>
+        <Grid container>
+            <Grid item xs={12}>
                 <Box sx={{
                   // border:"2px solid blue",
                   display: "flex", 
@@ -130,7 +137,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
                         position: 'absolute',
                         mb:'20px',
                         top: '0px',
-                    }}>Por favor situe a la persona frente a la camara y presione el botón &quot;Capturar&quot; para el registro</Alert>
+                    }}>Por favor situe a la persona frente a la camara y presione el botón Capturar para el registro</Alert>
                    
                     <div className={styles.video_container}>
                         <video className={styles.video}

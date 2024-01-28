@@ -47,6 +47,17 @@ export type  audienciaType = {
     notaPedido: string;
 
 }
+export type  salidasTransitoriasType = {
+    numeroDocumento: string;
+    fechaOficio: string;
+    documento: string;
+    horaSalida: string;
+    diasSalida: string;
+    horaLlegada: string;
+    diasLlegada: string;
+    estado: string;
+    tiempoPermiso: string;
+}
 
 export type libertadesType = {
     id: number;

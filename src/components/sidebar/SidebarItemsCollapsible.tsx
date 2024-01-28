@@ -1,21 +1,31 @@
 'use client'
 
-import {Collapse, List, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
-import {ExpandLess, ExpandMore} from "@mui/icons-material";
-import React, { MouseEventHandler, ReactElement, ReactHTMLElement, ReactNode } from "react";
+import React, { ReactNode } from 'react';
+import {
+    ListItemButton,
+    ListItemIcon,
+    ListItemText,
+    Collapse,
+    List,
+} from '@mui/material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import { SvgIconComponent } from '@mui/icons-material';
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-interface SidebarItemsCollapsibleProps{
-    label:string;
-    Icon:any;
-    open:boolean;
-    toggle:(MouseEventHandler<HTMLDivElement>);
-    children:ReactNode;
+interface SidebarItemsCollapsibleProps {
+    label: string;
+    Icon: SvgIconComponent; // Asegúrate de definir el tipo para Icon correctamente
+    open: boolean;
+    toggle: () => void;
+    children: ReactNode;
 }
-
-const SidebarItemsCollapsible = ({ label, Icon, open, toggle, children }:SidebarItemsCollapsibleProps) => {
+const SidebarItemsCollapsible: React.FC<SidebarItemsCollapsibleProps> = ({
+                                                                             label,
+                                                                             Icon,
+                                                                             open,
+                                                                             toggle,
+                                                                             children,
+                                                                         }) => {
     return (
         <>
             <ListItemButton onClick={toggle}>
@@ -33,3 +43,4 @@ const SidebarItemsCollapsible = ({ label, Icon, open, toggle, children }:Sidebar
         </>
     );
 };
+export default SidebarItemsCollapsible;

@@ -17,7 +17,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import IdentificationForm, { IdentificacionForm } from "./IdentificationForm";
+import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";
 
@@ -86,7 +86,7 @@ export default function FormRegister(){
         
         contadorReconocimiento.current = 0;
         //Sin Kubernetes
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
+        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/`;
         console.log('url:', url);
         setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{

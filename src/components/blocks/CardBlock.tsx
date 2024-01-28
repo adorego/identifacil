@@ -1,17 +1,15 @@
 'use client';
 
 import * as React from "react";
-
-import {Button, Card, CardActions, CardContent, CardMedia, Grid, Link, Typography} from "@mui/material";
 import {usePathname, useRouter} from "next/navigation";
 
-interface CardBlockProps{
-    name:string;
-    link:string;
-    image:string;
-    size?:number;
-}
-const CardBlock:React.FC<CardBlockProps> = ({name, link, image, size=4}:CardBlockProps) =>{
+import {Button, Card, CardActions, CardContent, CardMedia, Grid, Typography} from "@mui/material";
+
+import splash from '../../common/splash-img.png';
+import Link from "next/link";
+
+
+export default function CardBlock({name="", link="", image="", size=4}){
     const router = useRouter();
 
     const handleNavigation = (url: string) => {
@@ -20,34 +18,28 @@ const CardBlock:React.FC<CardBlockProps> = ({name, link, image, size=4}:CardBloc
     return(
 
             <Grid item sm={size}>
-                <Card  onClick={(e) => handleNavigation(link)} style={{cursor: 'pointer'}}>
-                    <CardMedia
-                        sx={{ height: '250px', margin: '10px', borderRadius: '6px' }}
-                        image={image}
-                        title={name}
-                    />
-                    <CardContent>
-                        <Typography variant="h6"
-                                    style={{
-                                        textAlign: 'left',
-                                        textDecoration: 'none'
-                                    }}>
-                            {name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                        </Typography>
-                    </CardContent>
-                    {/*<CardActions>
-                            <Button size="small" variant={"contained"} sx={{
-                                boxShadow: "none",
-                                width: "100%",
-                            }}>Continuar</Button>
-                        </CardActions>*/}
-                </Card>
+                <Link href={link}>
+                    <Card style={{cursor: 'pointer'}}>
+                        <CardMedia
+                            sx={{ height: '250px', margin: '10px', borderRadius: '6px' }}
+                            image={image}
+                            title={name}
+                        />
+                        <CardContent>
+                            <Typography variant="h6"
+                                        style={{
+                                            textAlign: 'left',
+                                            textDecoration: 'none'
+                                        }}>
+                                {name}
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Link>
 
             </Grid>
 
     )
 }
-
-export default CardBlock;

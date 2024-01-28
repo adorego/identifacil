@@ -39,7 +39,7 @@ const NotificacionRegistro = (props:NotificacionRegistroProps) =>{
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            {/* <img src={URL.createObjectURL(props.foto)} width={120} height={220} alt="foto" /> */}
+            <img src={URL.createObjectURL(props.foto)} width={120} height={220} alt="foto" />
           </Box>
         </Modal>
       </>
