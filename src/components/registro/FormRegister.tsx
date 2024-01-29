@@ -30,6 +30,7 @@ import { IReconocimiento } from "./FaceDetectionOverlay";
 import NotificacionRegistro from "./NotificacionRegistro";
 import PPLRegistration from "./PPLRegistration";
 import RegistrationData from "./RegistrationData";
+import log from "loglevel";
 import style from "./FormRegister.module.css";
 
 const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
@@ -85,22 +86,27 @@ export default function FormRegister(){
         formData.append('esPPL','true');
         
         contadorReconocimiento.current = 0;
-        //Sin Kubernetes
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
-        console.log('url:', url);
-        setProgresoRegistro(EstadosProgreso[2]);
-        const result = await fetch(url,{
-          method:'POST',
-          body:formData
-        })
-        const data = await result.json();
-        if(!result.ok){
-          console.log('Ocurrio un error', data);
-          setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
-        }else{
-          setProgresoRegistro(EstadosProgreso[3]);
-          setMensaje("Registro realizado correctamente");
+        try{
+            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
+            console.log('url:', url);
+            setProgresoRegistro(EstadosProgreso[2]);
+            const result = await fetch(url,{
+              method:'POST',
+              body:formData
+            })
+            const data = await result.json();
+            if(!result.ok){
+              setProgresoRegistro(EstadosProgreso[0]);
+              setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
+              log.error("Ocurrio un error durante el registro:",data);
+            }else{
+              setProgresoRegistro(EstadosProgreso[3]);
+              setMensaje("Registro realizado correctamente");
 
+            }
+        }catch(error){
+          setProgresoRegistro(EstadosProgreso[0]);
+          setMensaje("Registro realizado correctamente");
         }
         
         }

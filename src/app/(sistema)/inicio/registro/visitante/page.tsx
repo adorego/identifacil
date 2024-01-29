@@ -57,7 +57,7 @@ export default function RegistroVisitante(){
       contadorReconocimiento.current = 0;
       //Sin Kubernetes
       try{
-        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/registro/`;
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
         setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{
           method:'POST',
