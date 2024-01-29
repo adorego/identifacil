@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
-import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";
+import React, {ChangeEvent, ReactElement, ReactNode, useEffect, useRef, useState} from "react";
 
 import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
 import ConfirmacionRegistro from "./ConfirmacionRegistro";
@@ -34,7 +34,7 @@ import log from "loglevel";
 import style from "./FormRegister.module.css";
 
 const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
-export const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo'];
+export const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo','Ocuurio un error'];
 
 export interface RegistroResponse{
   success:boolean;
@@ -52,23 +52,36 @@ export default function FormRegister(){
   const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
   const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
   const [mensaje, setMensaje] = useState("");
+  const [registroRealizado, setRegistroRealizado] = useState(false);
   
-
-    const setIdentificacion = (identificacion: IdentificacionForm) => {
+  console.log("Active step:", activeStep);
+  useEffect(
+    () =>{
+      if(registroRealizado && activeStep === 1){
+        setHabilitarBotonSiguiente(true);
+      }else{
+        console.log('Desabilitar boton siguiente');
+        setHabilitarBotonSiguiente(false);
+      }
+    },[activeStep, registroRealizado]
+  )
+  
+  console.log("Habilitar Boton siguiente:", habilitarBotonSiguiente);  
+  const setIdentificacion = (identificacion: IdentificacionForm) => {
         // console.log("Datos de identificacion:", identificacion);
-        identidad.current = identificacion;
-    }
+    identidad.current = identificacion;
+  }
 
     
-    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
+  const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
         await generar_request_enviar();
       }
-    }
+  }
 
-    const generar_request_enviar = async () =>{
+  const generar_request_enviar = async () =>{
       if(identidad.current != null && identidad.current.cedula_identidad){
         const formData = new FormData();
         formData.append('tipo_identificacion','1');
@@ -96,16 +109,17 @@ export default function FormRegister(){
             })
             const data = await result.json();
             if(!result.ok){
-              setProgresoRegistro(EstadosProgreso[0]);
+              setProgresoRegistro(EstadosProgreso[3]);
               setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
               log.error("Ocurrio un error durante el registro:",data);
             }else{
+              setRegistroRealizado(true);
               setProgresoRegistro(EstadosProgreso[3]);
               setMensaje("Registro realizado correctamente");
 
             }
         }catch(error){
-          setProgresoRegistro(EstadosProgreso[0]);
+          setProgresoRegistro(EstadosProgreso[3]);
           setMensaje("Registro realizado correctamente");
         }
         
@@ -123,6 +137,7 @@ export default function FormRegister(){
             if (activeStep === 3) {
                 setActiveStep(0);
             } else {
+                
                 setActiveStep(activeStep + 1);
             }
     }
@@ -206,7 +221,7 @@ export default function FormRegister(){
                             </Button>
                           </Grid> 
                           <Grid item xs={'auto'}>
-                            <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                            <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
                               Siguiente
                             </Button>
                           </Grid>

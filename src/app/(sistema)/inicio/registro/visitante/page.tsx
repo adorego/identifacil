@@ -9,6 +9,7 @@ import ConfirmacionRegistro from "@/components/registro/ConfirmacionRegistro";
 import { EstadosProgreso } from "@/components/registro/FormRegister";
 import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWithLayout";
 import { IReconocimiento } from "@/components/registro/FaceDetectionOverlay";
+import log from "loglevel";
 import style from "./page.module.css"
 import { useGlobalContext } from "@/app/Context/store";
 
@@ -65,7 +66,8 @@ export default function RegistroVisitante(){
         })
         const data = await result.json();
         if(!result.ok){
-          console.log('Ocurrio un error', data);
+          setProgresoRegistro(EstadosProgreso[3]);
+          log.error('Ocurrio un error:', data);
           setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
         }else{
           setProgresoRegistro(EstadosProgreso[3]);
