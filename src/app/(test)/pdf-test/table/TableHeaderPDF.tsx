@@ -9,8 +9,8 @@ import {
     View
 } from '@react-pdf/renderer'
 
-const borderColor = '#90e5fc'
-const borderColor2 = '#90e5fc'
+const borderColor = '#f4f6f8'
+const tableColor = '#d5d6d6'
 
 const styles =  StyleSheet.create({
     section:{
@@ -24,8 +24,8 @@ const styles =  StyleSheet.create({
         width: '100%',
         fontSize: '14px',
         flexDirection: 'row',
-        borderBottomColor: '#bff0fd',
-        backgroundColor: '#bff0fd',
+        borderBottomColor: '#f4f6f8',
+        backgroundColor: '#f4f6f8',
         borderBottomWidth: 1,
         alignItems: 'center',
         height: 24,
@@ -46,7 +46,7 @@ const styles =  StyleSheet.create({
     },
     rowData: {
         flexDirection: 'row',
-        borderBottomColor: '#bff0fd',
+        borderBottomColor: '#f4f6f8',
         borderBottomWidth: 1,
         alignItems: 'center',
         height: 24,
@@ -56,16 +56,30 @@ const styles =  StyleSheet.create({
     descriptionData: {
         width: '80%',
         textAlign: 'left',
-        borderRightColor: borderColor2,
+        borderRightColor: tableColor,
         borderRightWidth: 1,
         paddingLeft: 8,
     },
     qtyData: {
         width: '20%',
-        borderRightColor: borderColor2,
+        borderRightColor: tableColor,
         textAlign: 'right',
         paddingRight: 8,
     },
+    tableSection:{
+        width: '100%',
+        fontSize: '11px',
+        display: "flex",
+        flexDirection: "row",
+    },
+    tableBox:{
+        border: `1px solid ${tableColor}`,
+        padding: '8px 4px',
+    },
+    tableBoxHeader:{
+        borderRight: '0',
+        backgroundColor: tableColor,
+    }
 })
 
 
@@ -73,28 +87,97 @@ const styles =  StyleSheet.create({
 export default function TableHeaderPDF({datos}){
 
     return(
-        <View style={{margin:10, marginTop: '40px'}}>
-            {/* Table Header */}
-            <View style={styles.tableHeaderContainer}>
-                <Text style={styles.description}>
-                    Descripcion
-                </Text>
-                <Text style={styles.poblacion}>
-                    Población
-                </Text>
-            </View>
-            {/* Table Body*/}
-            {Object.keys(datos).map((key) => (
-                <View style={styles.rowData}  key={key}>
+        <>
+            <View style={{margin:'auto', marginTop: '40px', width: '80%'}}>
+                {/* Cantidad general */}
+                <View style={styles.tableSection}>
+                    <View style={[styles.tableBox, styles.tableBoxHeader, {width: '80%'}]}><Text>Capacidad total:</Text></View>
+                    <View style={[styles.tableBox, {textAlign: 'right', width: '20%'}]}><Text>{datos.capacidad}</Text></View>
+                </View>
+                <View style={[styles.tableSection, {marginTop: '30px'}]}>
+                    <View style={[styles.tableBox, styles.tableBoxHeader, {width: '80%'}]}><Text>Poblacion total:</Text></View>
+                    <View style={[styles.tableBox, {textAlign: 'right', width: '20%'}]}><Text>{datos.condenados + datos.procesados}</Text></View>
+                </View>
+
+                {/* Situacion Penal*/}
+                <View style={[styles.tableSection, {marginTop: '30px'}]}>
+                    <View style={[styles.tableBox, styles.tableBoxHeader, {width: '80%', borderBottom: '0'}]}><Text>Situacion penal</Text></View>
+                    <View style={[styles.tableBox, styles.tableBoxHeader,  {textAlign: 'right', width: '20%'}]}><Text>Total</Text></View>
+                </View>
+                <View style={styles.rowData}>
+                    <View style={[styles.descriptionData, {width: '80%'}]}><Text>Procesados</Text></View>
+                    <View style={styles.qtyData}><Text>{datos.procesados}</Text></View>
+                </View>
+                <View style={styles.rowData}>
+                    <View style={[styles.descriptionData, {width: '80%'}]}><Text>Condenados</Text></View>
+                    <View style={styles.qtyData}><Text>{datos.condenados}</Text></View>
+                </View>
+
+
+                {/* Table Header */}
+                <View style={[styles.tableSection, { marginTop: '30px', borderBottom: '0'}]} >
+                    <View style={[styles.tableBox, styles.tableBoxHeader, {width: '70%'}]}><Text>Otros</Text></View>
+                    <View style={[styles.tableBox, styles.tableBoxHeader,  {textAlign: 'right', width: '30%'}]}><Text>Total</Text></View>
+                </View>
+                {/* Table Body*/}
+                {/*{Object.keys(datos).map((key) => (
+                    <View style={styles.rowData}  key={key}>
+                        <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
+                            {key}:
+                        </Text>
+                        <Text style={styles.qtyData}>
+                            {datos[key]}
+                        </Text>
+                    </View>
+                ))}*/}
+                <View style={styles.rowData}>
                     <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
-                        {key}:
+                        Salidas Especiales:
                     </Text>
                     <Text style={styles.qtyData}>
-                        {datos[key]}
+                        {datos.salidasEspciales}
                     </Text>
                 </View>
-            ))}
-        </View>
+
+
+                <View style={styles.rowData}>
+                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
+                        Fugas:
+                    </Text>
+                    <Text style={styles.qtyData}>
+                        {datos.fugas}
+                    </Text>
+                </View>
+
+                <View style={styles.rowData}>
+                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
+                        Fallecidos:
+                    </Text>
+                    <Text style={styles.qtyData}>
+                        {datos.fallecidos}
+                    </Text>
+                </View>
+
+                <View style={styles.rowData}>
+                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
+                        Internados:
+                    </Text>
+                    <Text style={styles.qtyData}>
+                        {datos.internados}
+                    </Text>
+                </View>
+
+                <View style={styles.rowData}>
+                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
+                        Reposo:
+                    </Text>
+                    <Text style={styles.qtyData}>
+                        {datos.comparecencia}
+                    </Text>
+                </View>
+            </View>
+        </>
+
 
     )
 }

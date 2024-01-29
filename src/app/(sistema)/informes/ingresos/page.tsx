@@ -53,15 +53,6 @@ export default function Page(){
     return(
         <Box >
             <h2>Por ingresos</h2>
-            {/*<Breadcrumbs aria-label="breadcrumb" mb={2}>
-                <Link underline="hover" color="inherit" href="/">
-                    Inicio
-                </Link>
-                <Link underline="hover" color="inherit" href="/informes">
-                    Informes
-                </Link>
-                <Typography color="text.primary">Ingresos</Typography>
-            </Breadcrumbs>*/}
 
             <PenitenciariaFilter />
             <Grid container spacing={2} mt={2}>

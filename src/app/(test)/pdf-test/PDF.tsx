@@ -8,12 +8,13 @@ import {
     View
 } from '@react-pdf/renderer'
 import Logo from '@/common/images/logo-sippy.png'
+import ministerioLogo from '@/common/images/ministerio-justicia-logo.png'
 import {useEffect, useState} from "react";
 import TableHeaderPDF from "@/app/(test)/pdf-test/table/TableHeaderPDF";
 
 const styles =  StyleSheet.create({
     page:{
-        backgroundColor: "#f0f0f0",
+        backgroundColor: "#FFF",
         padding: 10,
     },
     section:{
@@ -25,18 +26,23 @@ const styles =  StyleSheet.create({
     },
     imgContainer:{
         width: 42,
-        height: 'auto',
-        marginLeft: 'auto',
-        marginRight: 'auto'
+        height: 'auto'
+    },
+    imgContainerMinisterio:{
+        width: 'auto',
+        height: '50',
+
     },
     paragraph:{
         fontSize: '11px',
     },
     title:{
         textTransform: 'uppercase',
-        marginTop: '10px',
+        marginTop: '30px',
         fontWeight: 'extrabold',
-        fontSize: '14px'
+        fontSize: '14px',
+        width: '100%',
+        textAlign: 'center'
     }
 })
 
@@ -57,28 +63,54 @@ export default function PDF({data}){
     return(
         <Document>
             <Page size='A4' style={styles.page} orientation='portrait'>
-                <View style={{textAlign: 'center', width: '100%'}}>
-                    <Image src={Logo.src}  style={styles.imgContainer} />.
+                <View style={
+                    {
+                        width: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        borderBottom: '1px solid lightgray',
+                        paddingBottom: '10px'
+
+                    }}>
+                    <Image src={ministerioLogo.src}  style={styles.imgContainerMinisterio} />
+                    <Image src={Logo.src}  style={styles.imgContainer} />
+                    {/*<View style={{width: '50px', height: '50x', backgroundColor: 'red'}}> A</View>
+                    <View style={{width: '50px', height: '50x', backgroundColor: 'red'}}> B</View>*/}
+                </View>
+                <View>
                     <Text style={styles.title}>
                         Parte diario - Población penal
                     </Text>
                 </View>
-                <View style={{marginTop: '40px', marginLeft: 10, marginRight: 10}}>
+                <View style={
+                    {
+                        marginTop: '40px',
+                        marginLeft: 'auto',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-around',
+                        width: '100%',
+                        alignItems: 'baseline'
+                    }}>
+                    <View>
+                        <Text style={styles.paragraph}>
+                            Establecimiento:
+                        </Text>
+                        <Text style={{fontWeight: 'bold', fontSize: '11px'}}>
+                            {state.establecimiento}
+                        </Text>
+                    </View>
 
-                    <Text style={styles.paragraph}>
-                        Establecimiento:
-                    </Text>
-                    <Text style={{fontWeight: 'bold', fontSize: '11px'}}>
-                        {state.establecimiento}
-                    </Text>
-
-
-                    <Text style={[styles.paragraph, {marginTop: '10px'}]}>
-                        Fecha:
-                    </Text>
-                    <Text style={{fontWeight: 'bold', fontSize: '11px'}}>
-                        {state.fecha}
-                    </Text>
+                    <View>
+                        <Text style={[styles.paragraph, {marginTop: '10px'}]}>
+                            Fecha:
+                        </Text>
+                        <Text style={{fontWeight: 'bold', fontSize: '11px'}}>
+                            {state.fecha}
+                        </Text>
+                    </View>
 
                 </View>
 

@@ -1,5 +1,5 @@
 import {Box, Card, CardContent, Grid, Typography} from "@mui/material";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import {KeyboardArrowRight} from "@mui/icons-material";
 import Link from "next/link";
 import * as React from "react";
 import {ReactNode} from "react";
@@ -10,6 +10,16 @@ type cardReportType = {
     icon?: ReactNode;
 }
 
+const styles = {
+    link:{
+        textDecoration: 'none',
+        color: '#00a76f',
+        fontWeight: '700',
+        display: 'flex',
+        alignItems: 'center',
+        marginTop: '10px',
+    }
+}
 const cardReport = ({nombre = "", link="https://www.google.com/", icon}: cardReportType) => {
     return(
         <>
@@ -28,8 +38,8 @@ const cardReport = ({nombre = "", link="https://www.google.com/", icon}: cardRep
                                             }}>
                                     {nombre}
                                 </Typography>
-                                <Link href={link}>
-                                    Ver más
+                                <Link href={link} style={styles.link}>
+                                    Ver más <KeyboardArrowRight />
                                 </Link>
                             </Box>
                         </Grid>
