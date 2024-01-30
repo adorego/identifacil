@@ -98,7 +98,7 @@ export default function PenitenciariaFilter() {
                             Filtrar
                         </Button>
 
-                        <Button fullWidth variant="outlined"  size='small'    href='/reportes/ingresos' >
+                        <Button fullWidth variant="outlined"  size='small'    href='/informes/ingresos/reporte' >
                             Generar PDF
                         </Button>
                     </Stack>
