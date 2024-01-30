@@ -54,7 +54,7 @@ export default function FormRegister(){
   const [mensaje, setMensaje] = useState("");
   const [registroRealizado, setRegistroRealizado] = useState(false);
   
-  console.log("Active step:", activeStep);
+  // console.log("Active step:", activeStep);
   useEffect(
     () =>{
       if(registroRealizado && activeStep === 1){
@@ -110,17 +110,18 @@ export default function FormRegister(){
             const data = await result.json();
             if(!result.ok){
               setProgresoRegistro(EstadosProgreso[3]);
-              setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
+              setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo:${data.message}`);
               log.error("Ocurrio un error durante el registro:",data);
             }else{
               setRegistroRealizado(true);
-              setProgresoRegistro(EstadosProgreso[3]);
+              setProgresoRegistro(EstadosProgreso[0]);
+              onStepForward();
               setMensaje("Registro realizado correctamente");
 
             }
         }catch(error){
           setProgresoRegistro(EstadosProgreso[3]);
-          setMensaje("Registro realizado correctamente");
+          setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo:${error}`);
         }
         
         }

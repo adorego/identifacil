@@ -105,7 +105,7 @@ export default function EntradaSalidaVisitante(){
     )
   }
   const onConsultarManejador = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/identificacion/ppl_con_cedula`;
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/ppl_con_cedula`;
       const dataToSend = {
         numeroDeIdentifiicacion:pplAVisitar.cedula
       }

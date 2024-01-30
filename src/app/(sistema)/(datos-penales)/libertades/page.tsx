@@ -1,11 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import TituloComponent from "@/components/titulo/tituloComponent";
+
 import {Box, CircularProgress, Paper} from "@mui/material";
-import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import CustomTable from "@/components/CustomTable";
 import {useEffect, useState} from "react";
+
+import CustomTable from "@/components/CustomTable";
+import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
+import TituloComponent from "@/components/titulo/tituloComponent";
 import {fetchData} from "@/components/utils/utils";
 
 const header = [
@@ -20,7 +22,7 @@ export default function Page(){
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL + '/libertades';
+        const apiUrl = 'http://localhost:5000' + '/libertades';
 
         fetchData(apiUrl)
             .then(fetchedData => {

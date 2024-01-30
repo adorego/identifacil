@@ -68,15 +68,18 @@ export default function RegistroVisitante(){
         if(!result.ok){
           setProgresoRegistro(EstadosProgreso[3]);
           log.error('Ocurrio un error:', data);
-          setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
+          setMensaje(`Ocurrió un error al realizar el registro:
+                    ${data.message}`);
         }else{
-          setProgresoRegistro(EstadosProgreso[3]);
+          onStepForward();
+          setProgresoRegistro(EstadosProgreso[0]);
           setMensaje("Registro realizado correctamente");
 
         }
         
       }catch(error){
-        openSnackbar(`Ocurrió unu error durante el registro:${error}`,"error");
+        setProgresoRegistro(EstadosProgreso[3]);
+        setMensaje(`Ocurrió un error al realizar el registro:${error}`);
       }
   }
 }
@@ -143,31 +146,16 @@ const cerrar_dialogo = () =>{
                     {activeStep === 2 && <ConfirmacionRegistro mensaje="Visitante Registrado exitosamente" />}
             
             
-            {activeStep !== 0 && activeStep !== 2 ? 
-                <Grid container  spacing={5} mt={1}>
-                  <Grid item xs={'auto'}>
-                    <Button variant="contained" 
-                    onClick={onStepBackward} 
-                    startIcon={<KeyboardArrowLeft />}>
-                      Anterior
-                    </Button>
-                  </Grid> 
-                  <Grid item xs={'auto'}>
-                    <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                      Siguiente
-                    </Button>
-                  </Grid>
-                </Grid>
-              : 
-
-                <Grid container spacing={5} mt={1}>
-                  <Grid item xs='auto'>
-                      <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                        Siguiente
-                      </Button>
-                  </Grid>
-                </Grid>
-              }
+                    {activeStep === 0 ?
+                      <Grid container spacing={5} mt={1}>
+                        <Grid item xs='auto'>
+                            <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                              Siguiente
+                            </Button>
+                        </Grid>
+                      </Grid> : null
+                    }
+              
               </Box>
             </FormControl>
         </Box>
