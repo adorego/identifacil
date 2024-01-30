@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, IconButton, InputLabel, OutlinedInput, Radio, RadioGroup, Stack, TextField } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, IconButton, InputLabel, OutlinedInput, Radio, RadioGroup, Stack, TextField, Typography } from "@mui/material";
 import { Delete, Save } from "@mui/icons-material";
 import { FC, useState } from "react";
 
@@ -34,7 +34,7 @@ const estadoDatosFamiliaresInicial:datosFamiliares = {
   esCabezaDeFamilia_modificado:false,
   tieneCirculoFamiliar:false,
   tieneCirculoFamiliar_modificado:false,
-  familiares:null,
+  familiares:[],
   familiares_modificado:false,
   tieneConcubino:false,
   tieneConcubino_modificado:false,
@@ -62,7 +62,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
   const [agregarFamiliar, setAgregarFamiliar] = useState<boolean>(false);
   const {openSnackbar} = useGlobalContext();
   
-  
+  console.log("Familiar a agregar:", familiarAAgregar);
   const onSelectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     setEstadoFormularioDatosFamiliares(
       (previus) =>{
@@ -93,19 +93,24 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
 
   
   const manejadorAgregarFamilia = (event:React.MouseEvent<HTMLButtonElement>) =>{
+    
     setEstadoFormularioDatosFamiliares(
       (previus) => {
-        if(!previus.familiares){
+        if(previus.familiares === null){
           previus.familiares = [];
         }
-        previus.familiares.push(familiarAAgregar);
+        const datosFamiliares:Array<familiar> = [...previus.familiares];
+        datosFamiliares.push(familiarAAgregar);
+        
         return(
           {
             ...previus,
+            familiares:datosFamiliares,
             familiares_modificado:true
             
           }
         )
+        
       });
       
       setFamiliarAAgregar(familiarInicial);
@@ -296,7 +301,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
         <Grid container spacing={2} ml={1}>
           <Grid item sm={12} mt={2}>
             <FormControl>
-                <FormLabel id="datoLiderFamilia">Concubino</FormLabel>
+                <Typography id="datoLiderFamilia">Concubino</Typography>
                   <RadioGroup
                     value={estadoFormularioDatosFamiliares.tieneConcubino}
                     onChange={onSelectChange}
@@ -349,7 +354,7 @@ const BloqueCirculoFamiliar:FC<BloqueCirculoFamiliarProps> = ({tieneCirculoFamil
       <Grid container spacing={2} alignItems={"center"}>
                 <Grid item>
                   <FormControl fullWidth={true}>
-                    <FormLabel>Lista de Familiares en el Sistema Penitenciario</FormLabel>
+                    <Typography variant="body1" sx={{mt:"20px"}}>Lista de Familiares en el Sistema Penitenciario</Typography>
                   </FormControl> 
                 </Grid>
                 
@@ -371,7 +376,6 @@ interface ListaDeFamiliaresProps{
 }
 
 const ListaDeFamiliares:FC<ListaDeFamiliaresProps> = ({listaDeFamiliares, onEliminarFamiliar}) =>{
-  console.log("ListaDeFamiliares:", listaDeFamiliares);
   return(
     listaDeFamiliares.map(
       (familiar, index) =>{

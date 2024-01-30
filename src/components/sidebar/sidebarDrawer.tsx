@@ -1,33 +1,40 @@
 import * as React from 'react';
-import {styled, useTheme, Theme, CSSObject} from '@mui/material/styles';
-import MuiDrawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
+
+import {
+    AccountBalance,
+    AirportShuttle,
+    BarChart,
+    ExpandLess,
+    ExpandMore,
+    FaceOutlined,
+    Fingerprint,
+    Hail,
+    Key,
+    ManageAccounts,
+    Mood,
+    People,
+    PermIdentity,
+    Settings
+} from "@mui/icons-material";
+import {Box, Collapse, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
+import {CSSObject, Theme, styled, useTheme} from '@mui/material/styles';
+import {usePathname, useRouter} from "next/navigation";
+
 import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from "@mui/icons-material/Menu";
-import styles from "@/components/sidebar.module.css";
-import {Box, Collapse, Select, FormControl, Typography, InputLabel, MenuItem} from "@mui/material";
-import SidebarItem from "@/components/sidebar/sidebarItem";
-import {usePathname, useRouter} from "next/navigation";
-
-import {
-    AccountBalance,
-    AirportShuttle, BarChart,
-    ExpandLess,
-    ExpandMore,
-    FaceOutlined,
-    Fingerprint, Hail, Key, ManageAccounts, Mood,
-    People,
-    PermIdentity, Settings
-} from "@mui/icons-material";
-import {useState} from "react";
+import MuiDrawer from '@mui/material/Drawer';
 import {SelectChangeEvent} from "@mui/material/Select";
+import SidebarItem from "@/components/sidebar/sidebarItem";
+import styles from "@/components/sidebar.module.css";
+import {useState} from "react";
 
 const drawerWidth = 279;
 
-type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales';
+type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales' | 'visitantes';
 
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -84,6 +91,7 @@ export default function SidebarDrawer() {
     const [open, setOpen] = React.useState(true);
     const [openMenus, setOpenMenus] = useState<Record<OpenMenusKeys, boolean>>({
         registroAccesos: false,
+        visitantes:false,
         sistema: false,
         datosMovimientos: false,
         movimientos: false,
@@ -152,6 +160,8 @@ export default function SidebarDrawer() {
                         >
                             {/*<MenuItem>Seleccionar establecimiento</MenuItem>*/}
                             <MenuItem value={1}>Minga Guazu</MenuItem>
+                            <MenuItem value={1}>Emboscada</MenuItem>
+                            <MenuItem value={1}>Padre de la Vega</MenuItem>
                             {/*<MenuItem value={2}>Emboscada</MenuItem>*/}
                         </Select>
                     : ''
@@ -180,35 +190,57 @@ export default function SidebarDrawer() {
                     <ListItemIcon>
                         <Fingerprint/>
                     </ListItemIcon>
-                    <ListItemText primary={'Registro de Accesos'} hidden={false}/>
+                    <ListItemText primary={'Accesos PPL'} hidden={false}/>
                     {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
                 </ListItemButton>
 
                 <Collapse in={openMenus.registroAccesos} timeout="auto" unmountOnExit>
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-
-                        <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
-                            <ListItemIcon>
-                                <span className='subIcon'></span>
-                            </ListItemIcon>
-                            <ListItemText primary="Ingreso PPL" hidden={false}/>
-                        </ListItemButton>
-
-                        <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
-                            <ListItemIcon>
-                                <span className='subIcon'></span>
-                            </ListItemIcon>
-                            <ListItemText primary="Acceso al Penal" hidden={false}/>
-                        </ListItemButton>
-                        <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
-                            <ListItemIcon>
-                                <span className='subIcon'></span>
-                            </ListItemIcon>
-                            <ListItemText primary="Identificación" hidden={false}/>
-                        </ListItemButton>
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Registro PPL"
+                            path="/inicio/registro/ppl"
+                            isActive={pathname === '/inicio/registro/ppl'}
+                        />
+                        
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Entrada/Salida PPL"
+                            path="/acceso/entrada-salida-ppl"
+                            isActive={pathname === '/acceso/entrada-salida-ppl'}
+                        />
+                        
+                        
                     </List>
                 </Collapse>
 
+                <ListItemButton onClick={() => handleClick('visitantes')} className={openMenus.visitantes ? 'active-button' : ''} >
+                    <ListItemIcon>
+                        <Hail/>
+                    </ListItemIcon>
+                    <ListItemText primary={'Visitante'} hidden={false}/>
+                    {openMenus.visitantes ? <ExpandLess/> : <ExpandMore/>}
+                </ListItemButton>
+
+                <Collapse in={openMenus.visitantes} timeout="auto" unmountOnExit>
+                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                        
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Registro Visitante"
+                            path="/inicio/registro/visitante"
+                            isActive={pathname === '/inicio/registro/visitante'}
+                        />
+                        
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Entrada/Salida Visitante"
+                            path="/acceso/entrada-salida-visitante"
+                            isActive={pathname === '/acceso/entrada-salida-visitante'}
+                        />
+                        
+                    </List>
+                </Collapse>
                 {/* Menu de PPL */}
                 <SidebarItem
                     icon={<Mood/>}
@@ -309,13 +341,13 @@ export default function SidebarDrawer() {
                 />
 
                 {/* Menu de Bloqueados */}
-                <ListItemButton disabled>
+                {/* <ListItemButton disabled>
                     <ListItemIcon>
                         <Hail/>
                     </ListItemIcon>
                     <ListItemText primary={'Gestión de Visitas'} hidden={false}/>
 
-                </ListItemButton>
+                </ListItemButton> */}
 
 {/*                <ListItemButton disabled>
                     <ListItemIcon>
@@ -409,12 +441,12 @@ export default function SidebarDrawer() {
 
                 {/* ------------------------- Fin de movimientos ------------------------- */}
 
-                <ListItemButton disabled>
+                {/* <ListItemButton disabled>
                     <ListItemIcon>
                         <ManageAccounts/>
                     </ListItemIcon>
                     <ListItemText primary={'Gestión de Funcionarios'} hidden={false}/>
-                </ListItemButton>
+                </ListItemButton> */}
 
             </List>
         </Drawer>

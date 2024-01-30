@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { RequestResponse, api_request } from "@/lib/api-request";
 
@@ -391,118 +391,122 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
 
       <Grid container spacing={2}>
         <Grid item sm={12}>
-          <FormControl>
-            <FormLabel id="situacionJudicial">Situación judicial</FormLabel>
-              <RadioGroup
-                value={estadoFormularioJudicial.situacionJudicial}
-                onChange={onDatoChange}
-                row
-                aria-labelledby="situacionJudicial"
-                name="situacionJudicial"
-                            >
-                <FormControlLabel 
-                  value="procesado" 
-                  control={<Radio />} 
-                  label="Procesado"/>
-                <FormControlLabel 
-                  value="condenado" 
-                  control={<Radio/>} 
-                  label="Condenado"/>
+            <FormControl>
+              <FormLabel id="situacionJudicial">Situación judicial</FormLabel>
+                <RadioGroup
+                  value={estadoFormularioJudicial.situacionJudicial}
+                  onChange={onDatoChange}
+                  row
+                  aria-labelledby="situacionJudicial"
+                  name="situacionJudicial"
+                              >
+                  <FormControlLabel 
+                    value="procesado" 
+                    control={<Radio />} 
+                    label="Procesado"/>
+                  <FormControlLabel 
+                    value="condenado" 
+                    control={<Radio/>} 
+                    label="Condenado"/>
               </RadioGroup>
             </FormControl>
+          </Grid>
         </Grid>
-        <Grid item sm={12}>
-          <FormControl>
-            <FormLabel id="primeraVezPrision">Primera vez en prisión:</FormLabel>
-              <RadioGroup
-                value={estadoFormularioJudicial.primeraVezEnPrision}
-                onChange={onSelectChange}
-                row
-                aria-labelledby="primeraVezPrision"
-                name="primeraVezEnPrision">
-                <FormControlLabel 
-                  value={true} 
-                  control={<Radio />} 
-                  label="Si"/>
-                <FormControlLabel 
-                  value={false} 
-                  control={<Radio />} 
-                  label="No"/>
-              </RadioGroup>
-            </FormControl>
-        </Grid>
-        <Grid item sm={6}>
-          <FormControl fullWidth>
-            <InputLabel htmlFor="cantidadDeIngresos">Cantidad de veces de ingreso</InputLabel>
-              <OutlinedInput
-                disabled={estadoFormularioJudicial.primeraVezEnPrision}
-                name="cantidadDeIngresos"
-                value={estadoFormularioJudicial.cantidadDeIngresos}
-                onChange={onDatoChange}
-                label="Cantidad de veces de ingreso" />
-          </FormControl>
-        </Grid>
-        <Grid item sm={12}>
-          <Typography sx={{fontWeight:'bold', textTransform:'uppercase', mt:"10px"}}>Causa relacionada a la prisión</Typography>
-        </Grid>
-        <Grid item sm={6} sx={{mt:"20px",mb:"20px"}}>
-          <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="causa">Causas</InputLabel>
-            <Select
-              value={estadoFormularioJudicial.causa}
-              onChange={onOptionSelectChange}
-              name="causa"
-              label="seleccionar causa">
-
+        <Grid container mt={5}>
+          <Grid item sm={12}>
+            <Stack spacing={2} direction={"row"} justifyContent={"flex-start"} alignContent={"flex-start"}>
+              <FormControl>
+                <FormLabel id="primeraVezPrision">Primera vez en prisión:</FormLabel>
+                  <RadioGroup
+                    value={estadoFormularioJudicial.primeraVezEnPrision}
+                    onChange={onSelectChange}
+                    row
+                    aria-labelledby="primeraVezPrision"
+                    name="primeraVezEnPrision">
+                    <FormControlLabel 
+                      value={true} 
+                      control={<Radio />} 
+                      label="Si"/>
+                    <FormControlLabel 
+                      value={false} 
+                      control={<Radio />} 
+                      label="No"/>
+                  </RadioGroup>
+              </FormControl>
             
-            {causas ? causas.map(
-                  (data:causa, id) =>{
-                    return(
-                      <MenuItem key={id} value={data.id}>{String(`${data.numero_expediente}-${data.anho}-${data.caratula_causa}`)}</MenuItem>
-                    )
-                  }
-                ) : null}
-            </Select>
-          </FormControl>
+              <FormControl>
+                <InputLabel htmlFor="cantidadDeIngresos">Cantidad de veces de ingreso</InputLabel>
+                  <OutlinedInput
+                    disabled={estadoFormularioJudicial.primeraVezEnPrision}
+                    name="cantidadDeIngresos"
+                    value={estadoFormularioJudicial.cantidadDeIngresos}
+                    onChange={onDatoChange}
+                    label="Cantidad de veces de ingreso" />
+              </FormControl>
+            </Stack> 
+          </Grid>
         </Grid>
-        <Grid item sm={12}>
-          <Typography sx={{fontWeight:'bold', textTransform:'uppercase', mt:"10px"}}>
-            Datos laborales
-          </Typography>
-        </Grid>
-        <Grid item sm={6} sx={{mt:"20px",mb:"20px"}}>
-          <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="oficio">Oficio</InputLabel>
-            <Select
-              value={estadoFormularioJudicial.oficio}
-              onChange={onOptionSelectChange}
-              name="oficio"
-              label="seleccionar oficio">
-                {oficios ? oficios.map(
-                  (data:oficio, id) =>{
-                    return(
-                      <MenuItem key={id} value={data.id}>{String(`${data.nombre}`)}</MenuItem>
-                    )
-                  }
-                ) : null}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item sm={6} sx={{mt:"20px",mb:"20px"}}>
-          <FormControl fullWidth variant="outlined">
-            <InputLabel htmlFor="ultimoTrabajo">Ultimo lugar de trabajo</InputLabel>
-              <OutlinedInput
-                name="ultimoTrabajo"
-                value={estadoFormularioJudicial.ultimoTrabajo}
-                onChange={onDatoChange}
-                label="Ultimo trabajo" />
-          </FormControl>
-        </Grid>
+        <Grid container spacing={2} mt={5}>
+          <Grid item sm={12}>
+            <Typography sx={{fontWeight:'bold', textTransform:'uppercase'}}>Causa relacionada a la prisión</Typography>
+          </Grid>
+          <Grid item sm={6} sx={{mt:"5px",mb:"5px"}}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel htmlFor="causa">Causas</InputLabel>
+              <Select
+                value={estadoFormularioJudicial.causa}
+                onChange={onOptionSelectChange}
+                name="causa"
+                label="seleccionar causa">
+
+              
+              {causas ? causas.map(
+                    (data:causa, id) =>{
+                      return(
+                        <MenuItem key={id} value={data.id}>{String(`${data.numero_expediente}-${data.anho}-${data.caratula_causa}`)}</MenuItem>
+                      )
+                    }
+                  ) : null}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item sm={12}>
+            <Typography sx={{fontWeight:'bold', textTransform:'uppercase', mt:"5px"}}>
+              Datos laborales
+            </Typography>
+          </Grid>
+          <Grid item sm={6} sx={{mt:"5px",mb:"5px"}}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel htmlFor="oficio">Oficio</InputLabel>
+              <Select
+                value={estadoFormularioJudicial.oficio}
+                onChange={onOptionSelectChange}
+                name="oficio"
+                label="seleccionar oficio">
+                  {oficios ? oficios.map(
+                    (data:oficio, id) =>{
+                      return(
+                        <MenuItem key={id} value={data.id}>{String(`${data.nombre}`)}</MenuItem>
+                      )
+                    }
+                  ) : null}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item sm={6} sx={{mt:"5px",mb:"5px"}}>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel htmlFor="ultimoTrabajo">Ultimo lugar de trabajo</InputLabel>
+                <OutlinedInput
+                  name="ultimoTrabajo"
+                  value={estadoFormularioJudicial.ultimoTrabajo}
+                  onChange={onDatoChange}
+                  label="Ultimo trabajo" />
+            </FormControl>
+          </Grid>
       </Grid>
-      
       <Grid container spacing={2}>
         <Grid item sm={12}>
-          <Typography sx={{fontWeight:'bold', textTransform:'uppercase', mt:"10px"}}>Documento que ordena la reclusión</Typography>
+          <Typography sx={{fontWeight:'bold', textTransform:'uppercase', mt:"20px"}}>Documento que ordena la reclusión</Typography>
         </Grid>
         <Grid item sm={12}>
           <Typography variant='h6'>Oficio judicial</Typography>
@@ -541,15 +545,14 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
 
               </Grid>
             </Grid>
-
-
-        </Grid>
-        {/* Resolucion MJ/DGEP  */}
-        <Grid item sm={12}>
-          <Typography variant='h6'>Resolución MJ/DGEP</Typography>
-            <Grid container spacing={2}>
-              <Grid item sm={3}>
-                <FormControl fullWidth sx={{ marginTop: '17px',}}>
+          </Grid>
+          <Grid container spacing={2}>
+              <Grid item sm={12}>
+                <Typography variant='h6'>Resolución MJ/DGEP</Typography>
+              </Grid>
+          
+              <Grid item sm={4}>
+                <FormControl fullWidth>
                   <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
                     <OutlinedInput
                       name="resolucion.numeroDeDocumento"
@@ -558,8 +561,8 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
                       onChange={onObjectChange} />
                 </FormControl>
               </Grid>
-              <Grid item sm={3}>
-                <DemoContainer components={['DatePicker']}>
+              <Grid item sm={4}>
+                <DemoContainer components={['DatePicker']} sx={{mt:"-15px"}}>
                   <DatePicker 
                       value={estadoFormularioJudicial.resolucion.fechaDeDocumento} 
                       format="DD/MM/YYYY"
@@ -568,16 +571,14 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
                 </DemoContainer>
 
               </Grid>
-              <Grid item sm={3}>
-                <FormControl sx={{pt:"8px"}}>
+              <Grid item sm={4}>
+                <FormControl >
                   <MuiFileInput 
                     value={estadoFormularioJudicial.resolucion.documento} 
                     variant="outlined"
                     label="Seleccionar documento"
                     onChange={onFileResolucionMJChange} />
                 </FormControl>
-
-
               </Grid>
             </Grid>
             <Grid container spacing={2} mt={2}>
@@ -609,9 +610,9 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
               </Button>
             </Grid>
           </Grid>
-
         </Grid>
-      </Grid>  
+
+        
     </Box>
         
   )

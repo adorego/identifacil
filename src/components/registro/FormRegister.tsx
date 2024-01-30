@@ -60,7 +60,7 @@ export default function FormRegister(){
       if(registroRealizado && activeStep === 1){
         setHabilitarBotonSiguiente(true);
       }else{
-        console.log('Desabilitar boton siguiente');
+        // console.log('Desabilitar boton siguiente');
         setHabilitarBotonSiguiente(false);
       }
     },[activeStep, registroRealizado]
@@ -74,6 +74,7 @@ export default function FormRegister(){
 
     
   const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
+      console.log("Entro en agregar_reconocimiento");
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
@@ -82,7 +83,9 @@ export default function FormRegister(){
   }
 
   const generar_request_enviar = async () =>{
+      console.log('Entro en generar_request_enviar');
       if(identidad.current != null && identidad.current.cedula_identidad){
+        console.log("Antes de generar el formData");
         const formData = new FormData();
         formData.append('tipo_identificacion','1');
         formData.append('numero_identificacion', identidad.current.cedula_identidad);
@@ -124,7 +127,9 @@ export default function FormRegister(){
           setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo:${error}`);
         }
         
-        }
+      }else{
+        log.error('Error antes de enviar los datos de registro, No existen los datos de identidad');
+      }
     }
     
 
@@ -181,7 +186,7 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {activeStep === 0 && <IdentificationForm 
+                    {/* {activeStep === 0 && <IdentificationForm 
                     habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
@@ -200,8 +205,8 @@ export default function FormRegister(){
                     } />}
                   
                     {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />}
-            
-                    {/* Para pruebas
+             */}
+                    {/* Para pruebas*/}
                     {activeStep === 0 && <CuestionarioRegistro datosDeIdentidad={
                       {
                         cedula_identidad:"1130650",
@@ -210,7 +215,7 @@ export default function FormRegister(){
                         fecha_nacimiento:"21-07-1975",
                         codigo_genero:"2"
                       }
-                    } />} */}
+                    } />}
             
                     {activeStep !== 0 ? 
                         <Grid container  spacing={5} mt={1}>

@@ -61,8 +61,8 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
         progreso(1);
         if(numero_de_capturas === 3){
           capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas,"foto1");
-          setTimeout(capturar_rostro_y_enviar, 200, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto2");
-          setTimeout(capturar_rostro_y_enviar,400, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto3");
+          setTimeout(capturar_rostro_y_enviar, 100, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto2");
+          setTimeout(capturar_rostro_y_enviar,200, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto3");
           reset_capturar_foto();
         }else{
           capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas,"foto1");
@@ -117,6 +117,7 @@ const FaceDetectionOverlay:FC<FaceDetectionOverlayProps> =
   }
   
   const capturar_rostro_y_enviar = async (box:faceapi.Box, canvas:HTMLCanvasElement, nombreArchivo:string) =>{
+    console.log('Entro en capturar_rostro_y_enviar');
     if(videoElement){
       const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
       const fotoCanvas = faceapi.createCanvas(videoElement);
