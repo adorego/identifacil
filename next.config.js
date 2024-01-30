@@ -7,11 +7,11 @@ const nextConfig = {
             transform: "@mui/icons-material/{{member}}",
         },
     },*/
+    // webpack5: true,
     webpack: (config) => {
-          config.watchOptions.poll = 300;
-          return config;
-        },
-    
+        config.resolve.fallback = { fs: false, os: false, path: false };
+        return config;
+    },
     
 }
 

@@ -186,7 +186,7 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {/* {activeStep === 0 && <IdentificationForm 
+                    {activeStep === 0 && <IdentificationForm 
                     habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
@@ -205,9 +205,9 @@ export default function FormRegister(){
                     } />}
                   
                     {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />}
-             */}
+            
                     {/* Para pruebas*/}
-                    {activeStep === 0 && <CuestionarioRegistro datosDeIdentidad={
+                    {/* {activeStep === 0 && <CuestionarioRegistro datosDeIdentidad={
                       {
                         cedula_identidad:"1130650",
                         nombres:"ANDRES",
@@ -216,7 +216,7 @@ export default function FormRegister(){
                         codigo_genero:"2"
                       }
                     } />}
-            
+             */}
                     {activeStep !== 0 ? 
                         <Grid container  spacing={5} mt={1}>
                           <Grid item xs={'auto'}>
