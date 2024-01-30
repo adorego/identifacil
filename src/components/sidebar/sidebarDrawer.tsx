@@ -116,7 +116,7 @@ export default function SidebarDrawer() {
         setAge(event.target.value as string);
     };
     return (
-        <Drawer variant="permanent" open={open}>
+        <Drawer className='sidebarSippy' variant="permanent" open={open}>
             <DrawerHeader>
                 <Box
                     sx={{
@@ -176,7 +176,7 @@ export default function SidebarDrawer() {
 
 
                 {/* <ListItem disablePadding> */}
-                <ListItemButton onClick={() => handleClick('registroAccesos')}>
+                <ListItemButton onClick={() => handleClick('registroAccesos')} className={openMenus.registroAccesos ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Fingerprint/>
                     </ListItemIcon>
@@ -189,20 +189,20 @@ export default function SidebarDrawer() {
 
                         <ListItemButton onClick={(e) => handleNavigation('/inicio/registro/ppl')}>
                             <ListItemIcon>
-                                <PermIdentity/>
+                                <span className='subIcon'></span>
                             </ListItemIcon>
                             <ListItemText primary="Ingreso PPL" hidden={false}/>
                         </ListItemButton>
 
                         <ListItemButton onClick={(e) => handleNavigation('/acceso')}>
                             <ListItemIcon>
-                                <People/>
+                                <span className='subIcon'></span>
                             </ListItemIcon>
                             <ListItemText primary="Acceso al Penal" hidden={false}/>
                         </ListItemButton>
                         <ListItemButton onClick={(e) => handleNavigation('/identificacion')}>
                             <ListItemIcon>
-                                <FaceOutlined/>
+                                <span className='subIcon'></span>
                             </ListItemIcon>
                             <ListItemText primary="Identificación" hidden={false}/>
                         </ListItemButton>
@@ -226,7 +226,7 @@ export default function SidebarDrawer() {
                         />*/}
 
                 {/* ------------------------- Menu Penales ------------------------- */}
-                <ListItemButton onClick={() => handleClick('datosPenales')}>
+                <ListItemButton onClick={() => handleClick('datosPenales')} className={openMenus.datosPenales ? 'active-button' : ''} >
                     <ListItemIcon>
                         <AccountBalance/>
                     </ListItemIcon>
@@ -237,13 +237,13 @@ export default function SidebarDrawer() {
                 <Collapse in={openMenus.datosPenales} timeout="auto" unmountOnExit>
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Causas"
                             path="/causas"
                             isActive={pathname === '/causas'}
                         />
                     </List>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                    {/*<List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
                             icon={<Settings/>}
                             label="Audiencias"
@@ -258,11 +258,11 @@ export default function SidebarDrawer() {
                             path="/libertades"
                             isActive={pathname === '/libertades'}
                         />
-                    </List>
+                    </List>*/}
                 </Collapse>
 
                 {/* ------------------------- Menu Movimientos ------------------------- */}
-                <ListItemButton onClick={() => handleClick('movimientos')}>
+                <ListItemButton onClick={() => handleClick('movimientos')} className={openMenus.movimientos ? 'active-button' : ''} >
                     <ListItemIcon>
                         <AirportShuttle/>
                     </ListItemIcon>
@@ -273,25 +273,25 @@ export default function SidebarDrawer() {
                 <Collapse in={openMenus.movimientos} timeout="auto" unmountOnExit>
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Traslados"
                             path="/movimientos/traslados"
                             isActive={pathname === '/movimientos/traslados'}
                         />
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Salidas especiales"
                             path="/movimientos/salidasEspeciales"
                             isActive={pathname === '/movimientos/salidasEspeciales'}
                         />
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Salidas Transitorias"
                             path="/movimientos/salidasTransitorias"
                             isActive={pathname === '/movimientos/salidasTransitorias'}
                         />
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Bajas"
                             path="/movimientos/bajas"
                             isActive={pathname === '/movimientos/bajas'}
@@ -317,7 +317,7 @@ export default function SidebarDrawer() {
 
                 </ListItemButton>
 
-                <ListItemButton disabled>
+{/*                <ListItemButton disabled>
                     <ListItemIcon>
                         <AccountBalance/>
                     </ListItemIcon>
@@ -329,7 +329,7 @@ export default function SidebarDrawer() {
                         <Key/>
                     </ListItemIcon>
                     <ListItemText primary={'Autorizaciones'} hidden={false}/>
-                </ListItemButton>
+                </ListItemButton>*/}
 
                 {/* ------------------------- Menu de Sistema ------------------------- */}
                 {open ? <Typography variant='overline' display="block" align="left" pl='16px'>
@@ -338,7 +338,7 @@ export default function SidebarDrawer() {
 
                 }
 
-                <ListItemButton onClick={() => handleClick('sistema')}>
+                <ListItemButton onClick={() => handleClick('sistema')} className={openMenus.sistema ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
@@ -349,13 +349,13 @@ export default function SidebarDrawer() {
                 <Collapse in={openMenus.sistema} timeout="auto" unmountOnExit>
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Camaras"
                             path="/sistema/camaras"
                             isActive={pathname === '/sistema/camaras'}
                         />
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Roles"
                             path="/sistema/roles"
                             isActive={pathname === '/sistema/roles'}
@@ -366,7 +366,7 @@ export default function SidebarDrawer() {
 
                 {/* ------------------------- Menu de Sistema movimiento------------------------- */}
 
-                <ListItemButton onClick={() => handleClick('datosMovimientos')}>
+                <ListItemButton onClick={() => handleClick('datosMovimientos')} className={openMenus.datosMovimientos ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
@@ -377,27 +377,27 @@ export default function SidebarDrawer() {
                 <Collapse in={openMenus.datosMovimientos} timeout="auto" unmountOnExit>
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Medidas de seguridad"
                             path="/sistema/medidas-seguridad"
                             isActive={pathname === '/sistema/medidas-seguridad'}
                         />
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Motivos de traslados"
                             path="/sistema/motivos-traslados"
                             isActive={pathname === '/sistema/motivos-traslados'}
                         />
 
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Personal"
                             path="/sistema/personal"
                             isActive={pathname === '/sistema/personal'}
                         />
 
                         <SidebarItem
-                            icon={<Settings/>}
+                            icon={<span className='subIcon'></span>}
                             label="Vehiculo"
                             path="/sistema/vehiculo"
                             isActive={pathname === '/sistema/vehiculo'}

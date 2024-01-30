@@ -1,13 +1,13 @@
 'use client'
 
-import PDF from "@/app/(test)/pdf-test/PDF";
+import IngresosPDF from "@/app/(pdf)/reportes/ingresosPDF";
 import {PDFDownloadLink, PDFViewer} from "@react-pdf/renderer";
 import {Box, Button} from "@mui/material";
-import {useEffect, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 
 
-export default function Page(){
+export default function ReportesPDF({ params }: { params: { tipoReporte: string } }) {
 
     const [state, setState] = useState('')
     const [isClient, setIsClient] = useState(false)
@@ -28,7 +28,7 @@ export default function Page(){
     return(
         <>
 
-            {/*<PDFDownloadLink document={<PDF data={state} />} fileName='myfirstped.pdf' >
+            {/*<PDFDownloadLink document={<IngresosPDF data={state} />} fileName='myfirstped.pdf' >
                 {
                     ({loading,error,url,blob}) => loading ? <button>
                         Loading Document
@@ -40,10 +40,10 @@ export default function Page(){
             </PDFDownloadLink>*/}
             { isClient ?
             <Box sx={{
-                mt: 2,
+                height: 'calc(100vh - 20px)'
             }}>
-                <PDFViewer showToolbar={true} width='100%' height='940px'>
-                    <PDF data={state[0]} />
+                <PDFViewer showToolbar={true} width='100%' height='100%'>
+                    <IngresosPDF data={state[0]} />
                 </PDFViewer>
             </Box>
                 : null}

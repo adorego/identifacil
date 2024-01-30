@@ -1,72 +1,133 @@
-:root{
-  font-family: 'Inter';
+:root {
+    font-family: 'Inter';
 }
+
 .MuiButtonBase-root.active {
-  border-radius: 8px;
-  background: rgba(0,167,111,0.08);
-  color: #00A76F;
+    border-radius: 8px;
+    background: rgba(0, 167, 111, 0.08);
+    color: #00A76F;
 }
+
 /*nav.MuiList-root.MuiList-padding {
   padding: 20px;
 }*/
-.titleSidebar{
-  background-image: linear-gradient(90deg, rgba(224, 225, 226, 0.00) 0%, #E0E1E2 50%, rgba(224, 225, 226, 0.16) 100%);
-  border: 0;
-  height: 1px;
-  width: 90%;
+.titleSidebar {
+    background-image: linear-gradient(90deg, rgba(224, 225, 226, 0.00) 0%, #E0E1E2 50%, rgba(224, 225, 226, 0.16) 100%);
+    border: 0;
+    height: 1px;
+    width: 90%;
 }
-.MuiList-root.MuiList-padding{
-  color: #637381;
+
+.sidebarSippy .MuiList-root.MuiList-padding {
+    color: #637381;
+    padding: 10px;
 }
+
 /*.MuiListItemIcon-root {
   min-width: 40px !important;
 }*/
 
-.container-main{
-  padding: 20px 40px;
+.container-main {
+    padding: 20px 40px;
 }
-.MuiGrid-root.MuiGrid-item.MuiGrid-grid-sm-10{
-  background: #F6FAFF;
+
+.MuiGrid-root.MuiGrid-item.MuiGrid-grid-sm-10 {
+    background: #F6FAFF;
 }
-.secondaryData{
-  color: #b3b3b3;
+
+.secondaryData {
+    color: #b3b3b3;
 }
+
 thead tr th.MuiTableCell-root {
-  background: #f4f6f8;
-  FONT-WEIGHT: 600;
-  color: #637381;
+    background: #f4f6f8;
+    FONT-WEIGHT: 600;
+    color: #637381;
 }
+
 .imageContainer {
-  width: 120px;
-  border-radius: 10px;
+    width: 120px;
+    border-radius: 10px;
 }
-.cardContainer{
-  background-color: #FFF;
-  border: 1px solid #e3e3e3;
-  padding: 20px;
-  border-radius: 10px;
+
+.cardContainer {
+    background-color: #FFF;
+    border: 1px solid #e3e3e3;
+    padding: 20px;
+    border-radius: 10px;
 }
-.lineBarChart > div >svg {
-  margin-top: 30px;
+
+.lineBarChart > div > svg {
+    margin-top: 30px;
 }
-.linkItemButton{
-  text-decoration: none;
-  color: inherit;
+
+.linkItemButton {
+    text-decoration: none;
+    color: inherit;
 }
-.customTable th, .customTable td{
-  padding: 24px;
+
+.customTable th, .customTable td {
+    padding: 24px;
 }
+
 .tabPills button {
-  border: 1px solid #212121;
-  border-radius: 40px;
-  margin-left: 10px;
+    border: 1px solid #212121;
+    border-radius: 40px;
+    margin-left: 10px;
 }
 
 .tabPills button.Mui-selected {
-  border-color: green !important;
-  color: #fff !important;
-  background: green;
+    border-color: green !important;
+    color: #fff !important;
+    background: green;
 }
+
+.sidebarSippy .MuiPaper-root {
+    border-right: 1px dashed rgba(145, 158, 171, 0.2);
+}
+
+.sidebarSippy .MuiButtonBase-root{
+    border-radius: 10px;
+}
+
+header.MuiPaper-root {
+    border-bottom: 0;
+}
+
+.Mui-selected {
+    background-color: red;
+}
+
+.MuiCollapse-vertical .MuiList-root {
+
+    margin-left: 0;
+}
+
+.active-button {
+    background-color: rgba(145, 158, 171, 0.08) !important;
+}
+
+.subIcon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-right: 16px;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+}
+
+.subIcon:before {
+    content: "";
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: rgb(145, 158, 171);
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+}
+
 /* :root {
   --max-width: 1100px;
   --border-radius: 12px;

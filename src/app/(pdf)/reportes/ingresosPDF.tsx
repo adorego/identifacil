@@ -10,7 +10,7 @@ import {
 import Logo from '@/common/images/logo-sippy.png'
 import ministerioLogo from '@/common/images/ministerio-justicia-logo.png'
 import {useEffect, useState} from "react";
-import TableHeaderPDF from "@/app/(test)/pdf-test/table/TableHeaderPDF";
+import TableHeaderPDF from "@/app/(pdf)/reportes/table/TableHeaderPDF";
 
 const styles =  StyleSheet.create({
     page:{
@@ -47,7 +47,7 @@ const styles =  StyleSheet.create({
 })
 
 // @ts-ignore
-export default function PDF({data}){
+export default function IngresosPDF({data}){
     const [state, setState] = useState({
         establecimiento: '',
         fecha: '',
@@ -76,8 +76,6 @@ export default function PDF({data}){
                     }}>
                     <Image src={ministerioLogo.src}  style={styles.imgContainerMinisterio} />
                     <Image src={Logo.src}  style={styles.imgContainer} />
-                    {/*<View style={{width: '50px', height: '50x', backgroundColor: 'red'}}> A</View>
-                    <View style={{width: '50px', height: '50x', backgroundColor: 'red'}}> B</View>*/}
                 </View>
                 <View>
                     <Text style={styles.title}>

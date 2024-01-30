@@ -65,9 +65,9 @@ export default function NavTabs() {
                 aria-label="nav tabs example"
                 role="navigation"
             >
-                <LinkTab label="Page One" href="/drafts" />
-                <LinkTab label="Page Two" href="/trash" />
-                <LinkTab label="Page Three" href="/spam" />
+                <LinkTab label="ReportesPDF One" href="/drafts" />
+                <LinkTab label="ReportesPDF Two" href="/trash" />
+                <LinkTab label="ReportesPDF Three" href="/spam" />
             </Tabs>
         </Box>
     );

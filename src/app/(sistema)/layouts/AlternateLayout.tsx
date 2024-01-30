@@ -34,7 +34,7 @@ const AlternateLayout = ({ children }) => {
                     {/*<SideBar/>*/}
                     <SidebarDrawer />
                 </Box>
-                <Box width='100%' sx={{bgcolor: '#F6FAFF', minHeight: '100vh'}}>
+                <Box width='100%' sx={{bgcolor: '#FFF', minHeight: '100vh'}}>
                     <TopNav/>
                     <Box mx={6} mt={4}>
 

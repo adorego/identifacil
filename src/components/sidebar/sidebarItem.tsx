@@ -30,7 +30,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({ icon, label, path, isActive, 
         </Link>*/
         <Link href={path} className='linkItemButton' prefetch={true}>
 
-            <ListItemButton >
+            <ListItemButton className={isActive ? 'active' : ''}>
                 <ListItemIcon>
                     {icon}
                 </ListItemIcon>
