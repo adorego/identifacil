@@ -1,9 +1,11 @@
 'use client'
 
 import * as React from 'react';
+
 import {Box, Breadcrumbs, Link, Typography} from "@mui/material";
-import TituloComponent from "../../../../components/titulo/tituloComponent";
+
 import CustomTable from "../../../../components/CustomTable";
+import TituloComponent from "../../../../components/titulo/tituloComponent";
 
 export default function Page(){
 
@@ -16,7 +18,8 @@ export default function Page(){
                         title: 'Roles',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/roles/[id]'
+                        newRecord: '/sistema/roles/[id]',
+                        deleteOption:false,
                     }}
                 />
 

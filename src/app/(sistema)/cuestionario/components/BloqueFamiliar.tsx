@@ -152,7 +152,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
   const onDatosFamiliaresSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     if(numeroDeIdentificacion){
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_familiares`;
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`;
       const datosDelFormulario:datosFamiliares = Object.assign({},estadoFormularioDatosFamiliares);
       datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
@@ -187,7 +187,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
       }}          
       noValidate
       autoComplete="off">
-        <Grid container spacing={2}>
+        <Grid container spacing={2} ml={2}>
             <Grid item sm={12}>
               <FormControl>
                 <FormLabel id="datoLiderFamilia">¿Es la cabeza de familia/sustento de la familia?</FormLabel>
@@ -269,9 +269,9 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
                               onChange={onFamiliarDatoChange} />
                       </FormControl>
               </Grid>
-              <Grid item sm={12} sx={{ml:"15px"}}>
+              <Grid item sm={12} sx={{ml:"2px"}}>
                       <Button variant="contained" 
-                        sx={{marginBottom:"10"}}
+                        sx={{marginBottom:"5"}}
                         startIcon={<PersonAddIcon />}
                         onClick={manejadorAgregarFamilia}>
                           Agregar familiar
@@ -286,14 +286,14 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
                 onEliminarItem={eliminarFamiliares}/>
               </Grid>
             </Grid>
-            </>
+          </> 
 
           }
-          
+        </Grid>  
           
         
         {/* CONCUBINO */}
-        <Grid container>
+        <Grid container spacing={2} ml={1}>
           <Grid item sm={12} mt={2}>
             <FormControl>
                 <FormLabel id="datoLiderFamilia">Concubino</FormLabel>
@@ -332,7 +332,7 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
             {/* </Stack> */}
           </Grid>
          </Grid> 
-      </Grid>
+      
     </Box>      
   )
 } 
@@ -371,6 +371,7 @@ interface ListaDeFamiliaresProps{
 }
 
 const ListaDeFamiliares:FC<ListaDeFamiliaresProps> = ({listaDeFamiliares, onEliminarFamiliar}) =>{
+  console.log("ListaDeFamiliares:", listaDeFamiliares);
   return(
     listaDeFamiliares.map(
       (familiar, index) =>{

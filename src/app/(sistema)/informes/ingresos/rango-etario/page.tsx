@@ -1,10 +1,12 @@
 'use client'
 
 import * as React from 'react';
+
+import {Box, Breadcrumbs, Button, Grid, Link, Paper, Stack, TextField, Typography} from "@mui/material";
+
 import CustomTable from "../../../../../components/CustomTable";
-import {Grid, Paper, TextField, Typography, Button, Stack, Breadcrumbs, Link, Box} from "@mui/material";
-import {lugarNacimientoExtended} from "../../../../dummyData/data";
 import PenitenciariaFilter from "../../components/penitenciariaFilter";
+import {lugarNacimientoExtended} from "../../../../dummyData/data";
 
 const dummyData = lugarNacimientoExtended()
 
@@ -41,6 +43,7 @@ export default function Page() {
                             rowsPerPageCustom: 10,
                             title:'Por rango etario',
                             pagination: true,
+                            deleteOption:false,
                         }}
 
                     />

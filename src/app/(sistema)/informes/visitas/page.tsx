@@ -28,7 +28,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 3,
                                     title: 'Por motivo de medida',
                                     pagination: false,
-                                    expandedList: '/movimientos/bajas/'
+                                    expandedList: '/movimientos/bajas/',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -43,7 +44,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 3,
                                     title: 'Por rango de tiempo',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/lugar-nacimiento'
+                                    expandedList: '/informes/traslados/lugar-nacimiento',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -59,7 +61,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 4,
                                     title: 'Por situacion procesal',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/rango-tiempo'
+                                    expandedList: '/informes/traslados/rango-tiempo',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -75,7 +78,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 4,
                                     title: 'Por hecho punible',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/tiempo-reclusion'
+                                    expandedList: '/informes/traslados/tiempo-reclusion',
+                                    deleteOption:false,
                                 }
                             }
 

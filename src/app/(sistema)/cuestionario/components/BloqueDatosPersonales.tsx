@@ -24,8 +24,7 @@ import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {RequestResponse, api_request} from "@/lib/api-request";
 import dayjs, {Dayjs} from "dayjs";
 
-import {FieldChangeHandlerContext} from "@mui/x-date-pickers/internals";
-import {IdentificacionForm} from "@/components/registro/IdentificationForm";
+import { IdentificacionForm } from "@/components/registro/IdentificationForm";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 
@@ -127,26 +126,68 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosPersonalesA
     useEffect(
         () => {
 
-            const getNacionalidades = async () => {
-                const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/nacionalidades`;
-                try {
-                    const respuesta: RequestResponse = await api_request<NacionalidadesDTO>(url, {
-                        method: 'GET',
-                        headers: {
-                            'Content-type': 'application/json'
-                        }
-                    });
-                    // console.log("Respuesta:", respuesta);
-                    if (respuesta.success && respuesta.datos) {
-                        setNacionalidades(respuesta.datos.nacionalidades);
-                    } else {
-                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
-                    }
+      const getNacionalidades = async () =>{
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/nacionalidades`;
+        try{
+          const respuesta:RequestResponse = await api_request<NacionalidadesDTO>(url,{
+            method:'GET',
+            headers:{
+              'Content-type':'application/json'
+            }
+          });
+          // console.log("Respuesta:", respuesta);
+          if(respuesta.success && respuesta.datos){
+            setNacionalidades(respuesta.datos.nacionalidades);
+          }else{
+            openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+          }
+          
+        }catch(error){
+          openSnackbar(`Error en la consulta de datos:${error}`, "error");
+        }
+        
+        
+        
+      }
 
                 } catch (error) {
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
 
+  useEffect(
+    () =>{
+        const getEstadosCiviles = async () =>{
+          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
+          try{
+            const respuesta:RequestResponse = await api_request<EstadoCivilDTO>(url,{
+              method:'GET',
+              headers:{
+                'Content-type':'application/json'
+              }
+            });
+            // console.log("Respuesta:", respuesta);
+            if(respuesta.success && respuesta.datos){
+              setEstadosCiviles(respuesta.datos.estadosCiviles);
+            }else{
+              openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+            }
+            
+          }catch(error){
+            openSnackbar(`Error en la consulta de datos:${error}`, "error");
+          }
+        }
+        getEstadosCiviles();
+    },[]
+  )
+  const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.target.name);
+      setDatosPersonalesState(
+        (previus) =>{
+          return(
+            {
+              ...previus,
+              [event.target.name]:event.target.value,
+              [`${event.target.name}_modificado`]:true
 
             }
 
@@ -171,6 +212,53 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosPersonalesA
                 )
             }
         )
+      }
+    )
+  }
+
+  const onFechaNacimientoChange = (value:Dayjs|null , context:PickerChangeHandlerContext<DateValidationError>) =>{
+    // console.log(value);
+    setDatosPersonalesState(
+      (previus) =>{
+        return(
+          {
+            ...previus,
+            fechaNacimiento:value,
+            fechaDeNacimiento_modificado:true
+            
+
+          }
+        )
+      }
+    )
+  }
+  const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(datosDeIdentificacion.cedula_identidad){
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
+      const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
+      datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
+      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+      })
+      if(respuesta.success){
+        openSnackbar("Datos guardados correctamente","success")
+      }else{
+        if(respuesta.error){
+          openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+          log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+        }
+      }
+
+      // console.log("Respuesta:", respuesta);
+    }else{
+      openSnackbar("Falta el número de identificación","error");
     }
 
     const onDatoSelectChange = (event: SelectChangeEvent) => {

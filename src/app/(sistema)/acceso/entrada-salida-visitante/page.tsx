@@ -2,8 +2,7 @@
 
 import { Box, Button, CircularProgress, FormControl, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { ChangeEvent, useState } from "react"
-import {initialResponse} from "@/components/utils/initialData";
-import { IdentificationResponse } from "../../identificacion/page";
+import { IdentificationResponse, initialResponse } from "../../../../model/respuesta-identificacion";
 import { ThumbDown, ThumbUp } from "@mui/icons-material";
 
 import { Dayjs } from "dayjs";
@@ -53,7 +52,7 @@ export default function EntradaSalidaVisitante(){
   const {openSnackbar} = useGlobalContext();
 
   const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
-    const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/identificacion/`;
+    const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
     // console.log('url:', url);
     const dataToSend = {
       descriptorFacial:reconocimiento.descriptor
@@ -106,7 +105,7 @@ export default function EntradaSalidaVisitante(){
     )
   }
   const onConsultarManejador = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/identificacion/ppl_con_cedula`;
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/ppl_con_cedula`;
       const dataToSend = {
         numeroDeIdentifiicacion:pplAVisitar.cedula
       }

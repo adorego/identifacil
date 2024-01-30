@@ -5,27 +5,39 @@ import {Box, Button, CssBaseline, Grid, Link, Paper, TextField, Typography} from
 import splash from '../../../common/images/logo-sippy.png';
 import styles from './layout.module.css'
 import {useRouter} from 'next/navigation';
+import { useState } from 'react';
+
+interface datosIdentificacion{
+    numeroDeDocumento:string;
+    clave:string;
+}
+
+const datosIdentificacionInicial:datosIdentificacion = {
+    numeroDeDocumento:"",
+    clave:""
+}
 
 export default function Login() {
     const router = useRouter();
+    const [estadoFormularioLogin, setEstadoFormularioLogin] = useState(datosIdentificacionInicial);
 
     const onAceptarClick = () => {
-        router.push('/inicio');
+        if(estadoFormularioLogin.numeroDeDocumento === "111111" && estadoFormularioLogin.clave === "admin"){
+            router.push('/inicio');
+        }
     };
 
 
-    /*function Copyright(props: any) {
-        return (
-            <Typography variant="body2" color="text.secondary" align="center" {...props}>
-                {'Copyright © '}
-                <Link color="inherit" href="https://mui.com/">
-                    Your Website
-                </Link>{' '}
-                {new Date().getFullYear()}
-                {'.'}
-            </Typography>
-        );
-    }*/
+    const onChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+        setEstadoFormularioLogin(
+            (previus) =>{
+                return{
+                    ...previus,
+                    [event.target.name]:event.target.value
+                }
+            }
+        )
+    }
 
     return (
         <>
@@ -75,20 +87,24 @@ export default function Login() {
                         </Typography>*/}
                         <Box component="form" noValidate sx={{mt: 1}}>
                             <TextField
+                                value={estadoFormularioLogin.numeroDeDocumento}
+                                onChange={onChange}
                                 margin="normal"
                                 required
                                 fullWidth
                                 id="email"
                                 label="Número de documento"
-                                name="email"
+                                name="numeroDeDocumento"
                                 autoComplete="email"
                                 autoFocus
                             />
                             <TextField
+                                value={estadoFormularioLogin.clave}
+                                onChange={onChange}
                                 margin="normal"
                                 required
                                 fullWidth
-                                name="password"
+                                name="clave"
                                 label="Contraseña"
                                 type="password"
                                 id="password"

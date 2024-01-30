@@ -34,7 +34,7 @@ export default function FaceRecognitionWithLayout(props:FaceRecognitionProps){
                                     left:'50%', 
                                     transform: 'translate(-50%,-50%)',
                                     zIndex:10}}>
-                            {props.progresoRegistro === EstadosProgreso[3] ? 
+                              {props.progresoRegistro === EstadosProgreso[3] ? 
                               <RegistrationData mensaje={props.mensaje} cerrarDialogo={props.cerrar_dialogo}/> :
                               <CircularProgressionWithLabel indicador={0} estado={props.progresoRegistro} />} 
           

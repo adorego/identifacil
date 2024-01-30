@@ -1,10 +1,10 @@
 'use client'
 
 import {Box, Breadcrumbs, Grid, Link, Paper} from "@mui/material";
+import {destinosTrasladosData, motivosTrasladosData, rangoTiempoData, reclsusosData} from "../../../dummyData/data";
 
 import CustomTable from "../../../../components/CustomTable";
 import PenitenciariaFilter from "../components/penitenciariaFilter";
-import {destinosTrasladosData, motivosTrasladosData, rangoTiempoData, reclsusosData} from "../../../dummyData/data";
 
 const trasladosDummy = reclsusosData();
 const motivosTrasladosDummy = motivosTrasladosData();
@@ -38,7 +38,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 5,
                                     title: 'Internos con mas traslados',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/lugar-nacimiento'
+                                    expandedList: '/informes/traslados/lugar-nacimiento',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -53,7 +54,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 5,
                                     title: 'Por motivo de traslados',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/lugar-nacimiento'
+                                    expandedList: '/informes/traslados/lugar-nacimiento',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -69,7 +71,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 4,
                                     title: 'Por rango de tiempo',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/rango-tiempo'
+                                    expandedList: '/informes/traslados/rango-tiempo',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -85,7 +88,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 4,
                                     title: 'Destinos con mas traslados',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/destinos-mas-traslados'
+                                    expandedList: '/informes/traslados/destinos-mas-traslados',
+                                    deleteOption:false,
                                 }
                             }
 
@@ -101,7 +105,8 @@ export default  function Page(){
                                     rowsPerPageCustom: 4,
                                     title: 'Tiempo de reclusion',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/tiempo-reclusion'
+                                    expandedList: '/informes/traslados/tiempo-reclusion',
+                                    deleteOption:false,
                                 }
                             }
 

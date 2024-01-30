@@ -1,32 +1,26 @@
 'use client'
 
-import {
-  Box,
-  Button,
-  CircularProgress,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  Radio,
-  RadioGroup,
-  TextField,
-  Typography
-} from "@mui/material";
-import {ChangeEvent, useState} from "react"
-import {IdentificationResponse} from "../../identificacion/page";
-import {initialResponse} from '@/components/utils/initialData'
-import {ThumbDown, ThumbUp} from "@mui/icons-material";
+import { Box, Button, CircularProgress, FormControl, FormControlLabel, FormLabel, Grid, Radio, RadioGroup, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import { ChangeEvent, useState } from "react"
+import { IdentificationResponse, initialResponse } from "../../../../model/respuesta-identificacion";
+import { ThumbDown, ThumbUp } from "@mui/icons-material";
 
 import {Dayjs} from "dayjs";
 import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWithLayout";
 import {IReconocimiento} from "@/components/registro/FaceDetectionOverlay";
 import style from "./page.module.css";
 
-const EstadosProgreso: Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos', 'Datos disponibles'];
-export interface SalidaPPL {
-    fechaDeSalida: Dayjs | null;
-    tipoDeSalida: string;
-    fechaDeEntrada: Dayjs | null;
+const EstadosProgreso:Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos','Datos disponibles'];
+
+export interface SalidaPPL{
+  fechaDeSalida:Dayjs | null;
+  tipoDeSalida:string;
+  fechaDeEntrada:Dayjs | null;
+}
+const salidaPPLInicial:SalidaPPL = {
+  fechaDeSalida:null,
+  tipoDeSalida:"",
+  fechaDeEntrada:null
 }
 
 const salidaPPLInicial: SalidaPPL = {
@@ -49,48 +43,19 @@ const entradaPPLInicial: EntradaPPL = {
 }
 
 
-export default function Page() {
-    const [progresoReconocimiento, setProgresoReconocimiento] = useState(EstadosProgreso[0]);
-    const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
-    const [identificationData, setIdentificationData] = useState<IdentificationResponse>(initialResponse)
-    const [pplIdentificado, setPPLIdentificado] = useState(false);
-    const [entrada_salida, setEntradaSalida] = useState<boolean | null>(null);
-    const [autorizarIngreso, setAutorizarIngreso] = useState<string>("inicio");
-    const [entradaPPL, setEntradaPPL] = useState<EntradaPPL>(entradaPPLInicial);
-    const [salidaPPL, setSalidaPPL] = useState<SalidaPPL>(salidaPPLInicial)
-    const [mensaje, setMensaje] = useState("");
-
-    const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
-        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/identificacion/`;
-        // console.log('url:', url);
-        const dataToSend = {
-            descriptorFacial: reconocimiento.descriptor
-        }
-        // console.log("Data to send:", dataToSend);
-        setProgresoReconocimiento(EstadosProgreso[2]);
-        const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(dataToSend),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-
-        });
-
-        if (!response.ok) {
-            const data = await response.json();
-            console.log('Ocurrio un error:', data);
-        } else {
-            const data: IdentificationResponse = await response.json();
-            setProgresoReconocimiento(EstadosProgreso[0]);
-            setPPLIdentificado(true);
-            setIdentificationData({
-                numeroDeIdentificacion: data.numeroDeIdentificacion,
-                nombres: data.nombres,
-                apellidos: data.apellidos,
-                esPPL: data.esPPL
-            })
-            // openSnackbar(`Persona Reconocida, nombre:${data.nombres}, apellido:${data.apellidos}, esPPL:${esPPL}`);
+  const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
+    const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
+    // console.log('url:', url);
+    const dataToSend = {
+      descriptorFacial:reconocimiento.descriptor
+    }
+    // console.log("Data to send:", dataToSend);
+    setProgresoReconocimiento(EstadosProgreso[2]);
+    const response = await fetch(url,{
+        method:'POST',
+        body:JSON.stringify(dataToSend),
+        headers: {
+          'Content-Type': 'application/json'
         }
     }
 

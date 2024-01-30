@@ -124,12 +124,12 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
   const [oficios, setOficios] = useState<Array<oficio>>([]);
   const {openSnackbar} = useGlobalContext();
   
-  console.log("Estado Judicial:", estadoFormularioJudicial);
+  
   
   useEffect(
     () =>{
       const getCausas = async (numeroDeIdentificacion:string) =>{
-          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/causas?ci=${numeroDeIdentificacion}`;
+          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${numeroDeIdentificacion}`;
           const parameter = {
             numeroDeIdentificacion:numeroDeIdentificacion
           }
@@ -161,7 +161,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
   useEffect(
     () =>{
         const getOficios = async () =>{
-          const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/oficios`;
+          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/oficios`;
           try{
             const respuesta:RequestResponse = await api_request<oficiosDTO>(url,{
               method:'GET',
@@ -211,9 +211,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
 
   const onObjectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     const names = event.target.name.split('.');
-    // @ts-ignore
-    // TODO: Tambien habia un error aqui de compilacion
-    const objetoAModificar = estadoFormularioJudicial[names[0]];
+    const objetoAModificar = names[0] === "oficioJudicial" ? estadoFormularioJudicial.oficioJudicial : estadoFormularioJudicial.resolucion;
     
     setEstadoFormularioJudicial(
       (previus) =>{
@@ -327,7 +325,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
   const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
     if(numeroDeIdentificacion != "" && numeroDeIdentificacion != null){
-      const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/datos_judiciales`;
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales`;
       const formData = crearFormData(estadoFormularioJudicial, numeroDeIdentificacion);
 
       const respuesta = await api_request(url,{

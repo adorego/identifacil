@@ -1,9 +1,11 @@
 'use client'
 
 import * as React from 'react';
+
 import {Box, CircularProgress} from "@mui/material";
-import CustomTable from "@/components/CustomTable";
 import {useEffect, useState} from "react";
+
+import CustomTable from "@/components/CustomTable";
 
 export default function Page(){
 
@@ -66,6 +68,7 @@ export default function Page(){
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/motivos-traslado/crear',
                         targetURL:`/sistema/motivos-traslado/`,
+                        deleteOption:false,
                     }}
                 />
 

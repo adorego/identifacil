@@ -73,22 +73,22 @@ export default function NestedInformacionPreso(){
                             </Grid>
                             <Grid item sm={10}>
                                <CustomTabPanel value={value} index={0}>
-                                    <BloqueDatosPersonales />
+                                    {/* <BloqueDatosPersonales /> */}
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={1}>
-                                    <BloqueSalud />
+                                    {/* <BloqueSalud /> */}
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={2}>
-                                    <BloqueSeguridad />
+                                    {/* <BloqueSeguridad /> */}
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={3}>
-                                    <BloqueEducacion />
+                                    {/* <BloqueEducacion /> */}
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={4}>
-                                    <BloqueFamiliares />
+                                    {/* <BloqueFamiliares /> */}
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={5}>
-                                    <BloqueJudicial />
+                                    {/* <BloqueJudicial /> */}
                                 </CustomTabPanel>
                             </Grid>
 

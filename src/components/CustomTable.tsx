@@ -1,26 +1,29 @@
 'use client';
 
-import React, {useState} from 'react';
 import {
+    Box,
+    Button,
+    IconButton,
+    Link,
+    Paper,
+    Stack,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
-    Paper,
-    Link,
-    IconButton,
     TablePagination,
-    TableSortLabel, Typography, Box, Stack, Button,
+    TableRow,
+    TableSortLabel,
+    Typography,
 } from '@mui/material';
+import React, {useState} from 'react';
+
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {dummyData} from "@/app/dummyData/data";
-import ModalBorrado from "@/components/modal/ModalBorrado";
-
 
 interface Header {
     id: string;

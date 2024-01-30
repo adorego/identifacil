@@ -9,6 +9,7 @@ import ConfirmacionRegistro from "@/components/registro/ConfirmacionRegistro";
 import { EstadosProgreso } from "@/components/registro/FormRegister";
 import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWithLayout";
 import { IReconocimiento } from "@/components/registro/FaceDetectionOverlay";
+import log from "loglevel";
 import style from "./page.module.css"
 import { useGlobalContext } from "@/app/Context/store";
 
@@ -57,7 +58,7 @@ export default function RegistroVisitante(){
       contadorReconocimiento.current = 0;
       //Sin Kubernetes
       try{
-        const url = `${process.env.NEXT_PUBLIC_REGISTRO_SERVER_URL}/identifacil/api/registro/`;
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
         setProgresoRegistro(EstadosProgreso[2]);
         const result = await fetch(url,{
           method:'POST',
@@ -65,16 +66,20 @@ export default function RegistroVisitante(){
         })
         const data = await result.json();
         if(!result.ok){
-          console.log('Ocurrio un error', data);
-          setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
-        }else{
           setProgresoRegistro(EstadosProgreso[3]);
+          log.error('Ocurrio un error:', data);
+          setMensaje(`Ocurrió un error al realizar el registro:
+                    ${data.message}`);
+        }else{
+          onStepForward();
+          setProgresoRegistro(EstadosProgreso[0]);
           setMensaje("Registro realizado correctamente");
 
         }
         
       }catch(error){
-        openSnackbar(`Ocurrió unu error durante el registro:${error}`,"error");
+        setProgresoRegistro(EstadosProgreso[3]);
+        setMensaje(`Ocurrió un error al realizar el registro:${error}`);
       }
   }
 }
@@ -141,31 +146,16 @@ const cerrar_dialogo = () =>{
                     {activeStep === 2 && <ConfirmacionRegistro mensaje="Visitante Registrado exitosamente" />}
             
             
-            {activeStep !== 0 && activeStep !== 2 ? 
-                <Grid container  spacing={5} mt={1}>
-                  <Grid item xs={'auto'}>
-                    <Button variant="contained" 
-                    onClick={onStepBackward} 
-                    startIcon={<KeyboardArrowLeft />}>
-                      Anterior
-                    </Button>
-                  </Grid> 
-                  <Grid item xs={'auto'}>
-                    <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                      Siguiente
-                    </Button>
-                  </Grid>
-                </Grid>
-              : 
-
-                <Grid container spacing={5} mt={1}>
-                  <Grid item xs='auto'>
-                      <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                        Siguiente
-                      </Button>
-                  </Grid>
-                </Grid>
-              }
+                    {activeStep === 0 ?
+                      <Grid container spacing={5} mt={1}>
+                        <Grid item xs='auto'>
+                            <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                              Siguiente
+                            </Button>
+                        </Grid>
+                      </Grid> : null
+                    }
+              
               </Box>
             </FormControl>
         </Box>

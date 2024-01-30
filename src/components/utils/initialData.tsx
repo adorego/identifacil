@@ -1,4 +1,4 @@
-import {IdentificationResponse} from "@/app/(sistema)/identificacion/page";
+import { IdentificationResponse } from "@/model/respuesta-identificacion";
 
 export const initialDataForm = {
     id: 0,

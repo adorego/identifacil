@@ -196,13 +196,12 @@ export default function TopNav() {
                         borderBottom: '1px solid #E2E8F0'
                     }} >
                 <Toolbar>
-
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon/>
                         </SearchIconWrapper>
                         <StyledInputBase
-                            placeholder="Search…"
+                            placeholder="Buscar…"
                             inputProps={{'aria-label': 'search'}}
                         />
                     </Search>

@@ -37,10 +37,8 @@ import {
 import {usePathname, useRouter} from "next/navigation";
 
 import IconButton from "@mui/material/IconButton";
-import Link from 'next/link'
 import MenuIcon from "@mui/icons-material/Menu";
 import SidebarItem from "./sidebar/sidebarItem";
-import SidebarItems from "./sidebar/sidebarItem";
 import styles from "./sidebar.module.css";
 import {useGlobalContext} from "@/app/Context/store";
 import {useState} from "react";
@@ -193,8 +191,8 @@ export default function SideBar() {
                             isActive={pathname === '/movimientos'}
                         />*/}
 
-                        {/* ------------------------- Menu Penales ------------------------- */}
-                        <ListItemButton onClick={() => handleClick('datosPenales')}>
+                       {/* ------------------------- Menu Penales ------------------------- */}
+                       <ListItemButton onClick={() => handleClick('datosPenales')}>
                             <ListItemIcon>
                                 <AccountBalance/>
                             </ListItemIcon>

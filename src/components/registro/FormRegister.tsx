@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
-import React, {ChangeEvent, ReactElement, ReactNode, useRef, useState} from "react";
+import React, {ChangeEvent, ReactElement, ReactNode, useEffect, useRef, useState} from "react";
 
 import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
 import ConfirmacionRegistro from "./ConfirmacionRegistro";
@@ -30,10 +30,11 @@ import { IReconocimiento } from "./FaceDetectionOverlay";
 import NotificacionRegistro from "./NotificacionRegistro";
 import PPLRegistration from "./PPLRegistration";
 import RegistrationData from "./RegistrationData";
+import log from "loglevel";
 import style from "./FormRegister.module.css";
 
 const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
-export const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo'];
+export const EstadosProgreso:Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos','Registro completo','Ocuurio un error'];
 
 export interface RegistroResponse{
   success:boolean;
@@ -51,23 +52,36 @@ export default function FormRegister(){
   const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
   const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
   const [mensaje, setMensaje] = useState("");
+  const [registroRealizado, setRegistroRealizado] = useState(false);
   
-
-    const setIdentificacion = (identificacion: IdentificacionForm) => {
+  // console.log("Active step:", activeStep);
+  useEffect(
+    () =>{
+      if(registroRealizado && activeStep === 1){
+        setHabilitarBotonSiguiente(true);
+      }else{
+        console.log('Desabilitar boton siguiente');
+        setHabilitarBotonSiguiente(false);
+      }
+    },[activeStep, registroRealizado]
+  )
+  
+  console.log("Habilitar Boton siguiente:", habilitarBotonSiguiente);  
+  const setIdentificacion = (identificacion: IdentificacionForm) => {
         // console.log("Datos de identificacion:", identificacion);
-        identidad.current = identificacion;
-    }
+    identidad.current = identificacion;
+  }
 
     
-    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
+  const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
         await generar_request_enviar();
       }
-    }
+  }
 
-    const generar_request_enviar = async () =>{
+  const generar_request_enviar = async () =>{
       if(identidad.current != null && identidad.current.cedula_identidad){
         const formData = new FormData();
         formData.append('tipo_identificacion','1');
@@ -85,22 +99,29 @@ export default function FormRegister(){
         formData.append('esPPL','true');
         
         contadorReconocimiento.current = 0;
-        //Sin Kubernetes
-        const url = `${process.env.NEXT_PUBLIC_SERVER_URL}/api/registro/`;
-        console.log('url:', url);
-        setProgresoRegistro(EstadosProgreso[2]);
-        const result = await fetch(url,{
-          method:'POST',
-          body:formData
-        })
-        const data = await result.json();
-        if(!result.ok){
-          console.log('Ocurrio un error', data);
-          setMensaje("Ocurrió un error al realizar el registro, vuelva a intentarlo");
-        }else{
-          setProgresoRegistro(EstadosProgreso[3]);
-          setMensaje("Registro realizado correctamente");
+        try{
+            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
+            console.log('url:', url);
+            setProgresoRegistro(EstadosProgreso[2]);
+            const result = await fetch(url,{
+              method:'POST',
+              body:formData
+            })
+            const data = await result.json();
+            if(!result.ok){
+              setProgresoRegistro(EstadosProgreso[3]);
+              setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo:${data.message}`);
+              log.error("Ocurrio un error durante el registro:",data);
+            }else{
+              setRegistroRealizado(true);
+              setProgresoRegistro(EstadosProgreso[0]);
+              onStepForward();
+              setMensaje("Registro realizado correctamente");
 
+            }
+        }catch(error){
+          setProgresoRegistro(EstadosProgreso[3]);
+          setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo:${error}`);
         }
         
         }
@@ -117,6 +138,7 @@ export default function FormRegister(){
             if (activeStep === 3) {
                 setActiveStep(0);
             } else {
+                
                 setActiveStep(activeStep + 1);
             }
     }
@@ -200,7 +222,7 @@ export default function FormRegister(){
                             </Button>
                           </Grid> 
                           <Grid item xs={'auto'}>
-                            <Button variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                            <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
                               Siguiente
                             </Button>
                           </Grid>
