@@ -159,9 +159,8 @@ export default function SidebarDrawer() {
                             onChange={handleChange}
                         >
                             {/*<MenuItem>Seleccionar establecimiento</MenuItem>*/}
-                            <MenuItem value={1}>Minga Guazu</MenuItem>
                             <MenuItem value={1}>Emboscada</MenuItem>
-                            <MenuItem value={1}>Padre de la Vega</MenuItem>
+                            <MenuItem value={2}>Minga Guazu</MenuItem>
                             {/*<MenuItem value={2}>Emboscada</MenuItem>*/}
                         </Select>
                     : ''
@@ -370,7 +369,7 @@ export default function SidebarDrawer() {
 
                 }
 
-                <ListItemButton onClick={() => handleClick('sistema')} className={openMenus.sistema ? 'active-button' : ''} >
+                {/*<ListItemButton onClick={() => handleClick('sistema')} className={openMenus.sistema ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
@@ -394,7 +393,7 @@ export default function SidebarDrawer() {
                         />
 
                     </List>
-                </Collapse>
+                </Collapse>*/}
 
                 {/* ------------------------- Menu de Sistema movimiento------------------------- */}
 

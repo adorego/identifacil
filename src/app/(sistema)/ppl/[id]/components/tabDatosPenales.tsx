@@ -39,8 +39,8 @@ export default function TabDatosPersonales() {
                                     <CustomTable showId={true}/>
                                 </Box>
                             </TabPanel>
-                            <TabPanel value="2">Item Two</TabPanel>
-                            <TabPanel value="3">Item Three</TabPanel>
+                            {/*<TabPanel value="2">Item Two</TabPanel>
+                            <TabPanel value="3">Item Three</TabPanel>*/}
                         </Box>
 
                     </TabContext>

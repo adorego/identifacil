@@ -1133,5 +1133,39 @@
         "comparecencia": 0
       }
     }
+  ],
+  "nacionalidades": [
+    {
+      "id": 1,
+      "nombre": "Paraguaya",
+      "pais": "Paraguay"
+    },
+    {
+      "id": 2,
+      "nombre": "Brasilera",
+      "pais": "Brasil"
+    },
+    {
+      "id": 3,
+      "nombre": "Argentina",
+      "pais": "Argentina"
+    }
+  ],
+  "estados_civiles": [
+    {
+      "id": 1,
+      "nombre": "Soltero",
+      "codigo": "S"
+    },
+    {
+      "id": 2,
+      "nombre": "Casado",
+      "codigo": "C"
+    },
+    {
+      "id": 3,
+      "nombre": "Viudo",
+      "codigo": "V"
+    }
   ]
 }

@@ -73,22 +73,22 @@ export default function NestedInformacionPreso(){
                             </Grid>
                             <Grid item sm={10}>
                                <CustomTabPanel value={value} index={0}>
-                                    {/* <BloqueDatosPersonales /> */}
+                                     <BloqueDatosPersonales datosDeIdentificacion={{cedula_identidad: '3636681', nombres: 'Fernando', apellidos:'Vera Cuenca', codigo_genero: '2', fecha_nacimiento: '20/07/1989'}} />
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={1}>
-                                    {/* <BloqueSalud /> */}
+                                     <BloqueSalud numeroDeIdentificacion={'3636681'}  />
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={2}>
-                                    {/* <BloqueSeguridad /> */}
+                                     <BloqueSeguridad numeroDeIdentificacion={'3636681'}/>
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={3}>
-                                    {/* <BloqueEducacion /> */}
+                                     <BloqueEducacion  numeroDeIdentificacion={'3636681'}/>
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={4}>
-                                    {/* <BloqueFamiliares /> */}
+                                     <BloqueFamiliares  numeroDeIdentificacion={'3636681'}/>
                                 </CustomTabPanel>
                                 <CustomTabPanel value={value} index={5}>
-                                    {/* <BloqueJudicial /> */}
+                                     <BloqueJudicial  numeroDeIdentificacion={'3636681'}/>
                                 </CustomTabPanel>
                             </Grid>
 

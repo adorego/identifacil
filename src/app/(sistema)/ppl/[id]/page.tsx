@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import {Breadcrumbs, Grid, Link, Stack, Box} from "@mui/material";
+import {Grid, Stack, Box} from "@mui/material";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
+import defaultProfile from '@/common/blank-profile-picture-973460_960_720.webp';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import CustomTable from "@/components/CustomTable";
@@ -12,6 +13,7 @@ import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
 import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
+import Image from "next/image";
 
 const audienciasDummy = proximaAudienciaData();
 const visitaDummy = visitaData();
@@ -44,12 +46,14 @@ export default function Page({ params }: { params: { id: number } }) {
                         <Grid p={3} item sm={12}>
                             <Stack direction='row'>
                                 <Box className='imageContainer' sx={{marginRight: '40px'}}>
-                                    <img
-                                        src='https://source.unsplash.com/collection/1118917/480x480'
+                                    <Image
+                                        src={defaultProfile.src}
                                         alt=''
                                         loading="lazy"
+                                        width={'150'}
+                                        height={'150'}
                                         style={{
-                                            width: '100%',
+
                                             borderRadius: '10px',
                                         }}
                                     />
@@ -119,19 +123,19 @@ export default function Page({ params }: { params: { id: number } }) {
                     {/* Tabs */}
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
-                            <Tab label="Perfil" value="1" />
-                            <Tab label="Informaciones" value="2" />
-                            <Tab label="Datos penales" value="3" />
+                            {/*<Tab label="Perfil" value="1" />*/}
+                            <Tab label="Informaciones" value="1" />
+                            <Tab label="Datos penales" value="2" />
                         </TabList>
                     </Box>
 
                     {/* Contenidos de tabs */}
                     <Box>
-                        <TabPanel value="1" sx={{p:'0'}}>
+                        {/*<TabPanel value="1" sx={{p:'0'}}>
                             <Grid container mt={2} spacing={2}>
                                 <Grid item xs={8}>
 
-                                    {/*<DocumentosJudicialesTable />*/}
+                                    <DocumentosJudicialesTable />
 
                                     <CustomTable options={{
                                         title: 'Ultimos documentos judiciales/penales/etc',
@@ -145,7 +149,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Box>
-                                        {/*<ProximasAudicienciasTable />*/}
+                                        <ProximasAudicienciasTable />
                                         <CustomTable
                                             data={audienciasDummy.data}
                                             headers={audienciasDummy.header}
@@ -175,11 +179,11 @@ export default function Page({ params }: { params: { id: number } }) {
                                     </Box>
                                 </Grid>
                             </Grid>
-                        </TabPanel>
-                        <TabPanel value="2" sx={{p:'0'}}>
+                        </TabPanel>*/}
+                        <TabPanel value="1" sx={{p:'0'}}>
                             <NestedInformacionPreso/>
                         </TabPanel>
-                        <TabPanel value="3" sx={{p:'0'}}>
+                        <TabPanel value="2" sx={{p:'0'}}>
                             <TabDatosPersonales />
                         </TabPanel>
                     </Box>
