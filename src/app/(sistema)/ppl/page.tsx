@@ -12,9 +12,10 @@ const ENDPOINT : string = 'http://localhost:5000/PPL'
 
 const header = [
     { id: 'id', label: 'ID' },
-    { id: 'nombre', label: 'Nombre y apellido' },
-    { id: 'alias', label: 'apellido' },
-    { id: 'fechaNacimiento', label: 'Fecha nacimiento' },
+    { id: 'nombre', label: 'Nombre' },
+    { id: 'apellido', label: 'Apellido' },
+    { id: 'apodo', label: 'Apodo' },
+    { id: 'fechaDeNacimiento', label: 'Fecha nacimiento', type: 'date' },
     { id: 'estadoPerfil', label: 'Estado Perfil' },
 ]
 
@@ -54,7 +55,7 @@ export default function Page(){
                         <Box p={3}>
                             <FiltrosTables/>
                         </Box>
-                        <CustomTable headers={header} data={data} showId={true}
+                        <CustomTable headers={header} data={data} showId={false}
                                      options={{
                                          deleteOption: false,
                                          rowsPerPageCustom: 10,

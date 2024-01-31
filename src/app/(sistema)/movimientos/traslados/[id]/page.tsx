@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Button,  Card,  CircularProgress,  CardContent,  Grid,  TextField,  FormControl,  InputLabel,  Select,
+import { Button, CircularProgress,  CardContent,  Grid,  TextField,  FormControl,  InputLabel,  Select,
     MenuItem,  Typography, IconButton, Box, Modal, Paper, } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import {FileUploadOutlined} from "@mui/icons-material";
@@ -9,8 +9,17 @@ import CustomTable from "@/components/CustomTable";
 import {useRouter} from 'next/navigation';
 import {useGlobalContext} from "@/app/Context/store";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {TrasladoForm, PPLType, Motivo, Medidas, Personal, Vehiculo} from "@/components/utils/movimientosType"
+import {
+    TrasladoForm,
+    PPLType,
+    Motivo,
+    Medidas,
+    Personal,
+    Vehiculo,
+    pplTraslado
+} from "@/components/utils/movimientosType"
 import {sendRequest} from "@/app/api";
+import {fetchFormData, postEntity} from "@/components/utils/utils";
 
 
 
@@ -26,12 +35,8 @@ const styleModal = {
     p: 4,
 };
 
-const initialPPL: PPLType = {
-    id: 0,
-    nombreApellido: '',
-    alias: '',
-    motivo: '',
-    fechaTraslado: '',
+const initialPPL: { id: string } = {
+    id: '0',
 };
 
 const initialTrasladoForm: TrasladoForm = {
@@ -76,6 +81,8 @@ export default function Page({ params }: { params: { id: number } }) {
     const [medidas, setMedidas] = useState<Medidas[]>([]);
     const [personal, setPersonal] = useState<Personal[]>([]);
     const [vehiculos, setVehiculo] = useState<Vehiculo[]>([]);
+    const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
+
     const [trasladoForm, setTrasladoForm] = useState<TrasladoForm>(initialTrasladoForm);
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
@@ -151,10 +158,26 @@ export default function Page({ params }: { params: { id: number } }) {
             }
         };
 
+        const fetchPplTraslado = async () => {
+            try {
+                const respuesta = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/PPL`);
+                if (respuesta.ok) {
+                    const datos = await respuesta.json();
+                    setStatePPL(datos);
+                    console.log(datos)
+                } else {
+                    throw new Error(`Error: ${respuesta.status}`);
+                }
+            } catch (error) {
+                console.error('Error al cargar los PPLs:', error);
+            }
+        };
+
         cargarMotivos();
         fetchMedidas();
         fetchPersonal();
         fetchVehiculos();
+        fetchPplTraslado();
     }, []);
 
 
@@ -234,7 +257,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
             await delay(5000);
 
-            const response = await fetch('http://localhost:5000/traslados', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/traslados`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -246,7 +269,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
             if (response.ok) {
                 openSnackbar("Traslado creado correctamente.", "success");
-                router.push('/movimientos');
+                router.push('/movimientos/traslados');
             }
             if (!response.ok) {
                 throw new Error('Error en la petición');
@@ -262,9 +285,42 @@ export default function Page({ params }: { params: { id: number } }) {
     };
 
     // Manejador de envio
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = () => {
+
+        postEntity(
+            isEditMode,
+            'traslados',
+            'Traslados',
+            params,
+            trasladoForm,
+            setLoading,
+            openSnackbar,
+            router
+        );
+    }
+
+    useEffect(() => {
+        // @ts-ignore
+        if (isEditMode !== 'crear') {
+
+            setLoading(true);
+            fetchFormData(params.id, 'traslados') // Usa la función importada
+                .then((data) => {
+                    if (data) {
+                        console.log(data);
+                        setTrasladoForm(data);
+                    }
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }else{
+
+        }
+    }, [isEditMode, params.id]);
+    /*const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        /*console.log(trasladoForm)*/
+        /!*console.log(trasladoForm)*!/
         const response = await sendRequest('/traslados', trasladoForm, params.id, isEditMode);
 
         setLoading(false);
@@ -282,7 +338,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
         postTraslado();
         // console.log(JSON.stringify(trasladoForm))
-    };
+    };*/
 
     // ************ Agrgar PPLS A TRASLADOS Logica MODAL *********
     const [open, setOpen] = React.useState(false);
@@ -310,9 +366,10 @@ export default function Page({ params }: { params: { id: number } }) {
     };
 
     const addPPLToState = () => {
+        // @ts-ignore
         setTrasladoForm(prevState => ({
             ...prevState,
-            PPLs: [...prevState.PPLs, modalPPL]
+            PPLs: [...prevState.PPLs, modalPPL.id]
         }));
         handleClose();
         setModalPPL(initialPPL); // Resetear el formulario del modal
@@ -507,7 +564,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                         <Select
                                             value={trasladoForm.vehiculoId}
                                             onChange={handleSelectChange}
-                                            label="Chapa"
+                                            label="Modelo del vehiculo"
                                             name="vehiculoId"
                                         >
                                             {/* Replace these menu items with your options */}
@@ -583,7 +640,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                     </Grid>
                                 </Grid>
                                 <Grid item xs={12} >
-                                    <CustomTable data={trasladoForm.PPLs} headers={headersPPL} />
+                                    <CustomTable data={trasladoForm.PPLs} headers={headersPPL} showId={true}/>
                                 </Grid>
                             </Grid>
                         </form>)
@@ -603,44 +660,22 @@ export default function Page({ params }: { params: { id: number } }) {
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel>PPL</InputLabel>
                                 <Select
-                                    value={modalPPL.nombreApellido}
+                                    value={modalPPL.id}
+                                    label='PPL'
                                     onChange={handleSelectModalChange('id')}
                                 >
                                     {/* Aquí puedes agregar los PPLs precargados */}
-                                    <MenuItem value="1">Juan Jose Martinez</MenuItem>
-                                    <MenuItem value="2">Roberto Caceres</MenuItem>
-                                    <MenuItem value="3">Roberto Caceres</MenuItem>
+                                    {
+                                        statePPL.map(
+                                            (item) => {
+                                                return (
+                                                    <MenuItem key={item.id} value={item.id}>{item.nombre + ' ' + item.apellido}</MenuItem>
+                                                )
+                                            }
+                                        )
+                                    }
                                 </Select>
                             </FormControl>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="Alias"
-                                variant="outlined"
-                                value={modalPPL.alias}
-                                onChange={handleTextModalChange('alias')}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="Motivo"
-                                variant="outlined"
-                                value={modalPPL.motivo}
-                                onChange={handleTextModalChange('motivo')}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                label="Fecha de Traslado"
-                                type="date"
-                                variant="outlined"
-                                value={modalPPL.fechaTraslado}
-                                onChange={handleTextModalChange('fechaTraslado')}
-                                InputLabelProps={{ shrink: true }}
-                            />
                         </Grid>
                         <Grid item xs={12}>
                             <Button variant="contained" color="primary" onClick={addPPLToState}>

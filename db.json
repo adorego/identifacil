@@ -1,339 +1,107 @@
 {
   "PPL": [
     {
-      "id": 1,
-      "nombre": "Fernando José",
-      "apellido": "Mendez Murino",
-      "alias": "Pistolita",
-      "esExtranjero": false,
-      "edad": 37,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 123 456",
-      "direccion": "Mcal Lopez c/ Madam Lynch",
-      "lugarNacimiento": "San José de los Arroyos",
-      "fechaNacimiento": "24/07/1987",
+      "id": "65b9cce5009709c90cbf8dc0",
+      "numeroDeIdentificacion": 6047303,
+      "nombre": "Carlos",
+      "apellido": "Meyers",
+      "apodo": "Mayer",
+      "estadoCivil": "viudo",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
+      "nacionalidad": "paraguaya",
+      "lugarDeNacimiento": "",
+      "sexo": "masculino",
+      "tipoDeDocumento": "ci",
+      "estadoPerfil": "Completo",
+      "direccion": "",
+      "barrioCompania": "",
+      "numeroDeContacto": "",
+      "contactoDeEmergencia1": ""
+    },
+    {
+      "id": "65b9cce5e1241472d130a531",
+      "numeroDeIdentificacion": 6119364,
+      "nombre": "Latisha",
+      "apellido": "Spencer",
+      "apodo": "",
       "estadoCivil": "soltero",
-      "nroDocumento": "2545982",
-      "sexo": "Masculino",
-      "barrio": "Ciudad Nueva",
-      "Compañia": "-",
-      "nroContacto": "+595 981 123 456",
-      "domicilio": "Mcal Lopez c/ Peru",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Sabados",
-        "Domingos"
-      ],
-      "datosPersonales": {
-        "pueblosIndigenas": {
-          "puebloIndigena": false,
-          "nombreEtenia": ""
-        },
-        "comunidadLGBTI": {
-          "perteneceComunidad": false,
-          "detalle": ""
-        }
-      },
-      "datosSalud": {},
-      "datosSeguridad": {},
-      "datosEducacion": {},
-      "datosFamiliares": {},
-      "datosJudiciales": {},
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "25/12/2023",
-          "salidaHora": "10:08:05",
-          "entradaFecha": "27/12/2023",
-          "entradaHora": "20:13:12",
-          "estado": "Activo"
-        },
-        {
-          "id": 2,
-          "salidaFecha": "25/12/2023",
-          "salidaHora": "10:08:05",
-          "entradaFecha": "27/12/2023",
-          "entradaHora": "20:13:12",
-          "estado": "Activo"
-        },
-        {
-          "id": 3,
-          "salidaFecha": "25/12/2023",
-          "salidaHora": "10:08:05",
-          "entradaFecha": "27/12/2023",
-          "entradaHora": "20:13:12",
-          "estado": "Revocado"
-        }
-      ]
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
+      "nacionalidad": "paraguaya",
+      "lugarDeNacimiento": "",
+      "sexo": "masculino",
+      "tipoDeDocumento": "ci",
+      "direccion": "",
+      "barrioCompania": "",
+      "numeroDeContacto": "",
+      "contactoDeEmergencia1": ""
     },
     {
-      "id": 2,
-      "nombre": "María Eugenia",
-      "apellido": "González López",
-      "alias": "La Gata",
-      "esExtranjero": false,
-      "edad": 28,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 234 567",
-      "direccion": "Avda. Eusebio Ayala c/ España",
-      "lugarNacimiento": "Asunción",
-      "fechaNacimiento": "15/09/1994",
-      "estadoCivil": "casada",
-      "nroDocumento": "3254781",
-      "sexo": "Femenino",
-      "barrio": "Villa Morra",
-      "Compañia": "ABC S.A.",
-      "nroContacto": "+595 981 234 567",
-      "domicilio": "Avda. Eusebio Ayala c/ España",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Viernes",
-        "Sábados"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "20/01/2023",
-          "salidaHora": "08:30:00",
-          "entradaFecha": "22/01/2023",
-          "entradaHora": "18:45:30",
-          "estado": "Activo"
-        }
-      ]
-    },
-    {
-      "id": 3,
-      "nombre": "Luis Alberto",
-      "apellido": "Vera Mendoza",
-      "alias": "El Chino",
-      "esExtranjero": false,
-      "edad": 42,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 345 678",
-      "direccion": "Avda. San Martín c/ Gral. Aquino",
-      "lugarNacimiento": "Villa Hayes",
-      "fechaNacimiento": "10/03/1980",
-      "estadoCivil": "divorciado",
-      "nroDocumento": "4785963",
-      "sexo": "Masculino",
-      "barrio": "Obrero",
-      "Compañia": "XYZ S.A.",
-      "nroContacto": "+595 981 345 678",
-      "domicilio": "Avda. San Martín c/ Gral. Aquino",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Lunes",
-        "Miércoles"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "15/06/2023",
-          "salidaHora": "12:45:20",
-          "entradaFecha": "17/06/2023",
-          "entradaHora": "22:10:05",
-          "estado": "Activo"
-        },
-        {
-          "id": 2,
-          "salidaFecha": "15/06/2023",
-          "salidaHora": "12:45:20",
-          "entradaFecha": "17/06/2023",
-          "entradaHora": "22:10:05",
-          "estado": "Activo"
-        }
-      ]
-    },
-    {
-      "id": 4,
-      "nombre": "Ana Beatriz",
-      "apellido": "Martínez Benítez",
-      "alias": "La Peluquera",
-      "esExtranjero": false,
-      "edad": 35,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 456 789",
-      "direccion": "Cerro Corá c/ Mcal. Estigarribia",
-      "lugarNacimiento": "Coronel Oviedo",
-      "fechaNacimiento": "02/11/1987",
-      "estadoCivil": "viuda",
-      "nroDocumento": "6325418",
-      "sexo": "Femenino",
-      "barrio": "Ñemby",
-      "Compañia": "PQR S.A.",
-      "nroContacto": "+595 981 456 789",
-      "domicilio": "Cerro Corá c/ Mcal. Estigarribia",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Martes",
-        "Jueves"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "08/09/2023",
-          "salidaHora": "14:20:45",
-          "entradaFecha": "10/09/2023",
-          "entradaHora": "23:05:30",
-          "estado": "Activo"
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "nombre": "Carlos Daniel",
-      "apellido": "Rodríguez Giménez",
-      "alias": "El Loco",
-      "esExtranjero": false,
-      "edad": 45,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 567 890",
-      "direccion": "Gral. Santos c/ Colón",
-      "lugarNacimiento": "Encarnación",
-      "fechaNacimiento": "12/05/1978",
-      "estadoCivil": "soltero",
-      "nroDocumento": "7458962",
-      "sexo": "Masculino",
-      "barrio": "Luque",
-      "Compañia": "LMN S.A.",
-      "nroContacto": "+595 981 567 890",
-      "domicilio": "Gral. Santos c/ Colón",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Viernes",
-        "Sábados"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "05/02/2023",
-          "salidaHora": "09:15:30",
-          "entradaFecha": "07/02/2023",
-          "entradaHora": "19:30:10",
-          "estado": "Activo"
-        },
-        {
-          "id": 2,
-          "salidaFecha": "05/02/2023",
-          "salidaHora": "09:15:30",
-          "entradaFecha": "07/02/2023",
-          "entradaHora": "19:30:10",
-          "estado": "Activo"
-        }
-      ]
-    },
-    {
-      "id": 6,
-      "nombre": "Laura Mercedes",
-      "apellido": "Fernández Gómez",
-      "alias": "La Flaca",
-      "esExtranjero": false,
-      "edad": 30,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 678 901",
-      "direccion": "4to. Proyectadas c/ Carlos Antonio López",
-      "lugarNacimiento": "Pedro Juan Caballero",
-      "fechaNacimiento": "18/04/1992",
-      "estadoCivil": "soltera",
-      "nroDocumento": "8967541",
-      "sexo": "Femenino",
-      "barrio": "San Lorenzo",
-      "Compañia": "OPQ S.A.",
-      "nroContacto": "+595 981 678 901",
-      "domicilio": "4to. Proyectadas c/ Carlos Antonio López",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Lunes",
-        "Miércoles"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "12/11/2023",
-          "salidaHora": "11:40:15",
-          "entradaFecha": "14/11/2023",
-          "entradaHora": "21:55:00",
-          "estado": "Activo"
-        }
-      ]
-    },
-    {
-      "id": 7,
-      "nombre": "Juan Ramón",
-      "apellido": "Díaz García",
-      "alias": "El Rulo",
-      "esExtranjero": false,
-      "edad": 38,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 789 012",
-      "direccion": "Capitán Figari c/ Gral. Díaz",
-      "lugarNacimiento": "Itauguá",
-      "fechaNacimiento": "30/08/1985",
+      "id": "65b9cce56e1e11c3574a3f52",
+      "numeroDeIdentificacion": 4959053,
+      "nombre": "Hector",
+      "apellido": "Cortez",
+      "apodo": "Hache",
       "estadoCivil": "casado",
-      "nroDocumento": "5478963",
-      "sexo": "Masculino",
-      "barrio": "Fernando de la Mora",
-      "Compañia": "RST S.A.",
-      "nroContacto": "+595 981 789 012",
-      "domicilio": "Capitán Figari c/ Gral. Díaz",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Martes",
-        "Jueves"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "02/07/2023",
-          "salidaHora": "13:25:40",
-          "entradaFecha": "04/07/2023",
-          "entradaHora": "23:40:25",
-          "estado": "Activo"
-        }
-      ]
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
+      "nacionalidad": "paraguaya",
+      "lugarDeNacimiento": "",
+      "sexo": "masculino",
+      "tipoDeDocumento": "ci",
+      "direccion": "",
+      "barrioCompania": "",
+      "numeroDeContacto": "",
+      "contactoDeEmergencia1": ""
     },
     {
-      "id": 8,
-      "nombre": "Silvia Noemí",
-      "apellido": "López Martínez",
-      "alias": "La Tía",
-      "esExtranjero": false,
-      "edad": 50,
-      "nacionalidad": "Paraguaya",
-      "tipoDocumento": "CIP",
-      "celular": "+595981 890 123",
-      "direccion": "Avda. España c/ Gral. Bruguez",
-      "lugarNacimiento": "Ypacaraí",
-      "fechaNacimiento": "05/12/1972",
-      "estadoCivil": "soltera",
-      "nroDocumento": "3652147",
-      "sexo": "Femenino",
-      "barrio": "Capiatá",
-      "Compañia": "UVW S.A.",
-      "nroContacto": "+595 981 890 123",
-      "domicilio": "Avda. España c/ Gral. Bruguez",
-      "estadoPerfil": "completo",
-      "fechasVisitas": [
-        "Viernes",
-        "Sábados"
-      ],
-      "salidasTransitorias": [
-        {
-          "id": 1,
-          "salidaFecha": "18/03/2023",
-          "salidaHora": "10:55:00",
-          "entradaFecha": "20/03/2023",
-          "entradaHora": "21:10:45",
-          "estado": "Activo"
-        }
-      ]
+      "id": "65b9cce530a929640a0541cc",
+      "numeroDeIdentificacion": 6473465,
+      "nombre": "Abraham",
+      "apellido": "Sarubi",
+      "apodo": "Abo",
+      "estadoCivil": "casado",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
+      "nacionalidad": "paraguaya",
+      "lugarDeNacimiento": "",
+      "sexo": "masculino",
+      "tipoDeDocumento": "ci",
+      "direccion": "",
+      "barrioCompania": "",
+      "numeroDeContacto": "",
+      "contactoDeEmergencia1": ""
+    },
+    {
+      "id": "65b9cce5883fe527a504b5a6",
+      "numeroDeIdentificacion": 6372344,
+      "nombre": "David",
+      "apellido": "Baez",
+      "apodo": "Davicho",
+      "estadoCivil": "soltero",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
+      "nacionalidad": "paraguaya",
+      "lugarDeNacimiento": "",
+      "sexo": "masculino",
+      "tipoDeDocumento": "ci",
+      "direccion": "",
+      "barrioCompania": "",
+      "numeroDeContacto": "",
+      "contactoDeEmergencia1": ""
+    },
+    {
+      "id": "65b9cce57a9c4ee9cdd5347a",
+      "numeroDeIdentificacion": 2044711,
+      "nombre": "Norberto",
+      "apellido": "Vazquez",
+      "apodo": "Norber",
+      "estadoCivil": "viudo",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
+      "nacionalidad": "paraguaya",
+      "lugarDeNacimiento": "",
+      "sexo": "masculino",
+      "tipoDeDocumento": "ci",
+      "direccion": "",
+      "barrioCompania": "",
+      "numeroDeContacto": "",
+      "contactoDeEmergencia1": ""
     }
   ],
   "profile": {
@@ -341,7 +109,7 @@
   },
   "traslados": [
     {
-      "id": 2,
+      "id": "2",
       "documento": "1232465",
       "fechaDocumento": "2023-08-21",
       "fechaTraslado": "2023-12-02",
@@ -352,30 +120,34 @@
       "custodia": 3,
       "chofer": 2,
       "vehiculoId": 6,
-      "origenTraslado": "Tacumbu 2Minga Guasu",
-      "destinoTraslado": "Tacumbu 2",
+      "origenTraslado": "Tacumbu",
+      "destinoTraslado": "Emboscada",
       "documentoAdjunto": "",
-      "lastUpdate": ""
+      "lastUpdate": "",
+      "PPLs": [
+        "65b9cce530a929640a0541cc",
+        "65b9cce56e1e11c3574a3f52"
+      ]
     },
     {
-      "documento": "as",
+      "documento": "1232465",
       "fechaDocumento": "34412-02-22",
       "fechaTraslado": "32323-12-31",
-      "autorizo": "asdasdasd",
+      "autorizo": "Director",
       "motivoTraslado": "option1",
       "medidasSeguridad": "option2",
       "descripcionMotivo": "asdasdasdasd",
-      "custodia": "asdasdasd",
-      "chofer": "asdadasd",
-      "vehiculoId": "adasdas",
-      "origenTraslado": "asdasdasMinga Guasu",
-      "destinoTraslado": "asdasdas",
+      "custodia": "Carlos",
+      "chofer": "Roberto Cardenas",
+      "vehiculoId": "1",
+      "origenTraslado": "Minga Guasu",
+      "destinoTraslado": "Tacumbu",
       "documentoAdjunto": {},
       "PPLs": [],
-      "id": 3
+      "id": "3"
     },
     {
-      "id": 6,
+      "id": "6",
       "documento": "1233156465",
       "fechaDocumento": "2222-02-01",
       "fechaTraslado": "2221-02-22",
@@ -399,14 +171,14 @@
       "motivoTraslado": "option2",
       "medidasSeguridad": "option2",
       "descripcionMotivo": "asdasdsadasdasd",
-      "custodia": "123123",
-      "chofer": "12313",
-      "vehiculoId": "12313",
-      "origenTraslado": "123123Minga Guasu",
-      "destinoTraslado": "123123",
+      "custodia": "Roberto Cardenas",
+      "chofer": "Roberto Cardenas",
+      "vehiculoId": "1",
+      "origenTraslado": "Minga Guasu",
+      "destinoTraslado": "Emboscada",
       "documentoAdjunto": {},
       "PPLs": [],
-      "id": 7
+      "id": "7"
     },
     {
       "documento": "123123123",
@@ -423,7 +195,7 @@
       "destinoTraslado": "Tacumbu",
       "documentoAdjunto": "",
       "PPLs": [],
-      "id": 8
+      "id": "8"
     },
     {
       "documento": "1233",
@@ -436,8 +208,8 @@
       "custodia": 4,
       "chofer": 2,
       "vehiculoId": "chapaso",
-      "origenTraslado": "traslasdaosdaosdMinga Guasu",
-      "destinoTraslado": "traslasdaosdaosd",
+      "origenTraslado": "Minga Guasu",
+      "destinoTraslado": "Tacumbu",
       "documentoAdjunto": {},
       "PPLs": [
         {
@@ -453,7 +225,7 @@
           "fechaTraslado": "2023-11-02"
         }
       ],
-      "id": 9
+      "id": "9"
     },
     {
       "documento": "123123",
@@ -462,52 +234,18 @@
       "autorizo": "Casco",
       "motivoTraslado": "option2",
       "medidasSeguridad": "option1",
-      "descripcionMotivo": "asdadasd",
+      "descripcionMotivo": "Transito administrativo",
       "custodia": "asdasdasdsa",
-      "chofer": "asdadasdasdas",
+      "chofer": "Roberto Cardenas",
       "vehiculoId": "adasdasd",
       "origenTraslado": "Minga Guasu",
-      "destinoTraslado": "asdasdasd",
+      "destinoTraslado": "Tacumbu",
       "documentoAdjunto": {},
       "PPLs": [],
-      "id": 10
+      "id": "10"
     },
     {
-      "documento": "",
-      "fechaDocumento": "",
-      "fechaTraslado": "",
-      "autorizo": "",
-      "motivoTraslado": 2,
-      "medidasSeguridad": "",
-      "descripcionMotivo": "",
-      "custodia": "",
-      "chofer": "",
-      "vehiculoId": "",
-      "origenTraslado": "Minga Guasu",
-      "destinoTraslado": "",
-      "documentoAdjunto": "",
-      "PPLs": [],
-      "id": 11
-    },
-    {
-      "documento": "",
-      "fechaDocumento": "",
-      "fechaTraslado": "",
-      "autorizo": "",
-      "motivoTraslado": 1,
-      "medidasSeguridad": 14,
-      "descripcionMotivo": "",
-      "custodia": "",
-      "chofer": "",
-      "vehiculoId": "",
-      "origenTraslado": "Minga Guasu",
-      "destinoTraslado": "",
-      "documentoAdjunto": "",
-      "PPLs": [],
-      "id": 12
-    },
-    {
-      "id": 13,
+      "id": "13",
       "documento": "123456",
       "fechaDocumento": "99999-09-09",
       "fechaTraslado": "0099-09-09",
@@ -519,7 +257,7 @@
       "chofer": 2,
       "vehiculoId": "asdasd",
       "origenTraslado": "Minga Guasu",
-      "destinoTraslado": "asdasdasd",
+      "destinoTraslado": "Emboscada",
       "documentoAdjunto": {},
       "PPLs": [
         {
@@ -543,58 +281,59 @@
   "medidaSeguridad": [
     {
       "medidaSeguridad": "Prision preventiva",
-      "id": 1
+      "id": "1"
     },
     {
       "medidaSeguridad": "Escoltas adicionales",
-      "id": 3
+      "id": "3"
     },
     {
       "medidaSeguridad": "Escolta policial",
-      "id": 4
+      "id": "4"
     },
     {
-      "id": 5,
+      "id": "5",
       "medidaSeguridad": "Carros blindados",
       "lastUpdate": ""
     }
   ],
   "motivoTraslados": [
     {
-      "descripcion": "Prision preventiva",
-      "id": 1
+      "id": "1",
+      "descripcion": "Prision preventiva.",
+      "lastUpdate": ""
     },
     {
       "descripcion": "Mudanza",
-      "id": 2
+      "id": "2"
     },
     {
-      "id": 3,
+      "id": "3",
       "descripcion": "Mudanza a un establecimiento mas seguro !",
       "lastUpdate": ""
     }
   ],
   "personal": [
     {
-      "id": 1,
+      "id": "1",
       "nombre": "Carlos Martinez",
       "tipo": "chofer",
       "lastUpdate": "01/01/2023 22:00"
     },
     {
-      "id": 2,
+      "id": "2",
       "nombre": "Roberto Lopez",
       "tipo": "chofer",
       "lastUpdate": "01/01/2023 22:00"
     },
     {
-      "id": 3,
+      "id": "3",
       "nombre": "Felipez Ayala",
       "tipo": "custodio",
       "lastUpdate": "01/01/2023 22:00"
     },
     {
-      "id": 4,
+      "id": "4",
       "nombre": "Gustavo Caceres",
       "tipo": "custodio",
       "lastUpdate": "01/01/2023 22:00"
@@ -602,26 +341,26 @@
   ],
   "vehiculo": [
     {
-      "id": 1,
+      "id": "1",
       "modelo": "Mercedez Sprinter",
       "chapa": "ABC 12334444",
       "lastUpdate": ""
     },
     {
-      "id": 6,
+      "id": "6",
       "chapa": "ABC 1234",
       "modelo": "Mercerdez Sprint 2008",
       "lastUpdate": "01/01/2023 22:00",
       "nombre": "B"
     },
     {
-      "id": 7,
+      "id": "7",
       "chapa": "ABC 12334444",
       "modelo": "Mercedez Sprinter",
       "lastUpdate": ""
     },
     {
-      "id": 8,
+      "id": "8",
       "chapa": "CCC 55555",
       "modelo": "Hyundai",
       "lastUpdate": ""
@@ -629,7 +368,7 @@
   ],
   "salidasTransitorias": [
     {
-      "id": 1,
+      "id": "1",
       "nombre": "Juan Jose Perez",
       "salidaFecha": "25/12/2023",
       "salidaHora": "10:08:05",
@@ -638,7 +377,7 @@
       "estado": "Activo"
     },
     {
-      "id": 2,
+      "id": "2",
       "nombre": "Roberto Martinez",
       "salidaFecha": "25/12/2023",
       "salidaHora": "10:08:05",
@@ -647,7 +386,7 @@
       "estado": "Activo"
     },
     {
-      "id": 3,
+      "id": "3",
       "nombre": "Roberto Martinez",
       "salidaFecha": "25/12/2023",
       "salidaHora": "10:08:05",
@@ -658,7 +397,7 @@
   ],
   "causas": [
     {
-      "id": 1,
+      "id": "1",
       "nroCausa": "2023-001",
       "ano": "2023",
       "fechaAprension": "12/01/2023",
@@ -680,7 +419,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 1",
       "nombreDelFamiliar": "Juan Pérez",
       "telefonoDelFamiliar": "+595 987 654 321",
-      "fechaDeNacimiento": "01/01/1980",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 1",
       "linkDeNoticia": "http://noticias1.com",
       "defensor": "Privado",
@@ -690,7 +429,7 @@
       "lugarHecho": ""
     },
     {
-      "id": 2,
+      "id": "2",
       "nroCausa": "2023-002",
       "ano": "2023",
       "fechaAprension": "12/02/2023",
@@ -712,7 +451,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 2",
       "nombreDelFamiliar": "María López",
       "telefonoDelFamiliar": "+595 987 123 456",
-      "fechaDeNacimiento": "02/02/1985",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 2",
       "linkDeNoticia": "http://noticias2.com",
       "defensor": "Público",
@@ -720,7 +459,7 @@
       "telefonoDelDefensor": "+595 654 321 987"
     },
     {
-      "id": 3,
+      "id": "3",
       "nroCausa": "2023-003",
       "ano": "2023",
       "fechaAprension": "12/03/2023",
@@ -742,7 +481,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 3",
       "nombreDelFamiliar": "Carlos Gómez",
       "telefonoDelFamiliar": "+595 321 987 654",
-      "fechaDeNacimiento": "03/03/1990",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 3",
       "linkDeNoticia": "http://noticias3.com",
       "defensor": "Privado",
@@ -750,7 +489,7 @@
       "telefonoDelDefensor": "+595 123 987 654"
     },
     {
-      "id": 4,
+      "id": "4",
       "nroCausa": "2023-004",
       "ano": "2023",
       "fechaAprension": "12/04/2023",
@@ -772,7 +511,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 4",
       "nombreDelFamiliar": "Luisa Fernández",
       "telefonoDelFamiliar": "+595 654 789 321",
-      "fechaDeNacimiento": "04/04/1995",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 4",
       "linkDeNoticia": "http://noticias4.com",
       "defensor": "Público",
@@ -780,7 +519,7 @@
       "telefonoDelDefensor": "+595 987 654 123"
     },
     {
-      "id": 5,
+      "id": "5",
       "nroCausa": "2023-005",
       "ano": "2023",
       "fechaAprension": "12/05/2023",
@@ -802,7 +541,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 5",
       "nombreDelFamiliar": "Ana Martínez",
       "telefonoDelFamiliar": "+595 789 321 654",
-      "fechaDeNacimiento": "05/05/2000",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 5",
       "linkDeNoticia": "http://noticias5.com",
       "defensor": "Privado",
@@ -810,7 +549,7 @@
       "telefonoDelDefensor": "+595 321 654 789"
     },
     {
-      "id": 5,
+      "id": "5",
       "nroCausa": "2023-005",
       "ano": "2023",
       "fechaAprension": "12/05/2023",
@@ -832,7 +571,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 5",
       "nombreDelFamiliar": "Ana Martínez",
       "telefonoDelFamiliar": "+595 789 321 654",
-      "fechaDeNacimiento": "05/05/2000",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 5",
       "linkDeNoticia": "http://noticias5.com",
       "defensor": "Privado",
@@ -840,7 +579,7 @@
       "telefonoDelDefensor": "+595 321 654 789"
     },
     {
-      "id": 6,
+      "id": "6",
       "nroCausa": "2023-006",
       "ano": "2023",
       "fechaAprension": "12/06/2023",
@@ -862,7 +601,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 6",
       "nombreDelFamiliar": "Roberto Carlos",
       "telefonoDelFamiliar": "+595 654 321 098",
-      "fechaDeNacimiento": "06/06/1986",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 6",
       "linkDeNoticia": "http://noticias6.com",
       "defensor": "Público",
@@ -870,7 +609,7 @@
       "telefonoDelDefensor": "+595 654 321 098"
     },
     {
-      "id": 7,
+      "id": "7",
       "nroCausa": "2023-007",
       "ano": "2023",
       "fechaAprension": "12/07/2023",
@@ -892,7 +631,7 @@
       "juzgadoDeEjecucionOSentencia": "Juzgado 7",
       "nombreDelFamiliar": "Marta Sanchez",
       "telefonoDelFamiliar": "+595 987 654 321",
-      "fechaDeNacimiento": "07/07/1992",
+      "fechaDeNacimiento": "1998-01-15T12:00:00Z",
       "lugarDeNacimiento": "Ciudad 7",
       "linkDeNoticia": "http://noticias7.com",
       "defensor": "Privado",
@@ -900,7 +639,7 @@
       "telefonoDelDefensor": "+595 987 654 321"
     },
     {
-      "id": 8,
+      "id": "8",
       "nroCausa": "1",
       "ano": "2",
       "fechaAprension": "3",
@@ -930,7 +669,7 @@
       "telefonoDelDefensor": "3"
     },
     {
-      "id": 9,
+      "id": "9",
       "nroCausa": "6",
       "ano": "6",
       "fechaAprension": "6",
@@ -960,7 +699,7 @@
       "telefonoDelDefensor": "u"
     },
     {
-      "id": 10,
+      "id": "10",
       "nroCausa": "aaa",
       "ano": "j",
       "fechaAprension": "j",
@@ -992,7 +731,7 @@
   ],
   "audiencias": [
     {
-      "id": 1,
+      "id": "1",
       "causa": "Robo Agravado",
       "nroOficio": "OF-2023-0001",
       "formaDeAudiencia": "Virtual",
@@ -1009,7 +748,7 @@
       "pplVinculados": []
     },
     {
-      "id": 2,
+      "id": "2",
       "causa": "Fraude Fiscal",
       "nroOficio": "OF-2023-0002",
       "formaDeAudiencia": "Presencial",
@@ -1026,7 +765,7 @@
       "pplVinculados": []
     },
     {
-      "id": 3,
+      "id": "3",
       "causa": "Homicidio Simple",
       "nroOficio": "OF-2023-0003",
       "formaDeAudiencia": "Semi-presencial",
@@ -1043,7 +782,7 @@
       "pplVinculados": []
     },
     {
-      "id": 4,
+      "id": "4",
       "causa": "Lavado de Dinero",
       "nroOficio": "OF-2023-0004",
       "formaDeAudiencia": "Virtual",
@@ -1060,7 +799,7 @@
       "pplVinculados": []
     },
     {
-      "id": 5,
+      "id": "5",
       "causa": "Delito Informático",
       "nroOficio": "OF-2023-0005",
       "formaDeAudiencia": "Presencial",
@@ -1079,7 +818,7 @@
   ],
   "libertades": [
     {
-      "id": 1,
+      "id": "1",
       "nroOficio": "1234/2023",
       "caratula": "Nombre caratula 1",
       "fechaLibertad": "15/08/2023",
@@ -1088,28 +827,28 @@
       "adjunto": ""
     },
     {
-      "id": 2,
+      "id": "2",
       "nroOficio": "1234/2023",
       "caratula": "Nombre caratula 1",
       "fechaLibertad": "15/08/2023",
       "tipoLibertad": "Libertad condicional"
     },
     {
-      "id": 3,
+      "id": "3",
       "nroOficio": "1234/2023",
       "caratula": "Nombre caratula 1",
       "fechaLibertad": "15/08/2023",
       "tipoLibertad": "Libertad condicional"
     },
     {
-      "id": 4,
+      "id": "4",
       "nroOficio": "1234/2023",
       "caratula": "Nombre caratula 1",
       "fechaLibertad": "15/08/2023",
       "tipoLibertad": "Libertad condicional"
     },
     {
-      "id": 5,
+      "id": "5",
       "nroOficio": "1234/2023",
       "caratula": "Nombre caratula 1",
       "fechaLibertad": "15/08/2023",
@@ -1118,7 +857,7 @@
   ],
   "parteDiario": [
     {
-      "id": 1,
+      "id": "1",
       "establecimiento": "Minga Guazu",
       "fecha": "24/01/2024",
       "datos": {
@@ -1136,34 +875,34 @@
   ],
   "nacionalidades": [
     {
-      "id": 1,
+      "id": "1",
       "nombre": "Paraguaya",
       "pais": "Paraguay"
     },
     {
-      "id": 2,
+      "id": "2",
       "nombre": "Brasilera",
       "pais": "Brasil"
     },
     {
-      "id": 3,
+      "id": "3",
       "nombre": "Argentina",
       "pais": "Argentina"
     }
   ],
   "estados_civiles": [
     {
-      "id": 1,
+      "id": "1",
       "nombre": "Soltero",
       "codigo": "S"
     },
     {
-      "id": 2,
+      "id": "2",
       "nombre": "Casado",
       "codigo": "C"
     },
     {
-      "id": 3,
+      "id": "3",
       "nombre": "Viudo",
       "codigo": "V"
     }

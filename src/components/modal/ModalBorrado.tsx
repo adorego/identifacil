@@ -51,7 +51,7 @@ export default function ModalBorrado({open, onClose, data, metodo}:ModalProps) {
                 </DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                       ¿Desea borrar esta medida de seguridad?
+                       ¿Desea borrar este registro?
                         <br />
                         <b>{state.name}</b>
                     </DialogContentText>

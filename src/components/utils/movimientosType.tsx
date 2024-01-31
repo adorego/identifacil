@@ -1,9 +1,10 @@
 export type PPLType = {
-    nombreApellido: string;
+    nombre: string;
+    apellido: string;
     alias: string;
     motivo: string;
     fechaTraslado: string;
-    id: number;
+    id: string;
 };
 
 
@@ -47,4 +48,10 @@ export interface Vehiculo {
     id: string; // O número, según tu API
     modelo: string;
     chapa: string;
+}
+
+export interface pplTraslado {
+    id: string; // O número, según tu API
+    nombre: string;
+    apellido: string;
 }

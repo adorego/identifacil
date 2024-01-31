@@ -45,7 +45,7 @@ function a11yProps(index: number) {
 
 
 
-export default function NestedInformacionPreso(){
+export default function NestedInformacionPreso({datoID=""}:{datoID:string}){
 
     const [value, setValue] = React.useState(0);
 

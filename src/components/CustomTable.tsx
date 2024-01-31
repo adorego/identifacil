@@ -28,6 +28,7 @@ import {dummyData} from "@/app/dummyData/data";
 interface Header {
     id: string;
     label: string;
+    type?: string;
 }
 
 interface Data {
@@ -43,8 +44,10 @@ interface TableOptions {
     newRecord?: string;
     deleteOption?: boolean;
 }
+
 interface DeleteRecordArgs {
     id: number;
+
     [key: string]: any; // Permite cualquier otra propiedad adicional
 }
 
@@ -53,7 +56,7 @@ interface CustomTableProps {
     headers?: Header[];
     showId?: boolean;
     options?: TableOptions;
-    deleteRecord?: (args: DeleteRecordArgs) => void;
+    deleteRecord?: any;
 }
 
 const {headersCustom, rowsCustom} = dummyData();
@@ -62,7 +65,14 @@ const rowStyle = {
     width: '100px',
 
 }
-
+const formatDate = (dateString:string | null | number) => {
+    if(dateString){
+        const date = new Date(dateString);
+        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        // @ts-ignore
+        return date.toLocaleDateString(undefined, options);
+    }
+};
 function CustomTable({
                          showId = false,
                          data = rowsCustom,
@@ -123,7 +133,7 @@ function CustomTable({
         setPage(0);
     };
 
-    const handleCellClick = (row:Data): void => {
+    const handleCellClick = (row: Data): void => {
         // @ts-ignore
         deleteRecord(row);
     };
@@ -134,7 +144,6 @@ function CustomTable({
         padding: (options.title || options.newRecord) ? '20px' : '0px',
         // Aquí puedes agregar más estilos si es necesario
     };
-
 
 
     return (
@@ -203,7 +212,9 @@ function CustomTable({
                                         if (header.id === 'id' && !showId) return null;
 
                                         return <TableCell sx={(header.id == 'id' ? rowStyle : {})}
-                                                          key={header.id}>{row[header.id]}</TableCell>;
+                                                          key={header.id}>
+                                            {header.type === 'date' ? formatDate(row[header.id]) : row[header.id]}
+                                        </TableCell>;
                                     })}
                                     {(options.targetURL || options.deleteOption) ? (
                                         <TableCell sx={rowStyle}>

@@ -11,6 +11,9 @@ import CustomTable from "../../../../components/CustomTable";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
+import ModalBorrado from "@/components/modal/ModalBorrado";
+import {deleteRecord} from "@/app/api";
+import {useGlobalContext} from "@/app/Context/store";
 
 
 
@@ -20,15 +23,47 @@ const header2 = [
     {id: 'documento', label: 'Orden judicial'},
     {id: 'fechaDocumento', label: 'Fecha documento'},
     {id: 'fechaTraslado', label: 'Fecha traslado'},
-    {id: 'destinoTraslado', label: 'Origen'},
+    {id: 'origenTraslado', label: 'Origen'},
     {id: 'destinoTraslado', label: 'Destino'},
 ]
 
 export default function Ppl() {
+    const { openSnackbar } = useGlobalContext();
     const [data, setData] = useState(null);
     const [filterData, setFilterData] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
 
+    const handleOpenModal = (row: { id:number, descripcion: string }) => {
 
+        setModalOpen(true);
+        setSelectedData({
+            id: row.id,
+            name: row.descripcion,
+        });
+    };
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
+    const handleDelete = async (id:number) => {
+        const result = await deleteRecord(`/traslados/${id}`);
+
+        if (result.success) {
+            openSnackbar(result.message, "success");
+        } else {
+            openSnackbar(result.message, "error");
+        }
+    };
+    const handleDeleteRecord = (id:number)=>{
+        // @ts-ignore
+        //Actualiza el store local con el ID que se obtuvo dentro de CustomTable
+        const datosActualizados = data.filter((item: { id: number; }) => item.id !== id);
+        setData(datosActualizados)
+
+        // Borra el registro de la BD con el ID que toma de la lista
+        handleDelete(id);
+
+    }
     async function fetchData() {
         try {
             const response = await fetch('http://localhost:5000/traslados');
@@ -90,6 +125,7 @@ export default function Ppl() {
                         data={filterData ? filterData : data}
                         headers={header2}
                         showId={true}
+                        deleteRecord={handleOpenModal}
                         options={{
 
                             targetURL: '/movimientos/traslados',
@@ -102,7 +138,7 @@ export default function Ppl() {
                 </Box>
 
             </Paper>
-
+            <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
         </Box>
     )
 }

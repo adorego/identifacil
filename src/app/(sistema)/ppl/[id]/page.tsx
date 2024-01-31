@@ -8,20 +8,24 @@ import TabContext from '@mui/lab/TabContext';
 import defaultProfile from '@/common/blank-profile-picture-973460_960_720.webp';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import CustomTable from "@/components/CustomTable";
-import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
 import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import Image from "next/image";
-
-const audienciasDummy = proximaAudienciaData();
-const visitaDummy = visitaData();
+import {useEffect} from "react";
 
 
 
-export default function Page({ params }: { params: { id: number } }) {
+
+export default function Page({ params }: { params: { id: string } }) {
     const [value, setValue] = React.useState('1');
+    const [state, setState] = React.useState<{id: string}>({id: ''});
+
+    useEffect(() => {
+        setState({
+            id: params.id,
+        })
+    }, [params.id]);
 
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -181,7 +185,7 @@ export default function Page({ params }: { params: { id: number } }) {
                             </Grid>
                         </TabPanel>*/}
                         <TabPanel value="1" sx={{p:'0'}}>
-                            <NestedInformacionPreso/>
+                            <NestedInformacionPreso datoID={state.id}/>
                         </TabPanel>
                         <TabPanel value="2" sx={{p:'0'}}>
                             <TabDatosPersonales />

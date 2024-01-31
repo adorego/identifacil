@@ -114,7 +114,7 @@ export const postEntity = async (
         setLoading(true);
 
         const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
-        console.log(method)
+        console.log(stateForm)
         const url = isEditMode !== 'crear'
             ? `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}/${params.id}`
             : `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`;
