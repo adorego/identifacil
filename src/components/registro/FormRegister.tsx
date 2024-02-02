@@ -41,32 +41,68 @@ export interface RegistroResponse{
 
 }
 
+interface botonesDeFlujo{
+  mostrarBotonAnterior:boolean;
+  habilitarBotonAnterior:boolean;
+  mostrarBotonSiguiente:boolean;
+  habilitarBotonSiguiente:boolean;
+}
+
+const botonesDeFlujoEstadoInicial:botonesDeFlujo = {
+  mostrarBotonAnterior:false,
+  habilitarBotonAnterior:false,
+  mostrarBotonSiguiente:true,
+  habilitarBotonSiguiente:false,
+}
+
 export default function FormRegister(){
   const [activeStep, setActiveStep] = useState(0);
-  const [habilitarBotonSiguiente, setHabilitarBotonSiguiente] = useState(false);
-  const [desplegarRegistroFinal, setDesplegarRegistroFinal] = useState(false);
+  const [botonesDeFlujo, setBotonesDeFlujo] = useState<botonesDeFlujo>(botonesDeFlujoEstadoInicial);
+  const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
+  const [mensaje, setMensaje] = useState("");
+  const [registroRealizado, setRegistroRealizado] = useState(false);
+  
   const identidad = useRef<IdentificacionForm | null>(null);
   const reconocimientos = useRef<Array<IReconocimiento>>([])
   const foto = useRef<string | null>(null);
   const contadorReconocimiento = useRef<number>(0);
-  const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
   const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
-  const [mensaje, setMensaje] = useState("");
-  const [registroRealizado, setRegistroRealizado] = useState(false);
+ 
   
   // console.log("Active step:", activeStep);
   useEffect(
     () =>{
-      if(registroRealizado && activeStep === 1){
-        setHabilitarBotonSiguiente(true);
-      }else{
-        // console.log('Desabilitar boton siguiente');
-        setHabilitarBotonSiguiente(false);
+      switch (activeStep){
+        case(0):
+          setBotonesDeFlujo({
+            mostrarBotonAnterior:false,
+            habilitarBotonAnterior:false,
+            mostrarBotonSiguiente:true,
+            habilitarBotonSiguiente:false,
+          })
+          break;
+        case(1):
+          setBotonesDeFlujo({
+            mostrarBotonAnterior:true,
+            habilitarBotonAnterior:true,
+            mostrarBotonSiguiente:false,
+            habilitarBotonSiguiente:false,
+          })
+          break;
+        case(2):
+          setBotonesDeFlujo({
+            mostrarBotonAnterior:false,
+            habilitarBotonAnterior:false,
+            mostrarBotonSiguiente:true,
+            habilitarBotonSiguiente:true,
+          })
+          break;
+
       }
-    },[activeStep, registroRealizado]
+    },[activeStep]
   )
   
-  console.log("Habilitar Boton siguiente:", habilitarBotonSiguiente);  
+   
   const setIdentificacion = (identificacion: IdentificacionForm) => {
         // console.log("Datos de identificacion:", identificacion);
     identidad.current = identificacion;
@@ -74,7 +110,7 @@ export default function FormRegister(){
 
     
   const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
-      console.log("Entro en agregar_reconocimiento");
+      // console.log("Entro en agregar_reconocimiento");
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
@@ -83,9 +119,8 @@ export default function FormRegister(){
   }
 
   const generar_request_enviar = async () =>{
-      console.log('Entro en generar_request_enviar');
+      
       if(identidad.current != null && identidad.current.cedula_identidad){
-        console.log("Antes de generar el formData");
         const formData = new FormData();
         formData.append('tipo_identificacion','1');
         formData.append('numero_identificacion', identidad.current.cedula_identidad);
@@ -133,11 +168,18 @@ export default function FormRegister(){
     }
     
 
-    const mostrarRegistroFinal = (mostrar: boolean) => {
-        // console.log("Se presiono Capturar", foto.current, identidad.current);
-        setDesplegarRegistroFinal(mostrar);
+    const habillitarBotonSiguiente = (estado:boolean) =>{
+      setBotonesDeFlujo(   
+        (previus) =>{
+          return(
+            {
+              ...previus,
+              habilitarBotonSiguiente:estado
+            }
+          )
+        }
+      )
     }
-
 
     const onStepForward = () => {
             if (activeStep === 3) {
@@ -187,7 +229,7 @@ export default function FormRegister(){
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
                     {activeStep === 0 && <IdentificationForm 
-                    habilitarBotonSiguiente={setHabilitarBotonSiguiente} 
+                    habilitarBotonSiguiente={habillitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
                     {activeStep === 1 && <FaceRecognitionWithLayout 
@@ -217,35 +259,27 @@ export default function FormRegister(){
                       }
                     } />}
              */}
-                    {activeStep !== 0 ? 
-                        <Grid container  spacing={5} mt={1}>
-                          <Grid item xs={'auto'}>
-                            <Button variant="contained" 
-                            onClick={onStepBackward} 
+              <Grid container  spacing={5} mt={1}>
+                {botonesDeFlujo.mostrarBotonAnterior && <Grid item xs={'auto'}>
+                  <Button disabled={!botonesDeFlujo.habilitarBotonAnterior} variant="contained" 
+                    onClick={onStepBackward} 
                             startIcon={<KeyboardArrowLeft />}>
                               Anterior
-                            </Button>
-                          </Grid> 
-                          <Grid item xs={'auto'}>
-                            <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                              Siguiente
-                            </Button>
-                          </Grid>
-                        </Grid>
-                      : 
-                        <Grid container spacing={5} mt={1}>
-                          <Grid item xs='auto'>
-                              <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
-                                Siguiente
-                              </Button>
-                          </Grid>
-                        </Grid>
-                      }
+                        </Button>
+                </Grid>} 
+                {botonesDeFlujo.mostrarBotonSiguiente &&
+                <Grid item xs={'auto'}>
+                        <Button disabled={!botonesDeFlujo.habilitarBotonSiguiente} variant="contained" onClick={onStepForward} endIcon={<KeyboardArrowRight />}>
+                          Siguiente
+                        </Button>
+                </Grid>}
+              </Grid>
+                      
                         
                       
-                      </Box>
-                    </FormControl>
-                  </Box>
+            </Box>
+          </FormControl>
+        </Box>
 
     )
 }
