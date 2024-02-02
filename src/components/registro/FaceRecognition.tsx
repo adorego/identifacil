@@ -87,7 +87,13 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
       
   }
   
-    useEffect(
+  useEffect(
+    () =>{
+
+    },[]
+  )
+    
+  useEffect(
       () =>{
       
           Promise.all(
