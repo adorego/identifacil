@@ -906,5 +906,19 @@
       "nombre": "Viudo",
       "codigo": "V"
     }
+  ],
+  "establecimientos":[
+    {
+      "id": "1",
+      "nombre": "Emboscada"
+    },
+    {
+      "id": "2",
+      "nombre": "Tacumbu"
+    },
+    {
+      "id": "3",
+      "nombre": "Minga Guazu"
+    }
   ]
 }

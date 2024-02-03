@@ -24,7 +24,7 @@ import dayjs from 'dayjs';
 
 /**
  * Recibe los datos de la enpoint y retorna en una promesa
- * @param {url} Endpoint de la informacion.
+ * @param url
  */
 
 export async function fetchData(url : string) {

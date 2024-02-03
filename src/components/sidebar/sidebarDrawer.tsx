@@ -31,6 +31,7 @@ import {SelectChangeEvent} from "@mui/material/Select";
 import SidebarItem from "@/components/sidebar/sidebarItem";
 import styles from "@/components/sidebar.module.css";
 import {useState} from "react";
+import SelectorEstablecimiento from "@/components/sidebar/SelectorEstablecimiento";
 
 const drawerWidth = 279;
 
@@ -118,11 +119,8 @@ export default function SidebarDrawer() {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-    const [age, setAge] = React.useState('1');
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setAge(event.target.value as string);
-    };
+
     return (
         <Drawer className='sidebarSippy' variant="permanent" open={open}>
             <DrawerHeader>
@@ -148,26 +146,8 @@ export default function SidebarDrawer() {
                     <MenuIcon/>
                 </IconButton>
             </DrawerHeader>
-            <Box sx={{p: '20px'}}>
-                <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Establecimiento penitenciario</InputLabel>
-                    {open ? <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={age}
-                            label="Establecimiento penitenciario"
-                            onChange={handleChange}
-                        >
-                            {/*<MenuItem>Seleccionar establecimiento</MenuItem>*/}
-                            <MenuItem value={1}>Emboscada</MenuItem>
-                            <MenuItem value={2}>Minga Guazu</MenuItem>
-                            {/*<MenuItem value={2}>Emboscada</MenuItem>*/}
-                        </Select>
-                    : ''
-                    }
 
-                </FormControl>
-            </Box>
+            <SelectorEstablecimiento open={open} />
 
             <List aria-labelledby="nested-list-subheader" component="nav">
 

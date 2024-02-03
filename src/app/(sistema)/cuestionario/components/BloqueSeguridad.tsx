@@ -72,31 +72,31 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
   const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     // console.log(event.target.name);
     setEstadoBloqueSeguridadFormulario(
-      (previus) =>{
-        return(
-          {
-            ...previus,
-            [event.target.name]:event.target.value,
-            [`${event.target.name}_modificado`]:true
+        (previus) =>{
+          return(
+              {
+                ...previus,
+                [event.target.name]:event.target.value,
+                [`${event.target.name}_modificado`]:true
 
-          }
-        )
-      }
+              }
+          )
+        }
     )
-  } 
+  }
 
   const onSelectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     setEstadoBloqueSeguridadFormulario(
-      (previus) =>{
-        return(
-          {
-            ...previus,
-            [event.target.name]:(event.target.value === "true"),
-            [`${event.target.name}_modificado`]:true
+        (previus) =>{
+          return(
+              {
+                ...previus,
+                [event.target.name]:(event.target.value === "true"),
+                [`${event.target.name}_modificado`]:true
 
-          }
-        )
-      }
+              }
+          )
+        }
     )
   }
 
@@ -111,7 +111,7 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
         method:'POST',
         body:JSON.stringify(datosDelFormulario),
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json'
         }
 
       })
@@ -129,229 +129,229 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
     }
   }
   return(
-    <Box
-      component="form"
-      sx={{
-        '& .MuiTextField-root': { m: 1, width: '25ch' },
-      }}
-      noValidate
-      autoComplete="off"
-            >
-      <Grid container spacing={2} >
-        <Grid item sm={12}>
+      <Box
+          component="form"
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '25ch' },
+          }}
+          noValidate
+          autoComplete="off"
+      >
+        <Grid container spacing={2} >
+          <Grid item sm={12}>
             <FormControl>
               <FormLabel id="riesgoPersona;">¿Riesgo para el personal?</FormLabel>
-                <RadioGroup
+              <RadioGroup
                   value={estadoBloqueSeguridadFormulario.riesgoParaPersonal}
                   onChange={onSelectChange}
                   row
                   aria-labelledby="riesgoPersona;"
                   name="riesgoParaPersonal" >
-                  <FormControlLabel 
-                  value={true} 
-                  control={<Radio />} 
-                  label="Si"/>
-                  <FormControlLabel 
-                  value={false}
-                  control={<Radio/>} 
-                  label="No"/>
-                </RadioGroup>
+                <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label="Si"/>
+                <FormControlLabel
+                    value={false}
+                    control={<Radio/>}
+                    label="No"/>
+              </RadioGroup>
             </FormControl>
             <FormControl fullWidth={true}>
               <InputLabel htmlFor='riesgoParaPersonalRpta'>
                 Observacion
               </InputLabel>
               <OutlinedInput
-                disabled={!estadoBloqueSeguridadFormulario.riesgoParaPersonal}
-                name="riesgoParaPersonalRespuesta"
-                value={estadoBloqueSeguridadFormulario.riesgoParaPersonalRespuesta}
-                onChange={onDatoChange}
-                label="Observacion" />
+                  disabled={!estadoBloqueSeguridadFormulario.riesgoParaPersonal}
+                  name="riesgoParaPersonalRespuesta"
+                  value={estadoBloqueSeguridadFormulario.riesgoParaPersonalRespuesta}
+                  onChange={onDatoChange}
+                  label="Observacion" />
             </FormControl>
           </Grid>
           <Grid item sm={12}>
             <FormControl>
               <FormLabel id="riesgoRecluso;">¿Riesgo para otros reclusos?</FormLabel>
-                <RadioGroup
+              <RadioGroup
                   value={estadoBloqueSeguridadFormulario.riesgoParaReclusos}
                   onChange={onSelectChange}
                   row
                   aria-labelledby="riesgoRecluso;"
                   name="riesgoParaReclusos">
-                  <FormControlLabel 
-                    value={true} 
-                    control={<Radio/>} 
+                <FormControlLabel
+                    value={true}
+                    control={<Radio/>}
                     label="Si"/>
-                  <FormControlLabel 
-                    value={false} 
-                    control={<Radio/>} 
+                <FormControlLabel
+                    value={false}
+                    control={<Radio/>}
                     label="No"/>
-                </RadioGroup>
+              </RadioGroup>
             </FormControl>
             <FormControl fullWidth={true}>
               <InputLabel htmlFor='riesgoParaReclusosRespuesta'>
                 Observacion
               </InputLabel>
               <OutlinedInput
-                disabled={!estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
-                name="riesgoParaReclusosRespuesta"
-                value={estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
-                onChange={onDatoChange}
-                label="Observacion"/>
+                  disabled={!estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
+                  name="riesgoParaReclusosRespuesta"
+                  value={estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
+                  onChange={onDatoChange}
+                  label="Observacion"/>
             </FormControl>
           </Grid>
           <Grid item sm={12}>
             <FormControl>
               <FormLabel id="riesgoOtroRecluso;">¿Riesgo de ser lesionado por otros reclusos?</FormLabel>
-                <RadioGroup
+              <RadioGroup
                   value={estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusos}
                   onChange={onSelectChange}
                   row
                   aria-labelledby="riesgoOtroRecluso;"
                   name="riesgoDeSufrirLesionPorOtrosReclusos" >
-                  <FormControlLabel 
+                <FormControlLabel
                     value={true}
-                    control={<Radio />} 
+                    control={<Radio />}
                     label="Si"/>
-                  <FormControlLabel 
-                    value={false} 
-                    control={<Radio />} 
+                <FormControlLabel
+                    value={false}
+                    control={<Radio />}
                     label="No"/>
-                </RadioGroup>
+              </RadioGroup>
             </FormControl>
             <FormControl fullWidth={true}>
               <InputLabel htmlFor='riesgoPorReclusosRpta;'>
                 Observacion
               </InputLabel>
               <OutlinedInput
-                name="riesgoDeSufrirLesionPorOtrosReclusosRespuesta"
-                value={estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusosRespuesta}
-                onChange={onDatoChange}
-                label="Observacion"/>
+                  name="riesgoDeSufrirLesionPorOtrosReclusosRespuesta"
+                  value={estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusosRespuesta}
+                  onChange={onDatoChange}
+                  label="Observacion"/>
             </FormControl>
           </Grid>
           <Grid item sm={12}>
             <FormControl>
               <FormLabel id="danhoPropiedad;">¿Riesgo de dañar la propiedad?</FormLabel>
-                <RadioGroup
+              <RadioGroup
                   value={estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedad}
                   onChange={onSelectChange}
                   row
                   aria-labelledby="danhoPropiedad;"
                   name="riesgoDeDanharLaPropiedad">
-                  <FormControlLabel 
+                <FormControlLabel
                     value={true}
-                    control={<Radio/>} 
+                    control={<Radio/>}
                     label="Si"/>
-                  <FormControlLabel 
-                    value={false} 
-                    control={<Radio/>} 
+                <FormControlLabel
+                    value={false}
+                    control={<Radio/>}
                     label="No"/>
-                </RadioGroup>
-              </FormControl>
+              </RadioGroup>
+            </FormControl>
             <FormControl fullWidth={true}>
               <InputLabel htmlFor='danhoPropiedadRpta'>
-                  Observacion
+                Observacion
               </InputLabel>
               <OutlinedInput
-                name="riesgoDeDanharLaPropiedadRespuesta"
-                value={estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedadRespuesta}
-                onChange={onDatoChange}
-                label="Observacion"/>
+                  name="riesgoDeDanharLaPropiedadRespuesta"
+                  value={estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedadRespuesta}
+                  onChange={onDatoChange}
+                  label="Observacion"/>
             </FormControl>
           </Grid>
           <Grid item sm={12}>
             <FormControl>
               <FormLabel id="grupoAmenaza;">¿Miembro de un grupo que constituye una amenaza para la seguridad?</FormLabel>
-                <RadioGroup
+              <RadioGroup
                   value={estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridad}
                   onChange={onSelectChange}
                   row
                   aria-labelledby="grupoAmenaza;"
                   name="miembroDeGrupoQueConstituyeAmenazaParaSeguridad">
-                  <FormControlLabel 
-                    value={true} 
-                    control={<Radio />} 
+                <FormControlLabel
+                    value={true}
+                    control={<Radio />}
                     label="Si"/>
-                  <FormControlLabel 
-                    value={false} 
-                    control={<Radio />} 
+                <FormControlLabel
+                    value={false}
+                    control={<Radio />}
                     label="No"/>
-                </RadioGroup>
+              </RadioGroup>
             </FormControl>
             <FormControl fullWidth={true}>
               <InputLabel htmlFor="miembroGrupoRpta">Nombre del grupo</InputLabel>
               <OutlinedInput
-                name="miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta"
-                value={estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta}
-                onChange={onDatoChange}
-                label="Nombre del grupo"/>
+                  name="miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta"
+                  value={estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta}
+                  onChange={onDatoChange}
+                  label="Nombre del grupo"/>
             </FormControl>
           </Grid>
           <Grid item sm={12}>
             <FormControl>
               <FormLabel id="entrenamientoMilitar;">¿Entrenamiento militar previo?</FormLabel>
-                <RadioGroup
+              <RadioGroup
                   value={estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevio}
                   onChange={onSelectChange}
                   row
                   aria-labelledby="entrenamientoMilitar"
                   name="tieneEntrenamientoMilitarPrevio">
-                  <FormControlLabel 
+                <FormControlLabel
                     value={true}
-                    control={<Radio />} 
+                    control={<Radio />}
                     label="Si"/>
-                  <FormControlLabel 
+                <FormControlLabel
                     value={false}
-                    control={<Radio/>} 
+                    control={<Radio/>}
                     label="No"/>
-                </RadioGroup>
+              </RadioGroup>
             </FormControl>
             <FormControl fullWidth={true}>
               <InputLabel htmlFor="entrenamientoMilitarRpta">Agregar Respuesta</InputLabel>
               <OutlinedInput
-                name="tieneEntrenamientoMilitarPrevioRespuesta"
-                value={estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevioRespuesta}
-                onChange={onDatoChange}
-                label="Agregar Respuesta"/>
+                  name="tieneEntrenamientoMilitarPrevioRespuesta"
+                  value={estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevioRespuesta}
+                  onChange={onDatoChange}
+                  label="Agregar Respuesta"/>
             </FormControl>
           </Grid>
           <Grid item sm={12}>
             <FormControl>
               <FormLabel id="funcionarioPublico;">¿Era funcionario público?</FormLabel>
               <RadioGroup
-                value={estadoBloqueSeguridadFormulario.eraFuncionarioPublico}
-                onChange={onSelectChange}
-                row
-                aria-labelledby="funcionarioPublico;"
-                name="eraFuncionarioPublico">
-                <FormControlLabel 
-                  value={true}
-                  control={<Radio/>} 
-                  label="Si"/>
-                <FormControlLabel 
-                  value={false} 
-                  control={<Radio/>} 
-                  label="No"/>
+                  value={estadoBloqueSeguridadFormulario.eraFuncionarioPublico}
+                  onChange={onSelectChange}
+                  row
+                  aria-labelledby="funcionarioPublico;"
+                  name="eraFuncionarioPublico">
+                <FormControlLabel
+                    value={true}
+                    control={<Radio/>}
+                    label="Si"/>
+                <FormControlLabel
+                    value={false}
+                    control={<Radio/>}
+                    label="No"/>
               </RadioGroup>
             </FormControl>
             <FormControl fullWidth={true}>
-            <InputLabel htmlFor='funcionarioPublicoRpta'>Agregar cargo</InputLabel>
-            <OutlinedInput
-              name="funcionarioPublicoRpta"
-              value={estadoBloqueSeguridadFormulario.eraFuncionarioPublicoRespuesta}
-              onChange={onDatoChange}
-              label="Agregar cargo"/>
-          </FormControl>
+              <InputLabel htmlFor='funcionarioPublicoRpta'>Agregar cargo</InputLabel>
+              <OutlinedInput
+                  name="funcionarioPublicoRpta"
+                  value={estadoBloqueSeguridadFormulario.eraFuncionarioPublicoRespuesta}
+                  onChange={onDatoChange}
+                  label="Agregar cargo"/>
+            </FormControl>
+          </Grid>
+          <Grid item sm={12}>
+            <Button onClick={onFormSubmit} variant='contained'>
+              Guardar
+            </Button>
+          </Grid>
         </Grid>
-        <Grid item sm={12}>
-          <Button onClick={onFormSubmit} variant='contained'>
-            Guardar
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
   )
 }
-          
+
 export default BloqueSeguridad;

@@ -2,30 +2,24 @@
 
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import {Grid, Stack, Box} from "@mui/material";
+import {Breadcrumbs, Grid, Link, Stack, Box} from "@mui/material";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
-import defaultProfile from '@/common/blank-profile-picture-973460_960_720.webp';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import CustomTable from "@/components/CustomTable";
+import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
 import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import Image from "next/image";
-import {useEffect} from "react";
+
+const audienciasDummy = proximaAudienciaData();
+const visitaDummy = visitaData();
 
 
 
-
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState('1');
-    const [state, setState] = React.useState<{id: string}>({id: ''});
-
-    useEffect(() => {
-        setState({
-            id: params.id,
-        })
-    }, [params.id]);
 
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -37,7 +31,7 @@ export default function Page({ params }: { params: { id: string } }) {
             <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2}>
                 <TituloComponent titulo='PPL' />
             </Stack>
-             {/*@ts-ignore*/}
+            {/*@ts-ignore*/}
 
             <Grid container sx={{
                 bgcolor: "#FFF",
@@ -50,14 +44,12 @@ export default function Page({ params }: { params: { id: string } }) {
                         <Grid p={3} item sm={12}>
                             <Stack direction='row'>
                                 <Box className='imageContainer' sx={{marginRight: '40px'}}>
-                                    <Image
-                                        src={defaultProfile.src}
+                                    <img
+                                        src='https://source.unsplash.com/collection/1118917/480x480'
                                         alt=''
                                         loading="lazy"
-                                        width={'150'}
-                                        height={'150'}
                                         style={{
-
+                                            width: '100%',
                                             borderRadius: '10px',
                                         }}
                                     />
@@ -127,9 +119,9 @@ export default function Page({ params }: { params: { id: string } }) {
                     {/* Tabs */}
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
-                            {/*<Tab label="Perfil" value="1" />*/}
                             <Tab label="Informaciones" value="1" />
                             <Tab label="Datos penales" value="2" />
+                            {/*<Tab label="Perfil" value="1" />*/}
                         </TabList>
                     </Box>
 
@@ -185,7 +177,7 @@ export default function Page({ params }: { params: { id: string } }) {
                             </Grid>
                         </TabPanel>*/}
                         <TabPanel value="1" sx={{p:'0'}}>
-                            <NestedInformacionPreso datoID={state.id}/>
+                            <NestedInformacionPreso/>
                         </TabPanel>
                         <TabPanel value="2" sx={{p:'0'}}>
                             <TabDatosPersonales />
