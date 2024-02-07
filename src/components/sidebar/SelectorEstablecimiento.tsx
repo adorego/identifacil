@@ -23,10 +23,10 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
 
     useEffect(() => {
 
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/establecimientos/`;
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/establecimientos/`;
         fetchData(url)
             .then(fetchedData => {
-                console.log(fetchedData)
+
                 setState(prevState => {
                     return {
                         ...prevState,
@@ -64,7 +64,7 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
     }*/
     return(
         <>
-            {console.log(selectedEstablecimiento)}
+
             <Box sx={{p: '20px'}}>
                 <FormControl fullWidth>
                     <InputLabel id="establecimiento">Establecimiento penitenciario</InputLabel>

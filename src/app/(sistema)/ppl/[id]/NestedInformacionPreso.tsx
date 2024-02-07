@@ -9,6 +9,7 @@ import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
 import BloqueSalud from "../../cuestionario/components/BloqueSalud";
 import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
 import Typography from '@mui/material/Typography';
+import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -17,7 +18,7 @@ interface TabPanelProps {
 }
 
 function CustomTabPanel(props: TabPanelProps) {
-    const { children, value, index, ...other } = props;
+    const {children, value, index, ...other} = props;
 
     return (
         <div
@@ -28,7 +29,7 @@ function CustomTabPanel(props: TabPanelProps) {
             {...other}
         >
             {value === index && (
-                <Box sx={{ p: 3, backgroundColor: '#FFF', }}>
+                <Box sx={{p: 3, backgroundColor: '#FFF',}}>
                     {children}
                 </Box>
             )}
@@ -44,8 +45,7 @@ function a11yProps(index: number) {
 }
 
 
-
-export default function NestedInformacionPreso(){
+export default function NestedInformacionPreso({datosPersona, datosPersonales} : any) {
 
     const [value, setValue] = React.useState(0);
 
@@ -53,7 +53,7 @@ export default function NestedInformacionPreso(){
         setValue(newValue);
     };
 
-    return(
+    return (
         <Box pt={3}>
             <Paper elevation={1}>
                 <Box p={2}>
@@ -62,7 +62,8 @@ export default function NestedInformacionPreso(){
                             borderRight: '1px solid lightgray',
                         }}>
                             <Tabs
-                                value={value} onChange={handleChange} aria-label="basic tabs example" orientation='vertical'>
+                                value={value} onChange={handleChange} aria-label="basic tabs example"
+                                orientation='vertical'>
                                 <Tab label="Perfil" {...a11yProps(0)} />
                                 <Tab label="Salud" {...a11yProps(1)} />
                                 <Tab label="Seguridad" {...a11yProps(2)} />
@@ -73,7 +74,29 @@ export default function NestedInformacionPreso(){
                         </Grid>
                         <Grid item sm={10}>
                             <CustomTabPanel value={value} index={0}>
-                                {/* <BloqueDatosPersonales /> */}
+
+                                { datosPersona ?
+                                    <FormularioDatosPersonales datosDeIdentificacion={{
+                                        cedula_identidad: datosPersona.numero_de_identificacion,
+                                        nombres: datosPersona.nombre,
+                                        apellidos: datosPersona.apellido,
+                                        apodo: datosPersona.apodo,
+                                        codigo_genero: datosPersona.genero,
+                                        fecha_nacimiento: '1989/07/20',
+                                        estadoCivil: datosPersonales['estadoCivil'],
+                                        lugarDeNacimiento: datosPersonales['lugarDeNacimiento'],
+                                        direccion: datosPersonales['direccion'],
+                                        barrioCompania: datosPersonales['barrioCompania'],
+                                        numeroDeContacto: datosPersonales['numeroDeContacto'],
+                                        contactoDeEmergencia1: datosPersonales['contactoDeEmergencia1'],
+                                        contactoDeEmergencia2: datosPersonales['contactoDeEmergencia2'],
+                                        pueblosIndigenas: datosPersonales['pueblosIndigenas'],
+                                        nombreEtnia: datosPersonales['nombreEtnia'],
+                                        perteneceAComunidadLGTBI: datosPersonales['perteneceAComunidadLGTBI'],
+
+                                    }}/> : ''
+                                }
+
                             </CustomTabPanel>
                             <CustomTabPanel value={value} index={1}>
                                 {/* <BloqueSalud /> */}
@@ -93,7 +116,6 @@ export default function NestedInformacionPreso(){
                         </Grid>
 
                     </Grid>
-
 
 
                 </Box>

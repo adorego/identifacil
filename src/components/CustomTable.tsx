@@ -40,6 +40,7 @@ interface TableOptions {
     pagination: boolean;
     title?: string;
     targetURL?: string;
+    busqueda?: string;
     expandedList?: string;
     newRecord?: string;
     deleteOption?: boolean;
@@ -83,6 +84,7 @@ function CustomTable({
                              pagination: true,
                              title: '',
                              targetURL: '',
+                             busqueda: '',
                              expandedList: '',
                              newRecord: '',
                              deleteOption: false,
@@ -226,7 +228,7 @@ function CustomTable({
                                                         aria-label="Edit"
                                                         component={Link}
                                                         //href={`${options.targetURL}`}
-                                                        href={`${options.targetURL}/${row.id}`}
+                                                        href={options.busqueda ? `${options.targetURL}/${row[options.busqueda]}` : `${options.targetURL}/${row.id}`}
                                                         /*onClick={() => handleCellClick(row.id as number)}*/
                                                     >
                                                         <EditIcon/>

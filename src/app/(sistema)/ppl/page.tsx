@@ -8,15 +8,15 @@ import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import {fetchData} from "@/components/utils/utils";
 
-const ENDPOINT : string = 'http://localhost:5000/PPL'
+const ENDPOINT : string = 'http://localhost:4001/api/registro/gestion_ppl/ppls'
 
 const header = [
     { id: 'id', label: 'ID' },
     { id: 'nombre', label: 'Nombre' },
     { id: 'apellido', label: 'Apellido' },
-    { id: 'apodo', label: 'Apodo' },
+    { id: 'genero', label: 'Genero' },
     { id: 'fechaDeNacimiento', label: 'Fecha nacimiento', type: 'date' },
-    { id: 'estadoPerfil', label: 'Estado Perfil' },
+    { id: 'estado_perfil', label: 'Estado Perfil' },
 ]
 
 export default function Page(){
@@ -45,10 +45,10 @@ export default function Page(){
         );
     }
 
+
     return(
         <div>
             <TituloComponent titulo='Gestion PPL' />
-
             <Grid container mt={3}>
                 <Grid item sm={12}>
                     <Paper elevation={1}>
@@ -60,7 +60,8 @@ export default function Page(){
                                          deleteOption: false,
                                          rowsPerPageCustom: 10,
                                          pagination: true,
-                                         targetURL: '/ppl'
+                                         targetURL: `/ppl`,
+                                         busqueda: `numero_de_identificacion`,
                                      }}
                         />
                     </Paper>

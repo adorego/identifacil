@@ -12,14 +12,51 @@ import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
 import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
+import {useEffect} from "react";
+import {fetchData} from "@/components/utils/utils";
 
-const audienciasDummy = proximaAudienciaData();
-const visitaDummy = visitaData();
+/*const audienciasDummy = proximaAudienciaData();
+const visitaDummy = visitaData();*/
 
+type dataType = {
+    nombre: string;
+    apellido: string;
+    apodo: string;
+    fechaDeNacimiento: string;
+    establecimiento_penitenciario?: string | number;
+    datosPersonales: object
+}
 
+const initialData = {
+    nombre: '',
+    apellido: '',
+    apodo: '',
+    fechaDeNacimiento: '',
+    establecimiento_penitenciario: '',
+    datosPersonales: {}
+}
 
+const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/cedula/`;
 export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState('1');
+    const [data, setData] = React.useState<dataType>(initialData);
+    const [loading, setLoading] = React.useState(true);
+
+
+
+    useEffect(() => {
+        // Puedes cambiar la URL según tus necesidades
+
+        setLoading(true)
+        fetchData(`${ENDPOINT}${params.id}`)
+            .then(fetchedData => {
+
+                setData(fetchedData);
+            }).finally(()=> {
+
+            setLoading(false)
+        });
+    }, []);
 
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
@@ -55,43 +92,48 @@ export default function Page({ params }: { params: { id: number } }) {
                                     />
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
-                                    <Grid container mt={1} spacing={2}>
-                                        <Grid item m={0}>
-                                            <Typography variant="overline" display="block" mb={0}>
-                                                Nombre y apellido
-                                            </Typography>
-                                            <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
-                                                Juan Jos Perez Gomez (Josei)
-                                            </Typography>
+
+                                    { loading ?
+                                        'Cargando'
+                                        : <Grid container mt={1} spacing={2}>
+                                            <Grid item m={0}>
+                                                <Typography variant="overline" display="block" mb={0}>
+                                                    Nombre y apellido
+                                                </Typography>
+                                                <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
+                                                    {data.nombre} {data.apellido} ({data.apodo})
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item pt={0}>
+                                                <Typography variant="overline" display="block" mb={0}>
+                                                    Estado Procesal
+                                                </Typography>
+                                                <Typography variant="body1" display="block"
+                                                            sx={{fontWeight: '600',}}>
+                                                    Condenado
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item pt={0}>
+                                                <Typography variant="overline" display="block" mb={0}>
+                                                    Fecha de ingreso
+                                                </Typography>
+                                                <Typography variant="body1" display="block"
+                                                            sx={{fontWeight: '600',}}>
+                                                    01/01/2023
+                                                </Typography>
+                                            </Grid>
+                                            <Grid item pt={0}>
+                                                <Typography variant="overline" display="block" mb={0}>
+                                                    Penitenciaria
+                                                </Typography>
+                                                <Typography variant="body1" display="block"
+                                                            sx={{fontWeight: '600',}}>
+                                                    {data.establecimiento_penitenciario ? data.establecimiento_penitenciario : 'Minga Guazu'}
+                                                </Typography>
+                                            </Grid>
                                         </Grid>
-                                        <Grid item pt={0}>
-                                            <Typography variant="overline" display="block" mb={0}>
-                                                Estado Procesal
-                                            </Typography>
-                                            <Typography variant="body1" display="block"
-                                                        sx={{fontWeight: '600',}}>
-                                                Condenado
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item pt={0}>
-                                            <Typography variant="overline" display="block" mb={0}>
-                                                Fecha de ingreso
-                                            </Typography>
-                                            <Typography variant="body1" display="block"
-                                                        sx={{fontWeight: '600',}}>
-                                                01/01/2023
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item pt={0}>
-                                            <Typography variant="overline" display="block" mb={0}>
-                                                Penitenciaria
-                                            </Typography>
-                                            <Typography variant="body1" display="block"
-                                                        sx={{fontWeight: '600',}}>
-                                                Minga Guazu
-                                            </Typography>
-                                        </Grid>
-                                    </Grid>
+                                    }
+
                                 </Stack>
                             </Stack>
                         </Grid>
@@ -177,7 +219,7 @@ export default function Page({ params }: { params: { id: number } }) {
                             </Grid>
                         </TabPanel>*/}
                         <TabPanel value="1" sx={{p:'0'}}>
-                            <NestedInformacionPreso/>
+                            <NestedInformacionPreso datosPersona={data} datosPersonales={data.datosPersonales}/>
                         </TabPanel>
                         <TabPanel value="2" sx={{p:'0'}}>
                             <TabDatosPersonales />
