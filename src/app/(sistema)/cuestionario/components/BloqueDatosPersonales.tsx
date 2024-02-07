@@ -6,7 +6,7 @@ import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
 import { RequestResponse, api_request } from "@/lib/api-request";
 import dayjs, { Dayjs }  from "dayjs";
 
-import { IdentificacionForm } from "@/components/registro/IdentificationForm";
+import { DatosDeIdentificacion } from "@/components/registro/identificacionForm";
 import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
@@ -91,7 +91,7 @@ const datosPersonalesInicial: datosPersonales = {
   perteneceAComunidadLGTBI_modificado:false,
 }
 export interface BloqueDatosPersonalesProps{
-  datosDeIdentificacion:IdentificacionForm;
+  datosDeIdentificacion:DatosDeIdentificacion;
   
 }
 

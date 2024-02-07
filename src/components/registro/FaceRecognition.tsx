@@ -1,18 +1,18 @@
 import * as faceapi from "face-api.js";
 
-import {AddAPhoto, Height} from "@mui/icons-material";
+import {AddAPhoto, Height, Stream} from "@mui/icons-material";
 import {Alert, Box, Button, Grid, Typography} from "@mui/material";
 import {FC, Suspense, useEffect, useRef, useState} from "react";
 import FaceDetectionOverlay, { IReconocimiento } from "./FaceDetectionOverlay";
 
 import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
-import {IdentificacionForm} from "./IdentificationForm";
+import {IdentificacionForm} from "./IdentificationForm.tsx.back";
 // @ts-ignore
 import JSMpeg from "@cycjimmy/jsmpeg-player";
-import VideoPlayer from "./VideoPlayer";
-import { blue } from "@mui/material/colors";
+import { error } from "console";
+import log from "loglevel";
 import styles from "./FaceRecognition.module.css";
-import {testWebSocketConnection} from "@/common/testWebSocketConnection";
+import { useGlobalContext } from "@/app/Context/store";
 
 interface ErrorInt {
     error: boolean;
@@ -40,7 +40,9 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const [capturarFoto,setCapturarFoto] = useState<boolean>(false);
   const [iniciarDeteccion, setIniciarDeteccion] = useState<boolean>(false);
-  
+  const {openSnackbar} = useGlobalContext();
+
+
   const conectar_con_camaraIP = () =>{
     try{
       const canvas = document.createElement('canvas');
@@ -66,7 +68,8 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
     }
   }
 
-  const conectar_con_webcam = () =>{
+  const conectar_con_webcam = ():MediaStream | null =>{
+      let mediaStream = null;
       try{
         // console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
         if(navigator && navigator.mediaDevices){
@@ -75,21 +78,40 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
           .then(function(stream){
             if(videoElementRef.current != null){
               videoElementRef.current.srcObject = stream;
+              mediaStream = stream;
               setIniciarDeteccion(true);
+              return mediaStream;
             }
           })
+          
         }else{
-          console.log("No entro en mediaDevice");
+          log.error("Error al levantar el video en el browser");
+          openSnackbar("Error al levantar el video en el browser","error");           
+
         }
       }catch(error){
-        console.log(error);
+        log.error("Error al levantar el video en el browser");
+        openSnackbar("Error al levantar el video en el browser","error");    
       }
+      return mediaStream;
       
   }
   
   useEffect(
     () =>{
-
+      let stream:MediaStream | null = conectar_con_webcam();
+      return(
+        () => {
+          let tracks = stream?.getTracks();
+          tracks?.forEach(
+            (track) =>{
+              if(track.kind === 'video'){
+                track.stop();
+              }
+            })
+          
+        }
+      )
     },[]
   )
     
@@ -108,7 +130,7 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
           ).then(
             () =>{
                     //conectar_con_camaraIP();
-                    conectar_con_webcam();
+                    // conectar_con_webcam();
                    
 
 

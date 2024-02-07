@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Button, FormControl, Grid, Step, StepLabel, Stepper, Typography } from "@mui/material";
-import IdentificationForm, { IdentificacionForm } from "@/components/registro/IdentificationForm";
+import IdentificationForm, { DatosDeIdentificacion } from "@/components/registro/identificacionForm";
 import { KeyboardArrowLeft, KeyboardArrowRight } from "@mui/icons-material";
 import { useRef, useState } from "react";
 
@@ -16,7 +16,7 @@ import { useGlobalContext } from "@/app/Context/store";
 const steps = ["Identificación", "Reconocimiento", "Confirmacion"];
 export default function RegistroVisitante(){
   const [activeStep, setActiveStep] = useState(0);
-  const identidad = useRef<IdentificacionForm | null>(null);
+  const identidad = useRef<DatosDeIdentificacion | null>(null);
   const [habilitarBotonSiguiente, setHabilitarBotonSiguiente] = useState(false);
   const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
   const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
@@ -25,7 +25,7 @@ export default function RegistroVisitante(){
   const contadorReconocimiento = useRef<number>(0);
   const {openSnackbar} = useGlobalContext();
   
-  const setIdentificacion = (identificacion: IdentificacionForm) => {
+  const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
     console.log("Datos de identificacion:", identificacion);
     identidad.current = identificacion;
   }

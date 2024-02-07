@@ -23,7 +23,7 @@ import BloqueJudicial from "@/app/(sistema)/cuestionario/components/BloqueJudici
 import BloqueSalud from '@/app/(sistema)/cuestionario/components/BloqueSalud';
 import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSeguridad';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {IdentificacionForm} from "./IdentificationForm";
+import {IdentificacionForm} from "./IdentificationForm.tsx.back";
 
 // const steps = [
 //   'Reconocimiento',

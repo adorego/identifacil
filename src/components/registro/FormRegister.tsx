@@ -17,19 +17,15 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import IdentificationForm, {IdentificacionForm} from "./IdentificationForm";
+import IdentificacionForm, { DatosDeIdentificacion } from "./identificacionForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
 import React, {ChangeEvent, ReactElement, ReactNode, useEffect, useRef, useState} from "react";
 
-import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
 import ConfirmacionRegistro from "./ConfirmacionRegistro";
 import CuestionarioRegistro from "./CuestionarioRegistro";
-import FaceRecognition from "./FaceRecognition";
 import FaceRecognitionWithLayout from "./FaceRecognitionWithLayout";
 import { IReconocimiento } from "./FaceDetectionOverlay";
-import NotificacionRegistro from "./NotificacionRegistro";
-import PPLRegistration from "./PPLRegistration";
-import RegistrationData from "./RegistrationData";
+import Identificacion from "@/app/(sistema)/identificacion/page";
 import log from "loglevel";
 import style from "./FormRegister.module.css";
 
@@ -62,7 +58,7 @@ export default function FormRegister(){
   const [mensaje, setMensaje] = useState("");
   const [registroRealizado, setRegistroRealizado] = useState(false);
   
-  const identidad = useRef<IdentificacionForm | null>(null);
+  const identidad = useRef<DatosDeIdentificacion | null>(null);
   const reconocimientos = useRef<Array<IReconocimiento>>([])
   const foto = useRef<string | null>(null);
   const contadorReconocimiento = useRef<number>(0);
@@ -103,14 +99,14 @@ export default function FormRegister(){
   )
   
    
-  const setIdentificacion = (identificacion: IdentificacionForm) => {
+  const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
         // console.log("Datos de identificacion:", identificacion);
     identidad.current = identificacion;
   }
 
     
   const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
-      // console.log("Entro en agregar_reconocimiento");
+      console.log("Entro en agregar_reconocimiento");
       reconocimientos.current.push(reconocimiento);
       contadorReconocimiento.current++;
       if(contadorReconocimiento.current === 3){
@@ -127,7 +123,7 @@ export default function FormRegister(){
         formData.append('nombres', identidad.current.nombres);
         formData.append('apellidos', identidad.current.apellidos);
         formData.append('genero', identidad.current.codigo_genero);
-        formData.append('fechaDeNacimiento', identidad.current.fecha_nacimiento);
+        formData.append('fechaDeNacimiento', identidad.current.fecha_nacimiento.toISOString());
         formData.append('foto1', reconocimientos.current[0].foto);
         formData.append('descriptorFacial1', reconocimientos.current[0].descriptor.toString());
         formData.append('foto2', reconocimientos.current[1].foto);
@@ -135,6 +131,7 @@ export default function FormRegister(){
         formData.append('foto3', reconocimientos.current[2].foto);
         formData.append('descriptorFacial3', reconocimientos.current[2].descriptor.toString());
         formData.append('esPPL','true');
+        formData.append('establecimiento',String(1));
         
         contadorReconocimiento.current = 0;
         try{
@@ -168,7 +165,7 @@ export default function FormRegister(){
     }
     
 
-    const habillitarBotonSiguiente = (estado:boolean) =>{
+    const habilitarBotonSiguiente = (estado:boolean) =>{
       setBotonesDeFlujo(   
         (previus) =>{
           return(
@@ -228,8 +225,8 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {activeStep === 0 && <IdentificationForm 
-                    habilitarBotonSiguiente={habillitarBotonSiguiente} 
+                    {activeStep === 0 && <IdentificacionForm 
+                    habilitarBotonSiguiente={habilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
                     {activeStep === 1 && <FaceRecognitionWithLayout 
