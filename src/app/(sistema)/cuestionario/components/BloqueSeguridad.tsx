@@ -6,7 +6,7 @@ import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
 interface datosSeguridad{
-  numeroDeIdentificacion:string | null;
+  id_persona:number | null;
   riesgoParaPersonal: boolean;
   riesgoParaPersonal_modificado:boolean;
   riesgoParaPersonalRespuesta: string;
@@ -34,7 +34,7 @@ interface datosSeguridad{
 }
 
 const datosSeguridadIniciales:datosSeguridad = {
-  numeroDeIdentificacion:null,
+  id_persona:null,
   riesgoParaPersonal: false,
   riesgoParaPersonal_modificado:false,
   riesgoParaPersonalRespuesta: "",
@@ -62,10 +62,10 @@ const datosSeguridadIniciales:datosSeguridad = {
 
 interface BloqueSeguridadProps{
   datosIniciales?:datosSeguridad;
-  numeroDeIdentificacion:string;
+  id_persona:number;
 }
 
-const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadIniciales, numeroDeIdentificacion}) =>{
+const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadIniciales, id_persona}) =>{
   const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridad>(datosIniciales);
   const {openSnackbar} = useGlobalContext();
   // console.log(estadoBloqueSeguridadFormulario);
@@ -102,10 +102,10 @@ const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSegurid
 
   const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
-    if(numeroDeIdentificacion){
+    if(id_persona){
       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_seguridad`;
       const datosDelFormulario:datosSeguridad = Object.assign({},estadoBloqueSeguridadFormulario);
-      datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+      datosDelFormulario.id_persona = id_persona;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
       const respuesta = await api_request(url,{
         method:'POST',

@@ -6,7 +6,7 @@ import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
 export interface datosEducacion {
-  numeroDeIdentificacion:string;
+  id_persona:number|null;
   nivelAcademico: string;
   nivelAcademico_modificado:boolean;
   institucionEducativa: string;
@@ -20,7 +20,7 @@ export interface datosEducacion {
 }
 
 const datosEducacionIniciales:datosEducacion = {
-  numeroDeIdentificacion:"",
+  id_persona:null,
   nivelAcademico:"",
   nivelAcademico_modificado:false,
   institucionEducativa: "",
@@ -34,9 +34,9 @@ const datosEducacionIniciales:datosEducacion = {
 } 
 
 export interface BloqueEducacionProps{
-  numeroDeIdentificacion?:string;
+  id_persona:number;
 }
-const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
+const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona}) =>{
   const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosEducacionIniciales);
   const {openSnackbar} = useGlobalContext();
   // console.log(estadoFormularioDeEducacion);
@@ -74,11 +74,11 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
 
   const onGuardarClick = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
-    if(numeroDeIdentificacion){
+    if(id_persona){
       try{
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
         const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
-        datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+        datosDelFormulario.id_persona = id_persona;
         console.log("Datos a enviar:", datosDelFormulario);
         const respuesta = await api_request(url,{
           method:'POST',
@@ -104,7 +104,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
 
       // console.log("Respuesta:", respuesta);
     }else{
-      openSnackbar("Falta el número de identificación","error");
+      openSnackbar("Falta el id de la persona","error");
     }
   }
   

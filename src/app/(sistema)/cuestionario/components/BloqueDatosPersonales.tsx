@@ -11,7 +11,8 @@ import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
 interface datosPersonales {
-  numeroDeIdentificacion:string|undefined;
+  id_persona:number|null;
+  numeroDeIdentificacion:string|null;
   nombre: string;
   nombre_modificado:boolean;
   apellido: string;
@@ -52,7 +53,8 @@ interface datosPersonales {
 }
 
 const datosPersonalesInicial: datosPersonales = {
-  numeroDeIdentificacion:"",
+  id_persona:null,
+  numeroDeIdentificacion:null,
   nombre: '',
   apellido: '',
   apodo: '',
@@ -101,7 +103,8 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
     ...datosPersonalesInicial,
     fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"YYYY-MM-DD"),
     fechaDeNacimiento_modificado:true,
-    numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad,
+    id_persona:datosDeIdentificacion.id_persona,
+    numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
     nombre:datosDeIdentificacion.nombres,
     nombre_modificado:true,
     apellido:datosDeIdentificacion.apellidos,
@@ -237,10 +240,10 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
   }
   const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
-    if(datosDeIdentificacion.cedula_identidad){
+    if(datosDeIdentificacion.id_persona){
       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
       const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
-      datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
+      datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
       const respuesta = await api_request(url,{
         method:'POST',

@@ -48,7 +48,8 @@ interface expediente_tipo{
   fechaDeDocumento:Dayjs | null;
 }
 interface datosJudiciales{
-  numeroDeIdentificacion:string | null;
+  id_persona:number | null;
+  numeroDeIdentificacion:string|null;
   situacionJudicial: string;
   situacionJudicial_modificado:boolean;
   primeraVezEnPrision: boolean;
@@ -76,6 +77,7 @@ interface datosJudiciales{
 }
 
 const datosJudicialesIniciales:datosJudiciales = {
+  id_persona:null,
   numeroDeIdentificacion:null,
   situacionJudicial: "",
   situacionJudicial_modificado:false,
@@ -115,10 +117,11 @@ const datosJudicialesIniciales:datosJudiciales = {
 }
 interface BloqueJudicialProps{
   datosIniciales?:datosJudiciales;
-  numeroDeIdentificacion?:any;
+  id_persona:number;
+  numeroDeIdentificacion:string|null;
 }
 
-const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesIniciales, numeroDeIdentificacion}) =>{
+const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesIniciales, id_persona, numeroDeIdentificacion}) =>{
   const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudiciales>(datosIniciales)
   const [causas, setCausas] = useState<Array<causa>>([]);
   const [oficios, setOficios] = useState<Array<oficio>>([]);
@@ -128,7 +131,8 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
   
   useEffect(
     () =>{
-      const getCausas = async (numeroDeIdentificacion:string) =>{
+      const getCausas = async (numeroDeIdentificacion:string | null) =>{
+        if(numeroDeIdentificacion){
           const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${numeroDeIdentificacion}`;
           const parameter = {
             numeroDeIdentificacion:numeroDeIdentificacion
@@ -153,8 +157,12 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
             openSnackbar(`Error en la consulta de datos:${error}`, "error");
           }
       
+      }else{
+        openSnackbar("Se necesita de la cedula para recuperar las causas", "error");
       }
-      getCausas(numeroDeIdentificacion);
+    }
+    getCausas(numeroDeIdentificacion);
+    
     },[]
   )
 

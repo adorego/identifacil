@@ -16,7 +16,7 @@ interface familiar{
 
 }
 interface datosFamiliares{
-  numeroDeIdentificacion:string;
+  id_persona:number|null;
   esCabezaDeFamilia: boolean;
   esCabezaDeFamilia_modificado:boolean;
   tieneCirculoFamiliar:boolean;
@@ -29,7 +29,7 @@ interface datosFamiliares{
   concubino_modificado:boolean;
 }
 const estadoDatosFamiliaresInicial:datosFamiliares = {
-  numeroDeIdentificacion:"",
+  id_persona:null,
   esCabezaDeFamilia:false,
   esCabezaDeFamilia_modificado:false,
   tieneCirculoFamiliar:false,
@@ -52,17 +52,16 @@ const familiarInicial:familiar = {
 
 interface BloqueFamiliarProps{
   datosFamiliaresIniciales?:datosFamiliares;
-  numeroDeIdentificacion?:string;
+  id_persona:number;
 }
 
 
-const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFamiliaresIniciales = estadoDatosFamiliaresInicial}) =>{
+const BloqueFamiliar:FC<BloqueFamiliarProps> = ({id_persona, datosFamiliaresIniciales = estadoDatosFamiliaresInicial}) =>{
   const [estadoFormularioDatosFamiliares, setEstadoFormularioDatosFamiliares] = useState<datosFamiliares>(datosFamiliaresIniciales);
   const [familiarAAgregar,setFamiliarAAgregar] = useState<familiar>(familiarInicial);
   const [agregarFamiliar, setAgregarFamiliar] = useState<boolean>(false);
   const {openSnackbar} = useGlobalContext();
   
-  console.log("Familiar a agregar:", familiarAAgregar);
   const onSelectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
     setEstadoFormularioDatosFamiliares(
       (previus) =>{
@@ -156,10 +155,10 @@ const BloqueFamiliar:FC<BloqueFamiliarProps> = ({numeroDeIdentificacion, datosFa
   }
   const onDatosFamiliaresSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
-    if(numeroDeIdentificacion){
+    if(id_persona){
       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`;
       const datosDelFormulario:datosFamiliares = Object.assign({},estadoFormularioDatosFamiliares);
-      datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+      datosDelFormulario.id_persona = id_persona;
       // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
       const respuesta = await api_request(url,{
         method:'POST',

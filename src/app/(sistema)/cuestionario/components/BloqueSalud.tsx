@@ -17,20 +17,20 @@ import {
     Select,
     SelectChangeEvent,
     TextField
-  } from "@mui/material"
-  import { FC, ReactNode, SyntheticEvent, useContext, useReducer, useState } from "react";
-  
-  import CheckBoxIcon from '@mui/icons-material/CheckBox';
-  import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-  import { DatePicker } from "@mui/x-date-pickers";
-  import { Dayjs } from "dayjs";
-  import { IndexKind } from "typescript";
-  import { api_request } from "@/lib/api-request";
-  import log from "loglevel";
-  import {useGlobalContext} from "@/app/Context/store";
-  
-  interface datosSalud{
-    numeroDeIdentificacion:string | null;
+} from "@mui/material"
+import { FC, ReactNode, SyntheticEvent, useContext, useReducer, useState } from "react";
+import dayjs, { Dayjs } from "dayjs";
+
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import { DatePicker } from "@mui/x-date-pickers";
+import { IndexKind } from "typescript";
+import { api_request } from "@/lib/api-request";
+import log from "loglevel";
+import {useGlobalContext} from "@/app/Context/store";
+
+interface datosSalud{
+    id_persona:number | null;
     tieneAfeccionADrogas_modificado:boolean;
     tieneAfeccionADrogras:boolean;
     grupo_sanguineo:number;
@@ -65,6 +65,8 @@ import {
     fecha_parto_modificada:boolean;
     discapacidad_fisica:string;
     discapacidad_modificada:boolean;
+    explicacion_discapacidad_fisica:string;
+    explicacion_discapacidad_fisica_modificada:boolean;
     sigue_tratamiento_mental:boolean;
     sigue_tratamiento_mental_modificado:boolean;
     tiene_antecedentes_de_lesiones_autoinflingidas:boolean;
@@ -101,6 +103,7 @@ import {
     MODIFICAR_TIEMPO_GESTACION,
     MODIFICAR_FECHA_PARTO,
     MODIFICAR_DISCAPACIDAD_FISICA,
+    MODIFICAR_EXPLICACION_DISCAPACIDAD_FISICA,
     MODIFICAR_SIGUE_TRATAMIENTO_MENTAL,
     MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS,
     MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO,
@@ -116,7 +119,7 @@ import {
     payload:any;
   }
   const datosSaludInicial:datosSalud = {
-    numeroDeIdentificacion:null,
+    id_persona:null,
     tieneAfeccionADrogas_modificado:false,
     tieneAfeccionADrogras:false,
     grupo_sanguineo:0,
@@ -151,6 +154,8 @@ import {
     fecha_parto_modificada:false,
     discapacidad_fisica:"",
     discapacidad_modificada:false,
+    explicacion_discapacidad_fisica:"",
+    explicacion_discapacidad_fisica_modificada:false,
     sigue_tratamiento_mental:false,
     sigue_tratamiento_mental_modificado:false,
     tiene_antecedentes_de_lesiones_autoinflingidas:false,
@@ -217,6 +222,8 @@ import {
         return Object.assign({},{...state,fecha_parto_modificada:true, fecha_parto:action.payload});
       case (SALUD_ACTIONS.MODIFICAR_DISCAPACIDAD_FISICA):
         return Object.assign({},{...state, discapacidad_modificada:true, discapacidad_fisica:action.payload});
+      case (SALUD_ACTIONS.MODIFICAR_EXPLICACION_DISCAPACIDAD_FISICA):
+        return Object.assign({},{...state, explicacion_discapacidad_fisica_modificada:true, explicacion_discapacidad_fisica:action.payload})
       case (SALUD_ACTIONS.MODIFICAR_SIGUE_TRATAMIENTO_MENTAL):
         return Object.assign({}, {...state, sigue_tratamiento_mental_modificado:true, sigue_tratamiento_mental:(action.payload === "true")});
       case (SALUD_ACTIONS.MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS):
@@ -242,10 +249,10 @@ import {
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   export interface BloqueSaludProps{
-    numeroDeIdentificacion:string;
+    id_persona:number;
     datosAlmacenados?:datosSalud;
   }
-  const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenados = datosSaludInicial}) =>{
+  const BloqueSalud:FC<BloqueSaludProps> = ({id_persona,datosAlmacenados = datosSaludInicial}) =>{
     const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer,datosAlmacenados);
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const {openSnackbar} = useGlobalContext();
@@ -337,13 +344,30 @@ import {
   
     const onTiempoDeGestacionChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
       // console.log(event.currentTarget.value);
-      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload:event.currentTarget.value});
-  
+        const meses = parseInt(event.target.value);
+        if(meses > 9)
+        {
+          openSnackbar("Los meses de gestación deben ser menores a 9", "error");
+          datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload:0});
+
+        }else{
+          datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload:event.currentTarget.value});
+        }
     }
   
     const onFechaPartoChange = (value:Dayjs | null, context: any) =>{
       // console.log(value,context);
-      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:value})
+      if(value && value < dayjs()){
+        openSnackbar("La mínima fecha de parto puede ser hoy", "error");
+        datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:dayjs()})
+      }else if(value && value > dayjs().add(9,'M')){
+        openSnackbar("La máxima fecha de parto puede ser en 9 meses", "error");
+        datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:dayjs()})
+      }else{
+        datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:value})
+      }
+
+      
     }
   
     const onDiscapacidadFisicaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
@@ -351,6 +375,9 @@ import {
       datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_DISCAPACIDAD_FISICA, payload:event.currentTarget.value});
     }
   
+    const onExplicacionDiscapacidadFisicaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_EXPLICACION_DISCAPACIDAD_FISICA, payload:event.target.value});
+    }
     const onSigueTratamientoMentalChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
       // console.log(event.currentTarget.value);
       datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_SIGUE_TRATAMIENTO_MENTAL, payload:event.currentTarget.value});
@@ -392,7 +419,7 @@ import {
       
       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`;
       const datosDelFormulario:datosSalud = Object.assign({},datosSaludFormState);
-      datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
+      datosDelFormulario.id_persona = id_persona;
       const respuesta = await api_request(url,{
         method:'POST',
         body:JSON.stringify(datosDelFormulario),
@@ -846,17 +873,42 @@ import {
                                       aria-labelledby="discapacidad"
                                       name="row-radio-buttons-group"
                                   >
+                                      <FormControlLabel
+                                        value="Ninguna"
+                                        control={<Radio/>}
+                                        label="Ninguna"/>
                                       <FormControlLabel 
-                                        value="fisica" 
+                                        value="Fisica" 
                                         control={<Radio/>} 
                                         label="Fisica"/>
                                       <FormControlLabel 
-                                        value="motora" 
+                                        value="Motora" 
                                         control={<Radio />} 
                                         label="Motora"/>
+                                      <FormControlLabel 
+                                        value="Intelectual" 
+                                        control={<Radio />} 
+                                        label="Intelectual"/>
+                                      <FormControlLabel 
+                                        value="Otras" 
+                                        control={<Radio />} 
+                                        label="Otras"/>
                                   </RadioGroup>
                               </FormControl>
                           </Grid>
+                          {datosSaludFormState.discapacidad_fisica !== "Ninguna" && 
+                          <Grid item sm={12} sx={{ml:0}}>
+                            <FormControl fullWidth>
+                              <FormLabel>Detalle de la discapcidad</FormLabel>
+                                <TextField 
+                                  sx={{marginLeft:-20}}
+                                  fullWidth
+                                  value={datosSaludFormState.explicacion_discapacidad_fisica}
+                                  onChange={onExplicacionDiscapacidadFisicaChange}
+                                  disabled={false}
+                                />
+                            </FormControl>
+                          </Grid>}
   
         </Grid>
         <Grid container spacing={2} mt={2}>
