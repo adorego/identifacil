@@ -1,55 +1,74 @@
-import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, OutlinedInput, Radio, RadioGroup } from "@mui/material";
-import { FC, useState } from "react";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Grid,
+    InputLabel,
+    OutlinedInput,
+    Radio,
+    RadioGroup
+} from "@mui/material";
+import {FC, useEffect, useState} from "react";
 
-import { api_request } from "@/lib/api-request";
+import {api_request} from "@/lib/api-request";
 import log from "loglevel";
-import { useGlobalContext } from "@/app/Context/store";
+import {useGlobalContext} from "@/app/Context/store";
 
 export interface datosEducacion {
-    numeroDeIdentificacion:string;
+    numeroDeIdentificacion: string;
     nivelAcademico: string;
-    nivelAcademico_modificado:boolean;
+    nivelAcademico_modificado: boolean;
     institucionEducativa: string;
-    institucionEducativa_modificado:boolean;
+    institucionEducativa_modificado: boolean;
     tieneOficio: boolean;
-    tieneOficio_modificado:boolean;
+    tieneOficio_modificado: boolean;
     nombreOficio: string;
-    nombreOficio_modificado:boolean;
+    nombreOficio_modificado: boolean;
     ultimoTrabajo: string;
-    ultimoTrabajo_modificado:boolean;
+    ultimoTrabajo_modificado: boolean;
 }
 
-const datosEducacionIniciales:datosEducacion = {
-    numeroDeIdentificacion:"",
-    nivelAcademico:"",
-    nivelAcademico_modificado:false,
+const datosEducacionInicialesInitial: datosEducacion = {
+    numeroDeIdentificacion: "",
+    nivelAcademico: "",
+    nivelAcademico_modificado: false,
     institucionEducativa: "",
-    institucionEducativa_modificado:false,
+    institucionEducativa_modificado: false,
     tieneOficio: false,
-    tieneOficio_modificado:false,
+    tieneOficio_modificado: false,
     nombreOficio: "",
-    nombreOficio_modificado:false,
+    nombreOficio_modificado: false,
     ultimoTrabajo: "",
-    ultimoTrabajo_modificado:false
+    ultimoTrabajo_modificado: false
 }
 
-export interface BloqueEducacionProps{
-    numeroDeIdentificacion?:string;
+export interface BloqueEducacionProps {
+    numeroDeIdentificacion?: string;
+    datosEducacionIniciales?: datosEducacion;
 }
-const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
-    const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosEducacionIniciales);
+
+const BloqueEducacion: FC<BloqueEducacionProps> = (
+    {
+        numeroDeIdentificacion,
+        datosEducacionIniciales = datosEducacionInicialesInitial // Asigna directamente el valor predeterminado aquí
+    }) => {
+
+    const estadoInicial = datosEducacionIniciales ? datosEducacionIniciales : datosEducacionInicialesInitial;
+    const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(estadoInicial);
     const {openSnackbar} = useGlobalContext();
     // console.log(estadoFormularioDeEducacion);
 
-    const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+    const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
         setEstadoFormularioDeEducacion(
-            (previus) =>{
-                return(
+            (previus) => {
+                return (
                     {
                         ...previus,
-                        [event.target.name]:event.target.value,
-                        [`${event.target.name}_modificado`]:true
+                        [event.target.name]: event.target.value,
+                        [`${event.target.name}_modificado`]: true
 
                     }
                 )
@@ -57,14 +76,36 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
         )
     }
 
-    const onSelectChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+    useEffect(() => {
+        if (datosEducacionIniciales) {
+            setEstadoFormularioDeEducacion(prevState => {
+                return{
+                    ...prevState,
+                    numeroDeIdentificacion: datosEducacionIniciales.numeroDeIdentificacion,
+                    nivelAcademico: datosEducacionIniciales.nivelAcademico,
+                    nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
+                    institucionEducativa: datosEducacionIniciales.institucionEducativa,
+                    institucionEducativa_modificado: datosEducacionIniciales.institucionEducativa_modificado,
+                    tieneOficio: datosEducacionIniciales.tieneOficio,
+                    tieneOficio_modificado: datosEducacionIniciales.tieneOficio_modificado,
+                    nombreOficio: datosEducacionIniciales.nombreOficio,
+                    nombreOficio_modificado: datosEducacionIniciales.nombreOficio_modificado,
+                    ultimoTrabajo: datosEducacionIniciales.ultimoTrabajo,
+                    ultimoTrabajo_modificado: datosEducacionIniciales.ultimoTrabajo_modificado
+                }
+            })
+        }
+
+    }, [datosEducacionIniciales]);
+
+    const onSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEstadoFormularioDeEducacion(
-            (previus) =>{
-                return(
+            (previus) => {
+                return (
                     {
                         ...previus,
-                        [event.target.name]:(event.target.value === "true"),
-                        [`${event.target.name}_modificado`]:true
+                        [event.target.name]: (event.target.value === "true"),
+                        [`${event.target.name}_modificado`]: true
 
                     }
                 )
@@ -72,43 +113,43 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
         )
     }
 
-    const onGuardarClick = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        if(numeroDeIdentificacion){
-            try{
+        if (numeroDeIdentificacion) {
+            try {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
-                const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
+                const datosDelFormulario: datosEducacion = Object.assign({}, estadoFormularioDeEducacion);
                 datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
-                console.log("Datos a enviar:", datosDelFormulario);
-                const respuesta = await api_request(url,{
-                    method:'POST',
-                    body:JSON.stringify(datosDelFormulario),
+
+                const respuesta = await api_request(url, {
+                    method: 'POST',
+                    body: JSON.stringify(datosDelFormulario),
                     headers: {
                         'Content-Type': 'application/json'
                     }
 
                 });
-                console.log("Respuesta:", respuesta);
-                if(respuesta.success){
-                    openSnackbar("Datos guardados correctamente","success")
-                }else{
-                    if(respuesta.error){
-                        openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+
+                if (respuesta.success) {
+                    openSnackbar("Datos guardados correctamente", "success")
+                } else {
+                    if (respuesta.error) {
+                        openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                         log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
                     }
                 }
-            }catch(error){
-                openSnackbar(`Error al guardar los datos:${error}`,"error");
+            } catch (error) {
+                openSnackbar(`Error al guardar los datos:${error}`, "error");
             }
 
 
             // console.log("Respuesta:", respuesta);
-        }else{
-            openSnackbar("Falta el número de identificación","error");
+        } else {
+            openSnackbar("Falta el número de identificación", "error");
         }
     }
 
-    return(
+    return (
         <Box
             component="form"
             sx={{
@@ -139,7 +180,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
                                 } label="Secundaria"/>
                             <FormControlLabel
                                 value="terciaria"
-                                control={<Radio />
+                                control={<Radio/>
                                 } label="Terciaria"/>
                         </RadioGroup>
                     </FormControl>
@@ -167,7 +208,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({numeroDeIdentificacion}) =>{
                         >
                             <FormControlLabel
                                 value={true}
-                                control={<Radio />}
+                                control={<Radio/>}
                                 label="Si"/>
                             <FormControlLabel
                                 value={false}

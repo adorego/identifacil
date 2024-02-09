@@ -2,21 +2,33 @@
 
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import {Breadcrumbs, Grid, Link, Stack, Box} from "@mui/material";
+import {Grid, Stack, Box} from "@mui/material";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import CustomTable from "@/components/CustomTable";
-import {proximaAudienciaData, visitaData} from "@/app/dummyData/data";
 import NestedInformacionPreso from "./NestedInformacionPreso";
 import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect} from "react";
 import {fetchData} from "@/components/utils/utils";
+import Image from "next/image";
+import avatar from "@/common/blank-profile-picture-973460_960_720.webp"
 
-/*const audienciasDummy = proximaAudienciaData();
-const visitaDummy = visitaData();*/
+interface familiar {
+    nombre: string;
+    apellido: string;
+    vinculo: string;
+    lugar: string;
+
+}
+
+interface datosConcubino {
+    numeroDeIdentificacion: string;
+    nombres: string;
+    apellidos: string;
+
+}
 
 type dataType = {
     nombre: string;
@@ -24,7 +36,74 @@ type dataType = {
     apodo: string;
     fechaDeNacimiento: string;
     establecimiento_penitenciario?: string | number;
-    datosPersonales: object
+    genero: number;
+    fecha_nacimiento: string;
+    numero_de_identificacion: string;
+    datosPersonales: {
+        estadoCivil: string;
+        lugarDeNacimiento: string;
+        direccion: string;
+        barrioCompania: string;
+        numeroDeContacto: string;
+        contactoDeEmergencia1: string;
+        contactoDeEmergencia2: string;
+        pueblosIndigenas: boolean;
+        nombreEtnia: string;
+        perteneceAComunidadLGTBI: boolean;
+    };
+    datosDeSeguridad:{
+        "numeroDeIdentificacion": string;
+        "riesgoParaPersonal": boolean;
+        "riesgoParaPersonal_modificado": boolean;
+        "riesgoParaPersonalRespuesta": string;
+        "riesgoParaPersonalRespuesta_modificado": boolean;
+        "riesgoParaReclusos": boolean;
+        "riesgoParaReclusos_modificado": boolean;
+        "riesgoParaReclusosRespuesta": string;
+        "riesgoParaReclusosRespuesta_modificado": boolean;
+        "riesgoDeSufrirLesionPorOtrosReclusos": boolean;
+        "riesgoDeSufrirLesionPorOtrosReclusos_modificado": boolean;
+        "riesgoDeSufrirLesionPorOtrosReclusosRespuesta": string;
+        "riesgoDeDanharLaPropiedad": boolean;
+        "riesgoDeDanharLaPropiedad_modificado": boolean;
+        "riesgoDeDanharLaPropiedadRespuesta": string;
+        "miembroDeGrupoQueConstituyeAmenazaParaSeguridad": boolean;
+        "miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado": boolean;
+        "miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta": string;
+        "tieneEntrenamientoMilitarPrevio": boolean;
+        "tieneEntrenamientoMilitarPrevio_modificado": boolean;
+        "tieneEntrenamientoMilitarPrevioRespuesta": string;
+        "eraFuncionarioPublico": boolean;
+        "eraFuncionarioPublico_modificado": boolean;
+        "eraFuncionarioPublicoRespuesta": string;
+    };
+    datosFamiliares:{
+        numeroDeIdentificacion: string;
+        esCabezaDeFamilia: boolean;
+        esCabezaDeFamilia_modificado: boolean;
+        tieneCirculoFamiliar: boolean;
+        tieneCirculoFamiliar_modificado: boolean;
+        familiares: Array<familiar> | null;
+        familiares_modificado: boolean;
+        tieneConcubino: boolean;
+        tieneConcubino_modificado: boolean;
+        concubino: datosConcubino | null;
+        concubino_modificado: boolean;
+    };
+    datosEducacion:{
+        numeroDeIdentificacion: string;
+        nivelAcademico: string;
+        nivelAcademico_modificado: boolean;
+        institucionEducativa: string;
+        institucionEducativa_modificado: boolean;
+        tieneOficio: boolean;
+        tieneOficio_modificado: boolean;
+        nombreOficio: string;
+        nombreOficio_modificado: boolean;
+        ultimoTrabajo: string;
+        ultimoTrabajo_modificado: boolean;
+    };
+
 }
 
 const initialData = {
@@ -33,7 +112,73 @@ const initialData = {
     apodo: '',
     fechaDeNacimiento: '',
     establecimiento_penitenciario: '',
-    datosPersonales: {}
+    genero: 2,
+    fecha_nacimiento: '',
+    numero_de_identificacion: '',
+    datosPersonales:{
+        estadoCivil: "",
+        lugarDeNacimiento: "",
+        direccion: "",
+        barrioCompania: "",
+        numeroDeContacto: "",
+        contactoDeEmergencia1: "",
+        contactoDeEmergencia2: "",
+        pueblosIndigenas: false,
+        nombreEtnia: "",
+        perteneceAComunidadLGTBI: false,
+    },
+    datosDeSeguridad:{
+        numeroDeIdentificacion: "",
+        riesgoParaPersonal: false,
+        riesgoParaPersonal_modificado: false,
+        riesgoParaPersonalRespuesta: '',
+        riesgoParaPersonalRespuesta_modificado: false,
+        riesgoParaReclusos: false,
+        riesgoParaReclusos_modificado: false,
+        riesgoParaReclusosRespuesta: "",
+        riesgoParaReclusosRespuesta_modificado: false,
+        riesgoDeSufrirLesionPorOtrosReclusos: false,
+        riesgoDeSufrirLesionPorOtrosReclusos_modificado: false,
+        riesgoDeSufrirLesionPorOtrosReclusosRespuesta: "",
+        riesgoDeDanharLaPropiedad: false,
+        riesgoDeDanharLaPropiedad_modificado: false,
+        riesgoDeDanharLaPropiedadRespuesta: "",
+        miembroDeGrupoQueConstituyeAmenazaParaSeguridad: false,
+        miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado: false,
+        miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta: "",
+        tieneEntrenamientoMilitarPrevio: false,
+        tieneEntrenamientoMilitarPrevio_modificado: false,
+        tieneEntrenamientoMilitarPrevioRespuesta: "",
+        eraFuncionarioPublico: false,
+        eraFuncionarioPublico_modificado: false,
+        eraFuncionarioPublicoRespuesta: "",
+    },
+    datosFamiliares:{
+        numeroDeIdentificacion: "",
+        esCabezaDeFamilia: false,
+        esCabezaDeFamilia_modificado: false,
+        tieneCirculoFamiliar: false,
+        tieneCirculoFamiliar_modificado: false,
+        familiares: [],
+        familiares_modificado: false,
+        tieneConcubino: false,
+        tieneConcubino_modificado: false,
+        concubino: null,
+        concubino_modificado: false,
+    },
+    datosEducacion:{
+        numeroDeIdentificacion: "",
+        nivelAcademico: "",
+        nivelAcademico_modificado: false,
+        institucionEducativa: "",
+        institucionEducativa_modificado: false,
+        tieneOficio: false,
+        tieneOficio_modificado: false,
+        nombreOficio: "",
+        nombreOficio_modificado: false,
+        ultimoTrabajo: "",
+        ultimoTrabajo_modificado: false
+    }
 }
 
 const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/cedula/`;
@@ -50,7 +195,6 @@ export default function Page({ params }: { params: { id: number } }) {
         setLoading(true)
         fetchData(`${ENDPOINT}${params.id}`)
             .then(fetchedData => {
-
                 setData(fetchedData);
             }).finally(()=> {
 
@@ -81,7 +225,7 @@ export default function Page({ params }: { params: { id: number } }) {
                         <Grid p={3} item sm={12}>
                             <Stack direction='row'>
                                 <Box className='imageContainer' sx={{marginRight: '40px'}}>
-                                    <img
+                                    {/*<img
                                         src='https://source.unsplash.com/collection/1118917/480x480'
                                         alt=''
                                         loading="lazy"
@@ -89,7 +233,8 @@ export default function Page({ params }: { params: { id: number } }) {
                                             width: '100%',
                                             borderRadius: '10px',
                                         }}
-                                    />
+                                    />*/}
+                                    <Image src={avatar} alt={''} width={120} style={{borderRadius: '10px',}}/>
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
 
@@ -219,7 +364,7 @@ export default function Page({ params }: { params: { id: number } }) {
                             </Grid>
                         </TabPanel>*/}
                         <TabPanel value="1" sx={{p:'0'}}>
-                            <NestedInformacionPreso datosPersona={data} datosPersonales={data.datosPersonales}/>
+                            <NestedInformacionPreso datosPersona={data} />
                         </TabPanel>
                         <TabPanel value="2" sx={{p:'0'}}>
                             <TabDatosPersonales />

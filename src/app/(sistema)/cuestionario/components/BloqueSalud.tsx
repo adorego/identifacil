@@ -28,60 +28,9 @@ import { IndexKind } from "typescript";
 import { api_request } from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {datosSaludInicial, datosSaludType} from "@/components/utils/systemTypes";
 
-interface datosSalud{
-  numeroDeIdentificacion:string | null;
-  tieneAfeccionADrogas_modificado:boolean;
-  tieneAfeccionADrogras:boolean;
-  grupo_sanguineo:number;
-  grupo_sanguineo_modificado:boolean;
-  vacunas_recibidas:Array<{id:number, label:string}>;
-  vacunas_recibidas_modificada:boolean;
-  presion_arterial:number;
-  presion_arterial_modificada:boolean;
-  frecuencia_cardiaca:number;
-  frecuencia_cardiaca_modificada:boolean;
-  frecuencia_respiratoria:number;
-  frecuencia_respiratoria_modificada:boolean;
-  temperatura:number;
-  temperatura_modificada:boolean;
-  peso:number;
-  peso_modificado:boolean;
-  talla:number;
-  talla_modificado:boolean;
-  imc:number;
-  imc_modificado:boolean;
-  vdrl:boolean;
-  vdrl_modificado:boolean;
-  vih:boolean;
-  vih_modificado:boolean;
-  tb:boolean;
-  tb_modificado:boolean;
-  gestacion:boolean;
-  gestacion_modificado:boolean;
-  tiempo_gestacion:number;
-  tiempo_gestacion_modificado:boolean;
-  fecha_parto:Dayjs|null;
-  fecha_parto_modificada:boolean;
-  discapacidad_fisica:string;
-  discapacidad_modificada:boolean;
-  sigue_tratamiento_mental:boolean;
-  sigue_tratamiento_mental_modificado:boolean;
-  tiene_antecedentes_de_lesiones_autoinflingidas:boolean;
-  tiene_antecedentes_de_lesiones_autoinflingidas_modificado:boolean;
-  ha_estado_internado_en_hospital_psiquiatrico:boolean;
-  ha_estado_internado_en_hospital_psiquiatrico_modificado:boolean;
-  reporta_abuso_de_droga_previo_al_ingreso:boolean;
-  reporta_abuso_de_droga_previo_al_ingreso_modificado:boolean;
-  medicacion_actual:Array<string>;
-  medicacion_actual_modificada:boolean;
-  tiene_afeccion_severa_por_estupefacientes:boolean;
-  tiene_afeccion_severa_por_estupefaciente_modificado:boolean;
-  necesitaInterprete:boolean;
-  necesitaInterprete_modificado:boolean;
-  tieneDificultadParaLeerYEscribir:boolean;
-  tieneDificultadParaLeerYEscribir_modificado:boolean;
-}
+
 
 enum SALUD_ACTIONS{
   MODIFICAR_AFECCION_DROGA,
@@ -115,60 +64,7 @@ interface saludActions{
   type:SALUD_ACTIONS;
   payload:any;
 }
-const datosSaludInicial:datosSalud = {
-  numeroDeIdentificacion:null,
-  tieneAfeccionADrogas_modificado:false,
-  tieneAfeccionADrogras:false,
-  grupo_sanguineo:0,
-  grupo_sanguineo_modificado:false,
-  vacunas_recibidas:[],
-  vacunas_recibidas_modificada:false,
-  presion_arterial:0,
-  presion_arterial_modificada:false,
-  frecuencia_cardiaca:0,
-  frecuencia_cardiaca_modificada:false,
-  frecuencia_respiratoria:0,
-  frecuencia_respiratoria_modificada:false,
-  temperatura:0,
-  temperatura_modificada:false,
-  peso:0,
-  peso_modificado:false,
-  talla:0,
-  talla_modificado:false,
-  imc:0,
-  imc_modificado:false,
-  vdrl:false,
-  vdrl_modificado:false,
-  vih:false,
-  vih_modificado:false,
-  tb:false,
-  tb_modificado:false,
-  gestacion:false,
-  gestacion_modificado:false,
-  tiempo_gestacion:0,
-  tiempo_gestacion_modificado:false,
-  fecha_parto:null,
-  fecha_parto_modificada:false,
-  discapacidad_fisica:"",
-  discapacidad_modificada:false,
-  sigue_tratamiento_mental:false,
-  sigue_tratamiento_mental_modificado:false,
-  tiene_antecedentes_de_lesiones_autoinflingidas:false,
-  tiene_antecedentes_de_lesiones_autoinflingidas_modificado:false,
-  ha_estado_internado_en_hospital_psiquiatrico:false,
-  ha_estado_internado_en_hospital_psiquiatrico_modificado:false,
-  reporta_abuso_de_droga_previo_al_ingreso:false,
-  reporta_abuso_de_droga_previo_al_ingreso_modificado:false,
-  medicacion_actual:[],
-  medicacion_actual_modificada:false,
-  tiene_afeccion_severa_por_estupefacientes:false,
-  tiene_afeccion_severa_por_estupefaciente_modificado:false,
-  necesitaInterprete:false,
-  necesitaInterprete_modificado:false,
-  tieneDificultadParaLeerYEscribir:false,
-  tieneDificultadParaLeerYEscribir_modificado:false,
 
-}
 
 interface datosSaludSelect{
   grupos_sanguineos:Array<{id:number,label:string}>;
@@ -181,7 +77,7 @@ const datosSaludSelectInicial:datosSaludSelect = {
   vacunas_recibidas:[{id:1, label:"Covid 1era dosis"},{id:2, label:"Covid 2da dosis"},{id:3, label:"Covid 3era dosis"}]
 }
 
-function reducer(state:datosSalud, action:saludActions) {
+function reducer(state:datosSaludType, action:saludActions) {
   switch(action.type){
     case (SALUD_ACTIONS.MODIFICAR_AFECCION_DROGA):
       return Object.assign({},{...state,drogasModificado:true,tieneAfeccionADrogras:(action.payload === "true")});
@@ -243,7 +139,7 @@ const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
 export interface BloqueSaludProps{
   numeroDeIdentificacion:string;
-  datosAlmacenados?:datosSalud;
+  datosAlmacenados?:datosSaludType;
 }
 const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenados = datosSaludInicial}) =>{
   const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer,datosAlmacenados);
@@ -391,7 +287,7 @@ const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenad
     event.preventDefault();
 
     const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`;
-    const datosDelFormulario:datosSalud = Object.assign({},datosSaludFormState);
+    const datosDelFormulario:datosSaludType = Object.assign({},datosSaludFormState);
     datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
     const respuesta = await api_request(url,{
       method:'POST',

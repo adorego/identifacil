@@ -24,7 +24,7 @@ export default function TabDatosPersonales() {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas`;
+        const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/causas`;
         fetchData(apiUrl)
             .then(fetchedData => {
                 setData(fetchedData);

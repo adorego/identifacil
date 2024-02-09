@@ -3,13 +3,21 @@
 import * as React from 'react';
 import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
 import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
-import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
+import BloqueEducacion, {datosEducacion} from "../../cuestionario/components/BloqueEducacion";
 import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliar";
 import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
 import BloqueSalud from "../../cuestionario/components/BloqueSalud";
 import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
 import Typography from '@mui/material/Typography';
 import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
+import {
+    datosEducacionInicial,
+    datosEducacionType, datosFamiliaresInicial, datosFamiliaresType, datosJudicialesInicial, datosJudicialesType,
+    datosSaludInicial,
+    datosSaludType,
+    datosSeguridadInicial,
+    datosSeguridadType
+} from "@/components/utils/systemTypes";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -45,7 +53,61 @@ function a11yProps(index: number) {
 }
 
 
-export default function NestedInformacionPreso({datosPersona, datosPersonales} : any) {
+
+type datosPersonaType = {
+    numero_de_identificacion: string;
+    nombre: string;
+    apellido: string;
+    genero: number;
+    apodo: string;
+    fecha_nacimiento: string;
+    datosPersonales:{
+        estadoCivil: string;
+        lugarDeNacimiento: string;
+        direccion: string;
+        barrioCompania: string;
+        numeroDeContacto: string;
+        contactoDeEmergencia1: string;
+        contactoDeEmergencia2: string;
+        pueblosIndigenas: boolean;
+        nombreEtnia: string;
+        perteneceAComunidadLGTBI: boolean;
+    };
+    datosDeSeguridad: datosSeguridadType;
+    datosFamiliares: datosFamiliaresType;
+    datosEducacion: datosEducacionType;
+    datosSalud: datosSaludType;
+    datosJudiciales: datosJudicialesType;
+}
+
+
+const datosPersonaInitial = {
+    numero_de_identificacion: "",
+    nombre: "",
+    apellido: "",
+    genero: 1,
+    apodo: "",
+    fecha_nacimiento: "",
+    datosPersonales:{
+        estadoCivil: "",
+        lugarDeNacimiento: "",
+        direccion: "",
+        barrioCompania: "",
+        numeroDeContacto: "",
+        contactoDeEmergencia1: "",
+        contactoDeEmergencia2: "",
+        pueblosIndigenas: false,
+        nombreEtnia: "",
+        perteneceAComunidadLGTBI: false,
+    },
+    datosDeSeguridad: datosSeguridadInicial,
+    datosFamiliares: datosFamiliaresInicial,
+    datosEducacion: datosEducacionInicial,
+    datosSalud: datosSaludInicial,
+    datosJudiciales: datosJudicialesInicial
+}
+
+export default function NestedInformacionPreso({datosPersona=datosPersonaInitial} : { datosPersona:datosPersonaType }) {
 
     const [value, setValue] = React.useState(0);
 
@@ -83,43 +145,50 @@ export default function NestedInformacionPreso({datosPersona, datosPersonales} :
                                         apodo: datosPersona.apodo,
                                         codigo_genero: datosPersona.genero,
                                         fecha_nacimiento: '1989/07/20',
-                                        estadoCivil: datosPersonales['estadoCivil'],
-                                        lugarDeNacimiento: datosPersonales['lugarDeNacimiento'],
-                                        direccion: datosPersonales['direccion'],
-                                        barrioCompania: datosPersonales['barrioCompania'],
-                                        numeroDeContacto: datosPersonales['numeroDeContacto'],
-                                        contactoDeEmergencia1: datosPersonales['contactoDeEmergencia1'],
-                                        contactoDeEmergencia2: datosPersonales['contactoDeEmergencia2'],
-                                        pueblosIndigenas: datosPersonales['pueblosIndigenas'],
-                                        nombreEtnia: datosPersonales['nombreEtnia'],
-                                        perteneceAComunidadLGTBI: datosPersonales['perteneceAComunidadLGTBI'],
+                                        estadoCivil: datosPersona.datosPersonales.estadoCivil,
+                                        lugarDeNacimiento: datosPersona.datosPersonales.lugarDeNacimiento,
+                                        direccion: datosPersona.datosPersonales.direccion,
+                                        barrioCompania: datosPersona.datosPersonales.barrioCompania,
+                                        numeroDeContacto: datosPersona.datosPersonales.numeroDeContacto,
+                                        contactoDeEmergencia1: datosPersona.datosPersonales.contactoDeEmergencia1,
+                                        contactoDeEmergencia2: datosPersona.datosPersonales.contactoDeEmergencia2,
+                                        pueblosIndigenas: datosPersona.datosPersonales.pueblosIndigenas,
+                                        nombreEtnia: datosPersona.datosPersonales.nombreEtnia,
+                                        perteneceAComunidadLGTBI: datosPersona.datosPersonales.perteneceAComunidadLGTBI,
 
                                     }}/> : ''
                                 }
 
                             </CustomTabPanel>
+
                             <CustomTabPanel value={value} index={1}>
-                                {/* <BloqueSalud /> */}
+                                 <BloqueSalud
+                                     numeroDeIdentificacion={datosPersona.numero_de_identificacion}
+                                     datosAlmacenados={datosPersona.datosSalud}
+                                 />
                             </CustomTabPanel>
+
                             <CustomTabPanel value={value} index={2}>
-                                {/* <BloqueSeguridad /> */}
+                                 <BloqueSeguridad
+                                     datosIniciales={datosPersona.datosDeSeguridad}
+                                     numeroDeIdentificacion={datosPersona.numero_de_identificacion}
+                                 />
                             </CustomTabPanel>
+
                             <CustomTabPanel value={value} index={3}>
-                                {/* <BloqueEducacion /> */}
+                                 <BloqueEducacion numeroDeIdentificacion={datosPersona.numero_de_identificacion} datosEducacionIniciales={datosPersona.datosEducacion}/>
                             </CustomTabPanel>
+
                             <CustomTabPanel value={value} index={4}>
-                                {/* <BloqueFamiliares /> */}
+                                 <BloqueFamiliares numeroDeIdentificacion={datosPersona.numero_de_identificacion} datosFamiliaresIniciales={datosPersona.datosFamiliares} />
                             </CustomTabPanel>
+
                             <CustomTabPanel value={value} index={5}>
-                                {/* <BloqueJudicial /> */}
+                                 <BloqueJudicial numeroDeIdentificacion={datosPersona.numero_de_identificacion} datosIniciales={datosPersona.datosJudiciales} />
                             </CustomTabPanel>
                         </Grid>
-
                     </Grid>
-
-
                 </Box>
-
             </Paper>
         </Box>
     )

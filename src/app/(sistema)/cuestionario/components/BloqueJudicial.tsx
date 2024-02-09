@@ -1,14 +1,13 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { RequestResponse, api_request } from "@/lib/api-request";
-
 import { DatePicker } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { MuiFileInput } from "mui-file-input";
-import { StringDecoder } from "string_decoder";
 import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
+import {datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 
 interface oficiosDTO{
   oficios:Array<oficio>;
@@ -30,96 +29,19 @@ interface causasDTO{
   causas:Array<causa>
   success:boolean;
 }
-interface oficio_tipo{
-  numeroDeDocumento:string;
-  fechaDeDocumento:Dayjs | null;
-  documento:File | null;
 
-}
 
-interface resolucion_tipo{
-  numeroDeDocumento:string;
-  fechaDeDocumento:Dayjs | null;
-  documento:File | null;
-}
 
-interface expediente_tipo{
-  numeroDeDocumento:string;
-  fechaDeDocumento:Dayjs | null;
-}
-interface datosJudiciales{
-  numeroDeIdentificacion:string | null;
-  situacionJudicial: string;
-  situacionJudicial_modificado:boolean;
-  primeraVezEnPrision: boolean;
-  primeraVezEnPrision_modificado:boolean;
-  cantidadDeIngresos: number;
-  cantidadDeIngresos_modificado:boolean;
-  causa: string;
-  causa_modificado:boolean;
-  oficio: string;
-  oficio_modificado:boolean;
-  ultimoTrabajo: string;
-  ultimoTrabajo_modificado:boolean;
-  oficioJudicial: oficio_tipo;
-  oficioJudicial_modificado:boolean;
-  resolucion: resolucion_tipo;
-  resolucion_modificado:boolean;
-  expediente: expediente_tipo;
-  expediente_modificado:boolean;
-  caratula: string;
-  caratula_modificado:boolean;
-  hechoPunible: string;
-  hechoPunible_modificado:boolean;
-  sentenciaDefinitiva?: string;
-  sentenciaDefinitiva_modificado:boolean;
-}
 
-const datosJudicialesIniciales:datosJudiciales = {
-  numeroDeIdentificacion:null,
-  situacionJudicial: "",
-  situacionJudicial_modificado:false,
-  primeraVezEnPrision: false,
-  primeraVezEnPrision_modificado:false,
-  cantidadDeIngresos: 0,
-  cantidadDeIngresos_modificado:false,
-  causa:"",
-  causa_modificado:false,
-  oficio: "",
-  oficio_modificado:false,
-  ultimoTrabajo: "",
-  ultimoTrabajo_modificado:false,
-  oficioJudicial: {
-    numeroDeDocumento:"",
-    fechaDeDocumento:null,
-    documento:null,
-  },
-  oficioJudicial_modificado:false,
-  resolucion: {
-    numeroDeDocumento:"",
-    fechaDeDocumento:null,
-    documento:null
-  },
-  resolucion_modificado:false,
-  expediente: {
-    numeroDeDocumento:"",
-    fechaDeDocumento:null
-  },
-  expediente_modificado:false,
-  caratula: "",
-  caratula_modificado:false,
-  hechoPunible: "",
-  hechoPunible_modificado:false,
-  sentenciaDefinitiva: "",
-  sentenciaDefinitiva_modificado:false,
-}
 interface BloqueJudicialProps{
-  datosIniciales?:datosJudiciales;
+  datosIniciales?:datosJudicialesType;
   numeroDeIdentificacion?:any;
 }
 
-const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesIniciales, numeroDeIdentificacion}) =>{
-  const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudiciales>(datosIniciales)
+const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesInicial, numeroDeIdentificacion}) =>{
+
+  const estadoInicial = datosIniciales ? datosIniciales : datosJudicialesInicial;
+  const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(estadoInicial)
   const [causas, setCausas] = useState<Array<causa>>([]);
   const [oficios, setOficios] = useState<Array<oficio>>([]);
   const {openSnackbar} = useGlobalContext();
@@ -130,9 +52,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
       () =>{
         const getCausas = async (numeroDeIdentificacion:string) =>{
           const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${numeroDeIdentificacion}`;
-          const parameter = {
-            numeroDeIdentificacion:numeroDeIdentificacion
-          }
+
           try{
             const respuesta:RequestResponse = await api_request<causasDTO>(url,{
               method:'GET',
@@ -307,7 +227,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
     )
   }
 
-  const onOptionSelectChange = (event:SelectChangeEvent<string>) =>{
+  const onOptionSelectChange = (event:SelectChangeEvent) =>{
     console.log("Value:", event.target.value);
     setEstadoFormularioJudicial(
         (previus) =>{
@@ -348,7 +268,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
     }
   }
 
-  const crearFormData = (datos:datosJudiciales, numeroDeIdentificacion:string):FormData =>{
+  const crearFormData = (datos:datosJudicialesType, numeroDeIdentificacion:string):FormData =>{
     const formData = new FormData();
     const propiedades:Array<string> = Object.getOwnPropertyNames(datos);
     formData.append('numeroDeIdentificacion',numeroDeIdentificacion);

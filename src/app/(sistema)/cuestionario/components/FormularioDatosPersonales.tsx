@@ -17,7 +17,7 @@ interface datosPersonales {
     apellido_modificado:boolean;
     apodo: string;
     apodo_modificado:boolean;
-    estadoCivil: string;
+    estadoCivil?: string;
     estadoCivil_modificado:boolean;
     fechaDeNacimiento: Dayjs | null;
     fechaDeNacimiento_modificado:boolean;
@@ -26,7 +26,7 @@ interface datosPersonales {
     lugarDeNacimiento: string;
     lugarDeNacimiento_modificado:boolean;
     sexo: string;
-    codigo_genero: string;
+    codigo_genero?: number;
     sexo_modificado:boolean;
     tipoDeDocumento: string;
     tipoDeDocumento_modificado:boolean;
@@ -61,7 +61,7 @@ const datosPersonalesInicial: datosPersonales = {
     nacionalidad: '',
     lugarDeNacimiento: '',
     sexo: '',
-    codigo_genero: '',
+    codigo_genero: 0,
     tipoDeDocumento: '',
     direccion: '',
     barrioCompania: '',
@@ -97,9 +97,9 @@ export interface BloqueDatosPersonalesProps{
         nombres: string;
         apellidos: string;
         fecha_nacimiento: string;
-        codigo_genero: string;
+        codigo_genero: number;
         apodo: string;
-        estadoCivil: string;
+        estadoCivil?: string;
         lugarDeNacimiento: string;
         direccion: string;
         barrioCompania: string;
@@ -393,7 +393,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                             id="codigo_genero"
                             name="codigo_genero"
                             label='Genero'
-                            value={datosPersonalesState.codigo_genero}
+                            value={String(datosPersonalesState.codigo_genero)}
                             onChange={onDatoSelectChange}
                         >
                             <MenuItem value={1}>Femenino</MenuItem>
@@ -553,18 +553,17 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                     </FormControl>
                 </Grid>
                 <Grid item sm={8}>
-                    {
-                        datosPersonalesState.perteneceAComunidadLGTBI ?
-                            <TextField
-                                fullWidth
-                                label="Nombre de la comunidad"
-                                name="grupoLGTBI"
-                                value={datosPersonalesState.grupoLGTBI}
-                                onChange={onDatoChange}
-                                disabled={!datosPersonalesState.perteneceAComunidadLGTBI}
-                            />
-                            : null
-                    }
+
+                    {/*<TextField
+                        fullWidth
+                        label="Nombre de la comunidad"
+                        name="grupoLGTBI"
+                        value={datosPersonalesState.grupoLGTBI}
+                        onChange={onDatoChange}
+                        disabled={!datosPersonalesState.perteneceAComunidadLGTBI}
+                    />*/}
+
+
 
                 </Grid>
                 <Grid item sm={12}>

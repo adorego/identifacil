@@ -100,6 +100,18 @@ export const filterByDateRange = (data: any[], startDate: string | number | Date
 };
 
 
+
+/**
+ * Filtra un array de objetos basado en un rango de fechas.
+ * @param {string} isEditMode variable para saber si es un put o post
+ * @param {string }endpoint
+ * @param {string} entityName Nombre de la tabla o entidad a actualizar
+ * @param {number|string} params Es el valor del id del elemento consultado
+ * @param {string} stateForm Datos del form
+ * @param {string} setLoading Funcion para cambiar el estado del loader
+ * @param {string} openSnackbar Funcion para abrir el snackdel global context
+ * @param router
+ */
 export const postEntity = async (
     isEditMode: string | number,
     endpoint: string,
