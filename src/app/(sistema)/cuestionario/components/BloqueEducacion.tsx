@@ -12,53 +12,48 @@ import {
 } from "@mui/material";
 import {FC, useEffect, useState} from "react";
 
+import React from "react";
 import {api_request} from "@/lib/api-request";
+import { datosEducacionType } from "../../../../components/utils/systemTypes";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 
 export interface datosEducacion {
-    numeroDeIdentificacion: string;
-    nivelAcademico: string;
-    nivelAcademico_modificado: boolean;
-    institucionEducativa: string;
-    institucionEducativa_modificado: boolean;
-    tieneOficio: boolean;
-    tieneOficio_modificado: boolean;
-    nombreOficio: string;
-    nombreOficio_modificado: boolean;
-    ultimoTrabajo: string;
-    ultimoTrabajo_modificado: boolean;
+  id_persona:number|null;
+  nivelAcademico: string;
+  nivelAcademico_modificado:boolean;
+  institucionEducativa: string;
+  institucionEducativa_modificado:boolean;
+  tieneOficio: boolean;
+  tieneOficio_modificado:boolean;
+  nombreOficio: string;
+  nombreOficio_modificado:boolean;
+  ultimoTrabajo: string;
+  ultimoTrabajo_modificado:boolean;
 }
 
-const datosEducacionInicialesInitial: datosEducacion = {
-    numeroDeIdentificacion: "",
-    nivelAcademico: "",
-    nivelAcademico_modificado: false,
-    institucionEducativa: "",
-    institucionEducativa_modificado: false,
-    tieneOficio: false,
-    tieneOficio_modificado: false,
-    nombreOficio: "",
-    nombreOficio_modificado: false,
-    ultimoTrabajo: "",
-    ultimoTrabajo_modificado: false
+const datosEducacionIniciales:datosEducacion = {
+  id_persona:null,
+  nivelAcademico:"",
+  nivelAcademico_modificado:false,
+  institucionEducativa: "",
+  institucionEducativa_modificado:false,
+  tieneOficio: false,
+  tieneOficio_modificado:false,
+  nombreOficio: "",
+  nombreOficio_modificado:false,
+  ultimoTrabajo: "",
+  ultimoTrabajo_modificado:false
+} 
+
+export interface BloqueEducacionProps{
+  id_persona:number;
+  datosEducacionIniciales:datosEducacionType;
 }
-
-export interface BloqueEducacionProps {
-    numeroDeIdentificacion?: string;
-    datosEducacionIniciales?: datosEducacion;
-}
-
-const BloqueEducacion: FC<BloqueEducacionProps> = (
-    {
-        numeroDeIdentificacion,
-        datosEducacionIniciales = datosEducacionInicialesInitial // Asigna directamente el valor predeterminado aquí
-    }) => {
-
-    const estadoInicial = datosEducacionIniciales ? datosEducacionIniciales : datosEducacionInicialesInitial;
-    const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(estadoInicial);
-    const {openSnackbar} = useGlobalContext();
-    // console.log(estadoFormularioDeEducacion);
+const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales}) =>{
+  const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosEducacionIniciales);
+  const {openSnackbar} = useGlobalContext();
+  // console.log(estadoFormularioDeEducacion);
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
@@ -81,7 +76,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = (
             setEstadoFormularioDeEducacion(prevState => {
                 return{
                     ...prevState,
-                    numeroDeIdentificacion: datosEducacionIniciales.numeroDeIdentificacion,
+                    id_persona: datosEducacionIniciales.id_persona,
                     nivelAcademico: datosEducacionIniciales.nivelAcademico,
                     nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
                     institucionEducativa: datosEducacionIniciales.institucionEducativa,
@@ -113,20 +108,20 @@ const BloqueEducacion: FC<BloqueEducacionProps> = (
         )
     }
 
-    const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        if (numeroDeIdentificacion) {
-            try {
-                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
-                const datosDelFormulario: datosEducacion = Object.assign({}, estadoFormularioDeEducacion);
-                datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
-
-                const respuesta = await api_request(url, {
-                    method: 'POST',
-                    body: JSON.stringify(datosDelFormulario),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+  const onGuardarClick = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(id_persona){
+      try{
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
+        const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
+        datosDelFormulario.id_persona = id_persona;
+        console.log("Datos a enviar:", datosDelFormulario);
+        const respuesta = await api_request(url,{
+          method:'POST',
+          body:JSON.stringify(datosDelFormulario),
+          headers: {
+              'Content-Type': 'application/json'
+          }
 
                 });
 
@@ -143,28 +138,28 @@ const BloqueEducacion: FC<BloqueEducacionProps> = (
             }
 
 
-            // console.log("Respuesta:", respuesta);
-        } else {
-            openSnackbar("Falta el número de identificación", "error");
-        }
+      // console.log("Respuesta:", respuesta);
+    }else{
+      openSnackbar("Falta el id de la persona","error");
     }
-
-    return (
-        <Box
-            component="form"
-            sx={{
-                '& .MuiTextField-root': {m: 1, width: '25ch'},
-            }}
-            noValidate
-            autoComplete="off"
-        >
+  }
+  
+  return(
+    <Box
+                component="form"
+                sx={{
+                    '& .MuiTextField-root': {m: 1, width: '25ch'},
+                }}
+                noValidate
+                autoComplete="off"
+            >
 
             <Grid container spacing={2}>
                 <Grid item sm={6}>
                     <FormControl>
                         <FormLabel id="datoEducacion">Nivel Academico</FormLabel>
                         <RadioGroup
-                            value={estadoFormularioDeEducacion.nivelAcademico}
+                            value={estadoFormularioDeEducacion?.nivelAcademico}
                             onChange={onDatoChange}
                             row
                             aria-labelledby="datoEducacion"
@@ -191,7 +186,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = (
                         <OutlinedInput
                             name="institucionEducativa"
                             label="Institución educativa"
-                            value={estadoFormularioDeEducacion.institucionEducativa}
+                            value={estadoFormularioDeEducacion?.institucionEducativa}
                             onChange={onDatoChange}
                         />
                     </FormControl>
@@ -200,7 +195,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = (
                     <FormControl>
                         <FormLabel id="datoOficio">Cuenta con algún oficio</FormLabel>
                         <RadioGroup
-                            value={estadoFormularioDeEducacion.tieneOficio}
+                            value={estadoFormularioDeEducacion?.tieneOficio}
                             onChange={onSelectChange}
                             row
                             aria-labelledby="datoOficio"

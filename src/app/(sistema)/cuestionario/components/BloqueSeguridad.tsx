@@ -11,39 +11,30 @@ import {
     RadioGroup
 } from "@mui/material";
 import React, {FC, useState} from "react";
+import {datosSeguridadInicial, datosSeguridadType} from "@/components/utils/systemTypes";
 
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
-import {datosSeguridadInicial, datosSeguridadType} from "@/components/utils/systemTypes";
-
-
-
-
 
 interface BloqueSeguridadProps {
     datosIniciales?: datosSeguridadType;
-    numeroDeIdentificacion: string;
+    id_persona: number;
 }
 
-const BloqueSeguridad: FC<BloqueSeguridadProps> = (
-    {
-        datosIniciales = datosSeguridadInicial,
-        numeroDeIdentificacion
-    }) => {
-
-    const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(datosIniciales);
-    const {openSnackbar} = useGlobalContext();
-    // console.log(estadoBloqueSeguridadFormulario);
-    const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // console.log(event.target.name);
-        setEstadoBloqueSeguridadFormulario(
-            (previus) => {
-                return (
-                    {
-                        ...previus,
-                        [event.target.name]: event.target.value,
-                        [`${event.target.name}_modificado`]: true
+const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona}) =>{
+  const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(datosIniciales);
+  const {openSnackbar} = useGlobalContext();
+  // console.log(estadoBloqueSeguridadFormulario);
+  const onDatoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+    // console.log(event.target.name);
+    setEstadoBloqueSeguridadFormulario(
+      (previus) =>{
+        return(
+          {
+            ...previus,
+            [event.target.name]:event.target.value,
+            [`${event.target.name}_modificado`]:true
 
                     }
                 )
@@ -66,21 +57,19 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = (
         )
     }
 
-    const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        if (numeroDeIdentificacion) {
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_seguridad`;
-            const datosDelFormulario: datosSeguridadType = Object.assign({}, estadoBloqueSeguridadFormulario);
-
-            datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
-
-            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-            const respuesta = await api_request(url, {
-                method: 'POST',
-                body: JSON.stringify(datosDelFormulario),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+  const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(id_persona){
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_seguridad`;
+      const datosDelFormulario:datosSeguridadType = Object.assign({},estadoBloqueSeguridadFormulario);
+      datosDelFormulario.id_persona = id_persona;
+      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
 
             })
             if (respuesta.success) {
@@ -93,7 +82,7 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = (
             }
 
         } else {
-            openSnackbar("Falta el número de identificación", "error");
+            openSnackbar("Falta el identifiicador de la persona", "error");
         }
     }
     return (

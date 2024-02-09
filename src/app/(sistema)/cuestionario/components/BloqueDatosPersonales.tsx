@@ -6,111 +6,114 @@ import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
 import { RequestResponse, api_request } from "@/lib/api-request";
 import dayjs, { Dayjs }  from "dayjs";
 
-import { IdentificacionForm } from "@/components/registro/IdentificationForm";
+import { DatosDeIdentificacion } from "@/components/registro/identificacionForm";
 import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
 interface datosPersonales {
-    numeroDeIdentificacion:string|undefined;
-    nombre: string;
-    nombre_modificado:boolean;
-    apellido: string;
-    apellido_modificado:boolean;
-    apodo: string;
-    apodo_modificado:boolean;
-    estadoCivil: string;
-    estadoCivil_modificado:boolean;
-    fechaDeNacimiento: Dayjs | null;
-    fechaDeNacimiento_modificado:boolean;
-    nacionalidad: string;
-    nacionalidad_modificado:boolean;
-    lugarDeNacimiento: string;
-    lugarDeNacimiento_modificado:boolean;
-    sexo: string;
-    sexo_modificado:boolean;
-    tipoDeDocumento: string;
-    tipoDeDocumento_modificado:boolean;
-    direccion: string;
-    direccion_modificado:boolean;
-    barrioCompania: string;
-    barrioCompania_modificado:boolean;
-    numeroDeContacto: string;
-    numeroDeContacto_modificado:boolean;
-    contactoDeEmergencia1: string;
-    contactoDeEmergencia1_modificado:boolean;
-    contactoDeEmergencia2: string;
-    contactoDeEmergencia2_modificado:boolean;
-    pueblosIndigenas: boolean;
-    pueblosIndigenas_modificado:boolean;
-    nombreEtnia: string;
-    nombreEtnia_modificado:boolean;
-    perteneceAComunidadLGTBI:boolean;
-    perteneceAComunidadLGTBI_modificado:boolean;
-    grupoLGTBI: string;
-    grupoLGTBI_modificado:boolean;
+  id_persona:number|null;
+  numeroDeIdentificacion:string|null;
+  nombre: string;
+  nombre_modificado:boolean;
+  apellido: string;
+  apellido_modificado:boolean;
+  apodo: string;
+  apodo_modificado:boolean;
+  estadoCivil: string;
+  estadoCivil_modificado:boolean;
+  fechaDeNacimiento: Dayjs | null;
+  fechaDeNacimiento_modificado:boolean;
+  nacionalidad: string;
+  nacionalidad_modificado:boolean;
+  lugarDeNacimiento: string;
+  lugarDeNacimiento_modificado:boolean;
+  sexo: string;
+  sexo_modificado:boolean;
+  tipoDeDocumento: string;
+  tipoDeDocumento_modificado:boolean;
+  direccion: string;
+  direccion_modificado:boolean;
+  barrioCompania: string;
+  barrioCompania_modificado:boolean;
+  numeroDeContacto: string;
+  numeroDeContacto_modificado:boolean;
+  contactoDeEmergencia1: string;
+  contactoDeEmergencia1_modificado:boolean;
+  contactoDeEmergencia2: string;
+  contactoDeEmergencia2_modificado:boolean;
+  pueblosIndigenas: boolean;
+  pueblosIndigenas_modificado:boolean;
+  nombreEtnia: string;
+  nombreEtnia_modificado:boolean;
+  perteneceAComunidadLGTBI:boolean;
+  perteneceAComunidadLGTBI_modificado:boolean;
+  grupoLGTBI: string;
+  grupoLGTBI_modificado:boolean;
 
 }
 
 const datosPersonalesInicial: datosPersonales = {
-    numeroDeIdentificacion:"",
-    nombre: '',
-    apellido: '',
-    apodo: '',
-    estadoCivil: '',
-    fechaDeNacimiento: null,
-    nacionalidad: '',
-    lugarDeNacimiento: '',
-    sexo: '',
-    tipoDeDocumento: '',
-    direccion: '',
-    barrioCompania: '',
-    numeroDeContacto: '',
-    contactoDeEmergencia1: '',
-    contactoDeEmergencia2: '',
-    pueblosIndigenas: false,
-    nombreEtnia: '',
-    nombre_modificado: false,
-    apellido_modificado: false,
-    apodo_modificado: false,
-    estadoCivil_modificado: false,
-    fechaDeNacimiento_modificado: false,
-    nacionalidad_modificado: false,
-    lugarDeNacimiento_modificado: false,
-    sexo_modificado: false,
-    tipoDeDocumento_modificado: false,
-    direccion_modificado: false,
-    barrioCompania_modificado: false,
-    numeroDeContacto_modificado: false,
-    contactoDeEmergencia1_modificado: false,
-    contactoDeEmergencia2_modificado: false,
-    pueblosIndigenas_modificado: false,
-    nombreEtnia_modificado: false,
-    grupoLGTBI: '',
-    grupoLGTBI_modificado: false,
-    perteneceAComunidadLGTBI:false,
-    perteneceAComunidadLGTBI_modificado:false,
+  id_persona:null,
+  numeroDeIdentificacion:null,
+  nombre: '',
+  apellido: '',
+  apodo: '',
+  estadoCivil: '',
+  fechaDeNacimiento: null,
+  nacionalidad: '',
+  lugarDeNacimiento: '',
+  sexo: '',
+  tipoDeDocumento: '',
+  direccion: '',
+  barrioCompania: '',
+  numeroDeContacto: '',
+  contactoDeEmergencia1: '',
+  contactoDeEmergencia2: '',
+  pueblosIndigenas: false,
+  nombreEtnia: '',
+  nombre_modificado: false,
+  apellido_modificado: false,
+  apodo_modificado: false,
+  estadoCivil_modificado: false,
+  fechaDeNacimiento_modificado: false,
+  nacionalidad_modificado: false,
+  lugarDeNacimiento_modificado: false,
+  sexo_modificado: false,
+  tipoDeDocumento_modificado: false,
+  direccion_modificado: false,
+  barrioCompania_modificado: false,
+  numeroDeContacto_modificado: false,
+  contactoDeEmergencia1_modificado: false,
+  contactoDeEmergencia2_modificado: false,
+  pueblosIndigenas_modificado: false,
+  nombreEtnia_modificado: false,
+  grupoLGTBI: '',
+  grupoLGTBI_modificado: false,
+  perteneceAComunidadLGTBI:false,
+  perteneceAComunidadLGTBI_modificado:false,
 }
 export interface BloqueDatosPersonalesProps{
-    datosDeIdentificacion:IdentificacionForm;
-
+  datosDeIdentificacion:DatosDeIdentificacion;
+  
 }
 
 
 const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) =>{
-    const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
-        ...datosPersonalesInicial,
-        fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"YYYY-MM-DD"),
-        fechaDeNacimiento_modificado:true,
-        numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad,
-        nombre:datosDeIdentificacion.nombres,
-        nombre_modificado:true,
-        apellido:datosDeIdentificacion.apellidos,
-        apellido_modificado:true,
-
-    });
-    const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
-    const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
-    const {openSnackbar} = useGlobalContext();
+  const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
+    ...datosPersonalesInicial,
+    fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"YYYY-MM-DD"),
+    fechaDeNacimiento_modificado:true,
+    id_persona:datosDeIdentificacion.id_persona,
+    numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
+    nombre:datosDeIdentificacion.nombres,
+    nombre_modificado:true,
+    apellido:datosDeIdentificacion.apellidos,
+    apellido_modificado:true,
+    
+  });
+  const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+  const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
+  const {openSnackbar} = useGlobalContext();
 
     // console.log("Fecha de nacimiento recepciionada:", datosDeIdentificacion.fecha_nacimiento);
     // console.log("fecha de Nacimiento:", datosPersonalesState.fechaDeNacimiento);
@@ -230,24 +233,24 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
                         fechaDeNacimiento_modificado:true
 
 
-                    }
-                )
-            }
+          }
         )
-    }
-    const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-        event.preventDefault();
-        if(datosDeIdentificacion.cedula_identidad){
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
-            const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
-            datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
-            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-            const respuesta = await api_request(url,{
-                method:'POST',
-                body:JSON.stringify(datosDelFormulario),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+      }
+    )
+  }
+  const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(datosDeIdentificacion.id_persona){
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
+      const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
+      datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
+      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
 
             })
             if(respuesta.success){

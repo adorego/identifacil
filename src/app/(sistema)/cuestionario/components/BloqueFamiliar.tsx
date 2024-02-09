@@ -13,25 +13,24 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {Delete} from "@mui/icons-material";
 import React, {FC, useState} from "react";
+import {datosFamiliaresInicial, datosFamiliaresType, familiar, familiarInicial} from "@/components/utils/systemTypes";
+
+import {Delete} from "@mui/icons-material";
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
-import {datosFamiliaresInicial, datosFamiliaresType, familiar, familiarInicial} from "@/components/utils/systemTypes";
-
-
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
-    numeroDeIdentificacion?: string;
+    id_persona: number;
 }
 
 
 const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     {
-        numeroDeIdentificacion,
+        id_persona,
         datosFamiliaresIniciales = datosFamiliaresInicial
     }) => {
 
@@ -124,29 +123,29 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
         )
     }
 
-    const onEliminarConcubino = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setEstadoFormularioDatosFamiliares(
-            (previus) => {
-                return {
-                    ...previus,
-                    concubino: null
-                }
-            }
-        )
-    }
-    const onDatosFamiliaresSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-        if (numeroDeIdentificacion) {
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`;
-            const datosDelFormulario: datosFamiliaresType = Object.assign({}, estadoFormularioDatosFamiliares);
-            datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
-            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-            const respuesta = await api_request(url, {
-                method: 'POST',
-                body: JSON.stringify(datosDelFormulario),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+  const onEliminarConcubino = (event:React.MouseEvent<HTMLButtonElement>) =>{
+    setEstadoFormularioDatosFamiliares(
+      (previus) =>{
+        return{
+          ...previus,
+          concubino:null
+        }
+      }
+    )
+  }
+  const onDatosFamiliaresSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    event.preventDefault();
+    if(id_persona){
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`;
+      const datosDelFormulario:datosFamiliaresType = Object.assign({},estadoFormularioDatosFamiliares);
+      datosDelFormulario.id_persona = id_persona;
+      // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
 
             })
             if (respuesta.success) {

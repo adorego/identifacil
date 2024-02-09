@@ -1,323 +1,345 @@
 import {
-  Autocomplete,
-  AutocompleteChangeReason,
-  AutocompleteRenderInputParams,
-  Box,
-  Button,
-  Chip,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Grid,
-  InputLabel,
-  MenuItem,
-  OutlinedInput,
-  Radio,
-  RadioGroup,
-  Select,
-  SelectChangeEvent,
-  TextField
+    Autocomplete,
+    AutocompleteChangeReason,
+    AutocompleteRenderInputParams,
+    Box,
+    Button,
+    Chip,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Grid,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Radio,
+    RadioGroup,
+    Select,
+    SelectChangeEvent,
+    TextField
 } from "@mui/material"
 import { FC, ReactNode, SyntheticEvent, useContext, useReducer, useState } from "react";
+import { datosSaludInicial, datosSaludType } from "../../../../components/utils/systemTypes";
+import dayjs, { Dayjs } from "dayjs";
 
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import { DatePicker } from "@mui/x-date-pickers";
-import { Dayjs } from "dayjs";
 import { IndexKind } from "typescript";
-import { api_request } from "@/lib/api-request";
+import React from "react";
+import {api_request} from "../../../../lib/api-request"
 import log from "loglevel";
-import {useGlobalContext} from "@/app/Context/store";
-import {datosSaludInicial, datosSaludType} from "@/components/utils/systemTypes";
-
-
+import {useGlobalContext} from "../../../Context/store";
 
 enum SALUD_ACTIONS{
-  MODIFICAR_AFECCION_DROGA,
-  MODIFICAR_GRUPO_SANGUINEO,
-  MODIFICAR_VACUNAS_RECIBIDAS,
-  MODIFICAR_PRESION_ARTERIAL,
-  MODIFICAR_FRECUENCIA_CARDIACA,
-  MODIFICAR_FRECUENCIA_RESPIRATORIA,
-  MODIFICAR_TEMPERATURA,
-  MODIFICAR_PESO,
-  MODIFICAR_TALLA,
-  MODIFICAR_IMC,
-  MODIFICAR_VDRL,
-  MODIFICAR_VIH,
-  MODIFICAR_TB,
-  MODIFICAR_GESTACION,
-  MODIFICAR_TIEMPO_GESTACION,
-  MODIFICAR_FECHA_PARTO,
-  MODIFICAR_DISCAPACIDAD_FISICA,
-  MODIFICAR_SIGUE_TRATAMIENTO_MENTAL,
-  MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS,
-  MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO,
-  MODIFICAR_REPORTA_ABUSO_DE_DROGA_PREVIO_AL_INGRESO,
-  MODIFICAR_MEDICACION_ACTUAL,
-  MODIFICAR_TIENE_AFECCION_SEVERA_POR_ESTUPEFACIENTE,
-  MODIFICAR_NECESITA_INTERPRETE,
-  MODIFICAR_TIENE_DIFICULTAD_PARA_LEER_Y_ESCRIBIR,
-
-}
-interface saludActions{
-  type:SALUD_ACTIONS;
-  payload:any;
-}
-
-
-interface datosSaludSelect{
-  grupos_sanguineos:Array<{id:number,label:string}>;
-  vacunas_recibidas:Array<{id:number, label:string}>;
-
-}
-
-const datosSaludSelectInicial:datosSaludSelect = {
-  grupos_sanguineos:[{id:1,label:"A"},{id:2,label:"A+"},{id:3,label:"A-"}],
-  vacunas_recibidas:[{id:1, label:"Covid 1era dosis"},{id:2, label:"Covid 2da dosis"},{id:3, label:"Covid 3era dosis"}]
-}
-
-function reducer(state:datosSaludType, action:saludActions) {
-  switch(action.type){
-    case (SALUD_ACTIONS.MODIFICAR_AFECCION_DROGA):
-      return Object.assign({},{...state,drogasModificado:true,tieneAfeccionADrogras:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_GRUPO_SANGUINEO):
-      return Object.assign({},{...state, grupo_sanguineo_modificado:true ,grupo_sanguineo:(action.payload.id)});
-    case (SALUD_ACTIONS.MODIFICAR_VACUNAS_RECIBIDAS):
-      return Object.assign({},{...state, vacunas_recibidas:action.payload, vacunas_recibidas_modificada:true });
-    case (SALUD_ACTIONS.MODIFICAR_PRESION_ARTERIAL):
-      return Object.assign({},{...state, presion_arterial:action.payload, presion_arterial_modificada:true});
-    case (SALUD_ACTIONS.MODIFICAR_FRECUENCIA_CARDIACA):
-      return Object.assign({},{...state,frecuencia_cardiaca:action.payload, frecuencia_cardiaca_modificada:true});
-    case (SALUD_ACTIONS.MODIFICAR_FRECUENCIA_RESPIRATORIA):
-      return Object.assign({}, {...state, frecuencia_respiratoria:action.payload, frecuencia_respiratoria_modificada:true});
-    case (SALUD_ACTIONS.MODIFICAR_TEMPERATURA):
-      return Object.assign({},{...state, temperatura:action.payload, temperatura_modificada:true});
-    case (SALUD_ACTIONS.MODIFICAR_PESO):
-      return Object.assign({}, {...state, peso:action.payload, peso_modificado:true});
-    case (SALUD_ACTIONS.MODIFICAR_TALLA):
-      return Object.assign({},{...state, talla:action.payload, talla_modificado:true});
-    case (SALUD_ACTIONS.MODIFICAR_IMC):
-      return Object.assign({},{...state, imc:action.payload, imc_modificado:true});
-    case (SALUD_ACTIONS.MODIFICAR_VDRL):
-      return Object.assign({},{...state, vdrl:action.payload, vdrl_modificado:true});
-    case (SALUD_ACTIONS.MODIFICAR_VIH):
-      return Object.assign({},{...state, vih:action.payload, vih_modificado:true});
-    case (SALUD_ACTIONS.MODIFICAR_TB):
-      return Object.assign({},{...state, tb:action.payload, tb_modificado:true});
-    case (SALUD_ACTIONS.MODIFICAR_GESTACION):
-      return Object.assign({},{...state, gestacion_modificado:true,gestacion:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION):
-      return Object.assign({},{...state, tiempo_gestacion_modificado:true,tiempo_gestacion:action.payload});
-    case (SALUD_ACTIONS.MODIFICAR_FECHA_PARTO):
-      return Object.assign({},{...state,fecha_parto_modificada:true, fecha_parto:action.payload});
-    case (SALUD_ACTIONS.MODIFICAR_DISCAPACIDAD_FISICA):
-      return Object.assign({},{...state, discapacidad_modificada:true, discapacidad_fisica:action.payload});
-    case (SALUD_ACTIONS.MODIFICAR_SIGUE_TRATAMIENTO_MENTAL):
-      return Object.assign({}, {...state, sigue_tratamiento_mental_modificado:true, sigue_tratamiento_mental:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS):
-      return Object.assign({},{...state, tiene_antecedentes_de_lesiones_autoinflingidas_modificado:true, tiene_antecedentes_de_lesiones_autoinflingidas:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO):
-      return Object.assign({},{...state, ha_estado_internado_en_hospital_psiquiatrico_modificado:true, ha_estado_internado_en_hospital_psiquiatrico:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_REPORTA_ABUSO_DE_DROGA_PREVIO_AL_INGRESO):
-      return Object.assign({}, {...state, reporta_abuso_de_droga_previo_al_ingreso_modificado:true, reporta_abuso_de_droga_previo_al_ingreso:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_MEDICACION_ACTUAL):
-      return Object.assign({}, {...state, medicacion_actual_modificada:true, medicacion_actual:action.payload})
-    case (SALUD_ACTIONS.MODIFICAR_TIENE_AFECCION_SEVERA_POR_ESTUPEFACIENTE):
-      return Object.assign({},{...state, tiene_afeccion_severa_por_estupefaciente_modificado:true, tiene_afeccion_severa_por_estupefacientes:(action.payload === 'true')})
-    case (SALUD_ACTIONS.MODIFICAR_NECESITA_INTERPRETE):
-      return Object.assign({},{...state, necesitaInterprete_modificado:true, necesitaInterprete:(action.payload === "true")});
-    case (SALUD_ACTIONS.MODIFICAR_TIENE_DIFICULTAD_PARA_LEER_Y_ESCRIBIR):
-      return Object.assign({},{...state, tieneDificultadParaLeerYEscribir_modificado:true, tieneDificultadParaLeerYEscribir:(action.payload === "true")});
-
-    default:
-      return state;
+    MODIFICAR_AFECCION_DROGA,
+    MODIFICAR_GRUPO_SANGUINEO,
+    MODIFICAR_VACUNAS_RECIBIDAS,
+    MODIFICAR_PRESION_ARTERIAL,
+    MODIFICAR_FRECUENCIA_CARDIACA,
+    MODIFICAR_FRECUENCIA_RESPIRATORIA,
+    MODIFICAR_TEMPERATURA,
+    MODIFICAR_PESO,
+    MODIFICAR_TALLA,
+    MODIFICAR_IMC,
+    MODIFICAR_VDRL,
+    MODIFICAR_VIH,
+    MODIFICAR_TB,
+    MODIFICAR_GESTACION,
+    MODIFICAR_TIEMPO_GESTACION,
+    MODIFICAR_FECHA_PARTO,
+    MODIFICAR_DISCAPACIDAD_FISICA,
+    MODIFICAR_EXPLICACION_DISCAPACIDAD_FISICA,
+    MODIFICAR_SIGUE_TRATAMIENTO_MENTAL,
+    MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS,
+    MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO,
+    MODIFICAR_REPORTA_ABUSO_DE_DROGA_PREVIO_AL_INGRESO,
+    MODIFICAR_MEDICACION_ACTUAL,
+    MODIFICAR_TIENE_AFECCION_SEVERA_POR_ESTUPEFACIENTE,
+    MODIFICAR_NECESITA_INTERPRETE,
+    MODIFICAR_TIENE_DIFICULTAD_PARA_LEER_Y_ESCRIBIR,
+  
   }
-}
-
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-export interface BloqueSaludProps{
-  numeroDeIdentificacion:string;
-  datosAlmacenados?:datosSaludType;
-}
-const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenados = datosSaludInicial}) =>{
-  const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer,datosAlmacenados);
-  const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
-  const {openSnackbar} = useGlobalContext();
-  // console.log("Estado:", datosSaludFormState);
-
-  const onAffecionDrogaChange = (event:React.ChangeEvent<HTMLInputElement>  ) =>{
-    // console.log("Handler:", event.currentTarget.value);
-
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_AFECCION_DROGA,payload:event.currentTarget.value });
+  interface saludActions{
+    type:SALUD_ACTIONS;
+    payload:any;
   }
-
-  const onGrupoSanguineoSelect = (event:React.SyntheticEvent, value:any, reason:string) =>{
-    // console.log(value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_GRUPO_SANGUINEO, payload:value})
+  
+  
+  interface datosSaludSelect{
+    grupos_sanguineos:Array<{id:number,label:string}>;
+    vacunas_recibidas:Array<{id:number, label:string}>;
+  
   }
-
-  //Manejador de vacunas recibidas
-  const onVacunasRecibidasAdd = (event:React.SyntheticEvent, value:Array<{id:number, label:string}>, reason:string) =>{
-    // console.log(value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_VACUNAS_RECIBIDAS, payload:value});
+  
+  const datosSaludSelectInicial:datosSaludSelect = {
+    grupos_sanguineos:[{id:1,label:"A"},{id:2,label:"A+"},{id:3,label:"A-"}],
+    vacunas_recibidas:[{id:1, label:"Covid 1era dosis"},{id:2, label:"Covid 2da dosis"},{id:3, label:"Covid 3era dosis"}]
   }
-
-  //Manejador de Presión Arterial
-  const onPresionArterialChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_PRESION_ARTERIAL, payload:event.currentTarget.value});
+  
+  function reducer(state:datosSaludType, action:saludActions) {
+    switch(action.type){
+      case (SALUD_ACTIONS.MODIFICAR_AFECCION_DROGA):
+        return Object.assign({},{...state,drogasModificado:true,tieneAfeccionADrogras:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_GRUPO_SANGUINEO):
+        return Object.assign({},{...state, grupo_sanguineo_modificado:true ,grupo_sanguineo:(action.payload.id)});
+      case (SALUD_ACTIONS.MODIFICAR_VACUNAS_RECIBIDAS):
+        return Object.assign({},{...state, vacunas_recibidas:action.payload, vacunas_recibidas_modificada:true });
+      case (SALUD_ACTIONS.MODIFICAR_PRESION_ARTERIAL):
+        return Object.assign({},{...state, presion_arterial:action.payload, presion_arterial_modificada:true});
+      case (SALUD_ACTIONS.MODIFICAR_FRECUENCIA_CARDIACA):
+        return Object.assign({},{...state,frecuencia_cardiaca:action.payload, frecuencia_cardiaca_modificada:true});
+      case (SALUD_ACTIONS.MODIFICAR_FRECUENCIA_RESPIRATORIA):
+        return Object.assign({}, {...state, frecuencia_respiratoria:action.payload, frecuencia_respiratoria_modificada:true});
+      case (SALUD_ACTIONS.MODIFICAR_TEMPERATURA):
+        return Object.assign({},{...state, temperatura:action.payload, temperatura_modificada:true});
+      case (SALUD_ACTIONS.MODIFICAR_PESO):
+        return Object.assign({}, {...state, peso:action.payload, peso_modificado:true});
+      case (SALUD_ACTIONS.MODIFICAR_TALLA):
+        return Object.assign({},{...state, talla:action.payload, talla_modificado:true});
+      case (SALUD_ACTIONS.MODIFICAR_IMC):
+        return Object.assign({},{...state, imc:action.payload, imc_modificado:true});
+      case (SALUD_ACTIONS.MODIFICAR_VDRL):
+        return Object.assign({},{...state, vdrl:action.payload, vdrl_modificado:true});
+      case (SALUD_ACTIONS.MODIFICAR_VIH):
+        return Object.assign({},{...state, vih:action.payload, vih_modificado:true});
+      case (SALUD_ACTIONS.MODIFICAR_TB):
+        return Object.assign({},{...state, tb:action.payload, tb_modificado:true});
+      case (SALUD_ACTIONS.MODIFICAR_GESTACION):
+        return Object.assign({},{...state, gestacion_modificado:true,gestacion:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION):
+        return Object.assign({},{...state, tiempo_gestacion_modificado:true,tiempo_gestacion:action.payload});
+      case (SALUD_ACTIONS.MODIFICAR_FECHA_PARTO):
+        return Object.assign({},{...state,fecha_parto_modificada:true, fecha_parto:action.payload});
+      case (SALUD_ACTIONS.MODIFICAR_DISCAPACIDAD_FISICA):
+        return Object.assign({},{...state, discapacidad_modificada:true, discapacidad_fisica:action.payload});
+      case (SALUD_ACTIONS.MODIFICAR_EXPLICACION_DISCAPACIDAD_FISICA):
+        return Object.assign({},{...state, explicacion_discapacidad_fisica_modificada:true, explicacion_discapacidad_fisica:action.payload})
+      case (SALUD_ACTIONS.MODIFICAR_SIGUE_TRATAMIENTO_MENTAL):
+        return Object.assign({}, {...state, sigue_tratamiento_mental_modificado:true, sigue_tratamiento_mental:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS):
+        return Object.assign({},{...state, tiene_antecedentes_de_lesiones_autoinflingidas_modificado:true, tiene_antecedentes_de_lesiones_autoinflingidas:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO):
+        return Object.assign({},{...state, ha_estado_internado_en_hospital_psiquiatrico_modificado:true, ha_estado_internado_en_hospital_psiquiatrico:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_REPORTA_ABUSO_DE_DROGA_PREVIO_AL_INGRESO):
+        return Object.assign({}, {...state, reporta_abuso_de_droga_previo_al_ingreso_modificado:true, reporta_abuso_de_droga_previo_al_ingreso:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_MEDICACION_ACTUAL):
+        return Object.assign({}, {...state, medicacion_actual_modificada:true, medicacion_actual:action.payload})
+      case (SALUD_ACTIONS.MODIFICAR_TIENE_AFECCION_SEVERA_POR_ESTUPEFACIENTE):
+        return Object.assign({},{...state, tiene_afeccion_severa_por_estupefaciente_modificado:true, tiene_afeccion_severa_por_estupefacientes:(action.payload === 'true')})
+      case (SALUD_ACTIONS.MODIFICAR_NECESITA_INTERPRETE):
+        return Object.assign({},{...state, necesitaInterprete_modificado:true, necesitaInterprete:(action.payload === "true")});
+      case (SALUD_ACTIONS.MODIFICAR_TIENE_DIFICULTAD_PARA_LEER_Y_ESCRIBIR):
+          return Object.assign({},{...state, tieneDificultadParaLeerYEscribir_modificado:true, tieneDificultadParaLeerYEscribir:(action.payload === "true")});
+        
+      default:
+        return state;
+    }
   }
-
-  //Manejador de frecuencia cardiaca
-  const onFrecuenciaCardiacaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FRECUENCIA_CARDIACA, payload:event.currentTarget.value});
+  
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
+  export interface BloqueSaludProps{
+    id_persona:number;
+    datosAlmacenados?:datosSaludType;
   }
+  const BloqueSalud:FC<BloqueSaludProps> = ({id_persona,datosAlmacenados = datosSaludInicial}) =>{
+    const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer,datosAlmacenados);
+    const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
+    const {openSnackbar} = useGlobalContext();
+    // console.log("Estado:", datosSaludFormState);
+  
+    const onAffecionDrogaChange = (event:React.ChangeEvent<HTMLInputElement>  ) =>{
+      // console.log("Handler:", event.currentTarget.value);
+      
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_AFECCION_DROGA,payload:event.currentTarget.value });
+    }
+  
+    const onGrupoSanguineoSelect = (event:React.SyntheticEvent, value:any, reason:string) =>{
+      // console.log(value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_GRUPO_SANGUINEO, payload:value})
+    }
+  
+    //Manejador de vacunas recibidas
+    const onVacunasRecibidasAdd = (event:React.SyntheticEvent, value:Array<{id:number, label:string}>, reason:string) =>{
+      // console.log(value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_VACUNAS_RECIBIDAS, payload:value});
+    }
+  
+    //Manejador de Presión Arterial
+    const onPresionArterialChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_PRESION_ARTERIAL, payload:event.currentTarget.value});
+    }
+  
+    //Manejador de frecuencia cardiaca
+    const onFrecuenciaCardiacaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FRECUENCIA_CARDIACA, payload:event.currentTarget.value});
+    }
+  
+    //Manejador de frecuencia respiratoria
+    const onFrecuenciaRespiratoriaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FRECUENCIA_RESPIRATORIA, payload:event.currentTarget.value});
+    }
+  
+    //Manejador de temperatura
+    const onTemperaturaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TEMPERATURA, payload:event.currentTarget.value});
+    }
+  
+    //Manejador de peso
+    const onPesoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_PESO, payload:event.currentTarget.value});
+    }
+  
+    //Manejador de talla
+    const onTallaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TALLA, payload:event.currentTarget.value});
+    }
+  
+    //Manejador de IMC
+    const onIMCChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_IMC, payload:event.currentTarget.value});
+    }
+  
+     //Manejador de IMC
+     const onVDRLChange = (event:SelectChangeEvent) =>{
+      // console.log(event.target.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_VDRL, payload:event.target.value === "Positivo"});
+    }
+  
+    //Manejador de VIH
+    const onVIHChange = (event:SelectChangeEvent) =>{
+      // console.log(event.target.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_VIH, payload:event.target.value === "Positivo"});
+    }
+  
+    //Manejador de TB
+    const onTBChange = (event:SelectChangeEvent) =>{
+      // console.log(event.target.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TB, payload:event.target.value === "Positivo"});
+    }
+  
+    //Manejador de Gestacion
+    const onGestacionChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_GESTACION, payload:event.currentTarget.value});
+    }
+    
+  
+    const onTiempoDeGestacionChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+        const meses = parseInt(event.target.value);
+        if(meses > 9)
+        {
+          openSnackbar("Los meses de gestación deben ser menores a 9", "error");
+          datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload:0});
 
-  //Manejador de frecuencia respiratoria
-  const onFrecuenciaRespiratoriaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FRECUENCIA_RESPIRATORIA, payload:event.currentTarget.value});
-  }
-
-  //Manejador de temperatura
-  const onTemperaturaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TEMPERATURA, payload:event.currentTarget.value});
-  }
-
-  //Manejador de peso
-  const onPesoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_PESO, payload:event.currentTarget.value});
-  }
-
-  //Manejador de talla
-  const onTallaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TALLA, payload:event.currentTarget.value});
-  }
-
-  //Manejador de IMC
-  const onIMCChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_IMC, payload:event.currentTarget.value});
-  }
-
-  //Manejador de IMC
-  const onVDRLChange = (event:SelectChangeEvent) =>{
-    // console.log(event.target.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_VDRL, payload:event.target.value === "Positivo"});
-  }
-
-  //Manejador de VIH
-  const onVIHChange = (event:SelectChangeEvent) =>{
-    // console.log(event.target.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_VIH, payload:event.target.value === "Positivo"});
-  }
-
-  //Manejador de TB
-  const onTBChange = (event:SelectChangeEvent) =>{
-    // console.log(event.target.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TB, payload:event.target.value === "Positivo"});
-  }
-
-  //Manejador de Gestacion
-  const onGestacionChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_GESTACION, payload:event.currentTarget.value});
-  }
-
-
-  const onTiempoDeGestacionChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload:event.currentTarget.value});
-
-  }
-
-  const onFechaPartoChange = (value:Dayjs | null, context: any) =>{
-    // console.log(value,context);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:value})
-  }
-
-  const onDiscapacidadFisicaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_DISCAPACIDAD_FISICA, payload:event.currentTarget.value});
-  }
-
-  const onSigueTratamientoMentalChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    // console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_SIGUE_TRATAMIENTO_MENTAL, payload:event.currentTarget.value});
-  }
-
-  const onTieneAntecedentesDeLesionesAutoinflingidasChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS, payload:event.currentTarget.value});
-  }
-
-  const onHaEstadoInternadoEnPsiquiatricoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO, payload:event.currentTarget.value});
-  }
-
-  const onReportaAbusoDeDrogaPrevioAlIngresoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_REPORTA_ABUSO_DE_DROGA_PREVIO_AL_INGRESO, payload:event.currentTarget.value});
-  }
-
-  const onMedicacionActualChange = (event:SyntheticEvent<Element,Event>, value:any) =>{
-    // console.log(value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_MEDICACION_ACTUAL, payload:value});
-  }
-
-  const onTieneAfeccionSeveraPorEstupefacientes = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIENE_AFECCION_SEVERA_POR_ESTUPEFACIENTE, payload:event.currentTarget.value});
-  }
-
-  const onNecesitaInterpreteChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_NECESITA_INTERPRETE, payload:event.currentTarget.value});
-  }
-
-  const onTieneDificultadParaLeerYEscribirChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
-    console.log(event.currentTarget.value);
-    datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIENE_DIFICULTAD_PARA_LEER_Y_ESCRIBIR, payload:event.currentTarget.value});
-  }
-  const onDatosSaludSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-    event.preventDefault();
-
-    const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`;
-    const datosDelFormulario:datosSaludType = Object.assign({},datosSaludFormState);
-    datosDelFormulario.numeroDeIdentificacion = numeroDeIdentificacion;
-    const respuesta = await api_request(url,{
-      method:'POST',
-      body:JSON.stringify(datosDelFormulario),
-      headers: {
-        'Content-Type': 'application/json'
+        }else{
+          datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload:event.currentTarget.value});
+        }
+    }
+  
+    const onFechaPartoChange = (value:Dayjs | null, context: any) =>{
+      // console.log(value,context);
+      if(value && value < dayjs()){
+        openSnackbar("La mínima fecha de parto puede ser hoy", "error");
+        datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:dayjs()})
+      }else if(value && value > dayjs().add(9,'M')){
+        openSnackbar("La máxima fecha de parto puede ser en 9 meses", "error");
+        datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:dayjs()})
+      }else{
+        datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload:value})
       }
 
-    })
-    if(respuesta.success){
-      openSnackbar("Datos guardados correctamente","success")
-    }else{
-      openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`,`error`);
-      log.error("Error al guardar los datos", respuesta.datos);
+      
     }
-
-    console.log("Respuesta:", respuesta);
-  }
-
-
-  return(
+  
+    const onDiscapacidadFisicaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_DISCAPACIDAD_FISICA, payload:event.currentTarget.value});
+    }
+  
+    const onExplicacionDiscapacidadFisicaChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_EXPLICACION_DISCAPACIDAD_FISICA, payload:event.target.value});
+    }
+    const onSigueTratamientoMentalChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      // console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_SIGUE_TRATAMIENTO_MENTAL, payload:event.currentTarget.value});
+    }
+  
+    const onTieneAntecedentesDeLesionesAutoinflingidasChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIENE_ANTECEDENTES_LESIONES_AUTOINFLINGIDAS, payload:event.currentTarget.value});
+    }
+  
+    const onHaEstadoInternadoEnPsiquiatricoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_HA_ESTADO_INTERNADO_EN_PSIQUIATRICO, payload:event.currentTarget.value});
+    }
+  
+    const onReportaAbusoDeDrogaPrevioAlIngresoChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_REPORTA_ABUSO_DE_DROGA_PREVIO_AL_INGRESO, payload:event.currentTarget.value});
+    }
+  
+    const onMedicacionActualChange = (event:SyntheticEvent<Element,Event>, value:any) =>{
+      // console.log(value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_MEDICACION_ACTUAL, payload:value});
+    }
+  
+    const onTieneAfeccionSeveraPorEstupefacientes = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIENE_AFECCION_SEVERA_POR_ESTUPEFACIENTE, payload:event.currentTarget.value});
+    }
+  
+    const onNecesitaInterpreteChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_NECESITA_INTERPRETE, payload:event.currentTarget.value});
+    }
+  
+    const onTieneDificultadParaLeerYEscribirChange = (event:React.ChangeEvent<HTMLInputElement>) =>{
+      console.log(event.currentTarget.value);
+      datosSaludDispatch({type:SALUD_ACTIONS.MODIFICAR_TIENE_DIFICULTAD_PARA_LEER_Y_ESCRIBIR, payload:event.currentTarget.value});
+    }
+    const onDatosSaludSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+      event.preventDefault();
+      
+      const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`;
+      const datosDelFormulario:datosSaludType = Object.assign({},datosSaludFormState);
+      datosDelFormulario.id_persona = id_persona;
+      const respuesta = await api_request(url,{
+        method:'POST',
+        body:JSON.stringify(datosDelFormulario),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+  
+      })
+      if(respuesta.success){
+        openSnackbar("Datos guardados correctamente","success")
+      }else{
+        openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`,`error`);
+        log.error("Error al guardar los datos", respuesta.datos);
+      }
+  
+      console.log("Respuesta:", respuesta);
+    }
+  
+    
+    return(
       <>
-        <Box
-            component="form"
-            sx={{
-              '& .MuiTextField-root': {m: 1, width: '25ch'},
-            }}
-            noValidate
-            autoComplete="off"
-            mx={2}>
+      <Box
+        component="form"
+        sx={{
+          '& .MuiTextField-root': {m: 1, width: '25ch'},
+        }}
+        noValidate
+        autoComplete="off"
+        mx={2}>
           <Grid mb={2}>
             <FormControl>
               <FormLabel id="gestioacion">Cuenta con alguna afección por el consumo excesivo de
@@ -555,22 +577,22 @@ const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenad
               <FormControl fullWidth={true}>
                 <InputLabel htmlFor="gestacionTiempotiempoGestacion">¿Meses de gestación?</InputLabel>
                 <OutlinedInput
-                    disabled={!datosSaludFormState.gestacion}
-                    name="tiempoGestacion"
-                    value={datosSaludFormState.tiempo_gestacion}
-                    onChange={onTiempoDeGestacionChange}
-                    label="¿De cuanto tiempo se encuentra?" />
-              </FormControl>
-            </Grid>
-            <Grid item sm={4}
-                  sx={{marginTop:0}}>
-              <FormControl
-
-                  fullWidth={true}>
-                {/* <InputLabel htmlFor="gestacionFecha">Fecha de parto</InputLabel> */}
-
-                <DatePicker
-                    value={datosSaludFormState.fecha_parto}
+                  disabled={!datosSaludFormState.gestacion}
+                  name="tiempoGestacion"
+                  value={datosSaludFormState.tiempo_gestacion}
+                  onChange={onTiempoDeGestacionChange}
+                  label="¿De cuanto tiempo se encuentra?" />
+            </FormControl>
+          </Grid>
+          <Grid item sm={4}
+             sx={{marginTop:0}}>
+            <FormControl 
+              
+              fullWidth={true}>
+              {/* <InputLabel htmlFor="gestacionFecha">Fecha de parto</InputLabel> */}
+              
+                  <DatePicker 
+                    value={datosSaludFormState.fecha_parto} 
                     format="DD/MM/YYYY"
                     onChange={onFechaPartoChange}
                     label={"Fecha de parto"}
@@ -669,99 +691,99 @@ const BloqueSalud:FC<BloqueSaludProps> = ({numeroDeIdentificacion,datosAlmacenad
                 </RadioGroup>
               </FormControl>
             </Grid>
+        </Grid>
+        <Grid container spacing={2} mt={2}>
+          <Grid item sm={6}>
+            <FormControl>
+              <FormLabel id="medicacionActualmente">¿Que medicación toma actualmente?</FormLabel>
+              <Autocomplete
+                multiple
+                onChange={onMedicacionActualChange}
+                id="medicamentos-id"
+                options={[]}
+                freeSolo
+                // renderTags={(value: readonly string[], getTagProps) =>
+                //   value.map((option: string, index: number) => (
+                //     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                //   ))
+                // }
+              renderInput={(params) => (
+              <TextField 
+                ref={params.InputProps.ref}
+                {...params}
+                variant="outlined"
+                label="Medicamentos"
+                placeholder="Ingrese el nombre del medicamento"
+              />
+          )}
+        />
+            </FormControl>
           </Grid>
-          <Grid container spacing={2} mt={2}>
-            <Grid item sm={6}>
-              <FormControl>
-                <FormLabel id="medicacionActualmente">¿Que medicación toma actualmente?</FormLabel>
-                <Autocomplete
-                    multiple
-                    onChange={onMedicacionActualChange}
-                    id="medicamentos-id"
-                    options={[]}
-                    freeSolo
-                    // renderTags={(value: readonly string[], getTagProps) =>
-                    //   value.map((option: string, index: number) => (
-                    //     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                    //   ))
-                    // }
-                    renderInput={(params) => (
-                        <TextField
-                            ref={params.InputProps.ref}
-                            {...params}
-                            variant="outlined"
-                            label="Medicamentos"
-                            placeholder="Ingrese el nombre del medicamento"
-                        />
-                    )}
-                />
-              </FormControl>
-            </Grid>
+        </Grid>
+  
+        <Grid container spacing={2} mt={2}>
+          <Grid item sm={6}>
+            <FormControl>
+              <FormLabel id="afeccionSeveraEstupefacientes">
+                ¿Cuenta con alguna afección severa interna o externa por el consumo excesivo de
+                sustancias estupefacientes o drogas prohibidas.?
+              </FormLabel>
+              <RadioGroup
+                value={datosSaludFormState.tiene_afeccion_severa_por_estupefacientes}
+                onChange={onTieneAfeccionSeveraPorEstupefacientes}
+                row
+                aria-labelledby="afeccionSeveraEstupefacientes"
+                name="row-radio-buttons-group">
+                <FormControlLabel 
+                  value={true} 
+                  control={<Radio />} 
+                  label="Si"/>
+                <FormControlLabel 
+                  value={false} 
+                  control={<Radio />} 
+                  label="No"/>
+              </RadioGroup>
+            </FormControl>
           </Grid>
-
-          <Grid container spacing={2} mt={2}>
-            <Grid item sm={6}>
-              <FormControl>
-                <FormLabel id="afeccionSeveraEstupefacientes">
-                  ¿Cuenta con alguna afección severa interna o externa por el consumo excesivo de
-                  sustancias estupefacientes o drogas prohibidas.?
-                </FormLabel>
-                <RadioGroup
-                    value={datosSaludFormState.tiene_afeccion_severa_por_estupefacientes}
-                    onChange={onTieneAfeccionSeveraPorEstupefacientes}
-                    row
-                    aria-labelledby="afeccionSeveraEstupefacientes"
-                    name="row-radio-buttons-group">
-                  <FormControlLabel
-                      value={true}
-                      control={<Radio />}
-                      label="Si"/>
-                  <FormControlLabel
-                      value={false}
-                      control={<Radio />}
-                      label="No"/>
-                </RadioGroup>
-              </FormControl>
-            </Grid>
+        </Grid>
+        
+        
+  
+        {/* Salud Fisica                   */}
+        <Grid container spacing={2} mt={2}>
+                          <Grid item sm={12}>
+                              <FormLabel  sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}  id="demo-row-radio-buttons-group-label">Salud fisica</FormLabel>
+                          </Grid>
+                          <Grid item sm={6}>
+                            <FormControl>
+                                  <FormLabel id="discapacidad">Posee alguna Discapacidad:</FormLabel>
+                                  <RadioGroup
+                                      value={datosSaludFormState.discapacidad_fisica}
+                                      onChange={onDiscapacidadFisicaChange}
+                                      row
+                                      aria-labelledby="discapacidad"
+                                      name="row-radio-buttons-group"
+                                  >
+                                      <FormControlLabel 
+                                        value="fisica" 
+                                        control={<Radio/>} 
+                                        label="Fisica"/>
+                                      <FormControlLabel 
+                                        value="motora" 
+                                        control={<Radio />} 
+                                        label="Motora"/>
+                                  </RadioGroup>
+                              </FormControl>
+                          </Grid>
+  
+        </Grid>
+        <Grid container spacing={2} mt={2}>
+          <Grid item sm={12}>
+            <FormLabel  sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}  id="demo-row-radio-buttons-group-label">Limitaciones idiomáticas </FormLabel>
           </Grid>
-
-
-
-          {/* Salud Fisica                   */}
-          <Grid container spacing={2} mt={2}>
-            <Grid item sm={12}>
-              <FormLabel  sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}  id="demo-row-radio-buttons-group-label">Salud fisica</FormLabel>
-            </Grid>
-            <Grid item sm={6}>
-              <FormControl>
-                <FormLabel id="discapacidad">Posee alguna Discapacidad:</FormLabel>
-                <RadioGroup
-                    value={datosSaludFormState.discapacidad_fisica}
-                    onChange={onDiscapacidadFisicaChange}
-                    row
-                    aria-labelledby="discapacidad"
-                    name="row-radio-buttons-group"
-                >
-                  <FormControlLabel
-                      value="fisica"
-                      control={<Radio/>}
-                      label="Fisica"/>
-                  <FormControlLabel
-                      value="motora"
-                      control={<Radio />}
-                      label="Motora"/>
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-
-          </Grid>
-          <Grid container spacing={2} mt={2}>
-            <Grid item sm={12}>
-              <FormLabel  sx={{ fontWeight: 'bold', textTransform: 'uppercase' }}  id="demo-row-radio-buttons-group-label">Limitaciones idiomáticas </FormLabel>
-            </Grid>
-            <Grid item sm={6}>
-              <FormControl>
-                <FormLabel id="interprete">¿Necesita un intérprete?</FormLabel>
+          <Grid item sm={6}>
+            <FormControl>
+              <FormLabel id="interprete">¿Necesita un intérprete?</FormLabel>
                 <RadioGroup
                     value={datosSaludFormState.necesitaInterprete}
                     onChange={onNecesitaInterpreteChange}

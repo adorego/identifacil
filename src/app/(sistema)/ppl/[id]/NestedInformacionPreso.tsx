@@ -1,23 +1,29 @@
 'use client'
 
 import * as React from 'react';
-import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
-import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
+
 import BloqueEducacion, {datosEducacion} from "../../cuestionario/components/BloqueEducacion";
-import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliar";
-import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
-import BloqueSalud from "../../cuestionario/components/BloqueSalud";
-import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
-import Typography from '@mui/material/Typography';
-import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
+import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
 import {
     datosEducacionInicial,
-    datosEducacionType, datosFamiliaresInicial, datosFamiliaresType, datosJudicialesInicial, datosJudicialesType,
+    datosEducacionType,
+    datosFamiliaresInicial,
+    datosFamiliaresType,
+    datosJudicialesInicial,
+    datosJudicialesType,
     datosSaludInicial,
     datosSaludType,
     datosSeguridadInicial,
     datosSeguridadType
 } from "@/components/utils/systemTypes";
+
+import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
+import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliar";
+import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
+import BloqueSalud from "../../cuestionario/components/BloqueSalud";
+import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
+import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
+import Typography from '@mui/material/Typography';
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -55,7 +61,7 @@ function a11yProps(index: number) {
 
 
 type datosPersonaType = {
-    numero_de_identificacion: string;
+    id_persona: number;
     nombre: string;
     apellido: string;
     genero: number;
@@ -82,7 +88,7 @@ type datosPersonaType = {
 
 
 const datosPersonaInitial = {
-    numero_de_identificacion: "",
+    id_persona: 0,
     nombre: "",
     apellido: "",
     genero: 1,
@@ -139,22 +145,22 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
 
                                 { datosPersona ?
                                     <FormularioDatosPersonales datosDeIdentificacion={{
-                                        cedula_identidad: datosPersona.numero_de_identificacion,
+                                        id_persona: datosPersona.id_persona,
                                         nombres: datosPersona.nombre,
                                         apellidos: datosPersona.apellido,
                                         apodo: datosPersona.apodo,
                                         codigo_genero: datosPersona.genero,
                                         fecha_nacimiento: '1989/07/20',
-                                        estadoCivil: datosPersona.datosPersonales.estadoCivil,
-                                        lugarDeNacimiento: datosPersona.datosPersonales.lugarDeNacimiento,
-                                        direccion: datosPersona.datosPersonales.direccion,
-                                        barrioCompania: datosPersona.datosPersonales.barrioCompania,
-                                        numeroDeContacto: datosPersona.datosPersonales.numeroDeContacto,
-                                        contactoDeEmergencia1: datosPersona.datosPersonales.contactoDeEmergencia1,
-                                        contactoDeEmergencia2: datosPersona.datosPersonales.contactoDeEmergencia2,
-                                        pueblosIndigenas: datosPersona.datosPersonales.pueblosIndigenas,
-                                        nombreEtnia: datosPersona.datosPersonales.nombreEtnia,
-                                        perteneceAComunidadLGTBI: datosPersona.datosPersonales.perteneceAComunidadLGTBI,
+                                        estadoCivil: datosPersona?.datosPersonales?.estadoCivil,
+                                        lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
+                                        direccion: datosPersona?.datosPersonales?.direccion,
+                                        barrioCompania: datosPersona?.datosPersonales?.barrioCompania,
+                                        numeroDeContacto: datosPersona?.datosPersonales?.numeroDeContacto,
+                                        contactoDeEmergencia1: datosPersona?.datosPersonales?.contactoDeEmergencia1,
+                                        contactoDeEmergencia2: datosPersona?.datosPersonales?.contactoDeEmergencia2,
+                                        pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
+                                        nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
+                                        perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
 
                                     }}/> : ''
                                 }
@@ -163,7 +169,7 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
 
                             <CustomTabPanel value={value} index={1}>
                                  <BloqueSalud
-                                     numeroDeIdentificacion={datosPersona.numero_de_identificacion}
+                                     id_persona={datosPersona.id_persona}
                                      datosAlmacenados={datosPersona.datosSalud}
                                  />
                             </CustomTabPanel>
@@ -171,20 +177,21 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
                             <CustomTabPanel value={value} index={2}>
                                  <BloqueSeguridad
                                      datosIniciales={datosPersona.datosDeSeguridad}
-                                     numeroDeIdentificacion={datosPersona.numero_de_identificacion}
+                                     id_persona={datosPersona.id_persona}
                                  />
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={3}>
-                                 <BloqueEducacion numeroDeIdentificacion={datosPersona.numero_de_identificacion} datosEducacionIniciales={datosPersona.datosEducacion}/>
+                                 <BloqueEducacion id_persona={datosPersona.id_persona} 
+                                 datosEducacionIniciales={datosPersona.datosEducacion}/>
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={4}>
-                                 <BloqueFamiliares numeroDeIdentificacion={datosPersona.numero_de_identificacion} datosFamiliaresIniciales={datosPersona.datosFamiliares} />
+                                 <BloqueFamiliares id_persona={datosPersona.id_persona} datosFamiliaresIniciales={datosPersona.datosFamiliares} />
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={5}>
-                                 <BloqueJudicial numeroDeIdentificacion={datosPersona.numero_de_identificacion} datosIniciales={datosPersona.datosJudiciales} />
+                                 <BloqueJudicial id_persona={datosPersona.id_persona} datosIniciales={datosPersona.datosJudiciales} />
                             </CustomTabPanel>
                         </Grid>
                     </Grid>

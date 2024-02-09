@@ -1,13 +1,14 @@
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup, Select, SelectChangeEvent, Stack, Typography } from "@mui/material";
 import React, { FC, useEffect, useState } from "react";
 import { RequestResponse, api_request } from "@/lib/api-request";
+import {datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
+
 import { DatePicker } from "@mui/x-date-pickers";
 import { Dayjs } from "dayjs";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { MuiFileInput } from "mui-file-input";
 import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
-import {datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 
 interface oficiosDTO{
   oficios:Array<oficio>;
@@ -35,10 +36,10 @@ interface causasDTO{
 
 interface BloqueJudicialProps{
   datosIniciales?:datosJudicialesType;
-  numeroDeIdentificacion?:any;
+  id_persona:number;
 }
 
-const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesInicial, numeroDeIdentificacion}) =>{
+const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesInicial, id_persona}) =>{
 
   const estadoInicial = datosIniciales ? datosIniciales : datosJudicialesInicial;
   const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(estadoInicial)
@@ -49,9 +50,10 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
 
 
   useEffect(
-      () =>{
-        const getCausas = async (numeroDeIdentificacion:string) =>{
-          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${numeroDeIdentificacion}`;
+    () =>{
+      const getCausas = async (numeroDeIdentificacion:string | null) =>{
+        if(id_persona){
+          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${datosIniciales.numero_de_identificacion}`;
 
           try{
             const respuesta:RequestResponse = await api_request<causasDTO>(url,{
@@ -72,10 +74,14 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
             log.error(`Error al consultar las causas:${error}`);
             openSnackbar(`Error en la consulta de datos:${error}`, "error");
           }
-
-        }
-        getCausas(numeroDeIdentificacion);
-      },[]
+      
+      }else{
+        openSnackbar("Se necesita de la cedula para recuperar las causas", "error");
+      }
+    }
+    // getCausas(datosIniciales);
+    
+    },[]
   )
 
   useEffect(
@@ -244,9 +250,9 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
   }
   const onFormSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
     event.preventDefault();
-    if(numeroDeIdentificacion != "" && numeroDeIdentificacion != null){
+    if(id_persona != null){
       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales`;
-      const formData = crearFormData(estadoFormularioJudicial, numeroDeIdentificacion);
+      const formData = crearFormData(estadoFormularioJudicial, id_persona);
 
       const respuesta = await api_request(url,{
         method:'POST',
@@ -268,10 +274,10 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
     }
   }
 
-  const crearFormData = (datos:datosJudicialesType, numeroDeIdentificacion:string):FormData =>{
+  const crearFormData = (datos:datosJudicialesType, id_persona:number):FormData =>{
     const formData = new FormData();
     const propiedades:Array<string> = Object.getOwnPropertyNames(datos);
-    formData.append('numeroDeIdentificacion',numeroDeIdentificacion);
+    formData.append('numeroDeIdentificacion',String(id_persona));
     formData.append('situacionJudicial', datos.situacionJudicial);
     formData.append('situacionJudicial_modificado', String(datos.situacionJudicial_modificado));
     formData.append('primeraVezEnPrision', String(datos.primeraVezEnPrision));

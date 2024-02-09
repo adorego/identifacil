@@ -1,7 +1,7 @@
 import {Dayjs} from "dayjs";
 
 export type datosSaludType = {
-    numeroDeIdentificacion: string | null;
+    id_persona:number | null;
     tieneAfeccionADrogas_modificado: boolean;
     tieneAfeccionADrogras: boolean;
     grupo_sanguineo: number;
@@ -39,6 +39,8 @@ export type datosSaludType = {
     fecha_parto_modificada: boolean;
     discapacidad_fisica: string;
     discapacidad_modificada: boolean;
+    explicacion_discapacidad_fisica:string;
+    explicacion_discapacidad_fisica_modificada:boolean;
     sigue_tratamiento_mental: boolean;
     sigue_tratamiento_mental_modificado: boolean;
     tiene_antecedentes_de_lesiones_autoinflingidas: boolean;
@@ -58,7 +60,7 @@ export type datosSaludType = {
 }
 
 export const datosSaludInicial: datosSaludType = {
-    numeroDeIdentificacion: null,
+    id_persona: null,
     tieneAfeccionADrogas_modificado: false,
     tieneAfeccionADrogras: false,
     grupo_sanguineo: 0,
@@ -93,6 +95,8 @@ export const datosSaludInicial: datosSaludType = {
     fecha_parto_modificada: false,
     discapacidad_fisica: "",
     discapacidad_modificada: false,
+    explicacion_discapacidad_fisica:"",
+    explicacion_discapacidad_fisica_modificada:false,
     sigue_tratamiento_mental: false,
     sigue_tratamiento_mental_modificado: false,
     tiene_antecedentes_de_lesiones_autoinflingidas: false,
@@ -114,35 +118,35 @@ export const datosSaludInicial: datosSaludType = {
 
 
 export type datosSeguridadType = {
-    "numeroDeIdentificacion": string;
-    "riesgoParaPersonal": boolean;
-    "riesgoParaPersonal_modificado": boolean;
-    "riesgoParaPersonalRespuesta": string;
-    "riesgoParaPersonalRespuesta_modificado": boolean;
-    "riesgoParaReclusos": boolean;
-    "riesgoParaReclusos_modificado": boolean;
-    "riesgoParaReclusosRespuesta": string;
-    "riesgoParaReclusosRespuesta_modificado": boolean;
-    "riesgoDeSufrirLesionPorOtrosReclusos": boolean;
-    "riesgoDeSufrirLesionPorOtrosReclusos_modificado": boolean;
-    "riesgoDeSufrirLesionPorOtrosReclusosRespuesta": string;
-    "riesgoDeDanharLaPropiedad": boolean;
-    "riesgoDeDanharLaPropiedad_modificado": boolean;
-    "riesgoDeDanharLaPropiedadRespuesta": string;
-    "miembroDeGrupoQueConstituyeAmenazaParaSeguridad": boolean;
-    "miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado": boolean;
-    "miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta": string;
-    "tieneEntrenamientoMilitarPrevio": boolean;
-    "tieneEntrenamientoMilitarPrevio_modificado": boolean;
-    "tieneEntrenamientoMilitarPrevioRespuesta": string;
-    "eraFuncionarioPublico": boolean;
-    "eraFuncionarioPublico_modificado": boolean;
-    "eraFuncionarioPublicoRespuesta": string;
+    id_persona:number|null;
+    riesgoParaPersonal: boolean;
+    riesgoParaPersonal_modificado: boolean;
+    riesgoParaPersonalRespuesta: string;
+    riesgoParaPersonalRespuesta_modificado: boolean;
+    riesgoParaReclusos: boolean;
+    riesgoParaReclusos_modificado: boolean;
+    riesgoParaReclusosRespuesta: string;
+    riesgoParaReclusosRespuesta_modificado: boolean;
+    riesgoDeSufrirLesionPorOtrosReclusos: boolean;
+    riesgoDeSufrirLesionPorOtrosReclusos_modificado: boolean;
+    riesgoDeSufrirLesionPorOtrosReclusosRespuesta: string;
+    riesgoDeDanharLaPropiedad: boolean;
+    riesgoDeDanharLaPropiedad_modificado: boolean;
+    riesgoDeDanharLaPropiedadRespuesta: string;
+    miembroDeGrupoQueConstituyeAmenazaParaSeguridad: boolean;
+    miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado: boolean;
+    miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta: string;
+    tieneEntrenamientoMilitarPrevio: boolean;
+    tieneEntrenamientoMilitarPrevio_modificado: boolean;
+    tieneEntrenamientoMilitarPrevioRespuesta: string;
+    eraFuncionarioPublico: boolean;
+    eraFuncionarioPublico_modificado: boolean;
+    eraFuncionarioPublicoRespuesta: string;
 }
 
 
 export const datosSeguridadInicial: datosSeguridadType = {
-    numeroDeIdentificacion: "",
+    id_persona:null,
     riesgoParaPersonal: false,
     riesgoParaPersonal_modificado: false,
     riesgoParaPersonalRespuesta: "",
@@ -169,7 +173,7 @@ export const datosSeguridadInicial: datosSeguridadType = {
 }
 
 export type datosEducacionType = {
-    numeroDeIdentificacion: string;
+    id_persona: number|null;
     nivelAcademico: string;
     nivelAcademico_modificado: boolean;
     institucionEducativa: string;
@@ -183,8 +187,8 @@ export type datosEducacionType = {
 }
 
 export const datosEducacionInicial : datosEducacionType = {
-    numeroDeIdentificacion: "",
-        nivelAcademico: "",
+    id_persona: null,
+    nivelAcademico: "",
     nivelAcademico_modificado: false,
     institucionEducativa: "",
     institucionEducativa_modificado: false,
@@ -224,7 +228,7 @@ export const datosConcubinoInicial = {
 }
 
 export type datosFamiliaresType = {
-    numeroDeIdentificacion: string;
+    id_persona: number|null;
     esCabezaDeFamilia: boolean;
     esCabezaDeFamilia_modificado: boolean;
     tieneCirculoFamiliar: boolean;
@@ -238,7 +242,7 @@ export type datosFamiliaresType = {
 }
 
 export const datosFamiliaresInicial : datosFamiliaresType = {
-    numeroDeIdentificacion: "",
+    id_persona: null,
     esCabezaDeFamilia: false,
     esCabezaDeFamilia_modificado: false,
     tieneCirculoFamiliar: false,
@@ -270,7 +274,8 @@ interface expediente_tipo{
 }
 
 export type datosJudicialesType = {
-    numeroDeIdentificacion:string | null;
+    id_persona:number | null;
+    numeroDeIdentificacion:string;
     situacionJudicial: string;
     situacionJudicial_modificado:boolean;
     primeraVezEnPrision: boolean;
@@ -297,8 +302,9 @@ export type datosJudicialesType = {
     sentenciaDefinitiva_modificado:boolean;
 }
 
-export const datosJudicialesInicial : datosJudicialesType = {
-    numeroDeIdentificacion:null,
+export const datosJudicialesInicial:datosJudicialesType = {
+    id_persona:null,
+    numeroDeIdentificacion:"",
     situacionJudicial: "",
     situacionJudicial_modificado:false,
     primeraVezEnPrision: false,
