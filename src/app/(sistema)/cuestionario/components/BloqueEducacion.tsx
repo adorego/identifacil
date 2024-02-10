@@ -11,6 +11,7 @@ import {
     RadioGroup
 } from "@mui/material";
 import {FC, useEffect, useState} from "react";
+import { datosEducacionInicial, datosEducacionType } from "../../../../components/utils/systemTypes";
 
 import React from "react";
 import {api_request} from "@/lib/api-request";
@@ -45,27 +46,27 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
         )
     }
 
-    useEffect(() => {
-        if (datosEducacionIniciales) {
-            setEstadoFormularioDeEducacion(prevState => {
-                return{
-                    ...prevState,
-                    id_persona: datosEducacionIniciales.id_persona,
-                    nivelAcademico: datosEducacionIniciales.nivelAcademico,
-                    nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
-                    institucionEducativa: datosEducacionIniciales.institucionEducativa,
-                    institucionEducativa_modificado: datosEducacionIniciales.institucionEducativa_modificado,
-                    tieneOficio: datosEducacionIniciales.tieneOficio,
-                    tieneOficio_modificado: datosEducacionIniciales.tieneOficio_modificado,
-                    nombreOficio: datosEducacionIniciales.nombreOficio,
-                    nombreOficio_modificado: datosEducacionIniciales.nombreOficio_modificado,
-                    ultimoTrabajo: datosEducacionIniciales.ultimoTrabajo,
-                    ultimoTrabajo_modificado: datosEducacionIniciales.ultimoTrabajo_modificado
-                }
-            })
-        }
+    // useEffect(() => {
+    //     if (datosEducacionIniciales) {
+    //         setEstadoFormularioDeEducacion(prevState => {
+    //             return{
+    //                 ...prevState,
+    //                 id_persona: datosEducacionIniciales.id_persona,
+    //                 nivelAcademico: datosEducacionIniciales.nivelAcademico,
+    //                 nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
+    //                 institucionEducativa: datosEducacionIniciales.institucionEducativa,
+    //                 institucionEducativa_modificado: datosEducacionIniciales.institucionEducativa_modificado,
+    //                 tieneOficio: datosEducacionIniciales.tieneOficio,
+    //                 tieneOficio_modificado: datosEducacionIniciales.tieneOficio_modificado,
+    //                 nombreOficio: datosEducacionIniciales.nombreOficio,
+    //                 nombreOficio_modificado: datosEducacionIniciales.nombreOficio_modificado,
+    //                 ultimoTrabajo: datosEducacionIniciales.ultimoTrabajo,
+    //                 ultimoTrabajo_modificado: datosEducacionIniciales.ultimoTrabajo_modificado
+    //             }
+    //         })
+    //     }
 
-    }, [datosEducacionIniciales]);
+    // }, [datosEducacionIniciales]);
 
     const onSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEstadoFormularioDeEducacion(
@@ -191,7 +192,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
                         <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
                         <OutlinedInput
                             name="nombreOficio"
-                            value={estadoFormularioDeEducacion.nombreOficio}
+                            value={estadoFormularioDeEducacion?.nombreOficio}
                             label="Oficio"
                             onChange={onDatoChange}
                             disabled={!estadoFormularioDeEducacion.tieneOficio}

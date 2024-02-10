@@ -101,7 +101,7 @@ export interface BloqueDatosPersonalesProps{
 const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) =>{
   const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
     ...datosPersonalesInicial,
-    fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"YYYY-MM-DD"),
+    fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"DD-MM-YYYY"),
     fechaDeNacimiento_modificado:true,
     id_persona:datosDeIdentificacion.id_persona,
     numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
@@ -115,8 +115,8 @@ const BloqueDatosPersonales:FC<BloqueDatosPersonalesProps> = ({datosDeIdentifica
   const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
   const {openSnackbar} = useGlobalContext();
 
-    // console.log("Fecha de nacimiento recepciionada:", datosDeIdentificacion.fecha_nacimiento);
-    // console.log("fecha de Nacimiento:", datosPersonalesState.fechaDeNacimiento);
+  console.log("Fecha de nacimiento recepcionada:", datosDeIdentificacion.fecha_nacimiento);
+  console.log("fecha de Nacimiento:", datosPersonalesState.fechaDeNacimiento);
 
     useEffect(
         () =>{
