@@ -231,7 +231,7 @@ export default function FormRegister(){
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {/* {activeStep === 0 && <IdentificacionForm 
+                    {activeStep === 0 && <IdentificacionForm 
                     habilitarBotonSiguiente={habilitarBotonSiguiente} 
                     actualizarIdentificacion={setIdentificacion}
                     /> }
@@ -249,10 +249,10 @@ export default function FormRegister(){
                       identidad.current
                     }  id_persona={identidad.current.id_persona}/>}
                   
-                    {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />} */}
+                    {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente" />}
             
                     {/* Para pruebas*/}
-                    {activeStep === 0 && <CuestionarioRegistro id_persona={13} datosDeIdentidad={
+                    {/* {activeStep === 0 && <CuestionarioRegistro id_persona={13} datosDeIdentidad={
                       {
                         cedula_identidad:"1130650",
                         nombres:"ANDRES",
@@ -262,7 +262,7 @@ export default function FormRegister(){
                         id_persona:13,
                         es_extranjero:false,
                         tiene_cedula:true
-                      }} />}
+                      }} />} */}
                     
              
               <Grid container  spacing={5} mt={1}>

@@ -53,7 +53,7 @@ const BloqueJudicial:FC<BloqueJudicialProps> = ({datosIniciales=datosJudicialesI
     () =>{
       const getCausas = async (numeroDeIdentificacion:string | null) =>{
         if(id_persona){
-          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${datosIniciales.numero_de_identificacion}`;
+          const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${datosIniciales.numeroDeIdentificacion}`;
 
           try{
             const respuesta:RequestResponse = await api_request<causasDTO>(url,{

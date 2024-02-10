@@ -20,7 +20,7 @@ import {useGlobalContext} from "@/app/Context/store";
 
 export interface BloqueEducacionProps{
   id_persona:number;
-  datosEducacionIniciales:datosEducacionType;
+  datosEducacionIniciales?:datosEducacionType;
 }
 const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales=datosEducacionInicial}) =>{
   const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionIniciales);
@@ -85,7 +85,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
     if(id_persona){
       try{
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
-        const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
+        const datosDelFormulario:datosEducacionType = Object.assign({},estadoFormularioDeEducacion);
         datosDelFormulario.id_persona = id_persona;
         console.log("Datos a enviar:", datosDelFormulario);
         const respuesta = await api_request(url,{

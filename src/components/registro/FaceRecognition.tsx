@@ -5,11 +5,9 @@ import {Alert, Box, Button, Grid, Typography} from "@mui/material";
 import {FC, Suspense, useEffect, useRef, useState} from "react";
 import FaceDetectionOverlay, { IReconocimiento } from "./FaceDetectionOverlay";
 
-import CircularProgressionWithLabel from "@/common/CircularProgressionWithLabel";
-import {IdentificacionForm} from "./IdentificationForm.tsx.back";
 // @ts-ignore
-import JSMpeg from "@cycjimmy/jsmpeg-player";
-import { error } from "console";
+// import JSMpeg from "@cycjimmy/jsmpeg-player";
+// import { error } from "console";
 import log from "loglevel";
 import styles from "./FaceRecognition.module.css";
 import { useGlobalContext } from "@/app/Context/store";
@@ -43,30 +41,30 @@ const FaceRecognition:FC<FaceRecognitionProps> = (props:FaceRecognitionProps) =>
   const {openSnackbar} = useGlobalContext();
 
 
-  const conectar_con_camaraIP = () =>{
-    try{
-      const canvas = document.createElement('canvas');
-      const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
-      canvas: canvas as HTMLCanvasElement,
-      loop:true,
-      autoplay:true,
-      protocols:['mp2t'],
-      onSourceEstablished:(source:any) =>{
-        if(videoElementRef.current){
-          videoElementRef.current.srcObject = canvas.captureStream(); 
-          setIniciarDeteccion(true);
-        }
-      },
-      onEnded: (player:any) =>{
-        if(videoElementRef.current){
-          videoElementRef.current.srcObject = null;
-        }
-      }
-      });
-    }catch(error){
-      console.log(error);
-    }
-  }
+  // const conectar_con_camaraIP = () =>{
+  //   try{
+  //     const canvas = document.createElement('canvas');
+  //     const player = new JSMpeg.Player(process.env.NEXT_PUBLIC_CAMARA_STREAMING_WEBSOCKET_URL, {
+  //     canvas: canvas as HTMLCanvasElement,
+  //     loop:true,
+  //     autoplay:true,
+  //     protocols:['mp2t'],
+  //     onSourceEstablished:(source:any) =>{
+  //       if(videoElementRef.current){
+  //         videoElementRef.current.srcObject = canvas.captureStream(); 
+  //         setIniciarDeteccion(true);
+  //       }
+  //     },
+  //     onEnded: (player:any) =>{
+  //       if(videoElementRef.current){
+  //         videoElementRef.current.srcObject = null;
+  //       }
+  //     }
+  //     });
+  //   }catch(error){
+  //     console.log(error);
+  //   }
+  // }
 
   const conectar_con_webcam = ():MediaStream | null =>{
       let mediaStream = null;

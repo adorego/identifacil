@@ -139,7 +139,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                         {/* Bloque de formulario */}
                         {datosDeIdentidad.id_persona && <BloqueJudicial
                             id_persona={datosDeIdentidad.id_persona}
-                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : null}/>}
+                            />}
                     </AccordionDetails>
 
                 </Accordion>
