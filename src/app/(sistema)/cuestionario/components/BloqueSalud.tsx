@@ -140,7 +140,7 @@ enum SALUD_ACTIONS{
   const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
   const checkedIcon = <CheckBoxIcon fontSize="small" />;
   export interface BloqueSaludProps{
-    id_persona:number;
+    id_persona:number | null;
     datosAlmacenados?:datosSaludType;
   }
   const BloqueSalud:FC<BloqueSaludProps> = ({id_persona,datosAlmacenados = datosSaludInicial}) =>{

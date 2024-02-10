@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import BloqueEducacion, {datosEducacion} from "../../cuestionario/components/BloqueEducacion";
+import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
 import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
 import {
     datosEducacionInicial,
@@ -23,7 +23,7 @@ import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
 import BloqueSalud from "../../cuestionario/components/BloqueSalud";
 import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
 import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
-import Typography from '@mui/material/Typography';
+
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -61,7 +61,7 @@ function a11yProps(index: number) {
 
 
 type datosPersonaType = {
-    id_persona: number;
+    id_persona: number | null;
     nombre: string;
     apellido: string;
     genero: number;

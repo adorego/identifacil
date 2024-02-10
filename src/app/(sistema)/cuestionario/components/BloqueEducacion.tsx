@@ -14,44 +14,18 @@ import {FC, useEffect, useState} from "react";
 
 import React from "react";
 import {api_request} from "@/lib/api-request";
-import { datosEducacionType } from "../../../../components/utils/systemTypes";
+import {datosEducacionInicial, datosEducacionType} from "@/components/utils/systemTypes";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 
-export interface datosEducacion {
-  id_persona:number|null;
-  nivelAcademico: string;
-  nivelAcademico_modificado:boolean;
-  institucionEducativa: string;
-  institucionEducativa_modificado:boolean;
-  tieneOficio: boolean;
-  tieneOficio_modificado:boolean;
-  nombreOficio: string;
-  nombreOficio_modificado:boolean;
-  ultimoTrabajo: string;
-  ultimoTrabajo_modificado:boolean;
-}
 
-const datosEducacionIniciales:datosEducacion = {
-  id_persona:null,
-  nivelAcademico:"",
-  nivelAcademico_modificado:false,
-  institucionEducativa: "",
-  institucionEducativa_modificado:false,
-  tieneOficio: false,
-  tieneOficio_modificado:false,
-  nombreOficio: "",
-  nombreOficio_modificado:false,
-  ultimoTrabajo: "",
-  ultimoTrabajo_modificado:false
-} 
 
 export interface BloqueEducacionProps{
-  id_persona:number;
-  datosEducacionIniciales:datosEducacionType;
+  id_persona:number | null;
+  datosEducacionIniciales?:datosEducacionType;
 }
 const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales}) =>{
-  const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacion>(datosEducacionIniciales);
+  const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
   const {openSnackbar} = useGlobalContext();
   // console.log(estadoFormularioDeEducacion);
 
@@ -113,7 +87,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
     if(id_persona){
       try{
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
-        const datosDelFormulario:datosEducacion = Object.assign({},estadoFormularioDeEducacion);
+        const datosDelFormulario:datosEducacionType = Object.assign({},estadoFormularioDeEducacion);
         datosDelFormulario.id_persona = id_persona;
         console.log("Datos a enviar:", datosDelFormulario);
         const respuesta = await api_request(url,{

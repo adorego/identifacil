@@ -10,6 +10,7 @@ import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
 interface datosPersonales {
+    id_persona: number | null;
     numeroDeIdentificacion:string|undefined;
     nombre: string;
     nombre_modificado:boolean;
@@ -52,6 +53,7 @@ interface datosPersonales {
 }
 
 const datosPersonalesInicial: datosPersonales = {
+    id_persona: null,
     numeroDeIdentificacion:"",
     nombre: '',
     apellido: '',
@@ -94,6 +96,7 @@ const datosPersonalesInicial: datosPersonales = {
 export interface BloqueDatosPersonalesProps{
     datosDeIdentificacion:{
         cedula_identidad?: string;
+        id_persona: number | null;
         nombres: string;
         apellidos: string;
         fecha_nacimiento: string;

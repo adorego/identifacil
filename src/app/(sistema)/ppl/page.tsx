@@ -8,7 +8,7 @@ import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import {fetchData} from "@/components/utils/utils";
 
-const ENDPOINT : string = 'http://localhost:4001/api/registro/gestion_ppl/ppls'
+const ENDPOINT : string = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`
 
 const header = [
     { id: 'id', label: 'ID' },

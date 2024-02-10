@@ -92,7 +92,7 @@ export default IdentificacionForm;
 
 export interface DatosDeIdentificacion{
   id_persona:number|null;
-  cedula_identidad?:string;
+  cedula_identidad?:string | null;
   prontuario?:string;
   es_extranjero:boolean;
   tiene_cedula:boolean;

@@ -19,7 +19,7 @@ import {useGlobalContext} from "@/app/Context/store";
 
 interface BloqueSeguridadProps {
     datosIniciales?: datosSeguridadType;
-    id_persona: number;
+    id_persona: number | null;
 }
 
 const BloqueSeguridad:FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona}) =>{

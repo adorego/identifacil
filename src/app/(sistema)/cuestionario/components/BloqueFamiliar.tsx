@@ -24,7 +24,7 @@ import {useGlobalContext} from "@/app/Context/store";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
-    id_persona: number;
+    id_persona: number | null;
 }
 
 

@@ -92,8 +92,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionSummary>
                     <AccordionDetails>
                         {/* Bloque de formulario */}
-                        {datosDeIdentidad.id_persona && <BloqueEducacion
-                            id_persona={datosDeIdentidad.id_persona}/>}
+                        {datosDeIdentidad.id_persona && <BloqueEducacion id_persona={datosDeIdentidad.id_persona}/>}
                     </AccordionDetails>
 
                 </Accordion>
@@ -138,8 +137,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     <AccordionDetails>
                         {/* Bloque de formulario */}
                         {datosDeIdentidad.id_persona && <BloqueJudicial
-                            id_persona={datosDeIdentidad.id_persona}
-                            numeroDeIdentificacion={datosDeIdentidad.cedula_identidad ? datosDeIdentidad.cedula_identidad : null}/>}
+                            id_persona={datosDeIdentidad.id_persona}/>}
                     </AccordionDetails>
 
                 </Accordion>

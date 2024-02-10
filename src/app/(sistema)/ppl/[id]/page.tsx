@@ -14,6 +14,15 @@ import {useEffect} from "react";
 import {fetchData} from "@/components/utils/utils";
 import Image from "next/image";
 import avatar from "@/common/blank-profile-picture-973460_960_720.webp"
+import {
+    datosEducacionInicial,
+    datosEducacionType, datosFamiliaresInicial,
+    datosFamiliaresType,
+    datosJudicialesInicial,
+    datosJudicialesType,
+    datosSaludInicial,
+    datosSaludType, datosSeguridadInicial, datosSeguridadType
+} from "@/components/utils/systemTypes";
 
 interface familiar {
     nombre: string;
@@ -31,6 +40,7 @@ interface datosConcubino {
 }
 
 type dataType = {
+    id_persona: number | null;
     nombre: string;
     apellido: string;
     apodo: string;
@@ -51,62 +61,15 @@ type dataType = {
         nombreEtnia: string;
         perteneceAComunidadLGTBI: boolean;
     };
-    datosDeSeguridad:{
-        "numeroDeIdentificacion": string;
-        "riesgoParaPersonal": boolean;
-        "riesgoParaPersonal_modificado": boolean;
-        "riesgoParaPersonalRespuesta": string;
-        "riesgoParaPersonalRespuesta_modificado": boolean;
-        "riesgoParaReclusos": boolean;
-        "riesgoParaReclusos_modificado": boolean;
-        "riesgoParaReclusosRespuesta": string;
-        "riesgoParaReclusosRespuesta_modificado": boolean;
-        "riesgoDeSufrirLesionPorOtrosReclusos": boolean;
-        "riesgoDeSufrirLesionPorOtrosReclusos_modificado": boolean;
-        "riesgoDeSufrirLesionPorOtrosReclusosRespuesta": string;
-        "riesgoDeDanharLaPropiedad": boolean;
-        "riesgoDeDanharLaPropiedad_modificado": boolean;
-        "riesgoDeDanharLaPropiedadRespuesta": string;
-        "miembroDeGrupoQueConstituyeAmenazaParaSeguridad": boolean;
-        "miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado": boolean;
-        "miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta": string;
-        "tieneEntrenamientoMilitarPrevio": boolean;
-        "tieneEntrenamientoMilitarPrevio_modificado": boolean;
-        "tieneEntrenamientoMilitarPrevioRespuesta": string;
-        "eraFuncionarioPublico": boolean;
-        "eraFuncionarioPublico_modificado": boolean;
-        "eraFuncionarioPublicoRespuesta": string;
-    };
-    datosFamiliares:{
-        numeroDeIdentificacion: string;
-        esCabezaDeFamilia: boolean;
-        esCabezaDeFamilia_modificado: boolean;
-        tieneCirculoFamiliar: boolean;
-        tieneCirculoFamiliar_modificado: boolean;
-        familiares: Array<familiar> | null;
-        familiares_modificado: boolean;
-        tieneConcubino: boolean;
-        tieneConcubino_modificado: boolean;
-        concubino: datosConcubino | null;
-        concubino_modificado: boolean;
-    };
-    datosEducacion:{
-        numeroDeIdentificacion: string;
-        nivelAcademico: string;
-        nivelAcademico_modificado: boolean;
-        institucionEducativa: string;
-        institucionEducativa_modificado: boolean;
-        tieneOficio: boolean;
-        tieneOficio_modificado: boolean;
-        nombreOficio: string;
-        nombreOficio_modificado: boolean;
-        ultimoTrabajo: string;
-        ultimoTrabajo_modificado: boolean;
-    };
-
+    datosDeSeguridad: datosSeguridadType;
+    datosFamiliares: datosFamiliaresType;
+    datosEducacion: datosEducacionType;
+    datosSalud: datosSaludType;
+    datosJudiciales: datosJudicialesType;
 }
 
 const initialData = {
+    id_persona: null,
     nombre: '',
     apellido: '',
     apodo: '',
@@ -127,58 +90,11 @@ const initialData = {
         nombreEtnia: "",
         perteneceAComunidadLGTBI: false,
     },
-    datosDeSeguridad:{
-        numeroDeIdentificacion: "",
-        riesgoParaPersonal: false,
-        riesgoParaPersonal_modificado: false,
-        riesgoParaPersonalRespuesta: '',
-        riesgoParaPersonalRespuesta_modificado: false,
-        riesgoParaReclusos: false,
-        riesgoParaReclusos_modificado: false,
-        riesgoParaReclusosRespuesta: "",
-        riesgoParaReclusosRespuesta_modificado: false,
-        riesgoDeSufrirLesionPorOtrosReclusos: false,
-        riesgoDeSufrirLesionPorOtrosReclusos_modificado: false,
-        riesgoDeSufrirLesionPorOtrosReclusosRespuesta: "",
-        riesgoDeDanharLaPropiedad: false,
-        riesgoDeDanharLaPropiedad_modificado: false,
-        riesgoDeDanharLaPropiedadRespuesta: "",
-        miembroDeGrupoQueConstituyeAmenazaParaSeguridad: false,
-        miembroDeGrupoQueConstituyeAmenazaParaSeguridad_modificado: false,
-        miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta: "",
-        tieneEntrenamientoMilitarPrevio: false,
-        tieneEntrenamientoMilitarPrevio_modificado: false,
-        tieneEntrenamientoMilitarPrevioRespuesta: "",
-        eraFuncionarioPublico: false,
-        eraFuncionarioPublico_modificado: false,
-        eraFuncionarioPublicoRespuesta: "",
-    },
-    datosFamiliares:{
-        numeroDeIdentificacion: "",
-        esCabezaDeFamilia: false,
-        esCabezaDeFamilia_modificado: false,
-        tieneCirculoFamiliar: false,
-        tieneCirculoFamiliar_modificado: false,
-        familiares: [],
-        familiares_modificado: false,
-        tieneConcubino: false,
-        tieneConcubino_modificado: false,
-        concubino: null,
-        concubino_modificado: false,
-    },
-    datosEducacion:{
-        numeroDeIdentificacion: "",
-        nivelAcademico: "",
-        nivelAcademico_modificado: false,
-        institucionEducativa: "",
-        institucionEducativa_modificado: false,
-        tieneOficio: false,
-        tieneOficio_modificado: false,
-        nombreOficio: "",
-        nombreOficio_modificado: false,
-        ultimoTrabajo: "",
-        ultimoTrabajo_modificado: false
-    }
+    datosDeSeguridad: datosSeguridadInicial,
+    datosFamiliares: datosFamiliaresInicial,
+    datosEducacion: datosEducacionInicial,
+    datosSalud: datosSaludInicial,
+    datosJudiciales: datosJudicialesInicial
 }
 
 const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/cedula/`;
