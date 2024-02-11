@@ -11,15 +11,12 @@ import {
     RadioGroup
 } from "@mui/material";
 import {FC, useEffect, useState} from "react";
-import { datosEducacionInicial, datosEducacionType } from "../../../../components/utils/systemTypes";
+import {datosEducacionInicial, datosEducacionType} from "@/components/utils/systemTypes";
 
 import React from "react";
 import {api_request} from "@/lib/api-request";
-import {datosEducacionInicial, datosEducacionType} from "@/components/utils/systemTypes";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
-
-
 
 export interface BloqueEducacionProps{
   id_persona:number | null;
