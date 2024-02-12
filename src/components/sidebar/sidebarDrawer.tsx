@@ -6,32 +6,21 @@ import {
     BarChart,
     ExpandLess,
     ExpandMore,
-    FaceOutlined,
     Fingerprint,
     Hail,
-    Key,
-    ManageAccounts,
     Mood,
-    People,
-    PermIdentity,
     Settings
 } from "@mui/icons-material";
-import {Box, Collapse, FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
-import {CSSObject, Theme, styled, useTheme} from '@mui/material/styles';
-import {usePathname, useRouter} from "next/navigation";
-
-import IconButton from '@mui/material/IconButton';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from "@mui/icons-material/Menu";
-import MuiDrawer from '@mui/material/Drawer';
-import {SelectChangeEvent} from "@mui/material/Select";
-import SidebarItem from "@/components/sidebar/sidebarItem";
 import styles from "@/components/sidebar.module.css";
+import {CSSObject, Theme, styled, useTheme} from '@mui/material/styles';
+import {Box, IconButton, List, ListItemButton, ListItemIcon, ListItemText, Typography, Collapse} from "@mui/material";
+import MuiDrawer from '@mui/material/Drawer';
+import {usePathname} from "next/navigation";
 import {useState} from "react";
+import SidebarItem from "@/components/sidebar/sidebarItem";
 import SelectorEstablecimiento from "@/components/sidebar/SelectorEstablecimiento";
+import {useGlobalContext} from "@/app/Context/store";
 
 const drawerWidth = 279;
 
@@ -67,9 +56,6 @@ const DrawerHeader = styled('div')(({theme}) => ({
     ...theme.mixins.toolbar,
 }));
 
-
-
-
 const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})(
     ({theme, open}) => ({
         width: drawerWidth,
@@ -87,7 +73,9 @@ const Drawer = styled(MuiDrawer, {shouldForwardProp: (prop) => prop !== 'open'})
     }),
 );
 
-export default function SidebarDrawer() {
+export default function SidebarDrawer()
+{
+    const { selectedEstablecimiento, setSelectedEstablecimiento } = useGlobalContext();
     const theme = useTheme();
     const [open, setOpen] = React.useState(true);
     const [openMenus, setOpenMenus] = useState<Record<OpenMenusKeys, boolean>>({
@@ -99,7 +87,6 @@ export default function SidebarDrawer() {
         datosPenales: false,
     });
 
-    const router = useRouter();
     const pathname = usePathname()
 
     const handleClick = (menu: OpenMenusKeys) => {
@@ -109,9 +96,6 @@ export default function SidebarDrawer() {
         }));
     };
 
-    const handleNavigation = (url: string) => {
-        router.push(url);
-    }
     const handleDrawerOpen = () => {
         setOpen(true);
     };

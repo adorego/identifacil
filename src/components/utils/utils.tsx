@@ -59,7 +59,7 @@ export async function fetchFormData(id: any, entity: string) {
     }
 }
 
-/*
+/**
 Como recibir del otro lado el fetch
 // OtraPagina.js
 import { useEffect, useState } from 'react';
@@ -83,6 +83,7 @@ export default function OtraPagina() {
 
 /**
  * Filtra un array de objetos basado en un rango de fechas.
+ *
  * @param {Array} data Array de objetos a filtrar.
  * @param {string} startDate Fecha de inicio para el filtro.
  * @param {string} endDate Fecha de finalización para el filtro.

@@ -76,7 +76,7 @@ export default function Login() {
                         }}
                     >
                         <Typography component="h1" variant="h4">
-                            IDENTIFACIL
+                            Iniciar Sesión
                         </Typography>
                         {/*<Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
                             <LockOutlinedIcon/>

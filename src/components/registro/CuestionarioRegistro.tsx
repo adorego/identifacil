@@ -52,22 +52,8 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
         <div>
             <h2>Cuestionario de Ingreso</h2>
 
-            <Box className='cardContainer'>
+            <Box className=''>
                 {/* Acordeon Salud */}
-                <Accordion expanded={expanded === 'salud'} onChange={handleAccordionChange('salud')}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon/>}
-                        aria-controls="panel1a-content"
-                        id="panel1a-header"
-                    >
-                        <Typography sx={{fontWeight: 'bold'}}>Preguntas de salud</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-
-                        <BloqueSalud
-                            id_persona={id_persona}/>
-                    </AccordionDetails>
-                </Accordion>
                 <Accordion expanded={expanded === "personal"} onChange={handleAccordionChange('personal')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}
@@ -81,6 +67,20 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                         <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad}/>
                     </AccordionDetails>
 
+                </Accordion>
+                <Accordion expanded={expanded === 'salud'} onChange={handleAccordionChange('salud')}>
+                    <AccordionSummary
+                        expandIcon={<ExpandMoreIcon/>}
+                        aria-controls="panel1a-content"
+                        id="panel1a-header"
+                    >
+                        <Typography sx={{fontWeight: 'bold'}}>Preguntas de salud</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+
+                        <BloqueSalud
+                            id_persona={id_persona}/>
+                    </AccordionDetails>
                 </Accordion>
                 <Accordion expanded={expanded === "educacion"} onChange={handleAccordionChange('educacion')}>
                     <AccordionSummary

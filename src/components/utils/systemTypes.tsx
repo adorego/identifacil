@@ -342,3 +342,12 @@ export const datosJudicialesInicial:datosJudicialesType = {
     sentenciaDefinitiva_modificado:false,
 }
 
+export type circuloFamiliarStateType = {
+    nombre: string;
+    vinculo_sistema: string;
+    relacion: number;
+    establecimiento: number;
+    edad_hijo: number | null ;
+    numero_documento_concubino: string;
+    lugar_donde_esta_hijo: string;
+}

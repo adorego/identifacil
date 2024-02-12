@@ -23,14 +23,15 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
 
     useEffect(() => {
 
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/establecimientos/`;
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/establecimientos/`;
         fetchData(url)
             .then(fetchedData => {
-
+                console.log('establecimientossss');
+                console.log(fetchedData);
                 setState(prevState => {
                     return {
                         ...prevState,
-                        establecimientos: [...fetchedData]
+                        establecimientos: [...fetchedData.establecimientos]
 
                     }
                 });

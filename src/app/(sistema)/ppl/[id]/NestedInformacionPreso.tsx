@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
 import {Box, Grid, Paper, Tab, Tabs} from "@mui/material";
 import {
     datosEducacionInicial,
@@ -16,8 +15,9 @@ import {
     datosSeguridadInicial,
     datosSeguridadType
 } from "@/components/utils/systemTypes";
-
 import BloqueDatosPersonales from "../../cuestionario/components/BloqueDatosPersonales";
+
+import BloqueEducacion from "../../cuestionario/components/BloqueEducacion";
 import BloqueFamiliares from "../../cuestionario/components/BloqueFamiliar";
 import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
 import BloqueSalud from "../../cuestionario/components/BloqueSalud";
