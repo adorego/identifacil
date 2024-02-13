@@ -1,13 +1,15 @@
 'use client'
 
 import * as React from 'react';
+
 import {CircularProgress, Paper} from "@mui/material";
+import {dataBajas, dataSalidasEspeciales, dataTraslados} from "@/app/dummyData/movimientosDummyData";
+import {useEffect, useState} from "react";
+
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
 import FiltrosTables from "../components/filtrosTables";
-import {dataBajas, dataSalidasEspeciales, dataTraslados} from "@/app/dummyData/movimientosDummyData";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {useEffect, useState} from "react";
 
 const headers = [
     { id: 'id', label: 'ID' },
@@ -23,7 +25,7 @@ export default function Ppl() {
 
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/salidasTransitorias');
+            const response = await fetch('http://localhost:5001/salidasTransitorias');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

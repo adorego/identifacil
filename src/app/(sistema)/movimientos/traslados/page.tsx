@@ -3,20 +3,18 @@
 import * as React from 'react';
 
 import {
-    CircularProgress, Paper,
+    CircularProgress,
+    Paper,
 } from "@mui/material";
+import {useEffect, useState} from "react";
 
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
-import TituloComponent from "@/components/titulo/tituloComponent";
-import {useEffect, useState} from "react";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import ModalBorrado from "@/components/modal/ModalBorrado";
+import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
-
-
-
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -66,7 +64,7 @@ export default function Ppl() {
     }
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/traslados');
+            const response = await fetch('http://localhost:5001/traslados');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

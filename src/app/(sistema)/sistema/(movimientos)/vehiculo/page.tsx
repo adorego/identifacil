@@ -29,7 +29,7 @@ export default function Page(){
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/vehiculo');
+            const response = await fetch('http://localhost:5001/vehiculo');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

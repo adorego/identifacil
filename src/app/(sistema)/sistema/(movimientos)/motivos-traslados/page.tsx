@@ -1,13 +1,15 @@
 'use client'
 
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+
 import {Box, CircularProgress} from "@mui/material";
+import {useEffect, useState} from 'react';
+
 import CustomTable from "@/components/CustomTable";
+import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
-import ModalBorrado from "@/components/modal/ModalBorrado";
 
 export default function Page(){
     const { openSnackbar } = useGlobalContext();
@@ -22,7 +24,7 @@ export default function Page(){
         { id: 'lastUpdate', label: 'Ultima actualización' },
     ]
 
-    const URL_PATH : string = `http://localhost:5000/motivoTraslados`;
+    const URL_PATH : string = `http://localhost:5001/motivoTraslados`;
 
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
     async function fetchData() {

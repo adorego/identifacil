@@ -1,13 +1,15 @@
 'use client'
 
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+
 import {Box, CircularProgress} from "@mui/material";
+import {useEffect, useState} from 'react';
+
 import CustomTable from "@/components/CustomTable";
-import {deleteRecord} from "@/app/api";
-import {useGlobalContext} from "@/app/Context/store";
 import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
+import {deleteRecord} from "@/app/api";
+import {useGlobalContext} from "@/app/Context/store";
 
 // Datos para armar el header de la tabla
 const header = [
@@ -29,7 +31,7 @@ export default function Page(){
     // Se obtiene datos de la API
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/medidaSeguridad');
+            const response = await fetch('http://localhost:5001/medidaSeguridad');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

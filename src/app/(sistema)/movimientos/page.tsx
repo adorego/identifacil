@@ -3,24 +3,26 @@
 import * as React from 'react';
 
 import {
-    Breadcrumbs, Button, CircularProgress,
+    Breadcrumbs,
+    Button,
+    CircularProgress,
     FormControl,
     Grid,
 } from "@mui/material";
+import {dataBajas, dataSalidasEspeciales, dataTraslados} from "../../dummyData/movimientosDummyData";
+import {useEffect, useState} from "react";
 
 import Box from '@mui/material/Box';
+import CustomTable from "../../../components/CustomTable";
+import FiltrosTables from "./components/filtrosTables";
+import Page from "./salidasTransitorias/[id]/page";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import CustomTable from "../../../components/CustomTable";
-import FiltrosTables from "./components/filtrosTables";
-import Page from "./salidasTransitorias/[id]/page";
-import {dataBajas, dataSalidasEspeciales, dataTraslados} from "../../dummyData/movimientosDummyData";
-import tabTitle from "./components/tabTitle";
 import TabTitle from "./components/tabTitle";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {useEffect, useState} from "react";
+import tabTitle from "./components/tabTitle";
 
 const header = [
     { id: "id", label: "id" },
@@ -63,7 +65,7 @@ export default function Ppl() {
 
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/traslados');
+            const response = await fetch('http://localhost:5001/traslados');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

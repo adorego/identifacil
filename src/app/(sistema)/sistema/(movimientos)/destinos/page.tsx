@@ -20,7 +20,7 @@ export default function Page(){
     async function fetchData() {
         // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5000/motivosTraslados');
+            const response = await fetch('http://localhost:5001/motivosTraslados');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

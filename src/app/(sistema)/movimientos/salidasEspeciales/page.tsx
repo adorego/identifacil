@@ -3,14 +3,13 @@
 import * as React from 'react';
 
 import {CircularProgress, Paper} from "@mui/material";
-import Box from '@mui/material/Box';
-
-import CustomTable from "../../../../components/CustomTable";
-import FiltrosTables from "../components/filtrosTables";
-import { dataSalidasEspeciales} from "@/app/dummyData/movimientosDummyData";
-import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 
+import Box from '@mui/material/Box';
+import CustomTable from "../../../../components/CustomTable";
+import FiltrosTables from "../components/filtrosTables";
+import TituloComponent from "@/components/titulo/tituloComponent";
+import { dataSalidasEspeciales } from "@/app/dummyData/movimientosDummyData";
 
 export default function Ppl() {
     const [data, setData] = useState(null);
@@ -20,7 +19,7 @@ export default function Ppl() {
 
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/traslados');
+            const response = await fetch('http://localhost:5001/traslados');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
