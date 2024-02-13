@@ -21,7 +21,7 @@ export default function Page() {
 
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5001/traslados');
+            const response = await fetch('http://localhost:5000/traslados');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

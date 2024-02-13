@@ -25,7 +25,7 @@ export default function Ppl() {
 
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5001/salidasTransitorias');
+            const response = await fetch('http://localhost:5000/salidasTransitorias');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
