@@ -129,8 +129,49 @@ export const postEntity = async (
         const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
         console.log(stateForm)
         const url = isEditMode !== 'crear'
-            ? `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}/${params.id}`
-            : `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`;
+            ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${params.id}` // PUT
+            : `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`;                                             // POST
+
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(stateForm),
+        });
+
+        setLoading(false);
+
+        if (response.ok) {
+            const message = isEditMode
+                ? `${entityName} actualizada correctamente.`
+                : `${entityName} creada correctamente.`;
+
+            openSnackbar(message, 'success');
+            router.push(`/${endpoint}`);
+        } else {
+            throw new Error('Error en la petición');
+        }
+    } catch (error) {
+        setLoading(false);
+        console.error('Error:', error);
+    }
+};
+
+
+export const postForm = async (
+    isEditMode: boolean,
+    endpoint: string,
+    entityName: string,
+    stateForm: any,
+    setLoading: (arg0: boolean) => void,
+    openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
+    router: any
+) => {
+    try {
+        setLoading(true);
+
+        const method = isEditMode ? 'PUT' : 'POST';
+        console.log(stateForm)
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
 
         const response = await fetch(url, {
             method: method,

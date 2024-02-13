@@ -1,4 +1,4 @@
-import React, {FC, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {
     Box,
     Button,
@@ -21,6 +21,8 @@ import {
     datosFamiliaresType,
 
 } from "@/components/utils/systemTypes";
+import {postEntity, postForm} from "@/components/utils/utils";
+import {useRouter} from "next/navigation";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -47,8 +49,34 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     * */
     const { open, handleOpen, handleClose } = useModal();
     const {openSnackbar} = useGlobalContext();
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+
+    useEffect(() => {
+        if(datosFamiliaresIniciales){
+            setStateCirculoFamiliar(prev=>{
+                return{
+                    ...prev,
+                    id_persona: datosFamiliaresIniciales.id_persona,
+                    esCabezaDeFamilia: datosFamiliaresIniciales.esCabezaDeFamilia,
+                    esCabezaDeFamilia_modificado: datosFamiliaresIniciales.esCabezaDeFamilia_modificado,
+                    tieneCirculoFamiliar: datosFamiliaresIniciales.tieneCirculoFamiliar,
+                    tieneCirculoFamiliar_modificado: datosFamiliaresIniciales.tieneCirculoFamiliar_modificado,
+                    familiares: datosFamiliaresIniciales.familiares,
+                    familiares_modificado: datosFamiliaresIniciales.familiares_modificado,
+                    tieneConcubino: datosFamiliaresIniciales.tieneConcubino,
+                    tieneConcubino_modificado: datosFamiliaresIniciales.tieneConcubino_modificado,
+                    concubino: datosFamiliaresIniciales.concubino,
+                    concubino_modificado: datosFamiliaresIniciales.concubino_modificado,
+                }
+            })
+
+        }
+    }, [datosFamiliaresIniciales]);
 
     const handleChangeCirculo = (nuevoMiembro:circuloFamiliarStateType)=>{
+        console.log(nuevoMiembro)
         setStateCirculoFamiliar(prev=> [...prev, nuevoMiembro])
     }
 
@@ -65,6 +93,31 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 )
             }
         )
+    }
+
+    const handleSubmit = (e: { preventDefault: () => void; })=>{
+        e.preventDefault()
+
+        console.log(
+            {
+                ...estadoFormularioDatosFamiliares,
+                id_persona: id_persona,
+                familiares:stateCirculoFamiliar
+            })
+
+        postForm(
+            false,
+            'datos_familiares',
+            'Datos Familiares',
+            {
+                ...estadoFormularioDatosFamiliares,
+                id_persona: 13,
+                familiares:stateCirculoFamiliar
+            },
+            setLoading,
+            openSnackbar,
+            router
+        );
     }
 
 
@@ -118,6 +171,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </FormControl>
                 </Grid>
             </Grid>
+            {estadoFormularioDatosFamiliares.tieneCirculoFamiliar?
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <Button onClick={handleOpen} variant={'contained'}>
@@ -131,14 +185,20 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </ModalComponent>
 
                     <Box mt={2}>
-
+                        {datosFamiliaresIniciales?
                         <TablaCirculoFamiliar rows={stateCirculoFamiliar} />
+                            : null }
                     </Box>
                 </Grid>
             </Grid>
-
-
-
+            : null}
+            <Grid container spacing={2} mt={2}>
+                <Grid item sm={12}>
+                    <Button variant='contained' onClick={handleSubmit}>
+                        Guardar
+                    </Button>
+                </Grid>
+            </Grid>
 
         </Box>
     )

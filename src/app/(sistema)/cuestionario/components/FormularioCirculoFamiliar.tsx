@@ -13,8 +13,10 @@ interface FormularioCirculoFamiliarProps {
 }
 
 const circuloFamiliarInitial: circuloFamiliarStateType = {
+    id_persona: 0,
     nombre: "",
-    vinculo_sistema: '',
+    apellido: "",
+    vinculo: '',
     relacion: 0,
     establecimiento: 0,
     edad_hijo: null,
@@ -76,11 +78,20 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
             <Box>
                 <Grid container spacing={2}>
 
-                    <Grid item sm={12} mt={2}>
+                    <Grid item sm={6} mt={2}>
                         <TextField
-                            label="Nombre y Apellido"
+                            label="Nombre"
                             name="nombre"
                             value={state.nombre}
+                            onChange={handleChange}
+                            variant="outlined"
+                            fullWidth/>
+                    </Grid>
+                    <Grid item sm={6} mt={2}>
+                        <TextField
+                            label="Apellido"
+                            name="apellido"
+                            value={state.apellido}
                             onChange={handleChange}
                             variant="outlined"
                             fullWidth/>
@@ -91,7 +102,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             <InputLabel id="vinculo-sistema-label">Relacion</InputLabel>
                             <Select
                                 labelId="vinculo-sistema-label"
-                                id="vinculo_sistema"
+                                id="vinculo"
                                 value={state.relacion}
                                 label="relacion"
                                 name='relacion'
@@ -99,9 +110,9 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             >
                                 <MenuItem value={0}>Ninguno</MenuItem>
                                 {
-                                    stateVinculos.map(item =>{
+                                    stateVinculos.map((item, index) =>{
                                         return(
-                                            <MenuItem value={item.id}>{item.nombre}</MenuItem>
+                                            <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
                                         )
                                     })
                                 }
@@ -122,9 +133,9 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             >
                                 <MenuItem value={0}>Ninguno</MenuItem>
                                 {
-                                    stateEstablecimientos.map(item =>{
+                                    stateEstablecimientos.map((item, index) =>{
                                         return(
-                                            <MenuItem value={item.id}>{item.nombre}</MenuItem>
+                                            <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
                                         )
                                     })
                                 }
@@ -137,10 +148,10 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             <InputLabel id="vinculo-sistema-label">Vinculo con el sistema</InputLabel>
                             <Select
                                 labelId="vinculo-sistema-label"
-                                id="vinculo_sistema"
-                                value={state.vinculo_sistema}
+                                id="vinculo"
+                                value={state.vinculo}
                                 label="Vinculo con el sistema"
-                                name='vinculo_sistema'
+                                name='vinculo'
                                 onChange={handleSelectChange}
                             >
                                 <MenuItem value={0}>Ninguno</MenuItem>

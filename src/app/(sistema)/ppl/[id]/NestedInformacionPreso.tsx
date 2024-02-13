@@ -66,12 +66,18 @@ type datosPersonaType = {
     apellido: string;
     genero: number;
     apodo: string;
-    fecha_nacimiento: string;
+    fechaDeNacimiento: string;
     datosPersonales:{
-        estadoCivil: string;
+        id: number | null;
+        estadoCivil: {
+            id: number | null;
+        };
         lugarDeNacimiento: string;
         direccion: string;
         barrioCompania: string;
+        nacionalidad: {
+            id: number | null;
+        };
         numeroDeContacto: string;
         contactoDeEmergencia1: string;
         contactoDeEmergencia2: string;
@@ -82,23 +88,29 @@ type datosPersonaType = {
     datosDeSeguridad: datosSeguridadType;
     datosFamiliares: datosFamiliaresType;
     datosEducacion: datosEducacionType;
-    datosSalud: datosSaludType;
+    datosDeSalud: datosSaludType;
     datosJudiciales: datosJudicialesType;
 }
 
 
-const datosPersonaInitial = {
+const datosPersonaInitial : datosPersonaType = {
     id_persona: 0,
     nombre: "",
     apellido: "",
     genero: 1,
     apodo: "",
-    fecha_nacimiento: "",
+    fechaDeNacimiento: "",
     datosPersonales:{
-        estadoCivil: "",
+        id: null,
+        estadoCivil:{
+            id: null,
+        },
         lugarDeNacimiento: "",
         direccion: "",
         barrioCompania: "",
+        nacionalidad: {
+            id: null,
+        },
         numeroDeContacto: "",
         contactoDeEmergencia1: "",
         contactoDeEmergencia2: "",
@@ -109,12 +121,12 @@ const datosPersonaInitial = {
     datosDeSeguridad: datosSeguridadInicial,
     datosFamiliares: datosFamiliaresInicial,
     datosEducacion: datosEducacionInicial,
-    datosSalud: datosSaludInicial,
+    datosDeSalud: datosSaludInicial,
     datosJudiciales: datosJudicialesInicial
 }
 
 export default function NestedInformacionPreso({datosPersona=datosPersonaInitial} : { datosPersona:datosPersonaType }) {
-
+    console.log(datosPersona.datosPersonales.id)
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -146,12 +158,14 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
                                 { datosPersona ?
                                     <FormularioDatosPersonales datosDeIdentificacion={{
                                         id_persona: datosPersona.id_persona,
+                                        id_datos_personales: datosPersona.datosPersonales.id,
                                         nombres: datosPersona.nombre,
                                         apellidos: datosPersona.apellido,
                                         apodo: datosPersona.apodo,
                                         codigo_genero: datosPersona.genero,
-                                        fecha_nacimiento: '1989/07/20',
-                                        estadoCivil: datosPersona?.datosPersonales?.estadoCivil,
+                                        fechaDeNacimiento: datosPersona.fechaDeNacimiento,
+                                        nacionalidad: datosPersona?.datosPersonales?.nacionalidad?.id,
+                                        estadoCivil: datosPersona?.datosPersonales?.estadoCivil?.id,
                                         lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
                                         direccion: datosPersona?.datosPersonales?.direccion,
                                         barrioCompania: datosPersona?.datosPersonales?.barrioCompania,
@@ -170,7 +184,7 @@ export default function NestedInformacionPreso({datosPersona=datosPersonaInitial
                             <CustomTabPanel value={value} index={1}>
                                  <BloqueSalud
                                      id_persona={datosPersona.id_persona}
-                                     datosAlmacenados={datosPersona.datosSalud}
+                                     datosAlmacenados={datosPersona.datosDeSalud}
                                  />
                             </CustomTabPanel>
 

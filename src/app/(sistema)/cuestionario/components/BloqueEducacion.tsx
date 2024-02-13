@@ -10,23 +10,23 @@ import {
     Radio,
     RadioGroup
 } from "@mui/material";
-import {FC, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import React from "react";
-import { datosEducacionInicial, datosEducacionType } from "../../../../components/utils/systemTypes";
+import {datosEducacionInicial, datosEducacionType} from "../../../../components/utils/systemTypes";
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 
 
-
-export interface BloqueEducacionProps{
-  id_persona:number | null;
-  datosEducacionIniciales?:datosEducacionType;
+export interface BloqueEducacionProps {
+    id_persona: number | null;
+    datosEducacionIniciales?: datosEducacionType;
 }
-const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales}) =>{
-  const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
-  const {openSnackbar} = useGlobalContext();
-  // console.log(estadoFormularioDeEducacion);
+
+const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales}) => {
+    const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
+    const {openSnackbar} = useGlobalContext();
+    // console.log(estadoFormularioDeEducacion);
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
@@ -44,27 +44,27 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
         )
     }
 
-    // useEffect(() => {
-    //     if (datosEducacionIniciales) {
-    //         setEstadoFormularioDeEducacion(prevState => {
-    //             return{
-    //                 ...prevState,
-    //                 id_persona: datosEducacionIniciales.id_persona,
-    //                 nivelAcademico: datosEducacionIniciales.nivelAcademico,
-    //                 nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
-    //                 institucionEducativa: datosEducacionIniciales.institucionEducativa,
-    //                 institucionEducativa_modificado: datosEducacionIniciales.institucionEducativa_modificado,
-    //                 tieneOficio: datosEducacionIniciales.tieneOficio,
-    //                 tieneOficio_modificado: datosEducacionIniciales.tieneOficio_modificado,
-    //                 nombreOficio: datosEducacionIniciales.nombreOficio,
-    //                 nombreOficio_modificado: datosEducacionIniciales.nombreOficio_modificado,
-    //                 ultimoTrabajo: datosEducacionIniciales.ultimoTrabajo,
-    //                 ultimoTrabajo_modificado: datosEducacionIniciales.ultimoTrabajo_modificado
-    //             }
-    //         })
-    //     }
+    useEffect(() => {
+        if (datosEducacionIniciales) {
+            setEstadoFormularioDeEducacion(prevState => {
+                return {
+                    ...prevState,
+                    id_persona: datosEducacionIniciales.id_persona,
+                    nivelAcademico: datosEducacionIniciales.nivelAcademico,
+                    nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
+                    institucionEducativa: datosEducacionIniciales.institucionEducativa,
+                    institucionEducativa_modificado: datosEducacionIniciales.institucionEducativa_modificado,
+                    tieneOficio: datosEducacionIniciales.tieneOficio,
+                    tieneOficio_modificado: datosEducacionIniciales.tieneOficio_modificado,
+                    nombreOficio: datosEducacionIniciales.nombreOficio,
+                    nombreOficio_modificado: datosEducacionIniciales.nombreOficio_modificado,
+                    ultimoTrabajo: datosEducacionIniciales.ultimoTrabajo,
+                    ultimoTrabajo_modificado: datosEducacionIniciales.ultimoTrabajo_modificado
+                }
+            })
+        }
 
-    // }, [datosEducacionIniciales]);
+    }, [datosEducacionIniciales]);
 
     const onSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setEstadoFormularioDeEducacion(
@@ -81,20 +81,20 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
         )
     }
 
-  const onGuardarClick = async (event:React.MouseEvent<HTMLButtonElement>) =>{
-    event.preventDefault();
-    if(id_persona){
-      try{
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_educacion`;
-        const datosDelFormulario:datosEducacionType = Object.assign({},estadoFormularioDeEducacion);
-        datosDelFormulario.id_persona = id_persona;
-        console.log("Datos a enviar:", datosDelFormulario);
-        const respuesta = await api_request(url,{
-          method:'POST',
-          body:JSON.stringify(datosDelFormulario),
-          headers: {
-              'Content-Type': 'application/json'
-          }
+    const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        if (id_persona) {
+            try {
+                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`;
+                const datosDelFormulario: datosEducacionType = Object.assign({}, estadoFormularioDeEducacion);
+                datosDelFormulario.id_persona = id_persona;
+                console.log("Datos a enviar:", datosDelFormulario);
+                const respuesta = await api_request(url, {
+                    method: 'POST',
+                    body: JSON.stringify(datosDelFormulario),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
 
                 });
 
@@ -111,21 +111,21 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
             }
 
 
-      // console.log("Respuesta:", respuesta);
-    }else{
-      openSnackbar("Falta el id de la persona","error");
+            // console.log("Respuesta:", respuesta);
+        } else {
+            openSnackbar("Falta el id de la persona", "error");
+        }
     }
-  }
-  
-  return(
-    <Box
-                component="form"
-                sx={{
-                    '& .MuiTextField-root': {m: 1, width: '25ch'},
-                }}
-                noValidate
-                autoComplete="off"
-            >
+
+    return (
+        <Box
+            component="form"
+            sx={{
+                '& .MuiTextField-root': {m: 1, width: '25ch'},
+            }}
+            noValidate
+            autoComplete="off"
+        >
 
             <Grid container spacing={2}>
                 <Grid item sm={6}>
@@ -150,6 +150,10 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
                                 value="terciaria"
                                 control={<Radio/>
                                 } label="Terciaria"/>
+                            <FormControlLabel
+                                value="ninguna"
+                                control={<Radio/>
+                                } label="Ninguna"/>
                         </RadioGroup>
                     </FormControl>
                 </Grid>
@@ -186,6 +190,7 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
                     </FormControl>
                 </Grid>
                 <Grid item sm={6}>
+                    { estadoFormularioDeEducacion.tieneOficio ?
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
                         <OutlinedInput
@@ -195,7 +200,10 @@ const BloqueEducacion:FC<BloqueEducacionProps> = ({id_persona, datosEducacionIni
                             onChange={onDatoChange}
                             disabled={!estadoFormularioDeEducacion.tieneOficio}
                         />
+
                     </FormControl>
+                        : null }
+
                 </Grid>
                 <Grid item sm={6}>
                     <FormControl fullWidth={true}>

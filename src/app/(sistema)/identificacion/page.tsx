@@ -15,8 +15,8 @@ export default function Identificacion(){
    const [progresoReconocimiento, setProgresoReconocmiento] = useState(EstadosProgreso[0]);
    const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
    const [identificationData, setIdentificationData] = useState<IdentificationResponse>(initialResponse)
-   
-   
+
+
    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
     const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
     console.log('url:', url);
@@ -31,12 +31,12 @@ export default function Identificacion(){
         headers: {
           'Content-Type': 'application/json'
         }
-        
-    });
-    
 
-    
-    
+    });
+
+
+
+
     if(!response.ok){
       const data = await response.json();
       setProgresoReconocmiento(EstadosProgreso[0]);
@@ -63,18 +63,18 @@ export default function Identificacion(){
   const cerrar_dialogo = () =>{
     setProgresoReconocmiento(EstadosProgreso[0]);
   }
-  
+
   return(
-    <Box sx={{position:'relative', 
-              // border:"2px solid #f00", 
+    <Box sx={{position:'relative',
+              // border:"2px solid #f00",
               width:"100%",
               height: "100vh"
-            
-            
-              }} 
+
+
+              }}
               mt={4}>
         <Box
-         sx={{position:'absolute', 
+         sx={{position:'absolute',
               display:`${!showSpinner ? 'none' : 'null'}`,
               backgroundColor:'hsla(0,0%,100%,1)',
               visibility:'',
@@ -82,28 +82,28 @@ export default function Identificacion(){
               height:"400px",
               paddingTop:"0px",
               top:'200px',
-              left:'50%', 
+              left:'50%',
               transform: 'translate(-50%,-50%)',
               zIndex:10}}
         >
-          {progresoReconocimiento === EstadosProgreso[3] ? 
-          <IdentificationData 
-          nombres={identificationData.nombres} 
-          apellidos={identificationData.apellidos} 
-          esPPL={identificationData.esPPL} 
+          {progresoReconocimiento === EstadosProgreso[3] ?
+          <IdentificationData
+          nombres={identificationData.nombres}
+          apellidos={identificationData.apellidos}
+          esPPL={identificationData.esPPL}
           cerrarDialogo={cerrar_dialogo}/> :
-          <CircularProgressionWithLabel 
-          indicador={0} 
-          estado={progresoReconocimiento} />} 
-          
+          <CircularProgressionWithLabel
+          indicador={0}
+          estado={progresoReconocimiento} />}
+
         </Box>
-        <FaceRecognition 
-        agregar_reconocimiento={agregar_reconocimiento} 
-        notificacion="" 
-        numero_de_capturas={1} 
+        <FaceRecognition
+        agregar_reconocimiento={agregar_reconocimiento}
+        notificacion=""
+        numero_de_capturas={1}
         progreso={actualizar_progreso}
         etiqueta_boton="Identificar" />
     </Box>
-    
+
   )
 }

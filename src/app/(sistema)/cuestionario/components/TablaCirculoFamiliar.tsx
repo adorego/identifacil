@@ -7,7 +7,7 @@ interface tablaCirculoTypes {
         nombre: string;
         relacion: number;
         establecimiento: number | null;
-        vinculo_sistema: string;
+        vinculo: string;
     }[];
 }
 
@@ -42,7 +42,7 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows}) => {
                                     </TableCell>
                                     <TableCell align="right">{row.relacion}</TableCell>
                                     <TableCell align="right">{row.establecimiento}</TableCell>
-                                    <TableCell align="right">{row.vinculo_sistema}</TableCell>
+                                    <TableCell align="right">{row.vinculo}</TableCell>
                                     <TableCell align="right">
                                         <IconButton aria-label="edit">
                                             <Visibility/>

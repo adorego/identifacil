@@ -5,7 +5,6 @@ import { EstadoCivil, EstadoCivilDTO } from "@/model/estadoCivil.model";
 import { Nacionalidad, NacionalidadesDTO } from "@/model/nacionalidad.model";
 import { RequestResponse, api_request } from "@/lib/api-request";
 import dayjs, { Dayjs }  from "dayjs";
-
 import log from "loglevel";
 import { useGlobalContext } from "@/app/Context/store";
 
@@ -18,11 +17,11 @@ interface datosPersonales {
     apellido_modificado:boolean;
     apodo: string;
     apodo_modificado:boolean;
-    estadoCivil?: string;
+    estadoCivil?: number | null;
     estadoCivil_modificado:boolean;
     fechaDeNacimiento: Dayjs | null;
     fechaDeNacimiento_modificado:boolean;
-    nacionalidad: string;
+    nacionalidad: number | null;
     nacionalidad_modificado:boolean;
     lugarDeNacimiento: string;
     lugarDeNacimiento_modificado:boolean;
@@ -58,9 +57,9 @@ const datosPersonalesInicial: datosPersonales = {
     nombre: '',
     apellido: '',
     apodo: '',
-    estadoCivil: '',
+    estadoCivil: null,
     fechaDeNacimiento: null,
-    nacionalidad: '',
+    nacionalidad: null,
     lugarDeNacimiento: '',
     sexo: '',
     codigo_genero: 0,
@@ -97,12 +96,14 @@ export interface BloqueDatosPersonalesProps{
     datosDeIdentificacion:{
         cedula_identidad?: string;
         id_persona: number | null;
+        id_datos_personales: number | null;
         nombres: string;
         apellidos: string;
-        fecha_nacimiento: string;
+        fechaDeNacimiento: string;
         codigo_genero: number;
         apodo: string;
-        estadoCivil?: string;
+        estadoCivil?: number | null;
+        nacionalidad?: number | null;
         lugarDeNacimiento: string;
         direccion: string;
         barrioCompania: string;
@@ -128,26 +129,27 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
         if(datosDeIdentificacion){
             setDatosPersonalesState(prevState => {
                 return{
-                ...prevState,
-                    fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento,"YYYY-MM-DD"),
-                    fechaDeNacimiento_modificado:true,
-                    numeroDeIdentificacion:datosDeIdentificacion.cedula_identidad,
-                    nombre:datosDeIdentificacion.nombres,
-                    nombre_modificado:true,
-                    apellido:datosDeIdentificacion.apellidos,
-                    apellido_modificado:true,
-                    codigo_genero:datosDeIdentificacion.codigo_genero,
-                    apodo:datosDeIdentificacion.apodo,
-                    estadoCivil:datosDeIdentificacion.estadoCivil,
-                    lugarDeNacimiento:datosDeIdentificacion.lugarDeNacimiento,
-                    direccion:datosDeIdentificacion.direccion,
-                    barrioCompania:datosDeIdentificacion.barrioCompania,
-                    numeroDeContacto:datosDeIdentificacion.numeroDeContacto,
-                    contactoDeEmergencia1:datosDeIdentificacion.contactoDeEmergencia1,
-                    contactoDeEmergencia2:datosDeIdentificacion.contactoDeEmergencia2,
-                    pueblosIndigenas:datosDeIdentificacion.pueblosIndigenas,
-                    nombreEtnia:datosDeIdentificacion.nombreEtnia,
-                    perteneceAComunidadLGTBI:datosDeIdentificacion.perteneceAComunidadLGTBI,
+                    ...prevState,
+                    fechaDeNacimiento: dayjs(datosDeIdentificacion.fechaDeNacimiento, "YYYY-MM-DD"),
+                    fechaDeNacimiento_modificado: true,
+                    numeroDeIdentificacion: datosDeIdentificacion.cedula_identidad,
+                    nombre: datosDeIdentificacion.nombres,
+                    nombre_modificado: true,
+                    apellido: datosDeIdentificacion.apellidos,
+                    apellido_modificado: true,
+                    nacionalidad: datosDeIdentificacion.nacionalidad ?? null,
+                    codigo_genero: datosDeIdentificacion.codigo_genero,
+                    apodo: datosDeIdentificacion.apodo,
+                    estadoCivil: datosDeIdentificacion.estadoCivil ?? null,
+                    lugarDeNacimiento: datosDeIdentificacion.lugarDeNacimiento,
+                    direccion: datosDeIdentificacion.direccion,
+                    barrioCompania: datosDeIdentificacion.barrioCompania,
+                    numeroDeContacto: datosDeIdentificacion.numeroDeContacto,
+                    contactoDeEmergencia1: datosDeIdentificacion.contactoDeEmergencia1,
+                    contactoDeEmergencia2: datosDeIdentificacion.contactoDeEmergencia2,
+                    pueblosIndigenas: datosDeIdentificacion.pueblosIndigenas,
+                    nombreEtnia: datosDeIdentificacion.nombreEtnia,
+                    perteneceAComunidadLGTBI: datosDeIdentificacion.perteneceAComunidadLGTBI,
                 }
             })
         }
@@ -231,13 +233,13 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
         )
     }
 
-    const onDatoSelectChange = (event:SelectChangeEvent) =>{
+    const onDatoSelectChange = (event:SelectChangeEvent<number|string|null>) =>{
         setDatosPersonalesState(
             (previus) =>{
                 return(
                     {
                         ...previus,
-                        [event.target.name]:event.target.value,
+                        [event.target.name]:event.target.value ?? null,
                         [`${event.target.name}_modificado`]:true
 
                     }
@@ -268,7 +270,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                 return(
                     {
                         ...previus,
-                        fechaNacimiento:value,
+                        fechaDeNacimiento:value,
                         fechaDeNacimiento_modificado:true
                     }
                 )
@@ -277,14 +279,15 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
     }
     const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
         event.preventDefault();
-        console.log(datosPersonalesState)
+
         if(!datosDeIdentificacion.cedula_identidad){
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
+            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`;
+            console.log('URL -> ' + url)
             const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
             datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
-            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+
             const respuesta = await api_request(url,{
-                method:'POST',
+                method:'PUT',
                 body:JSON.stringify(datosDelFormulario),
                 headers: {
                     'Content-Type': 'application/json'

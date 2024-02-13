@@ -1,4 +1,4 @@
-import {Box, CircularProgress, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
+import {Box, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import * as React from "react";
 import {SelectChangeEvent} from "@mui/material/Select";
 import {useEffect} from "react";
@@ -7,17 +7,17 @@ import {useGlobalContext} from "@/app/Context/store";
 
 const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
 
-    const { selectedEstablecimiento, setSelectedEstablecimiento } = useGlobalContext();
+    const { setSelectedEstablecimiento } = useGlobalContext();
     const [state, setState] = React.useState<
         {
-            selectedID: string,
+            selectedID: number,
             establecimientos:{
-                id: string,
+                id: number,
                 nombre: string
             }[]
         }>(
         {
-            selectedID: '0',
+            selectedID: 0,
             establecimientos:[]
         });
 
@@ -26,8 +26,7 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/establecimientos/`;
         fetchData(url)
             .then(fetchedData => {
-                console.log('establecimientossss');
-                console.log(fetchedData);
+
                 setState(prevState => {
                     return {
                         ...prevState,
@@ -39,12 +38,12 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
     }, []);
 
 
-    const handleChange = (event: SelectChangeEvent) => {
-        setSelectedEstablecimiento(event.target.value as string)
+    const handleChange = (event: SelectChangeEvent<number>) => {
+        setSelectedEstablecimiento(event.target.value as number)
         setState(prevState => {
             return{
                 ...prevState,
-                selectedID: event.target.value as string,
+                selectedID: event.target.value as number,
 
             }
         });
@@ -77,10 +76,10 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
                             label="Establecimiento penitenciario"
                             onChange={handleChange}
                         >
-                            <MenuItem value={'0'}>Todas</MenuItem>
+                            <MenuItem value={0}>Todas</MenuItem>
                             {
                                 state.establecimientos.map(item=>(
-                                        <MenuItem key={item.id} value={`${item.id}`}>{item.nombre}</MenuItem>
+                                        <MenuItem key={item.id} value={item.id}>{item.nombre}</MenuItem>
                                     )
                                 )
                             }

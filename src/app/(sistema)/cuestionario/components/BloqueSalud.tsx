@@ -18,7 +18,7 @@ import {
     SelectChangeEvent, Stack,
     TextField, Typography
 } from "@mui/material"
-import {FC, ReactNode, SyntheticEvent, useContext, useReducer, useState} from "react";
+import {FC, ReactNode, SyntheticEvent, useEffect, useReducer, useState} from "react";
 import {datosSaludInicial, datosSaludType} from "../../../../components/utils/systemTypes";
 import dayjs, {Dayjs} from "dayjs";
 
@@ -151,6 +151,75 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const {openSnackbar} = useGlobalContext();
     // console.log("Estado:", datosSaludFormState);
+
+
+
+    useEffect(() => {
+        if(datosAlmacenados){
+            console.log(datosAlmacenados)
+            setDatosSaludSeelect(prevState => {
+                return{
+                    ...prevState,
+                    id_persona: datosAlmacenados.id_persona,
+                    imc: datosAlmacenados.imc,
+                    imc_modificado: datosAlmacenados.imc_modificado,
+                    tieneAfeccionADrogas_modificado: datosAlmacenados.tieneAfeccionADrogas_modificado,
+                    tieneAfeccionADrogras: datosAlmacenados.tieneAfeccionADrogras,
+                    grupo_sanguineo: datosAlmacenados.grupo_sanguineo,
+                    grupo_sanguineo_modificado: datosAlmacenados.grupo_sanguineo_modificado,
+
+                    presion_arterial: datosAlmacenados.presion_arterial,
+                    presion_arterial_modificada: datosAlmacenados.presion_arterial_modificada,
+                    frecuencia_cardiaca: datosAlmacenados.frecuencia_cardiaca,
+                    frecuencia_cardiaca_modificada: datosAlmacenados.frecuencia_cardiaca_modificada,
+                    frecuencia_respiratoria: datosAlmacenados.frecuencia_respiratoria,
+                    frecuencia_respiratoria_modificada: datosAlmacenados.frecuencia_respiratoria_modificada,
+                    temperatura: datosAlmacenados.temperatura,
+                    temperatura_modificada: datosAlmacenados.temperatura_modificada,
+                    peso: datosAlmacenados.peso,
+                    peso_modificado: datosAlmacenados.peso_modificado,
+                    talla: datosAlmacenados.talla,
+                    talla_modificado: datosAlmacenados.talla_modificado,
+                    vdrl: datosAlmacenados.vdrl,
+                    vdrl_modificado: datosAlmacenados.vdrl_modificado,
+                    vih: datosAlmacenados.vih,
+                    vih_modificado: datosAlmacenados.vih_modificado,
+                    tb: datosAlmacenados.tb,
+                    tb_modificado: datosAlmacenados.tb_modificado,
+                    gestacion: datosAlmacenados.gestacion,
+                    gestacion_modificado: datosAlmacenados.gestacion_modificado,
+                    tiempo_gestacion: datosAlmacenados.tiempo_gestacion,
+                    tiempo_gestacion_modificado: datosAlmacenados.tiempo_gestacion_modificado,
+                    fecha_parto: datosAlmacenados.fecha_parto,
+                    fecha_parto_modificada: datosAlmacenados.fecha_parto_modificada,
+                    discapacidad_fisica: datosAlmacenados.discapacidad_fisica,
+                    discapacidad_modificada: datosAlmacenados.discapacidad_modificada,
+                    explicacion_discapacidad_fisica: datosAlmacenados.explicacion_discapacidad_fisica,
+                    explicacion_discapacidad_fisica_modificada: datosAlmacenados.explicacion_discapacidad_fisica_modificada,
+                    sigue_tratamiento_mental: datosAlmacenados.sigue_tratamiento_mental,
+                    sigue_tratamiento_mental_modificado: datosAlmacenados.sigue_tratamiento_mental_modificado,
+                    tiene_antecedentes_de_lesiones_autoinflingidas: datosAlmacenados.tiene_antecedentes_de_lesiones_autoinflingidas,
+                    tiene_antecedentes_de_lesiones_autoinflingidas_modificado: datosAlmacenados.tiene_antecedentes_de_lesiones_autoinflingidas_modificado,
+                    ha_estado_internado_en_hospital_psiquiatrico: datosAlmacenados.ha_estado_internado_en_hospital_psiquiatrico,
+                    ha_estado_internado_en_hospital_psiquiatrico_modificado: datosAlmacenados.ha_estado_internado_en_hospital_psiquiatrico_modificado,
+                    reporta_abuso_de_droga_previo_al_ingreso: datosAlmacenados.reporta_abuso_de_droga_previo_al_ingreso,
+                    reporta_abuso_de_droga_previo_al_ingreso_modificado: datosAlmacenados.reporta_abuso_de_droga_previo_al_ingreso_modificado,
+                    tiene_afeccion_severa_por_estupefacientes: datosAlmacenados.tiene_afeccion_severa_por_estupefacientes,
+                    tiene_afeccion_severa_por_estupefaciente_modificado: datosAlmacenados.tiene_afeccion_severa_por_estupefaciente_modificado,
+                    necesitaInterprete: datosAlmacenados.necesitaInterprete,
+                    necesitaInterprete_modificado: datosAlmacenados.necesitaInterprete_modificado,
+                    tieneDificultadParaLeerYEscribir: datosAlmacenados.tieneDificultadParaLeerYEscribir,
+                    tieneDificultadParaLeerYEscribir_modificado: datosAlmacenados.tieneDificultadParaLeerYEscribir_modificado,
+                    // TODO: Verificar porque no guarda medicamentos y vacunas (uno de los dos o ambos no andan)
+                    /*vacunas_recibidas: datosAlmacenados.vacunas_recibidas,
+                    vacunas_recibidas_modificada: datosAlmacenados.vacunas_recibidas_modificada,
+                    medicacion_actual: datosAlmacenados.medicacion_actual,
+                    medicacion_actual_modificada: datosAlmacenados.medicacion_actual_modificada,*/
+                }
+            })
+        }
+    }, [datosAlmacenados]);
+
 
     const onAffecionDrogaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log("Handler:", event.currentTarget.value);
@@ -375,7 +444,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 onChange={onGrupoSanguineoSelect}
                                 disablePortal
                                 fullWidth
-                                sx={{margin: 0, width: '100%', border: '1px solid red'}}
+                                sx={{margin: 0, width: '100%'}}
                                 renderOption={(props, option) => <li {...props} key={option.id}>{option.label}</li>}
                                 renderInput={function (params: AutocompleteRenderInputParams): ReactNode {
                                     return (
