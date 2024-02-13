@@ -19,7 +19,7 @@ import {
     TextField, Typography
 } from "@mui/material"
 import {FC, ReactNode, SyntheticEvent, useEffect, useReducer, useState} from "react";
-import {datosSaludInicial, datosSaludType} from "../../../../components/utils/systemTypes";
+import {datosDeSalud2Initial, datosDeSalud2Type} from "../../../../components/utils/systemTypes";
 import dayjs, {Dayjs} from "dayjs";
 
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
@@ -78,7 +78,7 @@ const datosSaludSelectInicial: datosSaludSelect = {
     vacunas_recibidas: [{id: 1, label: "Covid 1era dosis"}, {id: 2, label: "Covid 2da dosis"}, {id: 3, label: "Covid 3era dosis"}]
 }
 
-function reducer(state: datosSaludType, action: saludActions) {
+function reducer(state: datosDeSalud2Type, action: saludActions) {
     switch (action.type) {
         case (SALUD_ACTIONS.MODIFICAR_AFECCION_DROGA):
             return Object.assign({}, {...state, drogasModificado: true, tieneAfeccionADrogras: (action.payload === "true")});
@@ -143,10 +143,10 @@ const checkedIcon = <CheckBoxIcon fontSize="small"/>;
 
 export interface BloqueSaludProps {
     id_persona: number | null;
-    datosAlmacenados?: datosSaludType;
+    datosAlmacenados?: datosDeSalud2Type;
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosSaludInicial}) => {
+const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
     const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer, datosAlmacenados);
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const {openSnackbar} = useGlobalContext();
@@ -154,7 +154,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
 
 
-    useEffect(() => {
+    /*useEffect(() => {
         if(datosAlmacenados){
             console.log(datosAlmacenados)
             setDatosSaludSeelect(prevState => {
@@ -192,10 +192,10 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     tiempo_gestacion_modificado: datosAlmacenados.tiempo_gestacion_modificado,
                     fecha_parto: datosAlmacenados.fecha_parto,
                     fecha_parto_modificada: datosAlmacenados.fecha_parto_modificada,
-                    discapacidad_fisica: datosAlmacenados.discapacidad_fisica,
-                    discapacidad_modificada: datosAlmacenados.discapacidad_modificada,
-                    explicacion_discapacidad_fisica: datosAlmacenados.explicacion_discapacidad_fisica,
-                    explicacion_discapacidad_fisica_modificada: datosAlmacenados.explicacion_discapacidad_fisica_modificada,
+                    discapacidad_fisica: datosAlmacenados.saludFisica?.discapacidad_fisica ?? null,
+                    discapacidad_modificada: datosAlmacenados.saludFisica?.discapacidad_modificada ?? null,
+                    explicacion_discapacidad_fisica: datosAlmacenados.saludFisica?.explicacion_discapacidad_fisica,
+                    explicacion_discapacidad_fisica_modificada: datosAlmacenados.saludFisicaexplicacion_discapacidad_fisica_modificada,
                     sigue_tratamiento_mental: datosAlmacenados.sigue_tratamiento_mental,
                     sigue_tratamiento_mental_modificado: datosAlmacenados.sigue_tratamiento_mental_modificado,
                     tiene_antecedentes_de_lesiones_autoinflingidas: datosAlmacenados.tiene_antecedentes_de_lesiones_autoinflingidas,
@@ -211,14 +211,14 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     tieneDificultadParaLeerYEscribir: datosAlmacenados.tieneDificultadParaLeerYEscribir,
                     tieneDificultadParaLeerYEscribir_modificado: datosAlmacenados.tieneDificultadParaLeerYEscribir_modificado,
                     // TODO: Verificar porque no guarda medicamentos y vacunas (uno de los dos o ambos no andan)
-                    /*vacunas_recibidas: datosAlmacenados.vacunas_recibidas,
+                    /!*vacunas_recibidas: datosAlmacenados.vacunas_recibidas,
                     vacunas_recibidas_modificada: datosAlmacenados.vacunas_recibidas_modificada,
                     medicacion_actual: datosAlmacenados.medicacion_actual,
-                    medicacion_actual_modificada: datosAlmacenados.medicacion_actual_modificada,*/
+                    medicacion_actual_modificada: datosAlmacenados.medicacion_actual_modificada,*!/
                 }
             })
         }
-    }, [datosAlmacenados]);
+    }, [datosAlmacenados]);*/
 
 
     const onAffecionDrogaChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -380,7 +380,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         event.preventDefault();
 
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`;
-        const datosDelFormulario: datosSaludType = Object.assign({}, datosSaludFormState);
+        const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSaludFormState);
         datosDelFormulario.id_persona = id_persona;
         const respuesta = await api_request(url, {
             method: 'POST',

@@ -1,5 +1,134 @@
 import {Dayjs} from "dayjs";
 
+export type datosDeSalud2Type =  {
+    id: number | null;
+    id_persona: number | null;
+    tieneAfeccionADrogras: boolean | null;
+    tieneAfeccionADrogas_modificado: false;
+    grupo_sanguineo: null | null;
+    grupo_sanguineo_modificado: boolean | null;
+    vacunas_recibidas_modificada: boolean | null;
+    presion_arterial: string | null;
+    presion_arterial_modificada: boolean | null;
+    frecuencia_cardiaca: null;
+    frecuencia_cardiaca_modificada: boolean | null;
+    frecuencia_respiratoria: string | null;
+    frecuencia_respiratoria_modificada: boolean | null;
+    temperatura: string | null;
+    temperatura_modificada: boolean | null;
+    peso: string | null;
+    peso_modificado: boolean | null;
+    talla: string | null;
+    talla_modificado: boolean | null;
+    imc: string | null;
+    imc_modificado: boolean | null;
+    vdrl: boolean | null;
+    vdrl_modificado: boolean | null;
+    vih: boolean | null;
+    vih_modificado: boolean | null;
+    tb: boolean | null;
+    tb_modificado: boolean | null;
+    gestacion: boolean | null;
+    gestacion_modificado: boolean | null;
+    tiempo_gestacion: number | null;
+    tiempo_gestacion_modificado: boolean | null;
+    fecha_parto: string | null;
+    fecha_parto_modificada: boolean | null;
+    saludMental: {
+        id: number | null;
+        sigue_tratamiento_salud_mental: null;
+        sigue_tratamiento_mental_modificado: boolean | null;
+        tiene_antecedentes_de_lesiones_autoinflingidas: boolean | null;
+        tiene_antecedentes_de_lesiones_autoinflingidas_modificado: boolean | null;
+        ha_estado_internado_en_hospital_psiquiatrico: boolean | null;
+        ha_estado_internado_en_hospital_psiquiatrico_modificado: boolean | null;
+        reporta_abuso_de_droga_previo_al_ingreso: boolean | null;
+        reporta_abuso_de_droga_previo_al_ingreso_modificado: boolean | null;
+        medicacion_actual: [string | null] | [];
+        medicacion_actual_modificada: boolean | null;
+        tiene_afeccion_severa_por_estupefacientes: false;
+        tiene_afeccion_severa_por_estupefaciente_modificado: false
+    } | null ;
+    saludFisica: {
+        id: number | null;
+        discapacidad_fisica: string | null;
+        discapacidad_modificada: boolean | null;
+        explicacion_discapacidad_fisica: string | null;
+    } | null;
+    limitacionesIdiomaticas: {
+        id: number | null;
+        necesitaInterprete: boolean | null
+        necesitaInterprete_modificado: boolean | null
+        tieneDificultadParaLeerYEscribir: boolean | null;
+        tieneDificultadParaLeerYEscribir_modificado: boolean | null
+    } | null;
+}
+
+export const datosDeSalud2Initial =  {
+    id: null,
+    id_persona: null,
+    tieneAfeccionADrogras: null,
+    tieneAfeccionADrogas_modificado: null,
+    grupo_sanguineo: null,
+    grupo_sanguineo_modificado: null,
+    vacunas_recibidas_modificada: null,
+    presion_arterial: null,
+    presion_arterial_modificada: null,
+    frecuencia_cardiaca: null,
+    frecuencia_cardiaca_modificada: null,
+    frecuencia_respiratoria: null,
+    frecuencia_respiratoria_modificada: null,
+    temperatura: null,
+    temperatura_modificada: null,
+    peso: null,
+    peso_modificado: null,
+    talla: null,
+    talla_modificado: null,
+    imc: null,
+    imc_modificado: null,
+    vdrl: null,
+    vdrl_modificado: null,
+    vih: null,
+    vih_modificado: null,
+    tb: null,
+    tb_modificado: null,
+    gestacion: null,
+    gestacion_modificado: null,
+    tiempo_gestacion: null,
+    tiempo_gestacion_modificado: null,
+    fecha_parto: null,
+    fecha_parto_modificada: null,
+    saludMental: {
+        id: null,
+        sigue_tratamiento_salud_mental: null,
+        sigue_tratamiento_mental_modificado: null,
+        tiene_antecedentes_de_lesiones_autoinflingidas: null,
+        tiene_antecedentes_de_lesiones_autoinflingidas_modificado: null,
+        ha_estado_internado_en_hospital_psiquiatrico: null,
+        ha_estado_internado_en_hospital_psiquiatrico_modificado: null,
+        reporta_abuso_de_droga_previo_al_ingreso: null,
+        reporta_abuso_de_droga_previo_al_ingreso_modificado: null,
+        medicacion_actual: [],
+        medicacion_actual_modificada: null,
+        tiene_afeccion_severa_por_estupefacientes: null,
+        tiene_afeccion_severa_por_estupefaciente_modificado: false
+    },
+    saludFisica: {
+        id: null,
+        discapacidad_fisica: null,
+        discapacidad_modificada: null,
+        explicacion_discapacidad_fisica: null,
+    },
+    limitacionesIdiomaticas: {
+        id: null,
+        necesitaInterprete: null,
+        necesitaInterprete_modificado: null,
+        tieneDificultadParaLeerYEscribir: null,
+        tieneDificultadParaLeerYEscribir_modificado: null
+    }
+}
+
+
 export type datosSaludType = {
     id_persona:number | null;
     tieneAfeccionADrogas_modificado: boolean;
@@ -343,13 +472,24 @@ export const datosJudicialesInicial:datosJudicialesType = {
 }
 
 export type circuloFamiliarStateType = {
-    id_persona: number;
-    nombre: string;
-    apellido: string;
-    vinculo: string;
-    relacion: number;
-    establecimiento: number;
+    id_persona: number | null;
+    nombre: string | null;
+    apellido: string | null;
+    vinculo: string | null;
+    relacion: number | null;
+    establecimiento: number | null;
     edad_hijo: number | null ;
-    numero_documento_concubino: string;
-    lugar_donde_esta_hijo: string;
+    numero_documento_concubino: string | null;
+    lugar_donde_esta_hijo: string | null;
+}
+export const circuloFamiliarStateInitial = {
+    id_persona: null,
+    nombre: null,
+    apellido: null,
+    vinculo: null,
+    relacion: null,
+    establecimiento: null,
+    edad_hijo: null,
+    numero_documento_concubino: null,
+    lugar_donde_esta_hijo: null
 }

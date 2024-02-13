@@ -16,6 +16,7 @@ import {FormularioCirculoFamiliar} from "@/app/(sistema)/cuestionario/components
 import {TablaCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/TablaCirculoFamiliar";
 
 import {
+    circuloFamiliarStateInitial,
     circuloFamiliarStateType,
     datosFamiliaresInicial,
     datosFamiliaresType,
@@ -23,6 +24,7 @@ import {
 } from "@/components/utils/systemTypes";
 import {postEntity, postForm} from "@/components/utils/utils";
 import {useRouter} from "next/navigation";
+import {red} from "@mui/material/colors";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -55,7 +57,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
     useEffect(() => {
         if(datosFamiliaresIniciales){
-            setStateCirculoFamiliar(prev=>{
+            setEstadoFormularioDatosFamiliares(prev=>{
                 return{
                     ...prev,
                     id_persona: datosFamiliaresIniciales.id_persona,
@@ -76,7 +78,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     }, [datosFamiliaresIniciales]);
 
     const handleChangeCirculo = (nuevoMiembro:circuloFamiliarStateType)=>{
-        console.log(nuevoMiembro)
+
         setStateCirculoFamiliar(prev=> [...prev, nuevoMiembro])
     }
 
@@ -109,14 +111,17 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             false,
             'datos_familiares',
             'Datos Familiares',
+
             {
                 ...estadoFormularioDatosFamiliares,
-                id_persona: 13,
+                id_persona: id_persona,
                 familiares:stateCirculoFamiliar
             },
+
             setLoading,
             openSnackbar,
-            router
+            router,
+            false
         );
     }
 
@@ -185,9 +190,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </ModalComponent>
 
                     <Box mt={2}>
-                        {datosFamiliaresIniciales?
                         <TablaCirculoFamiliar rows={stateCirculoFamiliar} />
-                            : null }
+
                     </Box>
                 </Grid>
             </Grid>

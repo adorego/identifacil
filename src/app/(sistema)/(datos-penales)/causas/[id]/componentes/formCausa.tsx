@@ -11,7 +11,6 @@ import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
 const ENDPOINT  = 'http://localhost:5000/causas/1'
-
 // TODO: Hacer completado de form cuando es update o /crear
 export default function FormCausa({params} : { params: { id: number | string } }){
     const [datosFormulario, setDatosFormularios] = useState<CausaType>(initialDataForm);

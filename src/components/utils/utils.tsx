@@ -161,10 +161,12 @@ export const postForm = async (
     isEditMode: boolean,
     endpoint: string,
     entityName: string,
+
     stateForm: any,
     setLoading: (arg0: boolean) => void,
     openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
-    router: any
+    router: any,
+    redirect: boolean = false
 ) => {
     try {
         setLoading(true);
@@ -187,7 +189,9 @@ export const postForm = async (
                 : `${entityName} creada correctamente.`;
 
             openSnackbar(message, 'success');
-            router.push(`/${endpoint}`);
+            if(redirect){
+                router.push(`/${endpoint}`);
+            }
         } else {
             throw new Error('Error en la petición');
         }

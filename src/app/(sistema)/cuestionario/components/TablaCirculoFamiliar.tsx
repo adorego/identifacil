@@ -4,10 +4,10 @@ import {Visibility, Delete} from '@mui/icons-material/';
 
 interface tablaCirculoTypes {
     rows?: {
-        nombre: string;
-        relacion: number;
+        nombre: string | null;
+        relacion: number | null;
         establecimiento: number | null;
-        vinculo: string;
+        vinculo: string | null;
     }[];
 }
 
@@ -19,6 +19,7 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows}) => {
     return (
         <TableContainer component={Paper}>
             <Table sx={{minWidth: 650}} aria-label="simple table">
+
                 <TableHead>
                     { rows ?
                     <TableRow>

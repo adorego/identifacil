@@ -1,12 +1,15 @@
 'use client'
 
-import CuestionarioRegistro from "@/components/registro/CuestionarioRegistro"
-
 const Cuestionario = () =>{
     return(
-        // <CuestionarioRegistro />
-        <></>
-    )
+        <>
+            {/*<CuestionarioRegistro id_persona={13} datosDeIdentidad={{id_persona:13}} />*/}
+        </>
+
+
+)
 }
+
+import CuestionarioRegistro from "@/components/registro/CuestionarioRegistro"
 
 export default Cuestionario;
