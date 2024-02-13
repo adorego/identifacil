@@ -1,27 +1,40 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
-import { Button, CircularProgress,  CardContent,  Grid,  TextField,  FormControl,  InputLabel,  Select,
-    MenuItem,  Typography, IconButton, Box, Modal, Paper, } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
-import {FileUploadOutlined} from "@mui/icons-material";
-import CustomTable from "@/components/CustomTable";
-import {useRouter} from 'next/navigation';
-import {useGlobalContext} from "@/app/Context/store";
-import TituloComponent from "@/components/titulo/tituloComponent";
 import {
-    TrasladoForm,
-    PPLType,
-    Motivo,
+    Box,
+    Button,
+    CardContent,
+    CircularProgress,
+    FormControl,
+    Grid,
+    IconButton,
+    InputLabel,
+    MenuItem,
+    Modal,
+    Paper,
+    Select,
+    TextField,
+    Typography,
+} from '@mui/material';
+import {
     Medidas,
+    Motivo,
+    PPLType,
     Personal,
+    TrasladoForm,
     Vehiculo,
     pplTraslado
 } from "@/components/utils/movimientosType"
-import {sendRequest} from "@/app/api";
+import React, { useEffect, useState } from 'react';
 import {fetchFormData, postEntity} from "@/components/utils/utils";
 
-
+import CustomTable from "@/components/CustomTable";
+import {FileUploadOutlined} from "@mui/icons-material";
+import { SelectChangeEvent } from '@mui/material/Select';
+import TituloComponent from "@/components/titulo/tituloComponent";
+import {sendRequest} from "@/app/api";
+import {useGlobalContext} from "@/app/Context/store";
+import {useRouter} from 'next/navigation';
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -160,7 +173,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
         const fetchPplTraslado = async () => {
             try {
-                const respuesta = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/PPL`);
+                const respuesta = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppls/ppls`);
                 if (respuesta.ok) {
                     const datos = await respuesta.json();
                     setStatePPL(datos);
@@ -257,7 +270,7 @@ export default function Page({ params }: { params: { id: number } }) {
 
             await delay(5000);
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/traslados`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/traslados`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
