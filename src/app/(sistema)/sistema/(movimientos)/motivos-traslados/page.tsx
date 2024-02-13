@@ -24,7 +24,7 @@ export default function Page(){
         { id: 'lastUpdate', label: 'Ultima actualización' },
     ]
 
-    const URL_PATH : string = `http://localhost:5001/motivoTraslados`;
+    const URL_PATH : string = `http://localhost:5000/motivoTraslados`;
 
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
     async function fetchData() {

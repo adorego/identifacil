@@ -1,11 +1,13 @@
 'use client'
 
 import * as React from 'react';
+
 import {Box, CircularProgress} from "@mui/material";
-import CustomTable from "@/components/CustomTable";
 import {useEffect, useState} from "react";
-import TituloComponent from "@/components/titulo/tituloComponent";
+
+import CustomTable from "@/components/CustomTable";
 import ModalBorrado from "@/components/modal/ModalBorrado";
+import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 
@@ -28,7 +30,7 @@ export default function Page(){
     async function fetchData() {
         // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5001/personal');
+            const response = await fetch('http://localhost:5000/personal');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
