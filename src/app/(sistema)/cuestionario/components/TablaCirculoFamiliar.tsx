@@ -7,7 +7,7 @@ interface tablaCirculoTypes {
         nombre: string | null;
         relacion: number | null;
         establecimiento: number | null;
-        vinculo: string | null;
+        vinculo: number | null;
     }[];
 }
 

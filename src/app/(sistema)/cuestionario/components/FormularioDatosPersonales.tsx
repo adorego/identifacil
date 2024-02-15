@@ -410,8 +410,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                 </Grid>
                 <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
-                        <InputLabel>Nacionalidad</InputLabel>
+                        <InputLabel id='nacionalidad-label'>Nacionalidad</InputLabel>
                         <Select
+                            labelId='nacionalidad-label'
                             value={datosPersonalesState.nacionalidad}
                             onChange={onDatoSelectChange}
                             label="Nacionalidad"
@@ -420,7 +421,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                             {nacionalidades ? nacionalidades.map(
                                 (data, id) =>{
                                     return(
-                                        <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
+                                        <MenuItem key={data.id} value={data.id}>{data.nombre}</MenuItem>
                                     )
                                 }
                             ) : null}

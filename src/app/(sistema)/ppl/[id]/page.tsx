@@ -15,13 +15,13 @@ import {fetchData} from "@/components/utils/utils";
 import Image from "next/image";
 import avatar from "@/common/blank-profile-picture-973460_960_720.webp"
 import {
+    datosDeSalud2Initial, datosDeSalud2Type,
     datosEducacionInicial,
     datosEducacionType, datosFamiliaresInicial,
     datosFamiliaresType,
     datosJudicialesInicial,
     datosJudicialesType,
-    datosSaludInicial,
-    datosSaludType, datosSeguridadInicial, datosSeguridadType
+    datosSeguridadInicial, datosSeguridadType
 } from "@/components/utils/systemTypes";
 
 interface familiar {
@@ -70,7 +70,7 @@ type dataType = {
     datosDeSeguridad: datosSeguridadType;
     datosFamiliares: datosFamiliaresType;
     datosEducacion: datosEducacionType;
-    datosDeSalud: datosSaludType;
+    datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
 }
 
@@ -105,7 +105,7 @@ const initialData = {
     datosDeSeguridad: datosSeguridadInicial,
     datosFamiliares: datosFamiliaresInicial,
     datosEducacion: datosEducacionInicial,
-    datosDeSalud: datosSaludInicial,
+    datosDeSalud: datosDeSalud2Initial,
     datosJudiciales: datosJudicialesInicial
 }
 

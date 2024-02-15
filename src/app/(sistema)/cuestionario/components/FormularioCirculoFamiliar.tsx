@@ -12,26 +12,20 @@ interface FormularioCirculoFamiliarProps {
     onHandleChangeCirculo: (nuevoMiembro: circuloFamiliarStateType) => void;
 }
 
-const circuloFamiliarInitial: circuloFamiliarStateType = {
-    id_persona: 0,
-    nombre: "",
-    apellido: "",
-    vinculo: '',
-    relacion: 0,
-    establecimiento: 0,
-    edad_hijo: null,
-    numero_documento_concubino: "",
-    lugar_donde_esta_hijo: ""
-}
 
-/**
- * Formulario para agregar una persona al form de familiares
- *
- * @param {()=>void} onClose Funcion para cerrar el modal
- * @return Vista de formlario
- * */
+
 export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps> = ({ onClose, onHandleChangeCirculo }) => {
-    const [state, setState] = React.useState<circuloFamiliarStateType>(circuloFamiliarInitial)
+    const [state, setState] = React.useState<circuloFamiliarStateType>({
+        id_persona: 0,
+        nombre: "",
+        apellido: "",
+        vinculo: null,
+        relacion: null,
+        establecimiento: null,
+        edad_hijo: null,
+        numero_documento_concubino: "",
+        lugar_donde_esta_hijo: ""
+    })
     const [stateVinculos, setStateVinculos] = React.useState<{id:number, nombre:string}[]>([])
     const [stateEstablecimientos, setStateEstablecimiento] = React.useState<{id:number, nombre:string}[]>([])
 
@@ -43,7 +37,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
           }
         })
     };
-    const handleSelectChange = (event: SelectChangeEvent<number | string> ) => {
+    const handleSelectChange = (event: SelectChangeEvent<number|string | null>) => {
         setState(prev=>{
             return{
                 ...prev,
@@ -154,7 +148,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                                 name='vinculo'
                                 onChange={handleSelectChange}
                             >
-                                <MenuItem value={0}>Ninguno</MenuItem>
+                                <MenuItem value=''>Ninguno</MenuItem>
                                 <MenuItem value={1}>Funcionario</MenuItem>
                                 <MenuItem value={2}>PPL</MenuItem>
                             </Select>
