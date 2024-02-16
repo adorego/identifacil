@@ -365,7 +365,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                             id="estado_civil_id"
                             name="estadoCivil"
                             label='Estado Civil'
-                            value={datosPersonalesState.estadoCivil}
+                            value={datosPersonalesState.estadoCivil ? datosPersonalesState.estadoCivil : ''}
                             onChange={onDatoSelectChange}
                         >
                             {estadosCiviles ? estadosCiviles.map(
@@ -413,7 +413,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
                         <InputLabel id='nacionalidad-label'>Nacionalidad</InputLabel>
                         <Select
                             labelId='nacionalidad-label'
-                            value={datosPersonalesState.nacionalidad}
+                            value={datosPersonalesState.nacionalidad ? datosPersonalesState.nacionalidad : ''}
                             onChange={onDatoSelectChange}
                             label="Nacionalidad"
                             name="nacionalidad"

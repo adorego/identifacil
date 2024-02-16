@@ -145,7 +145,7 @@ export interface BloqueSaludProps {
     datosAlmacenados?: datosDeSalud2Type;
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
+const OLD_BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
     const [datosSaludFormState, datosSaludDispatch] = useReducer(reducer, datosAlmacenados);
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const {openSnackbar} = useGlobalContext();

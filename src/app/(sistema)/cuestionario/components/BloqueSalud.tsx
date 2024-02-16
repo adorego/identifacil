@@ -11,33 +11,7 @@ import {useGlobalContext} from "@/app/Context/store";
 import {api_request} from "@/lib/api-request"
 import log from "loglevel";
 
-const arraySaludMental = [
-    'sigue_tratamiento_mental',
-    "sigue_tratamiento_mental_modificado",
-    "tiene_antecedentes_de_lesiones_autoinflingidas",
-    "tiene_antecedentes_de_lesiones_autoinflingidas_modificado",
-    "ha_estado_internado_en_hospital_psiquiatrico",
-    "ha_estado_internado_en_hospital_psiquiatrico_modificado",
-    "reporta_abuso_de_droga_previo_al_ingreso",
-    "reporta_abuso_de_droga_previo_al_ingreso_modificado",
-    "medicacion_actual",
-    "medicacion_actual_modificada",
-    "tiene_afeccion_severa_por_estupefacientes",
-    "tiene_afeccion_severa_por_estupefaciente_modificado",
-];
 
-const arraySaludFisica = [
-    "discapacidad_fisica",
-    "discapacidad_modificada",
-    "explicacion_discapacidad_fisica",
-]
-
-const arrayLimitacionesIdiomaticas = [
-    "necesitaInterprete",
-    "necesitaInterprete_modificado",
-    "tieneDificultadParaLeerYEscribir",
-    "tieneDificultadParaLeerYEscribir_modificado",
-]
 
 interface BloqueSaludProps {
     id_persona: number | null;
@@ -64,11 +38,11 @@ const datosSaludSelectInicial: datosSaludSelect = {
 
 const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
-    const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>({}); //datosDeSalud2Initial
+    const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
     const {openSnackbar} = useGlobalContext();
 
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (datosAlmacenados) {
             setDatosSalud(prev => {
                 return {
@@ -77,32 +51,40 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 }
             })
         }
-    }, [datosAlmacenados])*/
+    }, [datosAlmacenados])
 
 
     const onTiempoDeGestacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.currentTarget.value);
-        const meses = parseInt(event.target.value);
+        /*const meses = parseInt(event.target.value);
         if (meses > 9) {
             openSnackbar("Los meses de gestación deben ser menores a 9", "error");
             // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload: 0});
 
         } else {
             // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload: event.currentTarget.value});
-        }
+        }*/
+        setDatosSalud(prev => ({
+            ...prev,
+            tiempo_gestacion: parseInt(event.target.value),
+        }))
     }
 
     const onFechaPartoChange = (value: Dayjs | null | string, context: any) => {
         // console.log(value,context);
-        if (value && value < dayjs()) {
+        /*if (value && value < dayjs()) {
             openSnackbar("La mínima fecha de parto puede ser hoy", "error");
             // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload: dayjs()})
         } else if (value && value > dayjs().add(9, 'M')) {
             openSnackbar("La máxima fecha de parto puede ser en 9 meses", "error");
             //datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload: dayjs()})
         } else {
-            // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload: value})
-        }
+            setDatosSalud(prev => ({
+                ...prev,
+                fecha_parto: value,
+            }))
+        }*/
+
 
     }
 
@@ -119,10 +101,11 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     }
 
     const onGruposSanguineoChange = (event: React.SyntheticEvent, value: any, reason: string) => {
+        console.log(value)
 
         setDatosSalud(prev => ({
             ...prev,
-            grupo_sanguineo: value,
+            grupo_sanguineo: value.id,
         }))
     }
 
@@ -136,12 +119,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     }
 
     // Ejemplo de manejador de evento para un campo
-    const handleChange = (event: any) => {
+    const handleChange = (event: { target:{name: string, value: number | string} }, tipoDato: string) => {
 
-
-
-
-        if (arraySaludMental.includes(event.target.name)) {
+        if (tipoDato=='saludMental') {
             setDatosSalud((prev) => ({
                 ...prev,
                 saludMental: {
@@ -150,7 +130,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     [`${event.target.name}_modificado`]: true
                 }
             }));
-        } else if (arraySaludFisica.includes(event.target.name)) {
+        }
+
+        if (tipoDato=='saludFisica') {
 
             setDatosSalud((prev) => ({
                 ...prev,
@@ -160,7 +142,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     [`${event.target.name}_modificado`]: true
                 }
             }));
-        } else if (arrayLimitacionesIdiomaticas.includes(event.target.name)) {
+        }
+        if (tipoDato=='limitacionesIdiomaticas') {
 
             setDatosSalud((prev) => ({
                 ...prev,
@@ -170,7 +153,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     [`${event.target.name}_modificado`]: true
                 }
             }));
-        } else {
+        }
+        if (tipoDato=='saludGeneral') {
             setDatosSalud((prev) => ({
                 ...prev,
                 [event.target.name]: event.target.value,
@@ -185,22 +169,53 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         setDatosSalud(prev => {
             return {
                 ...prev,
-                [event.target.name]: event.target.value,
+                [event.target.name]: event.target.value === 'true',
                 [`${event.target.name}_modificado`]: true
             }
         });
     };
+
     // Para campos booleanos o específicos, puedes adaptar el manejador así
-    const handleBooleanChange = (event: { target: { name: string; value: boolean; }; }) => {
-        console.log(event.target.value)
-        if (arraySaludMental.includes(event.target.name)) {
+    const handleBooleanChange = (event: React.ChangeEvent<HTMLInputElement>, tipoSalud: string) => {
+
+        if (tipoSalud == 'saludMental') {
             setDatosSalud((prev) => ({
                 ...prev,
                 saludMental: {
                     ...prev.saludMental,
-                    [event.target.name]: event.target.value as boolean,
+                    [event.target.name]: event.target.value === 'true',
                     [`${event.target.name}_modificado`]: true
                 }
+            }));
+        }
+
+        if (tipoSalud == 'saludFisica') {
+            setDatosSalud((prev) => ({
+                ...prev,
+                saludFisica: {
+                    ...prev.saludFisica,
+                    [event.target.name]: event.target.value,
+                    [`${event.target.name}_modificado`]: true
+                }
+            }));
+        }
+        if (tipoSalud == 'limitacionesIdiomaticas') {
+            setDatosSalud((prev) => ({
+                ...prev,
+                limitacionesIdiomaticas: {
+                    ...prev.limitacionesIdiomaticas,
+                    [event.target.name]: event.target.value === 'true',
+                    [`${event.target.name}_modificado`]: true
+                }
+            }));
+        }
+
+        if(tipoSalud=='saludGeneral'){
+            setDatosSalud((prev) => ({
+                ...prev,
+                [event.target.name]: event.target.value === 'true',
+                [`${event.target.name}_modificado`]: true
+
             }));
         }
         /*setDatosSalud((prev) => ({
@@ -223,10 +238,11 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     const onDatosSaludSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
-        // const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`;
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`;
         console.log(JSON.stringify(datosSalud))
+        console.log(datosSalud)
 
-        /*const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSalud);
+        const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSalud);
         datosDelFormulario.id_persona = id_persona;
         const methodForm = datosSalud.id ? 'PUT' : 'POST';
         console.log('TIPO FORM: ' + methodForm)
@@ -245,7 +261,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
             // log.error("Error al guardar los datos", respuesta.datos);
         }
 
-        console.log("Respuesta:", respuesta);*/
+        console.log("Respuesta:", respuesta);
     }
 
 
@@ -269,7 +285,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 sustancias estupefacientes o drogas prohibidas.</FormLabel>
                             <RadioGroup
                                 value={datosSalud.tieneAfeccionADrogras}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludGeneral')}}
                                 row
                                 name="tieneAfeccionADrogras">
                                 <FormControlLabel
@@ -353,7 +369,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     name="presion_arterial"
                                     value={datosSalud.presion_arterial}
                                     label="PA"
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                 />
                             </FormControl>
 
@@ -363,7 +379,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     name="frecuencia_cardiaca"
                                     value={datosSalud.frecuencia_cardiaca}
                                     label="FC"
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                 />
                             </FormControl>
 
@@ -372,7 +388,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="frecuencia_respiratoria"
                                     value={datosSalud.frecuencia_respiratoria}
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                     label="FR"
                                 />
                             </FormControl>
@@ -383,7 +399,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     name="temperatura"
                                     label='Temperatura'
                                     value={datosSalud.temperatura}
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                 />
                             </FormControl>
 
@@ -392,7 +408,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="peso"
                                     value={datosSalud.peso}
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                     label="Peso"
                                 />
                             </FormControl>
@@ -401,7 +417,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="talla"
                                     value={datosSalud.talla}
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                     label="Talla"
                                 />
                             </FormControl>
@@ -411,7 +427,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="imc"
                                     value={datosSalud.imc}
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
                                     label="IMC"
                                 />
                             </FormControl>
@@ -425,14 +441,14 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <InputLabel htmlFor="vdrl">VDRL</InputLabel>
                                 <Select
                                     labelId="vdrl"
-                                    value={datosSalud.vdrl ? "Positivo" : "Negativo"}
+                                    value={String(datosSalud.vdrl)}
                                     label="VDRL"
                                     name="vdrl"
                                     onChange={handleSelectChange}
 
                                 >
-                                    <MenuItem value={"Positivo"}>Positivo</MenuItem>
-                                    <MenuItem value={"Negativo"}>Negativo</MenuItem>
+                                    <MenuItem value={"true"}>Positivo</MenuItem>
+                                    <MenuItem value={"false"}>Negativo</MenuItem>
 
                                 </Select>
                             </FormControl>
@@ -441,14 +457,14 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <InputLabel htmlFor="vih">VIH</InputLabel>
                                 <Select
                                     labelId="vih"
-                                    value={datosSalud.vih ? "Positivo" : "Negativo"}
+                                    value={String(datosSalud.vih)}
                                     name='vih'
                                     label="VIH"
                                     onChange={handleSelectChange}
 
                                 >
-                                    <MenuItem value={"Positivo"}>Positivo</MenuItem>
-                                    <MenuItem value={"Negativo"}>Negativo</MenuItem>
+                                    <MenuItem value={"true"}>Positivo</MenuItem>
+                                    <MenuItem value={"false"}>Negativo</MenuItem>
 
                                 </Select>
                             </FormControl>
@@ -457,14 +473,14 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <InputLabel htmlFor="tb">TB</InputLabel>
                                 <Select
                                     labelId="tb"
-                                    value={datosSalud.tb ? "Positivo" : "Negativo"}
+                                    value={String(datosSalud.tb)}
                                     label="TB"
                                     name='tb'
                                     onChange={handleSelectChange}
 
                                 >
-                                    <MenuItem value={"Positivo"}>Positivo</MenuItem>
-                                    <MenuItem value={"Negativo"}>Negativo</MenuItem>
+                                    <MenuItem value={"true"}>Positivo</MenuItem>
+                                    <MenuItem value={"false"}>Negativo</MenuItem>
 
                                 </Select>
                             </FormControl>
@@ -484,7 +500,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             <FormLabel id="gestioacion">¿Se encuentra en Periodo de gestación?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.gestacion}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludGeneral')}}
                                 row
                                 aria-labelledby="gestioacion"
                                 name="gestacion">
@@ -499,20 +515,23 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             </RadioGroup>
                         </FormControl>
                     </Grid>
-                    <Grid item sm={4}
-                          sx={{marginTop: 1}}>
+                    <Grid item sm={4} sx={{marginTop: 1}}>
+                        {datosSalud.gestacion?
                         <FormControl fullWidth={true}>
                             <InputLabel htmlFor="gestacionTiempotiempoGestacion">¿Meses de gestación?</InputLabel>
                             <OutlinedInput
+
                                 disabled={!datosSalud.gestacion}
-                                name="tiempoGestacion"
-                                value={datosSalud.tiempo_gestacion}
+                                name="tiempo_gestacion"
+                                value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
                                 onChange={onTiempoDeGestacionChange}
                                 label="¿De cuanto tiempo se encuentra?"/>
                         </FormControl>
+                        :null}
                     </Grid>
                     <Grid item sm={4}
                           sx={{marginTop: 0}}>
+                        {datosSalud.gestacion?
                         <FormControl
 
                             fullWidth={true}>
@@ -528,6 +547,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 disabled={!datosSalud.gestacion}/>
 
                         </FormControl>
+                        :null}
                     </Grid>
                 </Grid>
 
@@ -541,7 +561,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             <FormLabel id="sigue_tratamiento_mental">¿Sigue algún tratamiento por Salud Mental?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.sigue_tratamiento_mental}
-                                onChange={handleBooleanChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
                                 row
                                 aria-labelledby="sigue_tratamiento_mental"
                                 name="sigue_tratamiento_mental">
@@ -562,7 +582,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 autoinfligidas</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.tiene_antecedentes_de_lesiones_autoinflingidas}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
                                 row
                                 aria-labelledby="tiene_antecedentes_de_lesiones_autoinflingidas"
                                 name="tiene_antecedentes_de_lesiones_autoinflingidas">
@@ -582,13 +602,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>
                         <FormControl>
-                            <FormLabel id="gestioacion">¿Ha estado internado en hospital Psiquiatrico/Centro
+                            <FormLabel id="internado-en-hospital-psiquiatrico-label">¿Ha estado internado en hospital Psiquiatrico/Centro
                                 nacional de control de addicciones?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.ha_estado_internado_en_hospital_psiquiatrico}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
                                 row
-                                aria-labelledby="gestioacion"
+                                aria-labelledby="internado-en-hospital-psiquiatrico-label"
                                 name="ha_estado_internado_en_hospital_psiquiatrico">
                                 <FormControlLabel
                                     value={true}
@@ -608,7 +628,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 ingreso de prisión</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.reporta_abuso_de_droga_previo_al_ingreso}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
                                 row
                                 aria-labelledby="drogra-previo-prision"
                                 name="reporta_abuso_de_droga_previo_al_ingreso">
@@ -663,7 +683,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             </FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.tiene_afeccion_severa_por_estupefacientes}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
                                 row
                                 aria-labelledby="afeccionSeveraEstupefacientes"
                                 name="tiene_afeccion_severa_por_estupefacientes">
@@ -693,7 +713,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <FormLabel id="discapacidad">Posee alguna Discapacidad:</FormLabel>
                                 <RadioGroup
                                     value={datosSalud.saludFisica?.discapacidad_fisica}
-                                    onChange={handleChange}
+                                    onChange={(event)=>{handleBooleanChange(event, 'saludFisica')}}
                                     row
                                     aria-labelledby="discapacidad_fisica"
                                     name="discapacidad_fisica"
@@ -743,7 +763,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             <FormLabel id="necesitaInterprete">¿Necesita un intérprete?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.limitacionesIdiomaticas?.necesitaInterprete}
-                                onChange={handleChange}
+                                onChange={(event)=>{handleBooleanChange(event, 'limitacionesIdiomaticas')}}
                                 row
                                 aria-labelledby="interprete"
                                 name="necesitaInterprete">
@@ -793,4 +813,3 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 }
 
 export default BloqueSalud;
-
