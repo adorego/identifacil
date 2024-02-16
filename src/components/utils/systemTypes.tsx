@@ -77,7 +77,7 @@ export const datosDeSalud2Initial: datosDeSalud2Type =  {
     fecha_parto_modificada: null,
     saludMental: {
         id: null,
-        sigue_tratamiento_salud_mental: null,
+        sigue_tratamiento_mental: null,
         sigue_tratamiento_mental_modificado: null,
         tiene_antecedentes_de_lesiones_autoinflingidas: null,
         tiene_antecedentes_de_lesiones_autoinflingidas_modificado: null,
@@ -107,7 +107,7 @@ export const datosDeSalud2Initial: datosDeSalud2Type =  {
 
 export type saludMentalType = {
     id: number | null;
-    sigue_tratamiento_salud_mental: boolean | null;
+    sigue_tratamiento_mental: boolean | null;
     sigue_tratamiento_mental_modificado: boolean | null;
     tiene_antecedentes_de_lesiones_autoinflingidas: boolean | null;
     tiene_antecedentes_de_lesiones_autoinflingidas_modificado: boolean | null;

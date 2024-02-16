@@ -11,6 +11,33 @@ import {useGlobalContext} from "@/app/Context/store";
 import {api_request} from "@/lib/api-request"
 import log from "loglevel";
 
+const arraySaludMental = [
+    'sigue_tratamiento_mental',
+    "sigue_tratamiento_mental_modificado",
+    "tiene_antecedentes_de_lesiones_autoinflingidas",
+    "tiene_antecedentes_de_lesiones_autoinflingidas_modificado",
+    "ha_estado_internado_en_hospital_psiquiatrico",
+    "ha_estado_internado_en_hospital_psiquiatrico_modificado",
+    "reporta_abuso_de_droga_previo_al_ingreso",
+    "reporta_abuso_de_droga_previo_al_ingreso_modificado",
+    "medicacion_actual",
+    "medicacion_actual_modificada",
+    "tiene_afeccion_severa_por_estupefacientes",
+    "tiene_afeccion_severa_por_estupefaciente_modificado",
+];
+
+const arraySaludFisica = [
+    "discapacidad_fisica",
+    "discapacidad_modificada",
+    "explicacion_discapacidad_fisica",
+]
+
+const arrayLimitacionesIdiomaticas = [
+    "necesitaInterprete",
+    "necesitaInterprete_modificado",
+    "tieneDificultadParaLeerYEscribir",
+    "tieneDificultadParaLeerYEscribir_modificado",
+]
 
 interface BloqueSaludProps {
     id_persona: number | null;
@@ -111,37 +138,10 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     // Ejemplo de manejador de evento para un campo
     const handleChange = (event: any) => {
 
-        const arraySaludMental = [
-            'sigue_tratamiento_salud_mental',
-            "sigue_tratamiento_mental_modificado",
-            "tiene_antecedentes_de_lesiones_autoinflingidas",
-            "tiene_antecedentes_de_lesiones_autoinflingidas_modificado",
-            "ha_estado_internado_en_hospital_psiquiatrico",
-            "ha_estado_internado_en_hospital_psiquiatrico_modificado",
-            "reporta_abuso_de_droga_previo_al_ingreso",
-            "reporta_abuso_de_droga_previo_al_ingreso_modificado",
-            "medicacion_actual",
-            "medicacion_actual_modificada",
-            "tiene_afeccion_severa_por_estupefacientes",
-            "tiene_afeccion_severa_por_estupefaciente_modificado",
-        ];
 
-        const arraySaludFisica = [
-            "discapacidad_fisica",
-            "discapacidad_modificada",
-            "explicacion_discapacidad_fisica",
-        ]
-
-        const arrayLimitacionesIdiomaticas = [
-            "necesitaInterprete",
-            "necesitaInterprete_modificado",
-            "tieneDificultadParaLeerYEscribir",
-            "tieneDificultadParaLeerYEscribir_modificado",
-        ]
 
 
         if (arraySaludMental.includes(event.target.name)) {
-            console.log('entro salud mental')
             setDatosSalud((prev) => ({
                 ...prev,
                 saludMental: {
@@ -151,7 +151,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 }
             }));
         } else if (arraySaludFisica.includes(event.target.name)) {
-            console.log('entro salud fisica')
+
             setDatosSalud((prev) => ({
                 ...prev,
                 saludFisica: {
@@ -161,6 +161,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 }
             }));
         } else if (arrayLimitacionesIdiomaticas.includes(event.target.name)) {
+
             setDatosSalud((prev) => ({
                 ...prev,
                 limitacionesIdiomaticas: {
@@ -190,12 +191,23 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         });
     };
     // Para campos booleanos o específicos, puedes adaptar el manejador así
-    const handleBooleanChange = (name: string, value: boolean) => {
-        setDatosSalud((prev) => ({
+    const handleBooleanChange = (event: { target: { name: string; value: boolean; }; }) => {
+        console.log(event.target.value)
+        if (arraySaludMental.includes(event.target.name)) {
+            setDatosSalud((prev) => ({
+                ...prev,
+                saludMental: {
+                    ...prev.saludMental,
+                    [event.target.name]: event.target.value as boolean,
+                    [`${event.target.name}_modificado`]: true
+                }
+            }));
+        }
+        /*setDatosSalud((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: event.target.value,
             [`${name}_modificado`]: true
-        }));
+        }));*/
     };
 
     // Para DatePicker y otros controles personalizados
@@ -526,13 +538,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     </Grid>
                     <Grid item sm={6}>
                         <FormControl>
-                            <FormLabel id="gestioacion">¿Sigue algún tratamiento por Salud Mental?</FormLabel>
+                            <FormLabel id="sigue_tratamiento_mental">¿Sigue algún tratamiento por Salud Mental?</FormLabel>
                             <RadioGroup
-                                value={datosSalud.saludMental?.sigue_tratamiento_salud_mental}
-                                onChange={handleChange}
+                                value={datosSalud.saludMental?.sigue_tratamiento_mental}
+                                onChange={handleBooleanChange}
                                 row
-                                aria-labelledby="gestioacion"
-                                name="sigue_tratamiento_salud_mental">
+                                aria-labelledby="sigue_tratamiento_mental"
+                                name="sigue_tratamiento_mental">
                                 <FormControlLabel
                                     value={true}
                                     control={<Radio/>
@@ -577,7 +589,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 onChange={handleChange}
                                 row
                                 aria-labelledby="gestioacion"
-                                name="row-radio-buttons-group">
+                                name="ha_estado_internado_en_hospital_psiquiatrico">
                                 <FormControlLabel
                                     value={true}
                                     control={<Radio/>}
@@ -599,7 +611,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 onChange={handleChange}
                                 row
                                 aria-labelledby="drogra-previo-prision"
-                                name="row-radio-buttons-group">
+                                name="reporta_abuso_de_droga_previo_al_ingreso">
                                 <FormControlLabel
                                     value={true}
                                     control={<Radio/>}
