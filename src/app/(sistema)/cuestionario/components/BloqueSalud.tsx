@@ -1,6 +1,6 @@
-import React, {FC, useState, useEffect, ReactNode, SyntheticEvent} from "react";
+import React, {FC, useState, useEffect, SyntheticEvent} from "react";
 import {
-    Autocomplete, AutocompleteRenderInputParams, Box, Button, Chip, FormControl, FormControlLabel,
+    Autocomplete,  Box, Button, Chip, CircularProgress, FormControl, FormControlLabel,
     FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup,
     Select, SelectChangeEvent, Stack, TextField, Typography
 } from "@mui/material";
@@ -9,38 +9,66 @@ import {DatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {api_request} from "@/lib/api-request"
-import log from "loglevel";
 
 
 
+const nineMonthsFromNow = dayjs().add(9, 'month');
 interface BloqueSaludProps {
     id_persona: number | null;
     datosAlmacenados?: datosDeSalud2Type;
 }
 
 interface datosSaludSelect {
-    grupos_sanguineos: Array<{
+    grupo_sanguineo: Array<{
         id: number,
-        label: string
+        nombre: string
     }>;
     vacunas_recibidas: Array<{
         id: number,
-        label: string
+        nombre: string
     }>;
 
 }
 
 const datosSaludSelectInicial: datosSaludSelect = {
-    grupos_sanguineos: [{id: 1, label: "A"}, {id: 2, label: "A+"}, {id: 3, label: "A-"}],
-    vacunas_recibidas: [{id: 1, label: "Covid 1era dosis"}, {id: 2, label: "Covid 2da dosis"}, {id: 3, label: "Covid 3era dosis"}]
+    grupo_sanguineo: [{id: 1, nombre: "A"}, {id: 2, nombre: "A+"}, {id: 3, nombre: "A-"}],
+    vacunas_recibidas:[
+        {
+            id: 1,
+            nombre: "Vacuna contra el COVID 19-3era Dosis"
+        },
+        {
+            id: 2,
+            nombre: "Vacuna contra el COVID 19-2da Dosis"
+        },
+        {
+            id: 3,
+            nombre: "Vacuna contra el COVID 19-3ra Dosis"
+        },
+        {
+            id: 4,
+            nombre: "Vacuna contra la difteria, tetanos y pertussis(absorbida)"
+        },
+        {
+            id: 5,
+            nombre: "Vacuna contra la hepatitis A"
+        }
+    ]
 }
 
 
 const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
-    const {openSnackbar} = useGlobalContext();
+    const options = ['Option 1', 'Option 2'];
 
+
+    const [valueAutocomplete, setValueAutocomplete] = React.useState<string | null>(options[0]);
+    const [inputValue, setInputValue] = React.useState('');
+
+
+
+    const {openSnackbar} = useGlobalContext();
 
     useEffect(() => {
         if (datosAlmacenados) {
@@ -71,41 +99,25 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     }
 
     const onFechaPartoChange = (value: Dayjs | null | string, context: any) => {
-        // console.log(value,context);
-        /*if (value && value < dayjs()) {
-            openSnackbar("La mínima fecha de parto puede ser hoy", "error");
-            // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload: dayjs()})
-        } else if (value && value > dayjs().add(9, 'M')) {
-            openSnackbar("La máxima fecha de parto puede ser en 9 meses", "error");
-            //datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_FECHA_PARTO, payload: dayjs()})
-        } else {
-            setDatosSalud(prev => ({
-                ...prev,
-                fecha_parto: value,
-            }))
-        }*/
 
-
-    }
-
-
-    const onVacunasRecibidasChange = (event: React.SyntheticEvent, value: Array<{
-        id: number,
-        label: string
-    }>, reason: string) => {
-        // console.log(value);
         setDatosSalud(prev => ({
             ...prev,
-            vacunas_recibidas: value,
+            fecha_parto: value,
+            fecha_parto_modificado: true,
         }))
+
+
     }
 
-    const onGruposSanguineoChange = (event: React.SyntheticEvent, value: any, reason: string) => {
-        console.log(value)
+
+
+    const onGruposSanguineoChange = (event: SelectChangeEvent<number | string | any>) => {
+        const grupoSanguineoSelected = datosSaludSelectInicial.grupo_sanguineo.find(objeto => objeto.id === Number(event.target.value)) || {id: null, nombre: null};
 
         setDatosSalud(prev => ({
             ...prev,
-            grupo_sanguineo: value.id,
+            grupo_sanguineo: grupoSanguineoSelected ? {id: grupoSanguineoSelected.id, nombre: grupoSanguineoSelected.nombre} : {id: null, nombre: null},
+            grupo_sanguineo_modificado: true,
         }))
     }
 
@@ -113,15 +125,18 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         // console.log(value);
         setDatosSalud(prev => ({
             ...prev,
-            medicacion_actual: value,
-            medicacion_actual_modificado: true,
+            saludMental: {
+                ...prev.saludMental,
+                medicacion_actual: value,
+                medicacion_actual_modificado: true,
+            }
         }))
     }
 
     // Ejemplo de manejador de evento para un campo
-    const handleChange = (event: { target:{name: string, value: number | string} }, tipoDato: string) => {
+    const handleChange = (event: { target: { name: string, value: number | string } }, tipoDato: string) => {
 
-        if (tipoDato=='saludMental') {
+        if (tipoDato == 'saludMental') {
             setDatosSalud((prev) => ({
                 ...prev,
                 saludMental: {
@@ -132,7 +147,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
             }));
         }
 
-        if (tipoDato=='saludFisica') {
+        if (tipoDato == 'saludFisica') {
 
             setDatosSalud((prev) => ({
                 ...prev,
@@ -143,18 +158,18 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 }
             }));
         }
-        if (tipoDato=='limitacionesIdiomaticas') {
+        if (tipoDato == 'limitacionesIdiomaticas') {
 
             setDatosSalud((prev) => ({
                 ...prev,
                 limitacionesIdiomaticas: {
                     ...prev.limitacionesIdiomaticas,
-                    [event.target.name]: event.target.value,
+                    [event.target.name]: event.target.value === 'true',
                     [`${event.target.name}_modificado`]: true
                 }
             }));
         }
-        if (tipoDato=='saludGeneral') {
+        if (tipoDato == 'saludGeneral') {
             setDatosSalud((prev) => ({
                 ...prev,
                 [event.target.name]: event.target.value,
@@ -210,7 +225,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
             }));
         }
 
-        if(tipoSalud=='saludGeneral'){
+        if (tipoSalud == 'saludGeneral') {
             setDatosSalud((prev) => ({
                 ...prev,
                 [event.target.name]: event.target.value === 'true',
@@ -218,11 +233,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
             }));
         }
-        /*setDatosSalud((prev) => ({
-            ...prev,
-            [name]: event.target.value,
-            [`${name}_modificado`]: true
-        }));*/
+
     };
 
     // Para DatePicker y otros controles personalizados
@@ -238,21 +249,35 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     const onDatosSaludSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`;
-        console.log(JSON.stringify(datosSalud))
-        console.log(datosSalud)
+        const url = datosSalud.id ?
+            `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`
+            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`
+
+
+        // console.log(JSON.stringify(datosSalud))
+        // console.log(datosSalud)
+
 
         const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSalud);
         datosDelFormulario.id_persona = id_persona;
+
+        // TODO: Verificar este type para enviar los datos
+        // @ts-ignore
+        datosDelFormulario.grupo_sanguineo = datosSalud.grupo_sanguineo?.id
+        // @ts-ignore
+        datosDelFormulario.vacunas_recibidas = datosSalud.vacunas_recibidas.map(objeto => objeto.id)
+
         const methodForm = datosSalud.id ? 'PUT' : 'POST';
+        console.log(JSON.stringify(datosDelFormulario))
         console.log('TIPO FORM: ' + methodForm)
+
+
         const respuesta = await api_request(url, {
             method: methodForm,
             body: JSON.stringify(datosDelFormulario),
             headers: {
                 'Content-Type': 'application/json'
             }
-
         })
         if (respuesta.success) {
             openSnackbar("Datos guardados correctamente", "success")
@@ -264,6 +289,23 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         console.log("Respuesta:", respuesta);
     }
 
+/*    if (!datosSalud.id) {
+        return (
+            <>
+                <Box sx={{
+                    width: '100%',
+                    height: '450px',
+                    textAlign: 'center',
+                }}>
+                    <CircularProgress/>
+                </Box>
+            </>
+        )
+    } else {
+
+
+    }*/
+    const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<Array<{ id: number; nombre: string }>>([]);
 
     return (
         <>
@@ -285,7 +327,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 sustancias estupefacientes o drogas prohibidas.</FormLabel>
                             <RadioGroup
                                 value={datosSalud.tieneAfeccionADrogras}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludGeneral')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludGeneral')
+                                }}
                                 row
                                 name="tieneAfeccionADrogras">
                                 <FormControlLabel
@@ -303,54 +347,61 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
                 <Grid container spacing={2} my={0}>
                     <Grid item sm={6}>
-                        <FormControl fullWidth={true}>
-                            <Autocomplete
+                        <FormControl fullWidth>
+                            <InputLabel shrink>Grupo Sanguineo</InputLabel>
+                            <Select
+
+                                label="Grupo Sanguineo"
+                                labelId="grupo-sanquineo-label"
+                                id="grupo-sanguineo"
+                                name="grupo_sanguineo"
+                                value={datosSalud.grupo_sanguineo ? datosSalud.grupo_sanguineo?.id : ""}
                                 onChange={onGruposSanguineoChange}
-                                disablePortal
-                                fullWidth
-                                sx={{margin: 0, width: '100%'}}
-                                renderOption={(props, option) => <li {...props} key={option.id}>{option.label}</li>}
-                                renderInput={function (params: AutocompleteRenderInputParams): ReactNode {
-                                    return (
-                                        <TextField ref={params.InputProps.ref} {...params} label="Grupo Sanguineo"
-                                                   variant="outlined"
-                                                   sx={{margin: '0 !important', width: '100% !important'}}/>
-                                    )
-                                }}
-                                options={datosSaludSelectState?.grupos_sanguineos}
-
-                            />
-
+                            >
+                                {datosSaludSelectState.grupo_sanguineo.map((option, index) => (
+                                    <MenuItem key={option.id} value={option.id}>{option.nombre}</MenuItem>
+                                ))}
+                            </Select>
                         </FormControl>
                     </Grid>
                     <Grid item sm={6}>
                         <FormControl fullWidth={true}>
+
                             <Autocomplete
                                 multiple
-                                fullWidth
-                                onChange={onVacunasRecibidasChange}
-                                id="id-vacunas-recibidas"
-                                options={datosSaludSelectState.vacunas_recibidas}
-                                disableCloseOnSelect
-                                getOptionLabel={(option) => option.label}
-                                renderOption={(props, option) => {
-                                    return (
-                                        <li {...props} key={option.id}>
-                                            {option.label}
-                                        </li>
-                                    );
+                                id="vacunas-recibidas"
+                                options={datosSaludSelectInicial.vacunas_recibidas} // Usa las opciones por defecto
+
+                                value={datosSalud.vacunas_recibidas}
+
+                                onChange={(event, newValue) => {
+                                    setDatosSalud(prev=>({
+                                        ...prev,
+                                            vacunas_recibidas: newValue,
+                                    }));
                                 }}
-                                renderTags={(tagValue, getTagProps) => {
-                                    return tagValue.map((option, index) => (
-                                        <Chip {...getTagProps({index})} key={option.id} label={option.label}/>
+                                getOptionLabel={(option) => option.nombre}
+                                renderTags={(value, getTagProps) =>
+
+                                    value.map((option:{id:number, nombre:string}, index) => (
+                                        <Chip
+                                            //@ts-ignore
+                                            key={option.id}
+                                            label={option.nombre}
+                                            {...getTagProps({ index })} />
                                     ))
-                                }}
+                                }
                                 renderInput={(params) => (
-                                    <TextField ref={params.InputProps.ref} {...params} variant="outlined"
-                                               label="Vacunas recibidas!" placeholder="Seleccionar"
-                                               sx={{margin: '0 !important', width: '100% !important'}}/>
+                                    <TextField
+                                        {...params}
+                                        variant="outlined"
+                                        label="Vacunas Recibidas"
+                                        placeholder="Seleccione las vacunas recibidas"
+                                        sx={{margin: '0 !important', width: '100% !important'}}
+                                    />
                                 )}
                             />
+
 
                         </FormControl>
                     </Grid>
@@ -369,7 +420,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     name="presion_arterial"
                                     value={datosSalud.presion_arterial}
                                     label="PA"
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                 />
                             </FormControl>
 
@@ -379,7 +432,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     name="frecuencia_cardiaca"
                                     value={datosSalud.frecuencia_cardiaca}
                                     label="FC"
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                 />
                             </FormControl>
 
@@ -388,7 +443,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="frecuencia_respiratoria"
                                     value={datosSalud.frecuencia_respiratoria}
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                     label="FR"
                                 />
                             </FormControl>
@@ -399,7 +456,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     name="temperatura"
                                     label='Temperatura'
                                     value={datosSalud.temperatura}
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                 />
                             </FormControl>
 
@@ -408,7 +467,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="peso"
                                     value={datosSalud.peso}
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                     label="Peso"
                                 />
                             </FormControl>
@@ -417,7 +478,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="talla"
                                     value={datosSalud.talla}
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                     label="Talla"
                                 />
                             </FormControl>
@@ -427,7 +490,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <OutlinedInput
                                     name="imc"
                                     value={datosSalud.imc}
-                                    onChange={(event)=>{handleChange(event, 'saludGeneral')}}
+                                    onChange={(event) => {
+                                        handleChange(event, 'saludGeneral')
+                                    }}
                                     label="IMC"
                                 />
                             </FormControl>
@@ -500,7 +565,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             <FormLabel id="gestioacion">¿Se encuentra en Periodo de gestación?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.gestacion}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludGeneral')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludGeneral')
+                                }}
                                 row
                                 aria-labelledby="gestioacion"
                                 name="gestacion">
@@ -516,38 +583,34 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                         </FormControl>
                     </Grid>
                     <Grid item sm={4} sx={{marginTop: 1}}>
-                        {datosSalud.gestacion?
-                        <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="gestacionTiempotiempoGestacion">¿Meses de gestación?</InputLabel>
-                            <OutlinedInput
+                        {datosSalud.gestacion ?
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="gestacionTiempotiempoGestacion">¿Meses de
+                                    gestación?</InputLabel>
+                                <OutlinedInput
 
-                                disabled={!datosSalud.gestacion}
-                                name="tiempo_gestacion"
-                                value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
-                                onChange={onTiempoDeGestacionChange}
-                                label="¿De cuanto tiempo se encuentra?"/>
-                        </FormControl>
-                        :null}
+                                    disabled={!datosSalud.gestacion}
+                                    name="tiempo_gestacion"
+                                    value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
+                                    onChange={onTiempoDeGestacionChange}
+                                    label="¿De cuanto tiempo se encuentra?"/>
+                            </FormControl>
+                            : null}
                     </Grid>
-                    <Grid item sm={4}
-                          sx={{marginTop: 0}}>
-                        {datosSalud.gestacion?
-                        <FormControl
+                    <Grid item sm={4} sx={{marginTop: 0}}>
+                        {datosSalud.gestacion ?
+                            <FormControl fullWidth>
+                                <DatePicker
+                                    disablePast
+                                    maxDate={nineMonthsFromNow}
+                                    format="DD/MM/YYYY"
+                                    name='fecha_parto'
+                                    value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : ''}
+                                    onChange={onFechaPartoChange}
+                                    label={"Fecha de parto"} />
 
-                            fullWidth={true}>
-                            {/* <InputLabel htmlFor="gestacionFecha">Fecha de parto</InputLabel> */}
-
-                            <DatePicker
-                                // TODO: verificar porque al colocar la fecha de parto explota
-                                /*value={datosSalud.fecha_parto}*/
-                                format="DD/MM/YYYY"
-                                name='fecha_parto'
-                                onChange={onFechaPartoChange}
-                                label={"Fecha de parto"}
-                                disabled={!datosSalud.gestacion}/>
-
-                        </FormControl>
-                        :null}
+                            </FormControl>
+                            : null}
                     </Grid>
                 </Grid>
 
@@ -558,10 +621,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     </Grid>
                     <Grid item sm={6}>
                         <FormControl>
-                            <FormLabel id="sigue_tratamiento_mental">¿Sigue algún tratamiento por Salud Mental?</FormLabel>
+                            <FormLabel id="sigue_tratamiento_mental">¿Sigue algún tratamiento por Salud
+                                Mental?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.sigue_tratamiento_mental}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludMental')
+                                }}
                                 row
                                 aria-labelledby="sigue_tratamiento_mental"
                                 name="sigue_tratamiento_mental">
@@ -582,7 +648,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 autoinfligidas</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.tiene_antecedentes_de_lesiones_autoinflingidas}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludMental')
+                                }}
                                 row
                                 aria-labelledby="tiene_antecedentes_de_lesiones_autoinflingidas"
                                 name="tiene_antecedentes_de_lesiones_autoinflingidas">
@@ -602,11 +670,14 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>
                         <FormControl>
-                            <FormLabel id="internado-en-hospital-psiquiatrico-label">¿Ha estado internado en hospital Psiquiatrico/Centro
+                            <FormLabel id="internado-en-hospital-psiquiatrico-label">¿Ha estado internado en
+                                hospital Psiquiatrico/Centro
                                 nacional de control de addicciones?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.ha_estado_internado_en_hospital_psiquiatrico}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludMental')
+                                }}
                                 row
                                 aria-labelledby="internado-en-hospital-psiquiatrico-label"
                                 name="ha_estado_internado_en_hospital_psiquiatrico">
@@ -623,12 +694,15 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     </Grid>
                     <Grid item sm={6}>
                         <FormControl>
-                            <FormLabel id="drogra-previo-prision">La PPL reporta un problema de abuso de drogas previo
+                            <FormLabel id="drogra-previo-prision">La PPL reporta un problema de abuso de drogas
+                                previo
                                 al
                                 ingreso de prisión</FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.reporta_abuso_de_droga_previo_al_ingreso}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludMental')
+                                }}
                                 row
                                 aria-labelledby="drogra-previo-prision"
                                 name="reporta_abuso_de_droga_previo_al_ingreso">
@@ -646,19 +720,16 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 </Grid>
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>
+
                         <FormControl>
-                            <FormLabel id="medicacionActualmente">¿Que medicación toma actualmente?</FormLabel>
+                            <FormLabel id="medicamentos-id-label">¿Que medicación toma actualmente?</FormLabel>
                             <Autocomplete
                                 multiple
+                                freeSolo
                                 onChange={onMedicacionActualChange}
                                 id="medicamentos-id"
                                 options={[]}
-                                freeSolo
-                                // renderTags={(value: readonly string[], getTagProps) =>
-                                //   value.map((option: string, index: number) => (
-                                //     <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                                //   ))
-                                // }
+                                value={datosSalud.saludMental.medicacion_actual? datosSalud.saludMental.medicacion_actual : []}
                                 renderInput={(params) => (
                                     <TextField
                                         ref={params.InputProps.ref}
@@ -683,7 +754,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             </FormLabel>
                             <RadioGroup
                                 value={datosSalud.saludMental?.tiene_afeccion_severa_por_estupefacientes}
-                                onChange={(event)=>{handleBooleanChange(event, 'saludMental')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'saludMental')
+                                }}
                                 row
                                 aria-labelledby="afeccionSeveraEstupefacientes"
                                 name="tiene_afeccion_severa_por_estupefacientes">
@@ -713,11 +786,17 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 <FormLabel id="discapacidad">Posee alguna Discapacidad:</FormLabel>
                                 <RadioGroup
                                     value={datosSalud.saludFisica?.discapacidad_fisica}
-                                    onChange={(event)=>{handleBooleanChange(event, 'saludFisica')}}
+                                    onChange={(event) => {
+                                        handleBooleanChange(event, 'saludFisica')
+                                    }}
                                     row
                                     aria-labelledby="discapacidad_fisica"
                                     name="discapacidad_fisica"
                                 >
+                                    <FormControlLabel
+                                        value="ninguna"
+                                        control={<Radio/>}
+                                        label="Ninguna"/>
                                     <FormControlLabel
                                         value="fisica"
                                         control={<Radio/>}
@@ -746,8 +825,12 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             </FormControl>
                             {
                                 datosSalud.saludFisica?.discapacidad_fisica == 'otros' ?
-                                    <TextField label={'Otros'} value={datosSalud.saludFisica?.discapacidad_fisica}
-                                               variant="outlined" sx={{marginLeft: '0 !important'}}/>
+                                    <TextField
+                                        label={'Otros'}
+                                        name='explicacion_de_discapacidad'
+                                        value={datosSalud.saludFisica?.explicacion_de_discapacidad}
+                                        onChange={(event)=>{handleChange(event, 'saludFisica')}}
+                                        variant="outlined" sx={{marginLeft: '0 !important'}}/>
                                     : null}
                         </Stack>
                     </Grid>
@@ -763,7 +846,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             <FormLabel id="necesitaInterprete">¿Necesita un intérprete?</FormLabel>
                             <RadioGroup
                                 value={datosSalud.limitacionesIdiomaticas?.necesitaInterprete}
-                                onChange={(event)=>{handleBooleanChange(event, 'limitacionesIdiomaticas')}}
+                                onChange={(event) => {
+                                    handleBooleanChange(event, 'limitacionesIdiomaticas')
+                                }}
                                 row
                                 aria-labelledby="interprete"
                                 name="necesitaInterprete">
@@ -783,7 +868,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             <FormLabel id="dificultad-leer-escribir">Dificultad para leer o escribir</FormLabel>
                             <RadioGroup
                                 value={datosSalud.limitacionesIdiomaticas?.tieneDificultadParaLeerYEscribir}
-                                onChange={handleChange}
+                                onChange={(event => {
+                                    handleChange(event, 'limitacionesIdiomaticas')
+                                })}
                                 row
                                 aria-labelledby="dificultad-leer-escribir"
                                 name="tieneDificultadParaLeerYEscribir">

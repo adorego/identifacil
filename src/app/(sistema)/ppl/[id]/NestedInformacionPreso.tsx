@@ -124,7 +124,7 @@ const datosPersonaInitial: datosPersonaType = {
 }
 
 export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: { datosPersona: datosPersonaType }) {
-    console.log(datosPersona.datosPersonales.id)
+
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
