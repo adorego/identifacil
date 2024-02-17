@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react';
+
 import dayjs from 'dayjs';
 
 /*export default deleteRecord = async (id) => {
@@ -42,7 +43,7 @@ export async function fetchData(url : string) {
 
 export async function fetchFormData(id: any, entity: string) {
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${entity}?id=${id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/${entity}?id=${id}`);
         if (!response.ok) {
             throw new Error('Error en la petición');
         }
@@ -129,8 +130,8 @@ export const postEntity = async (
         const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
         console.log(stateForm)
         const url = isEditMode !== 'crear'
-            ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${params.id}` // PUT
-            : `${process.env.NEXT_PUBLIC_API_URL}/${endpoint}`;                                             // POST
+            ? `http://localhost:5000/${endpoint}/${params.id}` // PUT
+            : `http://localhost:5000/${endpoint}`;                                             // POST
 
         const response = await fetch(url, {
             method: method,

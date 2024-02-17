@@ -3,12 +3,13 @@
 import * as React from 'react';
 
 import {CircularProgress, Grid, Paper,} from "@mui/material";
-import {dataBajas} from "@/app/dummyData/movimientosDummyData";
+import {useEffect, useState} from "react";
+
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
 import FiltrosTables from "..//components/filtrosTables";
-import {useEffect, useState} from "react";
 import TituloComponent from "@/components/titulo/tituloComponent";
+import {dataBajas} from "@/app/dummyData/movimientosDummyData";
 
 // Datos Dummy
 const dummyBajas = dataBajas();

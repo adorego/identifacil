@@ -1,13 +1,14 @@
 'use client'
 
 import * as React from 'react';
-import TituloComponent from "@/components/titulo/tituloComponent";
-import CustomTable from "@/components/CustomTable";
-import {Box, CircularProgress, Paper} from "@mui/material";
-import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import {useEffect, useState} from "react";
-import {fetchData} from "@/components/utils/utils";
 
+import {Box, CircularProgress, Paper} from "@mui/material";
+import {useEffect, useState} from "react";
+
+import CustomTable from "@/components/CustomTable";
+import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
+import TituloComponent from "@/components/titulo/tituloComponent";
+import {fetchData} from "@/components/utils/utils";
 
 const header = [
     { id: 'caratula', label: 'Caratula' },
@@ -20,9 +21,9 @@ const header = [
 export default function Page(){
 
     const [data, setData] = useState(null);
-
+    console.log('Causas:', data);
     useEffect(() => {
-        const apiUrl = 'http://localhost:5000' + '/causas';
+        const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`;
         fetchData(apiUrl)
             .then(fetchedData => {
                 setData(fetchedData);

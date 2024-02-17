@@ -1,8 +1,10 @@
-import {Box, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
 import * as React from "react";
+
+import {Box, FormControl, InputLabel, MenuItem, Select} from "@mui/material";
+
 import {SelectChangeEvent} from "@mui/material/Select";
-import {useEffect} from "react";
 import {fetchData} from "@/components/utils/utils";
+import {useEffect} from "react";
 import {useGlobalContext} from "@/app/Context/store";
 
 const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
@@ -30,7 +32,7 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
                 setState(prevState => {
                     return {
                         ...prevState,
-                        establecimientos: [...fetchedData.establecimientos]
+                        establecimientos: fetchedData ? [...fetchedData.establecimientos] : []
 
                     }
                 });
