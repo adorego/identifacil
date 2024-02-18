@@ -156,7 +156,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                 {datosPersona ?
                                     <FormularioDatosPersonales datosDeIdentificacion={{
                                         id_persona: datosPersona.id_persona,
-                                        id_datos_personales: datosPersona.datosPersonales.id,
+                                        id_datos_personales: datosPersona.datosPersonales?.id,
                                         nombres: datosPersona.nombre,
                                         apellidos: datosPersona.apellido,
                                         apodo: datosPersona.apodo,

@@ -377,7 +377,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 onChange={(event, newValue) => {
                                     setDatosSalud(prev=>({
                                         ...prev,
-                                            vacunas_recibidas: newValue,
+                                        vacunas_recibidas: newValue,
+                                        vacunas_recibidas_modificado: true,
+
                                     }));
                                 }}
                                 getOptionLabel={(option) => option.nombre}

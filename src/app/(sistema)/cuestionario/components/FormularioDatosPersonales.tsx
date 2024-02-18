@@ -130,6 +130,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
             setDatosPersonalesState(prevState => {
                 return{
                     ...prevState,
+                    id_persona: datosDeIdentificacion.id_persona,
                     fechaDeNacimiento: dayjs(datosDeIdentificacion.fechaDeNacimiento, "YYYY-MM-DD"),
                     fechaDeNacimiento_modificado: true,
                     numeroDeIdentificacion: datosDeIdentificacion.cedula_identidad,
@@ -277,36 +278,44 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
             }
         )
     }
-    const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) =>{
+    const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
-        if(!datosDeIdentificacion.cedula_identidad){
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`;
-            console.log('URL -> ' + url)
-            const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
-            datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
+        console.log(datosDeIdentificacion)
+        const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
 
-            const respuesta = await api_request(url,{
-                method:'PUT',
-                body:JSON.stringify(datosDelFormulario),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+        const url = datosDeIdentificacion.id_datos_personales ?
+            `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
+            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
 
-            })
-            if(respuesta.success){
-                openSnackbar("Datos guardados correctamente","success")
-            }else{
-                if(respuesta.error){
-                    openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
-                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                }
+
+
+        const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
+
+        console.log('URL -> ' + url)
+        console.log(datosDelFormulario)
+
+        // datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
+
+        const respuesta = await api_request(url,{
+            method: methodForm,
+            body:JSON.stringify(datosDelFormulario),
+            headers: {
+                'Content-Type': 'application/json'
             }
 
-            // console.log("Respuesta:", respuesta);
+        })
+        if(respuesta.success){
+            openSnackbar("Datos guardados correctamente","success")
         }else{
-            openSnackbar("Falta el número de identificación","error");
+            if(respuesta.error){
+                openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`,`error`);
+                log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+            }
         }
+
+        // console.log("Respuesta:", respuesta);
+
     }
 
     return(
