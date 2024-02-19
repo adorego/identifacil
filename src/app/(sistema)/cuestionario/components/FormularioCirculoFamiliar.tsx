@@ -16,15 +16,20 @@ interface FormularioCirculoFamiliarProps {
 
 export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps> = ({ onClose, onHandleChangeCirculo }) => {
     const [state, setState] = React.useState<circuloFamiliarStateType>({
-        id_persona: 0,
+        id: null,
         nombre: "",
+        esFuncionario: false,
         apellido: "",
-        vinculo: null,
-        relacion: null,
-        establecimiento: null,
-        edad_hijo: null,
-        numero_documento_concubino: "",
-        lugar_donde_esta_hijo: ""
+        vinculo: {
+            id: null,
+            nombre: null,
+        },
+        establecimiento: {
+            id: null,
+            nombre: null,
+        },
+        edad: null,
+        lugar_donde_esta_hijo: null
     })
     const [stateVinculos, setStateVinculos] = React.useState<{id:number, nombre:string}[]>([])
     const [stateEstablecimientos, setStateEstablecimiento] = React.useState<{id:number, nombre:string}[]>([])
@@ -37,7 +42,9 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
           }
         })
     };
+
     const handleSelectChange = (event: SelectChangeEvent<number|string | null>) => {
+        console.log(event.target.value)
         setState(prev=>{
             return{
                 ...prev,
@@ -45,10 +52,55 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
             }
         });
     };
+
+    const handlerEstablecimientos = (event: SelectChangeEvent<number|string | null>) => {
+        const establecimientoActual = stateEstablecimientos.find(establecimiento => establecimiento.id === event.target.value)
+        if(establecimientoActual){
+            setState(prev=>{
+                return{
+                    ...prev,
+                    establecimiento: {
+                        id: establecimientoActual.id,
+                        nombre: establecimientoActual.nombre
+                    }
+                }
+            });
+        }
+    };
+
+    const handlerVinculos = (event: SelectChangeEvent<number|string | null>) => {
+        const vinculoActual = stateVinculos.find(vinculo => vinculo.id === event.target.value)
+        if(vinculoActual){
+            setState(prev=>{
+                return{
+                    ...prev,
+                    vinculo: {
+                        id: vinculoActual.id,
+                        nombre: vinculoActual.nombre
+                    }
+                }
+            });
+        }
+    };
+
+    const handleEsFuncionario = (event: SelectChangeEvent<number|string | null>) => {
+        setState(prev=>{
+            return{
+                ...prev,
+                esFuncionario: event.target.value === 'true',
+            }
+        });
+    };
+
     const handleSubmit = (event: { preventDefault: () => void; })=>{
+        /*console.log({
+            ...state,
+            vinculo: state.vinculo.id,
+            establecimiento: state.establecimiento.id
+        })*/
         event.preventDefault();
         onHandleChangeCirculo(state)
-        onClose(); // Cierra el modal después de la acción
+        onClose(); // Cierra el modal después de la acción*/
     }
 
     useEffect(() => {
@@ -68,7 +120,6 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
 
     return (
         <form onSubmit={handleSubmit}>
-
             <Box>
                 <Grid container spacing={2}>
 
@@ -93,16 +144,16 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
 
                     <Grid item sm={12}>
                         <FormControl fullWidth>
-                            <InputLabel id="vinculo-sistema-label">Relacion</InputLabel>
+                            <InputLabel id="vinculo-sistema-label">Vinculo familiar</InputLabel>
                             <Select
                                 labelId="vinculo-sistema-label"
                                 id="vinculo"
-                                value={state.relacion}
-                                label="relacion"
+                                value={state.vinculo?.id}
+                                label="Vinculo familiar"
                                 name='relacion'
-                                onChange={handleSelectChange}
+                                onChange={handlerVinculos}
                             >
-                                <MenuItem value={0}>Ninguno</MenuItem>
+                                <MenuItem disabled value={""}>Seleccionar vinculo</MenuItem>
                                 {
                                     stateVinculos.map((item, index) =>{
                                         return(
@@ -120,10 +171,10 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             <Select
                                 labelId="establecimiento-label"
                                 id="establecimiento"
-                                value={state.establecimiento}
+                                value={state.establecimiento.id}
                                 label="Establecimiento"
                                 name='establecimiento'
-                                onChange={handleSelectChange}
+                                onChange={handlerEstablecimientos}
                             >
                                 <MenuItem value={0}>Ninguno</MenuItem>
                                 {
@@ -143,32 +194,33 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             <Select
                                 labelId="vinculo-sistema-label"
                                 id="vinculo"
-                                value={state.vinculo}
+                                value={state.esFuncionario?.toString()}
                                 label="Vinculo con el sistema"
                                 name='vinculo'
-                                onChange={handleSelectChange}
+                                onChange={handleEsFuncionario}
                             >
-                                <MenuItem value=''>Ninguno</MenuItem>
-                                <MenuItem value={1}>Funcionario</MenuItem>
-                                <MenuItem value={2}>PPL</MenuItem>
+                                <MenuItem disabled value={''}>Seleccionar establecimiento</MenuItem>
+                                <MenuItem value={"true"}>Funcionario</MenuItem>
+                                <MenuItem value={"false"}>PPL</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
-                    { state.relacion == 5?
 
+                    {/* Si es hijo*/}
+                    { state.vinculo.id == 2?
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}
                             label="Edad"
                             type='number'
-                            name="edad_hijo"
+                            name="edad"
                             variant="outlined"
                             fullWidth/>
                     </Grid>
                     :null}
 
                     {/* Si es conyugue */}
-                    {state.relacion == 4?
+                    {state.vinculo.id == 3?
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}
@@ -180,7 +232,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     :null}
 
                     {/* Si es hijo*/}
-                    {state.relacion == 5?
+                    {state.vinculo.id == 2?
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}

@@ -239,19 +239,22 @@ export const familiarInicial: familiar = {
     lugar: ""
 }
 export interface datosConcubino {
-    numeroDeIdentificacion: string;
-    nombres: string;
-    apellidos: string;
+    id: number | null;
+    numeroDeIdentificacion: string| null;
+    nombres: string| null;
+    apellidos: string| null;
 
 }
 
 export const datosConcubinoInicial = {
+    id: null,
     numeroDeIdentificacion: "",
     nombres: "",
     apellidos: ""
 }
 
 export type datosFamiliaresType = {
+    id: number | null;
     id_persona: number|null;
     esCabezaDeFamilia: boolean;
     esCabezaDeFamilia_modificado: boolean;
@@ -266,6 +269,7 @@ export type datosFamiliaresType = {
 }
 
 export const datosFamiliaresInicial : datosFamiliaresType = {
+    id: null,
     id_persona: null,
     esCabezaDeFamilia: false,
     esCabezaDeFamilia_modificado: false,
@@ -275,7 +279,12 @@ export const datosFamiliaresInicial : datosFamiliaresType = {
     familiares_modificado: false,
     tieneConcubino: false,
     tieneConcubino_modificado: false,
-    concubino: null,
+    concubino: {
+        id: null,
+        nombres: null,
+        apellidos: null,
+        numeroDeIdentificacion: null
+    },
     concubino_modificado: false,
 }
 
@@ -367,24 +376,27 @@ export const datosJudicialesInicial:datosJudicialesType = {
 }
 
 export type circuloFamiliarStateType = {
-    id_persona: number | null;
+    id: number | null;
     nombre: string | null;
     apellido: string | null;
-    vinculo: number | null;
-    relacion: number | null;
-    establecimiento: number | null;
-    edad_hijo: number | null ;
-    numero_documento_concubino: string | null;
+    esFuncionario: boolean | null;
+    vinculo: {
+        id: number | null;
+        nombre: string | null;
+    };
+    edad: number | null ;
+    establecimiento: {
+        id: number | null;
+        nombre: string | null;
+    };
     lugar_donde_esta_hijo: string | null;
 }
 export const circuloFamiliarStateInitial = {
     id_persona: null,
     nombre: null,
     apellido: null,
-    vinculo: null,
-    relacion: null,
-    establecimiento: null,
-    edad_hijo: null,
-    numero_documento_concubino: null,
+    vinculo: {},
+    establecimiento: {},
+    edad: null,
     lugar_donde_esta_hijo: null
 }

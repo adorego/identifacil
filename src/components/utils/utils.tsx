@@ -173,8 +173,11 @@ export const postForm = async (
         setLoading(true);
 
         const method = isEditMode ? 'PUT' : 'POST';
-        console.log(stateForm)
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
+        console.log(JSON.stringify(stateForm))
+        const url = isEditMode
+            ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${stateForm.id}`
+            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
+
 
         const response = await fetch(url, {
             method: method,

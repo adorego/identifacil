@@ -4,16 +4,25 @@ import {Visibility, Delete} from '@mui/icons-material/';
 
 interface tablaCirculoTypes {
     rows?: {
+        id: number | null;
         nombre: string | null;
-        relacion: number | null;
-        establecimiento: number | null;
-        vinculo: number | null;
+        apellido: string | null;
+        esFuncionario: boolean | null;
+        establecimiento:  {
+            id: number | null,
+            nombre: string | null,
+        };
+        vinculo: {
+            id: number | null,
+            nombre: string | null,
+        };
     }[];
+    handleDelete: ()=>void;
 }
 
 
 
-export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows}) => {
+export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleDelete}) => {
 
 
     return (
@@ -39,16 +48,16 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows}) => {
                                     sx={{'&:last-child td, &:last-child th': {border: 0}}}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {row.nombre}
+                                        {row.nombre + " " + row.apellido}
                                     </TableCell>
-                                    <TableCell align="right">{row.relacion}</TableCell>
-                                    <TableCell align="right">{row.establecimiento}</TableCell>
-                                    <TableCell align="right">{row.vinculo}</TableCell>
+                                    <TableCell align="right">{row.vinculo.nombre}</TableCell>
+                                    <TableCell align="right">{row.establecimiento.nombre}</TableCell>
+                                    <TableCell align="right">{row.esFuncionario ? "Funcionario" : "PPL"}</TableCell>
                                     <TableCell align="right">
                                         <IconButton aria-label="edit">
                                             <Visibility/>
                                         </IconButton>
-                                        <IconButton aria-label="delete">
+                                        <IconButton aria-label="delete" onClick={handleDelete}>
                                             <Delete/>
                                         </IconButton>
                                     </TableCell>
