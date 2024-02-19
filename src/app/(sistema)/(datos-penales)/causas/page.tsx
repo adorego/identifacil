@@ -11,11 +11,12 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {fetchData} from "@/components/utils/utils";
 
 const header = [
-    { id: 'caratula', label: 'Caratula' },
-    { id: 'nroCausa', label: 'Nro. de la causa' },
+    { id: 'caratula_causa', label: 'Caratula' },
+    { id: 'numeroDeExpediente', label: 'Nro. de la causa' },
     { id: 'hechoPunible', label: 'Hecho punible' },
-    { id: 'compurgamiento', label: 'Compurgamiento' },
-    { id: 'situacionProcesal', label: 'Situación procesal' },
+    { id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento' },
+    { id: 'condenado', label: 'Condenado' },
+    { id: 'estado_procesal', label: 'Situación procesal' },
 ]
 
 export default function Page(){

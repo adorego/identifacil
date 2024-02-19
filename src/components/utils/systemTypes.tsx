@@ -238,7 +238,7 @@ export const familiarInicial: familiar = {
     vinculo: "",
     lugar: ""
 }
-export interface datosConcubino {
+export interface    datosConcubino {
     id: number | null;
     numeroDeIdentificacion: string| null;
     nombres: string| null;
@@ -282,7 +282,7 @@ export const datosFamiliaresInicial : datosFamiliaresType = {
     concubino: {
         id: null,
         nombres: null,
-        apellidos: null,
+        apellidos:null,
         numeroDeIdentificacion: null
     },
     concubino_modificado: false,

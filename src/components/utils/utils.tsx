@@ -178,7 +178,7 @@ export const postForm = async (
             ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${stateForm.id}`
             : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
 
-
+        console.log(url)
         const response = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },

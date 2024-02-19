@@ -1,34 +1,34 @@
 
 
 export type CausaType = {
-    id: number;
-    nroCausa: string;
-    ano: string;
-    fechaAprension: string;
-    caratula: string;
-    hechoPunible: string;
-    situacionProcesal: string;
-    condenado: string;
-    tiempoDeCondenaAnos: number;
-    compurgamiento: string;
-    tiempoDeCondenaMeses: number;
-    anosExtrasDeCondenaPorMedidaDeSeguridad: boolean;
-    anosDeCondenaPorMedidasDeSeguridad: number;
-    mesesDeCondenaPorMedidasDeSeguridad: number;
-    sentenciaDefinitiva: string;
-    sentenciaDescripcion: string;
-    fechaCompurgamientoCalculada: string;
-    circunscripcion: string;
-    secretaria: string;
-    juzgadoDeEjecucionOSentencia: string;
-    nombreDelFamiliar: string;
-    fechaHecho: string;
-    lugarHecho: string;
-    telefonoDelFamiliar: string;
-    linkDeNoticia: string;
-    "defensor": string;
-    "nombreDelDefensor": string;
-    "telefonoDelDefensor": string;
+    id: number | null;
+    numeroDeExpediente: string | null;
+    numeroDeDocumento: string | null;
+    anho: number | null;
+    condenado: string | null;
+    estado_procesal: string | null;
+    caratula_causa: string | null;
+    despacho_judicial: number | null;
+    circunscripcion: number | null;
+    ciudad: number | null;
+    hechos_punibles:Array<number|null>;
+    ppls:Array<number|null>;
+    tiempo_de_condena: number | null;
+    fecha_de_aprehension: Date | string | null;
+    fecha_de_compurgamiento_inicial: string | null;
+    fecha_de_compurgamiento_recalculada: string | null;
+    tiene_anhos_extra_de_seguridad: boolean; // booleano local para saber si mostrar el controlador
+    tiempo_de_seguridad: number | null;
+    sentencia_definitiva: string | null;
+    juzgado_de_tribunal_de_sentencia: string | null;
+    secretaria: string | null;
+    lugar_del_hecho: string | null;
+    link_de_noticia: string | null;
+    defensor: {
+        id: number | null;
+        nombreDelDefensor: string | null;
+        telefonoDelDefensor: string | null;
+    }
 };
 
 

@@ -57,7 +57,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
 
     useEffect(() => {
-        console.log(datosFamiliaresIniciales)
+
         if(datosFamiliaresIniciales){
             setEstadoFormularioDatosFamiliares(prev=>{
                 return{
@@ -77,11 +77,11 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 }
             })
 
-        }
-        if(datosFamiliaresIniciales.familiares){
-            setStateCirculoFamiliar(prev=>[
-                ...datosFamiliaresIniciales.familiares
-            ])
+            if(datosFamiliaresIniciales.familiares){
+                setStateCirculoFamiliar(prev=>[
+                    ...datosFamiliaresIniciales.familiares
+                ])
+            }
         }
     }, [datosFamiliaresIniciales]);
 
@@ -152,8 +152,9 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             id_persona: id_persona,
             familiares: circuloFamiliar,
         }
+        const editMod = datosFamiliaresIniciales ?? false; // Si es TRUE, entonces es PUT, si es FALSE es POST
         console.log(datosFormulario)
-        const editMod = !!id_persona; // Si es TRUE, entonces es PUT, si es FALSE es POST
+        console.log(editMod)
 
 
 
@@ -239,6 +240,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     <Typography variant={'subtitle1'}>
                         Concubino
                     </Typography>
+                    {estadoFormularioDatosFamiliares.concubino ?
                     <Stack spacing={2} direction={'row'}>
 
                             <TextField
@@ -267,6 +269,24 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                             </IconButton>
 
                     </Stack>
+                    :
+                    <Button variant={'contained'} onClick={()=>setEstadoFormularioDatosFamiliares(
+                        prev=>{
+                            const newState = { ...prev };
+                            // Solo modificar concubino si existe
+                            if(!prev.concubino){
+                                newState.concubino = {
+                                    id: null, // Asumiendo que quieres establecer id a null
+                                    nombres: null,
+                                    apellidos: null,
+                                    numeroDeIdentificacion: null,
+                                };
+                            }
+                            return newState;
+                    })}>
+                        Aregar concubino
+                    </Button>
+                    }
                 </Grid>
             </Grid>
             <Grid container spacing={2} mt={2}>
