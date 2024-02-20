@@ -151,6 +151,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             ...estadoFormularioDatosFamiliares,
             id_persona: id_persona,
             familiares: circuloFamiliar,
+            familiares_modificado: true,
         }
         const editMod = datosFamiliaresIniciales ?? false; // Si es TRUE, entonces es PUT, si es FALSE es POST
         console.log(datosFormulario)
