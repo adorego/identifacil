@@ -4,17 +4,16 @@ import * as React from 'react';
 import {useEffect, useState} from 'react';
 import {Box, Button, CircularProgress, Grid, Stack, TextField, Typography} from "@mui/material";
 import {handleInputChange} from "@/components/utils/formUtils";
-import {CausaType} from "@/components/utils/penalesType";
-import {initialDataForm} from '@/components/utils/initialData';
+import {causaInitialData, CausaType} from "@/components/utils/penalesType";
 import {fetchData, fetchFormData, postEntity} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
-const ENDPOINT  = 'http://localhost:5000/causas/1'
+
 // TODO: Hacer completado de form cuando es update o /crear
 export default function FormCausa({params} : { params: { id: number | string } }){
     //@ts-ignore
-    const [datosFormulario, setDatosFormularios] = useState<CausaType>(initialDataForm);
+    const [datosFormulario, setDatosFormularios] = useState<CausaType>(causaInitialData);
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
     const router = useRouter();
@@ -32,10 +31,10 @@ export default function FormCausa({params} : { params: { id: number | string } }
     };
 
     const handleSubmit = () => {
-        console.log(datosFormulario)
+        console.log(JSON.stringify(datosFormulario))
         postEntity(
             isEditMode,
-            'causas',
+            '/datos_penales/causas',
             'Causas',
             params,
             datosFormulario,
@@ -45,13 +44,7 @@ export default function FormCausa({params} : { params: { id: number | string } }
         );
     }
 
-    /*useEffect(() => {
 
-        fetchData(ENDPOINT)
-            .then(fetchedData => {
-                setDatosFormularios(fetchedData);
-            });
-    }, []);*/
 
     useEffect(() => {
         if (isEditMode !== 'crear') {

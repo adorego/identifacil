@@ -26,7 +26,7 @@ export interface BloqueEducacionProps {
 const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales}) => {
     const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
     const {openSnackbar} = useGlobalContext();
-    // console.log(estadoFormularioDeEducacion);
+
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
@@ -49,17 +49,8 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
             setEstadoFormularioDeEducacion(prevState => {
                 return {
                     ...prevState,
-                    id_persona: datosEducacionIniciales.id_persona,
-                    nivelAcademico: datosEducacionIniciales.nivelAcademico,
-                    nivelAcademico_modificado: datosEducacionIniciales.nivelAcademico_modificado,
-                    institucionEducativa: datosEducacionIniciales.institucionEducativa,
-                    institucionEducativa_modificado: datosEducacionIniciales.institucionEducativa_modificado,
-                    tieneOficio: datosEducacionIniciales.tieneOficio,
-                    tieneOficio_modificado: datosEducacionIniciales.tieneOficio_modificado,
-                    nombreOficio: datosEducacionIniciales.nombreOficio,
-                    nombreOficio_modificado: datosEducacionIniciales.nombreOficio_modificado,
-                    ultimoTrabajo: datosEducacionIniciales.ultimoTrabajo,
-                    ultimoTrabajo_modificado: datosEducacionIniciales.ultimoTrabajo_modificado
+                    ...datosEducacionIniciales,
+                    id_persona: id_persona,
                 }
             })
         }
@@ -83,15 +74,20 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
 
     const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        const methodForm = estadoFormularioDeEducacion.id ? 'PUT' : 'POST';
+
+
         if (id_persona) {
             try {
-                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`;
-                const datosDelFormulario: datosEducacionType = Object.assign({}, estadoFormularioDeEducacion);
-                datosDelFormulario.id_persona = id_persona;
-                console.log("Datos a enviar:", datosDelFormulario);
+
+
+                const url = estadoFormularioDeEducacion.id ?
+                    `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion/${estadoFormularioDeEducacion.id}`
+                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`
+
                 const respuesta = await api_request(url, {
-                    method: 'POST',
-                    body: JSON.stringify(datosDelFormulario),
+                    method: methodForm,
+                    body: JSON.stringify(estadoFormularioDeEducacion),
                     headers: {
                         'Content-Type': 'application/json'
                     }

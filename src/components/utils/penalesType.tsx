@@ -5,7 +5,7 @@ export type CausaType = {
     numeroDeExpediente: string | null;
     numeroDeDocumento: string | null;
     anho: number | null;
-    condenado: string | null;
+    condenado: boolean;
     estado_procesal: string | null;
     caratula_causa: string | null;
     despacho_judicial: number | null;
@@ -31,7 +31,37 @@ export type CausaType = {
     }
 };
 
+export const causaInitialData = {
+    id: null,
+    numeroDeExpediente:null,
+    numeroDeDocumento:null,
+    anho: null,
+    condenado: false,
+    estado_procesal:null,
+    caratula_causa:null,
+    despacho_judicial: null,
+    circunscripcion: null,
+    ciudad: null,
+    hechos_punibles:Array<number|null>,
+    ppls:Array<number|null>,
+    tiempo_de_condena: null,
+    fecha_de_aprehension: null,
+    fecha_de_compurgamiento_inicial:null,
+    fecha_de_compurgamiento_recalculada:null,
+    tiene_anhos_extra_de_seguridad: false, // booleano local para saber si mostrar el controlador
+    tiempo_de_seguridad: null,
+    sentencia_definitiva:null,
+    juzgado_de_tribunal_de_sentencia:null,
+    secretaria:null,
+    lugar_del_hecho:null,
+    link_de_noticia:null,
+    defensor: {
+        id: null,
+        nombreDelDefensor:null,
+        telefonoDelDefensor:null,
+    }
 
+};
 export type  audienciaType = {
     id: number;
     causa: string;

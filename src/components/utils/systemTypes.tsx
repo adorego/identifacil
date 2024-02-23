@@ -142,6 +142,7 @@ export type limitacionesIdiomaticasType = {
 
 
 export type datosSeguridadType = {
+    id: number | null;
     id_persona:number|null;
     riesgoParaPersonal: boolean;
     riesgoParaPersonal_modificado: boolean;
@@ -170,6 +171,7 @@ export type datosSeguridadType = {
 
 
 export const datosSeguridadInicial: datosSeguridadType = {
+    id: null,
     id_persona:null,
     riesgoParaPersonal: false,
     riesgoParaPersonal_modificado: false,
@@ -197,6 +199,7 @@ export const datosSeguridadInicial: datosSeguridadType = {
 }
 
 export type datosEducacionType = {
+    id: number | null;
     id_persona: number|null;
     nivelAcademico: string;
     nivelAcademico_modificado: boolean;
@@ -211,6 +214,7 @@ export type datosEducacionType = {
 }
 
 export const datosEducacionInicial : datosEducacionType = {
+    id: null,
     id_persona: null,
     nivelAcademico: "",
     nivelAcademico_modificado: false,

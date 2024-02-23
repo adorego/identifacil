@@ -74,6 +74,7 @@ const formatDate = (dateString:string | null | number) => {
         return date.toLocaleDateString(undefined, options);
     }
 };
+
 function CustomTable({
                          showId = false,
                          data = rowsCustom,
@@ -91,6 +92,7 @@ function CustomTable({
                          }
                      }: CustomTableProps): JSX.Element {
 
+    console.log(data)
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(options.rowsPerPageCustom);

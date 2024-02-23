@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import dayjs from 'dayjs';
+import {API_REGISTRO} from "../../../config";
 
 /*export default deleteRecord = async (id) => {
     try {
@@ -204,3 +205,13 @@ export const postForm = async (
         console.error('Error:', error);
     }
 };
+
+
+export async function getDatos(endpoint:string=""){
+
+    const res = await fetch(`${API_REGISTRO}${endpoint}`)
+
+    if(!res.ok) throw new Error('Something went wrong')
+
+    return await res.json()
+}

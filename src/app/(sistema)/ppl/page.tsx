@@ -1,14 +1,13 @@
-'use client'
-
 import * as React from 'react';
-import {useEffect, useState} from 'react';
+
 import {Box, CircularProgress, Grid, Paper} from "@mui/material";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import {fetchData} from "@/components/utils/utils";
+import {API_REGISTRO} from "../../../../config";
 
-const ENDPOINT : string = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`
+
+const ENDPOINT : string = `/gestion_ppl/ppls`
 
 const header = [
     { id: 'id', label: 'ID' },
@@ -19,19 +18,22 @@ const header = [
     { id: 'estado_perfil', label: 'Estado Perfil' },
 ]
 
-export default function Page(){
-    const [data, setData] = useState(null);
+async function getDatos(endpoint:string=""){
+
+    const res = await fetch(`${API_REGISTRO}${endpoint}`)
+
+    if(!res.ok) throw new Error('Something went wrong')
+
+    return await res.json()
+}
+
+export default async function Page(){
+
+    const ppls_lista = await getDatos(ENDPOINT)
 
 
-    useEffect(() => {
-         // Puedes cambiar la URL según tus necesidades
-        fetchData(ENDPOINT)
-            .then(fetchedData => {
-                setData(fetchedData);
-            });
-    }, []);
 
-    if (!data) {
+    if (!ppls_lista) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -55,7 +57,7 @@ export default function Page(){
                         <Box p={3}>
                             <FiltrosTables/>
                         </Box>
-                        <CustomTable headers={header} data={data} showId={false}
+                        <CustomTable headers={header} data={ppls_lista} showId={false}
                                      options={{
                                          deleteOption: false,
                                          rowsPerPageCustom: 10,
