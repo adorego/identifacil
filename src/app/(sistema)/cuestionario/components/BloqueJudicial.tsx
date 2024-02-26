@@ -63,9 +63,11 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(estadoInicial)
     const [causas, setCausas] = useState<Array<causa>>([]);
     const [hechosPunibles, setHechosPunibles] = useState<Array<{ id:number; nombre:string; }>>([]);
-    const [oficios, setOficios] = useState<Array<oficio>>([]);
+    // const [oficios, setOficios] = useState<Array<oficio>>([]);
     const {openSnackbar} = useGlobalContext();
     const API_URL_REGISTRO = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}`
+
+    console.log(datosIniciales)
 
     useEffect(
         () => {
@@ -81,7 +83,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
         }, []
     )
 
-    useEffect(
+    /*useEffect(
         () => {
             const getOficios = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/oficios`;
@@ -109,7 +111,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
             getOficios();
 
         }, []
-    )
+    )*/
 
     const transformarSetearCausas = (causas: Array<causa>) => {
         console.log("Causas:", causas);

@@ -46,6 +46,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     //@ts-ignore
     const [datosFormulario, setDatosFormularios] = useState<CausaType>(causaInitialData);
     const [stateCamposForm, setStateCamposForm] = useState<formDatosType>({hechos_punibles: [], circunscripciones: [], ciudad: []})
+    const [privados_libertad, set_privados_libertad] = useState<Array<any>>([])
 
     const [loading, setLoading] = useState(true);
     const {openSnackbar} = useGlobalContext();
@@ -74,6 +75,34 @@ export default function FormCausa({params}: { params: { id: number | string } })
         })
 
     }, []);
+
+    // Se obtiene los modelos completos de PPL con el ID guardado en el array de ppl de la causa
+    useEffect(() => {
+        const obtenerPersonaPorId = async (id: number) => {
+            const response = await fetch(`${ENDPOINT_API}/gestion_ppl/ppls/id/${id}`);
+            if (!response.ok) throw new Error('Error al obtener la persona');
+            return response.json();
+        };
+
+
+        if (datosFormulario.ppls.length > 0 && datosFormulario.ppls.every(id => typeof id === 'number')) {
+
+            const promesas = datosFormulario.ppls.map((id)  => obtenerPersonaPorId(id)
+            );
+
+
+            Promise.all(promesas)
+                .then(personas => {
+                    setDatosFormularios(prev=>({
+                        ...prev,
+                        ppls:[...personas]
+                    }));
+
+                })
+                .catch(error => {console.error('Error al obtener las personas:', error);});
+        }
+
+    }, [datosFormulario.ppls]);
 
     const handleChange = (event: any) => {
         event.preventDefault();
@@ -116,7 +145,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
             ppls: datosFormulario.ppls.map(item=>item.id_persona)
         }
 
-
+        console.log(stateForm)
         postEntity(
             'POST',
             endpoint_api,
@@ -172,6 +201,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     return (
         <>
             <Box>
+
                 <Grid container spacing={2}>
                     <Grid item sm={12}>
                         <Typography variant='h6'>
@@ -524,6 +554,14 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             )))
                             : null}
                         </ul>
+                        <div>
+                            {privados_libertad.map((persona, index) => (
+                                <div key={index}>
+                                    {/* Renderiza la información de la persona aquí */}
+                                    {persona.nombre}
+                                </div>
+                            ))}
+                        </div>
                     </Grid>
 
                 </Grid>
