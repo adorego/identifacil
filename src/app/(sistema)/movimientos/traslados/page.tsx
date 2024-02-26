@@ -15,6 +15,7 @@ import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
+import {reclsusosData} from "@/app/dummyData/data";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -24,6 +25,8 @@ const header2 = [
     {id: 'origenTraslado', label: 'Origen'},
     {id: 'destinoTraslado', label: 'Destino'},
 ]
+
+const trasladosDummy = reclsusosData();
 
 export default function Ppl() {
     const { openSnackbar } = useGlobalContext();
@@ -78,20 +81,20 @@ export default function Ppl() {
     }
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
-    useEffect(() => {
+    /*useEffect(() => {
         fetchData()
             .then(fetchedData => {
 
                 setData(fetchedData);
             });
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+    }, []); */
 
     const handleFitros = (value : any) => {
         console.log(value)
         setFilterData(value)
     }
 
-    if (!data) {
+    if (!trasladosDummy.rowsCustom) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -114,13 +117,13 @@ export default function Ppl() {
                 {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
                 {/*Elemento de tabla de traslados filtros */}
                 <Box px={3} py={3}>
-                    <FiltrosTables dataSinFiltro={data} handleFiltro={handleFitros}/>
+                    <FiltrosTables dataSinFiltro={trasladosDummy.rowsCustom} handleFiltro={handleFitros}/>
                 </Box>
 
                 {/* Elemento Tabla de Traslado*/}
                 <Box>
                     <CustomTable
-                        data={filterData ? filterData : data}
+                        data={filterData ? filterData : trasladosDummy.rowsCustom}
                         headers={header2}
                         showId={true}
                         deleteRecord={handleOpenModal}

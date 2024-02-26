@@ -313,18 +313,17 @@ interface expediente_tipo{
 export type datosJudicialesType = {
     id_persona:number | null;
     numeroDeIdentificacion:string;
-    situacionJudicial: string;
+    situacionJudicial: boolean;
     situacionJudicial_modificado:boolean;
     primeraVezEnPrision: boolean;
     primeraVezEnPrision_modificado:boolean;
     cantidadDeIngresos: number;
     cantidadDeIngresos_modificado:boolean;
-    causa: string;
+    causa: number | null;
     causa_modificado:boolean;
-    oficio: string;
-    oficio_modificado:boolean;
-    ultimoTrabajo: string;
-    ultimoTrabajo_modificado:boolean;
+    /*oficio: string;
+    oficio_modificado:boolean;*/
+
     oficioJudicial: oficio_tipo;
     oficioJudicial_modificado:boolean;
     resolucion: resolucion_tipo;
@@ -337,23 +336,22 @@ export type datosJudicialesType = {
     hechoPunible_modificado:boolean;
     sentenciaDefinitiva?: string;
     sentenciaDefinitiva_modificado:boolean;
+    fecha_ingreso_a_establecimiento: Dayjs | null;
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
     id_persona:null,
     numeroDeIdentificacion:"",
-    situacionJudicial: "",
+    situacionJudicial: false,
     situacionJudicial_modificado:false,
-    primeraVezEnPrision: false,
+    primeraVezEnPrision: true,
     primeraVezEnPrision_modificado:false,
     cantidadDeIngresos: 0,
     cantidadDeIngresos_modificado:false,
-    causa:"",
+    causa: null,
     causa_modificado:false,
-    oficio: "",
-    oficio_modificado:false,
-    ultimoTrabajo: "",
-    ultimoTrabajo_modificado:false,
+    /*oficio: "",
+    oficio_modificado:false,*/
     oficioJudicial: {
         numeroDeDocumento:"",
         fechaDeDocumento:null,
@@ -377,6 +375,7 @@ export const datosJudicialesInicial:datosJudicialesType = {
     hechoPunible_modificado:false,
     sentenciaDefinitiva: "",
     sentenciaDefinitiva_modificado:false,
+    fecha_ingreso_a_establecimiento: null
 }
 
 export type circuloFamiliarStateType = {

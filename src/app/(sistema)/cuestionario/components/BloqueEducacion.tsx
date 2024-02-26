@@ -27,7 +27,6 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
     const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
     const {openSnackbar} = useGlobalContext();
 
-
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
         setEstadoFormularioDeEducacion(
@@ -87,7 +86,10 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
 
                 const respuesta = await api_request(url, {
                     method: methodForm,
-                    body: JSON.stringify(estadoFormularioDeEducacion),
+                    body: JSON.stringify({
+                        ...estadoFormularioDeEducacion,
+                        id_persona:id_persona,
+                    }),
                     headers: {
                         'Content-Type': 'application/json'
                     }

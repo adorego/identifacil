@@ -92,7 +92,6 @@ function CustomTable({
                          }
                      }: CustomTableProps): JSX.Element {
 
-    console.log(data)
 
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(options.rowsPerPageCustom);

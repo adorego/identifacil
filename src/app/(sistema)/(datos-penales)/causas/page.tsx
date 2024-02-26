@@ -21,9 +21,7 @@ const header = [
 
 
 async function getCausas(){
-
     const res = await fetch(`${API_REGISTRO}/datos_penales/causas`)
-
     if(!res.ok) throw new Error('Something went wrong')
 
     return await res.json()

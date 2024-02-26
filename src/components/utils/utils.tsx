@@ -1,6 +1,3 @@
-'use client'
-
-import * as React from 'react';
 
 import dayjs from 'dayjs';
 import {API_REGISTRO} from "../../../config";
@@ -43,14 +40,17 @@ export async function fetchData(url : string) {
 }
 
 export async function fetchFormData(id: any, entity: string) {
+
     try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/${entity}?id=${id}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${entity}?id=${id}`);
         if (!response.ok) {
             throw new Error('Error en la petición');
         }
 
         const data = await response.json();
+
         if (data.length > 0) {
+
             return data[0];
         }
 
@@ -106,8 +106,8 @@ export const filterByDateRange = (data: any[], startDate: string | number | Date
 
 /**
  * Filtra un array de objetos basado en un rango de fechas.
- * @param {string} isEditMode variable para saber si es un put o post
- * @param {string }endpoint
+ * @param form_method
+ * @param endpoint_api
  * @param {string} entityName Nombre de la tabla o entidad a actualizar
  * @param {number|string} params Es el valor del id del elemento consultado
  * @param {string} stateForm Datos del form
@@ -116,8 +116,8 @@ export const filterByDateRange = (data: any[], startDate: string | number | Date
  * @param router
  */
 export const postEntity = async (
-    isEditMode: string | number,
-    endpoint: string,
+    form_method: string,
+    endpoint_api: string,
     entityName: string,
     params: { id: number | string; },
     stateForm: any,
@@ -128,14 +128,17 @@ export const postEntity = async (
     try {
         setLoading(true);
 
-        const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
-        console.log(stateForm)
-        const url = isEditMode !== 'crear'
-            ? `http://localhost:5000/${endpoint}/${params.id}` // PUT
-            : `http://localhost:5000/${endpoint}`;                                             // POST
+
+
+        const url = form_method == 'PUT'
+            ? `${endpoint_api}/${params.id}` // PUT
+            : `${endpoint_api}`; // POST
+
+        // console.log(stateForm)
+        // console.log(form_method)
 
         const response = await fetch(url, {
-            method: method,
+            method: form_method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(stateForm),
         });
@@ -143,12 +146,12 @@ export const postEntity = async (
         setLoading(false);
 
         if (response.ok) {
-            const message = isEditMode
+            const message = form_method == 'PUT'
                 ? `${entityName} actualizada correctamente.`
                 : `${entityName} creada correctamente.`;
 
             openSnackbar(message, 'success');
-            router.push(`/${endpoint}`);
+            router.push(`/${entityName}`);
         } else {
             throw new Error('Error en la petición');
         }
@@ -163,7 +166,6 @@ export const postForm = async (
     isEditMode: boolean,
     endpoint: string,
     entityName: string,
-
     stateForm: any,
     setLoading: (arg0: boolean) => void,
     openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
