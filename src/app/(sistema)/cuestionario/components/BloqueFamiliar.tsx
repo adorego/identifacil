@@ -1,31 +1,33 @@
-import React, {FC, useEffect, useState} from "react";
 import {
     Box,
     Button,
     FormControl,
     FormControlLabel,
     FormLabel,
-    Grid, IconButton,
+    Grid,
+    IconButton,
     Radio,
-    RadioGroup, Stack, TextField, Typography,
+    RadioGroup,
+    Stack,
+    TextField,
+    Typography,
 } from "@mui/material";
-import {useGlobalContext} from "@/app/Context/store";
-import {useModal} from "@/components/modal/UseModal";
-import {ModalComponent} from "@/components/modal/ModalComponent";
-import {FormularioCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/FormularioCirculoFamiliar";
-import {TablaCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/TablaCirculoFamiliar";
-
+import React, {FC, useEffect, useState} from "react";
 import {
     circuloFamiliarStateInitial,
     circuloFamiliarStateType,
     datosFamiliaresInicial,
     datosFamiliaresType,
-
 } from "@/components/utils/systemTypes";
-import {postForm} from "@/components/utils/utils";
-import {useRouter} from "next/navigation";
-import {Delete} from "@mui/icons-material";
 
+import {Delete} from "@mui/icons-material";
+import {FormularioCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/FormularioCirculoFamiliar";
+import {ModalComponent} from "@/components/modal/ModalComponent";
+import {TablaCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/TablaCirculoFamiliar";
+import {postForm} from "@/components/utils/utils";
+import {useGlobalContext} from "@/app/Context/store";
+import {useModal} from "@/components/modal/UseModal";
+import {useRouter} from "next/navigation";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
