@@ -20,7 +20,7 @@ import {RequestResponse, api_request} from "@/lib/api-request";
 import {datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 
 import {DatePicker} from "@mui/x-date-pickers";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {MuiFileInput} from "mui-file-input";
 import log from "loglevel";
@@ -58,8 +58,7 @@ interface BloqueJudicialProps {
 }
 
 
-
-const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudicialesInicial, id_persona}) => {
+const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicialesInicial, id_persona}) => {
 
 
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
@@ -69,22 +68,53 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
     const {openSnackbar} = useGlobalContext();
     const API_URL_REGISTRO = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}`
 
-    console.log(datosIniciales)
+    // console.log(datosIniciales)
 
     useEffect(
         () => {
-            if(datosIniciales){
-                setEstadoFormularioJudicial((prev : any )=>({
-                    ...prev,
-                    ...datosIniciales,
-                    primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
-                    cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
-                    oficioJudicial:{
-                        ...prev.oficioJudicial,
-                        numeroDeDocumento: datosIniciales.expediente_numero_de_documento
-,                    }
-                }))
+            if (datosIniciales) {
+                setEstadoFormularioJudicial((prev: any) => {
+
+                    const oficioJudicialBuscado = datosIniciales.ingresos_a_prision[0].documentos_que_ordenan_prision.find(documento => documento.tipo === "oficio judicial");
+                    const resolucionBuscado = datosIniciales.ingresos_a_prision[0].documentos_que_ordenan_prision.find(documento => documento.tipo === "resolucion MJ");
+
+
+                    return ({
+                        ...prev,
+                        ...datosIniciales,
+                        primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
+                        cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
+                        /*oficioJudicial:{
+                            ...prev.oficioJudicial,
+                            numeroDeDocumento: datosIniciales.expediente_numero_de_documento
+                            numeroDeDocumento: datosIniciales.expediente_numero_de_documento
+    ,                   },*/
+                        expediente: {
+                            ...prev.expediente,
+                            numeroDeDocumento: datosIniciales.expediente_numero_de_documento,
+                            fechaDeDocumento: dayjs(datosIniciales.expediente_fecha_de_documento)
+                            ,
+                        },
+                        causa: datosIniciales.ingresos_a_prision[0].causa.id,
+                        hechoPunible: datosIniciales.hecho_punible?git .id,
+                        sentenciaDefinitiva: datosIniciales.sentencia_definitiva,
+                        fecha_ingreso_a_establecimiento: dayjs(datosIniciales.ingresos_a_prision[0].fecha_ingreso),
+                        oficioJudicial: {
+                            ...prev.oficioJudicial,
+                            numeroDeDocumento: oficioJudicialBuscado?.numero_documento,
+                            fechaDeDocumento:dayjs(oficioJudicialBuscado?.fecha),
+                            documento: oficioJudicialBuscado?.ruta
+                        },
+                        resolucion: {
+                            ...prev.oficioJudicial,
+                            numeroDeDocumento: resolucionBuscado?.numero_documento,
+                            fechaDeDocumento:dayjs(resolucionBuscado?.fecha),
+                            documento: resolucionBuscado?.ruta
+                        },
+                    })
+                })
             }
+
 
             fetchData(`${API_URL_REGISTRO}/datos_penales/causas`).then(res => {
                 // console.log(res)
@@ -128,13 +158,13 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
         }, []
     )*/
 
-    const transformarSetearCausas = (causas: Array<causa>) => {
+    /*const transformarSetearCausas = (causas: Array<causa>) => {
         console.log("Causas:", causas);
         setCausas(causas);
 
-    }
+    }*/
     const onDatoChange = (event: any) => {
-        console.log(event);
+        // console.log(event);
         setEstadoFormularioJudicial(
             (previus) => {
                 return (
@@ -248,7 +278,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
     }
 
     const onOptionSelectChange = (event: SelectChangeEvent<string | number | null>) => {
-        console.log("Value:", event.target.value);
+        // console.log("Value:", event.target.value);
         setEstadoFormularioJudicial(
             (previus) => {
                 return (
@@ -262,6 +292,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
             }
         )
     }
+
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         if (id_persona != null) {
@@ -298,8 +329,9 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
         formData.append('primeraVezEnPrision', String(datos.primeraVezEnPrision));
         formData.append('primeraVezEnPrision_modificado', String(datos.primeraVezEnPrision_modificado));
         formData.append('cantidadDeIngresos', String(datos.cantidadDeIngresos));
-        formData.append('cantidadDeIngresos_modificado', String(datos.cantidadDeIngresos_modificado));
         formData.append('causa', String(datos.causa));
+        formData.append('caratula', String(datos.caratula));
+        formData.append('hechoPunible', String(datos.hechoPunible));
         formData.append('causa_modificado', String(datos.causa_modificado));
         /*formData.append('oficio', datos.oficio);
         formData.append('oficio_modificado', String(datos.oficio_modificado));*/
@@ -313,6 +345,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
         formData.append('expediente_numeroDeDocumento', datos.expediente.numeroDeDocumento);
         formData.append('expediente_fechaDeDocumento', datos.expediente.fechaDeDocumento?.toISOString() ? datos.expediente.fechaDeDocumento?.toISOString() : "");
         formData.append('fecha_ingreso_a_establecimiento', datos.fecha_ingreso_a_establecimiento?.toISOString() ? datos.fecha_ingreso_a_establecimiento?.toISOString() : "");
+        formData.append('sentenciaDefinitiva', datos.sentenciaDefinitiva ? datos.sentenciaDefinitiva : "");
+        formData.append('sentenciaDefinitiva', datos.sentenciaDefinitiva ? datos.sentenciaDefinitiva : "");
 
         return formData;
 
@@ -410,7 +444,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
 
                 <Grid item sm={12} mt={1}>
                     <FormControl fullWidth variant="outlined">
-                        <InputLabel htmlFor="causa">Causa</InputLabel>
+                        <InputLabel shrink htmlFor="causa">Causa</InputLabel>
                         <Select
                             value={estadoFormularioJudicial.causa}
                             onChange={onOptionSelectChange}
@@ -476,12 +510,12 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
                         <Grid item>
                             <FormControl>
 
-                                    <DatePicker
+                                <DatePicker
 
-                                        value={estadoFormularioJudicial.oficioJudicial.fechaDeDocumento}
-                                        format="DD/MM/YYYY"
-                                        onChange={onOficioJudicialFechaChange}
-                                        label={"Fecha del documento"}/>
+                                    value={estadoFormularioJudicial.oficioJudicial.fechaDeDocumento}
+                                    format="DD/MM/YYYY"
+                                    onChange={onOficioJudicialFechaChange}
+                                    label={"Fecha del documento"}/>
 
                             </FormControl>
 
@@ -522,14 +556,14 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
                     </FormControl>
                 </Grid>
                 <Grid item>
-                    <FormControl >
+                    <FormControl>
 
-                            <DatePicker
+                        <DatePicker
 
-                                value={estadoFormularioJudicial.resolucion.fechaDeDocumento}
-                                format="DD/MM/YYYY"
-                                onChange={onResolucionMJFechaChange}
-                                label={"Fecha del documento"}/>
+                            value={estadoFormularioJudicial.resolucion.fechaDeDocumento}
+                            format="DD/MM/YYYY"
+                            onChange={onResolucionMJFechaChange}
+                            label={"Fecha del documento"}/>
 
                     </FormControl>
 
@@ -611,7 +645,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
                                 format="DD/MM/YYYY"
                                 name='fecha_ingreso_a_establecimiento'
 
-                                onChange={(newValue : Dayjs|null) => {
+                                onChange={(newValue: Dayjs | null) => {
                                     setEstadoFormularioJudicial(prevState => ({
                                         ...prevState,
                                         fecha_ingreso_a_establecimiento: newValue,
