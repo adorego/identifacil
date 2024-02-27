@@ -1,37 +1,49 @@
-'use client'
-
+import {API_REGISTRO} from '@/../config'
 import * as React from 'react';
 
 import {Box, CircularProgress, Paper} from "@mui/material";
-import {useEffect, useState} from "react";
+
 
 import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {fetchData} from "@/components/utils/utils";
 
 const header = [
     { id: 'caratula_causa', label: 'Caratula' },
     { id: 'numeroDeExpediente', label: 'Nro. de la causa' },
-    { id: 'hechoPunible', label: 'Hecho punible' },
+    { id: 'numeroDeDocumento', label: 'Documento' },
+    { id: 'anho', label: 'Año' },
     { id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento' },
     { id: 'condenado', label: 'Condenado' },
     { id: 'estado_procesal', label: 'Situación procesal' },
 ]
 
-export default function Page(){
 
-    const [data, setData] = useState(null);
-    console.log('Causas:', data);
-    useEffect(() => {
+
+async function getCausas(){
+    const res = await fetch(`${API_REGISTRO}/datos_penales/causas`)
+    if(!res.ok) throw new Error('Something went wrong')
+
+    return await res.json()
+}
+
+export default async function Page(){
+
+    // const [data, setData] = useState(null);
+    const causas = await getCausas()
+
+    console.log(causas)
+
+    const data = null
+    /*useEffect(() => {
         const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`;
         fetchData(apiUrl)
             .then(fetchedData => {
                 setData(fetchedData);
             });
-    }, []);
+    }, []);*/
 
-    if (!data) {
+    if (!causas) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -57,7 +69,7 @@ export default function Page(){
                     </Box>
                     <CustomTable
                         headers={header}
-                        data={data}
+                        data={causas}
                         showId={true}
                         options={{
                             rowsPerPageCustom:5,

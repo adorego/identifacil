@@ -204,6 +204,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                                   datosFamiliaresIniciales={datosPersona.datosFamiliares}/>
                             </CustomTabPanel>
 
+
                             <CustomTabPanel value={value} index={5}>
                                 <BloqueJudicial id_persona={datosPersona.id_persona}
                                                 datosIniciales={datosPersona.datosJudiciales}/>

@@ -65,7 +65,7 @@ export default function FormRegister() {
     const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
 
 
-    console.log("Identidad:", identidad);
+    // console.log("Identidad:", identidad);
     useEffect(
         () => {
             switch (activeStep) {
@@ -100,7 +100,7 @@ export default function FormRegister() {
 
 
     const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
-        console.log("Datos de identificacion:", identificacion);
+        // console.log("Datos de identificacion:", identificacion);
         identidad.current = identificacion;
     }
 

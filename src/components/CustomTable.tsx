@@ -74,6 +74,7 @@ const formatDate = (dateString:string | null | number) => {
         return date.toLocaleDateString(undefined, options);
     }
 };
+
 function CustomTable({
                          showId = false,
                          data = rowsCustom,

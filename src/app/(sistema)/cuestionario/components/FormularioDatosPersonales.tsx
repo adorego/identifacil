@@ -121,6 +121,7 @@ export interface BloqueDatosPersonalesProps{
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentificacion }) => {
 
+
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial
     });
@@ -281,29 +282,23 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({ datosDeIdentifi
     const onDatosPersonalesSubmit = async (event:React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
-        console.log(datosDeIdentificacion)
         const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
-
         const url = datosDeIdentificacion.id_datos_personales ?
             `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
             : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
-
-
-
         const datosDelFormulario:datosPersonales = Object.assign({},datosPersonalesState);
 
-        console.log('URL -> ' + url)
-        console.log(datosDelFormulario)
+        console.log(JSON.stringify({
+            ...datosDelFormulario,
+            genero: datosDelFormulario.codigo_genero,
+        }))
 
-        // datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad;
-
-        const respuesta = await api_request(url,{
+         const respuesta = await api_request(url,{
             method: methodForm,
             body:JSON.stringify(datosDelFormulario),
             headers: {
                 'Content-Type': 'application/json'
             }
-
         })
         if(respuesta.success){
             openSnackbar("Datos guardados correctamente","success")

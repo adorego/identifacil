@@ -297,11 +297,13 @@ export default function Page({ params }: { params: { id: number } }) {
         }
     };
 
+
+
     // Manejador de envio
     const handleSubmit = () => {
-
+        const form_method = !isEditMode? 'POST' : 'PUT'
         postEntity(
-            isEditMode,
+            'POST',
             'traslados',
             'Traslados',
             params,
