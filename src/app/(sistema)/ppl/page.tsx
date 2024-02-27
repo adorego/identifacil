@@ -1,10 +1,13 @@
+'use client'
+
 import * as React from 'react';
 
 import {Box, CircularProgress, Grid, Paper} from "@mui/material";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import {API_REGISTRO} from '@/../config'
+import {useEffect, useState} from "react";
+import {fetchData} from "@/components/utils/utils";
 
 
 const ENDPOINT : string = `/gestion_ppl/ppls`
@@ -18,23 +21,45 @@ const header = [
     { id: 'estado_perfil', label: 'Estado Perfil' },
 ]
 
-async function getDatos(endpoint:string=""){
+/*async function getDatos(endpoint:string=""){
 
-    const res = await fetch(`${API_REGISTRO}${endpoint}`)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${endpoint}`)
 
-    console.log('PPL PAGE ' + `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${endpoint}`)
+
     if(!res.ok) throw new Error('Something went wrong')
 
     return await res.json()
-}
+}*/
 
-export default async function Page(){
+export default function Page(){
 
-    const ppls_lista = await getDatos(ENDPOINT)
+    const [listaPersonas, setListaPersonas] = useState([])
+
+    async function fetchData() {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error al realizar la solicitud fetch:', error);
+            return null; // o manejar el error de manera adecuada
+        }
+    }
+
+    useEffect(() => {
+        console.log('get ppl')
+        fetchData()
+            .then(fetchedData => {
+                setListaPersonas(fetchedData);
+            });
+    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
 
 
-    if (!ppls_lista) {
+    if (listaPersonas.length <= 0) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -58,7 +83,7 @@ export default async function Page(){
                         {/*<Box p={3}>
                             <FiltrosTables/>
                         </Box>*/}
-                        <CustomTable headers={header} data={ppls_lista} showId={false}
+                        <CustomTable headers={header} data={listaPersonas} showId={false}
                                      options={{
                                          deleteOption: false,
                                          rowsPerPageCustom: 10,
