@@ -1,3 +1,4 @@
+import {Dayjs} from "dayjs";
 
 
 export type CausaType = {
@@ -14,9 +15,9 @@ export type CausaType = {
     hechos_punibles:{id:number; nombre: string;}[];
     ppls:Array<{id_persona:number |null; nombre: string;  apellido: string}>;
     tiempo_de_condena: number | null;
-    fecha_de_aprehension: Date | string | null;
-    fecha_de_compurgamiento_inicial: string | null;
-    fecha_de_compurgamiento_recalculada: string | null;
+    fecha_de_aprehension: Dayjs | null;
+    fecha_de_compurgamiento_inicial: Dayjs | null;
+    fecha_de_compurgamiento_recalculada: Dayjs | null;
     tiene_anhos_extra_de_seguridad: boolean; // booleano local para saber si mostrar el controlador
     tiempo_de_seguridad: number | null;
     sentencia_definitiva: string | null;
