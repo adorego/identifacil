@@ -20,7 +20,7 @@ import {fetchData, fetchFormData, postEntity} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 import {DatePicker} from "@mui/x-date-pickers";
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import MenuItem from "@mui/material/MenuItem";
 import ModalPersona from "@/app/(sistema)/(datos-penales)/componentes/ModalPersona";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -106,8 +106,33 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     const handleChange = (event: any) => {
         event.preventDefault();
+
         handleInputChange(event, datosFormulario, setDatosFormularios);
+        if(event.target.name == 'numeroDeDocumento'){
+            setDatosFormularios(prevState => ({
+                ...prevState,
+                numeroDeExpediente: parseInt(event.target.value),
+            }))
+        }
     };
+    const handleDefensor = (event: { target: { name: any; value: any; }; }) =>{
+        console.log(event.target.name)
+        setDatosFormularios(prev=>({
+            ...prev,
+            defensor:{
+                ...prev.defensor,
+                [event.target.name] : event.target.value,
+            }
+        }))
+    }
+
+    const handleDespachoJudicial = (event: { target: { name: any; value: any; }; }) =>{
+        setDatosFormularios(prev=>({
+            ...prev,
+            despacho_judicial: parseInt(event.target.value),
+            juzgado_de_tribunal_de_sentencia: String(event.target.value),
+        }))
+    }
 
     const handlerPersona = (persona: {id_persona:number | null; nombre:string; apellido:string;}) =>{
         if(!datosFormulario.ppls.some(item=> item.id_persona == persona.id_persona)){
@@ -234,8 +259,14 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <DatePicker
                                 format="DD/MM/YYYY"
                                 name='fechaAprension'
-                                value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : ''}
-                                onChange={handleChange}
+                                value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : null}
+                                onChange={(newValue: Dayjs | null) => {
+                                    setDatosFormularios(prevState => ({
+                                        ...prevState,
+                                        fecha_de_aprehension: newValue,
+                                        fecha_de_aprehension_modificado: true,
+                                    }))
+                                }}
                                 label="Fecha de aprension y detención"/>
 
                         </FormControl>
@@ -322,7 +353,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             label="Meses"
                             variant="outlined"
                             value={datosFormulario.tiempo_de_condena}
-                            name="tiempoDeCondenaMeses"
+                            name="tiempo_de_condena"
                             onChange={handleChange}/>
                     </Grid>
                 </Grid>
@@ -334,7 +365,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <RadioGroup
                                 row
                                 aria-labelledby="anhosDeExtraSeguridad"
-                                name="anosExtrasDeCondenaPorMedidaDeSeguridad"
+                                name="tiene_anhos_extra_de_seguridad"
                                 onChange={handleChange}
                                 value={datosFormulario.tiene_anhos_extra_de_seguridad}
                             >
@@ -351,7 +382,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             label="Meses"
                             variant="outlined"
                             value={datosFormulario.tiempo_de_seguridad}
-                            name="mesesDeCondenaPorMedidasDeSeguridad"
+                            name="tiempo_de_seguridad"
                             onChange={handleChange}/>
                     </Grid>
                     {/*<Grid item sm={3}>
@@ -372,7 +403,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             label="Sentencia definitiva"
                             variant="outlined"
                             value={datosFormulario.sentencia_definitiva}
-                            name="sentenciaDefinitiva"
+                            name="sentencia_definitiva"
                             onChange={handleChange}/>
                     </Grid>
                     <Grid item sm={7}>
@@ -381,7 +412,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             label="En caracter de"
                             variant="outlined"
                             value={datosFormulario.sentencia_definitiva}
-                            name="sentenciaDescripcion"
+                            name="sentencia_definitiva"
                             onChange={handleChange}/>
                     </Grid>
                 </Grid>
@@ -392,8 +423,14 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <DatePicker
                                 format="DD/MM/YYYY"
                                 name='compurgamiento'
-                                value={datosFormulario.fecha_de_compurgamiento_inicial ? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : ''}
-                                onChange={handleChange}
+                                value={datosFormulario.fecha_de_compurgamiento_inicial ? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : null}
+                                onChange={(newValue: Dayjs | null) => {
+                                    setDatosFormularios(prevState => ({
+                                        ...prevState,
+                                        fecha_de_compurgamiento_inicial: newValue,
+                                        fecha_de_compurgamiento_inicial_modificado: true,
+                                    }))
+                                }}
                                 label="Compurgamiento inicial"/>
                         </FormControl>
                     </Grid>
@@ -402,8 +439,14 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <DatePicker
                                 format="DD/MM/YYYY"
                                 name='fechaCompurgamientoCalculada'
-                                value={datosFormulario.fecha_de_compurgamiento_recalculada ? dayjs(datosFormulario.fecha_de_compurgamiento_recalculada) : ''}
-                                onChange={handleChange}
+                                value={datosFormulario.fecha_de_compurgamiento_recalculada ? dayjs(datosFormulario.fecha_de_compurgamiento_recalculada) : null}
+                                onChange={(newValue: Dayjs | null) => {
+                                    setDatosFormularios(prevState => ({
+                                        ...prevState,
+                                        fecha_de_compurgamiento_recalculada: newValue,
+                                        fecha_de_compurgamiento_recalculada_modificado: true,
+                                    }))
+                                }}
                                 label="Compurgamiento recalculado"/>
                         </FormControl>
                     </Grid>
@@ -416,6 +459,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <Select
                                 labelId="circunscripcion-field"
                                 id="circunscripcion"
+                                name='circunscripcion'
                                 value={datosFormulario.circunscripcion}
                                 label="circunscripcion"
                                 onChange={handleChange}
@@ -435,13 +479,21 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 </Grid>
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            label="Juzgado de tribunal de sentencia"
-                            variant="outlined"
-                            value={datosFormulario.juzgado_de_tribunal_de_sentencia}
-                            name="juzgado_de_tribunal_de_sentencia"
-                            onChange={handleChange}/>
+
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Juzgado de tribunal de sentencia</InputLabel>
+                            <Select
+                                label="Juzgado de tribunal de sentencia"
+                                variant="outlined"
+                                value={typeof  datosFormulario.juzgado_de_tribunal_de_sentencia == 'number' ? String(datosFormulario.juzgado_de_tribunal_de_sentencia ) : datosFormulario.juzgado_de_tribunal_de_sentencia}
+                                name="juzgado_de_tribunal_de_sentencia"
+                                onChange={handleDespachoJudicial}
+                            >
+                                <MenuItem value={''}>Seleccionar dato</MenuItem>
+                                <MenuItem value={1}>Juzgado San Lorenzo</MenuItem>
+                                <MenuItem value={0}>Asuncion</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Grid>
                     <Grid item sm={6}>
                         <TextField
@@ -496,8 +548,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 label="Tipo"
                                 variant="outlined"
                                 value={datosFormulario.defensor.tipo}
-                                name="defensor"
-                                onChange={handleChange}
+                                name="tipo"
+                                onChange={handleDefensor}
                             >
                                 <MenuItem value={'publico'}>Publico</MenuItem>
                                 <MenuItem value={'privado'}>Privado</MenuItem>
@@ -512,7 +564,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             variant="outlined"
                             value={datosFormulario.defensor.nombre ? datosFormulario.defensor.nombre : ''}
                             name="nombre"
-                            onChange={handleChange}/>
+                            onChange={handleDefensor}/>
                     </Grid>
                     <Grid item sm={3}>
                         <TextField
@@ -521,7 +573,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             variant="outlined"
                             value={datosFormulario.defensor.apellido ? datosFormulario.defensor.apellido : ''}
                             name="apellido"
-                            onChange={handleChange}/>
+                            onChange={handleDefensor}/>
                     </Grid>
                     <Grid item sm={3}>
                         <TextField
@@ -529,8 +581,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             label="Telefono"
                             variant="outlined"
                             value={datosFormulario.defensor.telefono ? datosFormulario.defensor.telefono : ''}
-                            name="telefonoDelDefensor"
-                            onChange={handleChange}/>
+                            name="telefono"
+                            onChange={handleDefensor}/>
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} mt={1}>

@@ -501,6 +501,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             <FormControl fullWidth>
                                 <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
                                 <OutlinedInput
+                                    required
                                     name="oficioJudicial.numeroDeDocumento"
                                     value={estadoFormularioJudicial.oficioJudicial.numeroDeDocumento}
                                     label="Nro. de documento"
@@ -511,7 +512,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             <FormControl>
 
                                 <DatePicker
-
                                     value={estadoFormularioJudicial.oficioJudicial.fechaDeDocumento}
                                     format="DD/MM/YYYY"
                                     onChange={onOficioJudicialFechaChange}
@@ -524,6 +524,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                         <Grid item sm={5}>
                             <FormControl fullWidth>
                                 <MuiFileInput
+                                    required
                                     title="Titulo"
                                     value={estadoFormularioJudicial.oficioJudicial.documento}
                                     variant="outlined"
@@ -549,6 +550,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                     <FormControl fullWidth>
                         <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
                         <OutlinedInput
+                            required
                             name="resolucion.numeroDeDocumento"
                             value={estadoFormularioJudicial.resolucion.numeroDeDocumento}
                             label="Nro. de documento"
@@ -571,6 +573,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                 <Grid item>
                     <FormControl fullWidth>
                         <MuiFileInput
+                            required
                             value={estadoFormularioJudicial.resolucion.documento}
                             variant="outlined"
                             label="Seleccionar documento"
@@ -589,6 +592,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                     <FormControl fullWidth>
                         <InputLabel htmlFor="documentoOficioJudicial">Nro. de documento</InputLabel>
                         <OutlinedInput
+                            required
                             name="expediente.numeroDeDocumento"
                             value={estadoFormularioJudicial.expediente.numeroDeDocumento}
                             label="Nro. de documento"
@@ -598,6 +602,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                 <Grid item>
                     <FormControl>
                         <DatePicker
+
                             value={estadoFormularioJudicial.expediente.fechaDeDocumento}
                             format="DD/MM/YYYY"
                             onChange={onExpedienteFechaChange}
