@@ -96,7 +96,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             ,
                         },
                         causa: datosIniciales.ingresos_a_prision[0].causa.id,
-                        hechoPunible: datosIniciales.hecho_punible?git .id,
+                        hechoPunible: datosIniciales.hecho_punible?.id,
                         sentenciaDefinitiva: datosIniciales.sentencia_definitiva,
                         fecha_ingreso_a_establecimiento: dayjs(datosIniciales.ingresos_a_prision[0].fecha_ingreso),
                         oficioJudicial: {
