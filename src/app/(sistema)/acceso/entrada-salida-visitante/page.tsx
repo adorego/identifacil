@@ -38,9 +38,10 @@ const datosInicialesPplAVisitar = {
 }
 
 interface RespuestaAConsultaPPL {
+    id_persona: any;
     success: boolean;
-    nombres: string;
-    apellidos: string;
+    nombre: string;
+    apellido: string;
 }
 
 interface SolicitudEntradaVisitante {
@@ -115,30 +116,60 @@ export default function EntradaSalidaVisitante() {
                 }
             }
         )
+
     }
-    const onConsultarManejador = async (event: React.MouseEvent<HTMLButtonElement>) => {
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/ppl_con_cedula`;
-        const dataToSend = {
-            numeroDeIdentifiicacion: pplAVisitar.cedula
-        }
-        const response = await fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(dataToSend),
-            headers: {
-                'Content-Type': 'application/json'
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log(event.target.value)
+        setEntradaVisitante(
+            (previus) => {
+                return {
+                    ...previus,
+                    [event.target.name]: event.target.value
+                }
             }
+        )
+    }
 
-        });
+    const onConsultarManejador = async (event: React.MouseEvent<HTMLButtonElement>) => {
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/cedula/${pplAVisitar.cedula}`;
 
-        if (!response.ok) {
-            const data = await response.json();
-            openSnackbar(`Error en la consulta:${data.message}`, "error");
-            log.error('Ocurrio un error:', data);
-        } else {
-            const datosPPL: RespuestaAConsultaPPL = await response.json();
-            pplAVisitar.nombre = datosPPL.nombres;
-            pplAVisitar.apellido = datosPPL.apellidos;
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+
+            });
+
+            if (!response.ok) {
+                throw new Error('Error en la petición');
+            }
+            const data: RespuestaAConsultaPPL = await response.json();
+            console.log(data)
+
+
+            if (!response.ok) {
+                console.log(' error')
+                throw new Error('Error en la petición');
+                log.error('Ocurrio un error:', data);
+            }
+            if(data.id_persona){
+                console.log('dataaaa')
+
+                setPPLIdentificado(true)
+                setpplAVisitar(prev=>({
+                    ...prev,
+                    nombre: data.nombre,
+                    apellido: data.apellido,
+                }))
+            }
+        }catch(error){
+            console.error('Error:', error);
+            return null;
         }
+
     }
 
     const onEntradaSalidaSelectChange = (event: ChangeEvent<HTMLInputElement>, value: string) => {
@@ -157,6 +188,7 @@ export default function EntradaSalidaVisitante() {
 
     return (
         <>
+
             <FormControl className={style.form}>
                 <Typography variant="h6">Entrada/Salida Visitante</Typography>
                 <Box mt={3} sx={{
@@ -266,6 +298,7 @@ export default function EntradaSalidaVisitante() {
                                         <Grid item sm={12}>
                                             <FormControl fullWidth={true}>
                                                 <TextField
+                                                    InputLabelProps={{ shrink: true }}
                                                     label={"Nombres"}
                                                     value={pplAVisitar.nombre}
                                                     disabled={true}>
@@ -277,6 +310,7 @@ export default function EntradaSalidaVisitante() {
                                         <Grid item sm={12}>
                                             <FormControl fullWidth={true}>
                                                 <TextField
+                                                    InputLabelProps={{ shrink: true }}
                                                     label={"Apellidos"}
                                                     value={pplAVisitar.apellido}
                                                     disabled={true}>
@@ -319,9 +353,10 @@ export default function EntradaSalidaVisitante() {
                                                             multiline
                                                             minRows={3}
                                                             label={"Observación"}
+                                                            name="observacion"
                                                             value={entradaVisitante.observacion}
+                                                            onChange={handleChange}
                                                             disabled={false}>
-
                                                         </TextField>
                                                     </FormControl>
 
