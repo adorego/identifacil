@@ -4,7 +4,7 @@ import {Box, CircularProgress, Grid, Paper} from "@mui/material";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import {API_REGISTRO} from "../../../../config";
+import {API_REGISTRO} from '@/../config'
 
 
 const ENDPOINT : string = `/gestion_ppl/ppls`
@@ -22,6 +22,7 @@ async function getDatos(endpoint:string=""){
 
     const res = await fetch(`${API_REGISTRO}${endpoint}`)
 
+    console.log('PPL PAGE ' + `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${endpoint}`)
     if(!res.ok) throw new Error('Something went wrong')
 
     return await res.json()
