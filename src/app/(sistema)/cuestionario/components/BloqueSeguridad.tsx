@@ -24,7 +24,7 @@ interface BloqueSeguridadProps {
 
 const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona}) => {
 
-
+    console.log(id_persona)
     const estadoIncial = datosIniciales ? datosIniciales : datosSeguridadInicial
     const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(estadoIncial);
     const {openSnackbar} = useGlobalContext();
@@ -75,20 +75,20 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        const methodForm = datosIniciales.id ? 'PUT' : 'POST';
+        const methodForm = datosIniciales?.id  ? 'PUT' : 'POST';
         console.log(estadoBloqueSeguridadFormulario)
         if (id_persona) {
-            const url = datosIniciales.id ?
+            const url = datosIniciales?.id ?
                 `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${datosIniciales.id}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
 
 
 
-            console.log(JSON.stringify(estadoBloqueSeguridadFormulario))
+            //console.log(JSON.stringify(estadoBloqueSeguridadFormulario))
 
             const respuesta = await api_request(url, {
                 method: methodForm,
-                body: JSON.stringify(estadoBloqueSeguridadFormulario),
+                body: JSON.stringify({...estadoBloqueSeguridadFormulario, id_persona: id_persona}),
                 headers: {
                     'Content-Type': 'application/json'
                 }
