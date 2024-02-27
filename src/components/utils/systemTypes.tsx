@@ -314,6 +314,7 @@ export type datosJudicialesType = {
     primera_vez_en_prision: boolean;
     cantidad_de_veces_que_ingreso: number;
     expediente_numero_de_documento: string | null;
+    expediente_fecha_de_documento: string | null;
     id_persona:number | null;
     numeroDeIdentificacion:string;
     situacionJudicial: boolean;
@@ -340,10 +341,17 @@ export type datosJudicialesType = {
     sentenciaDefinitiva?: string;
     sentenciaDefinitiva_modificado:boolean;
     fecha_ingreso_a_establecimiento: Dayjs | null;
+    ingresos_a_prision:Array<{
+        causa: {
+            id: number | null;
+        }
+    }>
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
+    ingresos_a_prision:[{causa: {id:0},}],
     expediente_numero_de_documento: '',
+    expediente_fecha_de_documento: '',
     cantidad_de_veces_que_ingreso:0,
     primera_vez_en_prision: true,
     id_persona:null,

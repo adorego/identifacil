@@ -20,7 +20,7 @@ import {RequestResponse, api_request} from "@/lib/api-request";
 import {datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 
 import {DatePicker} from "@mui/x-date-pickers";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {MuiFileInput} from "mui-file-input";
 import log from "loglevel";
@@ -69,7 +69,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
     const {openSnackbar} = useGlobalContext();
     const API_URL_REGISTRO = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}`
 
-    console.log(datosIniciales)
+    // console.log(datosIniciales)
 
     useEffect(
         () => {
@@ -79,12 +79,20 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
                     ...datosIniciales,
                     primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
                     cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
-                    oficioJudicial:{
+                    /*oficioJudicial:{
                         ...prev.oficioJudicial,
                         numeroDeDocumento: datosIniciales.expediente_numero_de_documento
-,                    }
+                        numeroDeDocumento: datosIniciales.expediente_numero_de_documento
+,                   },*/
+                    expediente:{
+                        ...prev.expediente,
+                        numeroDeDocumento: datosIniciales.expediente_numero_de_documento,
+                        fechaDeDocumento: dayjs(datosIniciales.expediente_fecha_de_documento)
+,                   },
+                    causa: datosIniciales.ingresos_a_prision[0].causa.id
                 }))
             }
+
 
             fetchData(`${API_URL_REGISTRO}/datos_penales/causas`).then(res => {
                 // console.log(res)
@@ -128,13 +136,13 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
         }, []
     )*/
 
-    const transformarSetearCausas = (causas: Array<causa>) => {
+    /*const transformarSetearCausas = (causas: Array<causa>) => {
         console.log("Causas:", causas);
         setCausas(causas);
 
-    }
+    }*/
     const onDatoChange = (event: any) => {
-        console.log(event);
+        // console.log(event);
         setEstadoFormularioJudicial(
             (previus) => {
                 return (
@@ -248,7 +256,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
     }
 
     const onOptionSelectChange = (event: SelectChangeEvent<string | number | null>) => {
-        console.log("Value:", event.target.value);
+        // console.log("Value:", event.target.value);
         setEstadoFormularioJudicial(
             (previus) => {
                 return (
@@ -300,6 +308,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
         formData.append('cantidadDeIngresos', String(datos.cantidadDeIngresos));
         formData.append('cantidadDeIngresos_modificado', String(datos.cantidadDeIngresos_modificado));
         formData.append('causa', String(datos.causa));
+        formData.append('caratula', String(datos.caratula));
+        formData.append('hechoPunible', String(datos.hechoPunible));
         formData.append('causa_modificado', String(datos.causa_modificado));
         /*formData.append('oficio', datos.oficio);
         formData.append('oficio_modificado', String(datos.oficio_modificado));*/
@@ -410,7 +420,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales   = datosJudici
 
                 <Grid item sm={12} mt={1}>
                     <FormControl fullWidth variant="outlined">
-                        <InputLabel htmlFor="causa">Causa</InputLabel>
+                        <InputLabel shrink htmlFor="causa">Causa</InputLabel>
                         <Select
                             value={estadoFormularioJudicial.causa}
                             onChange={onOptionSelectChange}
