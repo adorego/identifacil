@@ -54,9 +54,9 @@ export default async function Page(){
             <Grid container mt={3}>
                 <Grid item sm={12}>
                     <Paper elevation={1}>
-                        <Box p={3}>
+                        {/*<Box p={3}>
                             <FiltrosTables/>
-                        </Box>
+                        </Box>*/}
                         <CustomTable headers={header} data={ppls_lista} showId={false}
                                      options={{
                                          deleteOption: false,

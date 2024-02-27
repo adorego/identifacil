@@ -78,7 +78,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     // Se obtiene los modelos completos de PPL con el ID guardado en el array de ppl de la causa
     useEffect(() => {
-        const obtenerPersonaPorId = async (id: number) => {
+        const obtenerPersonaPorId = async (id: { id_persona: number | null; nombre: string; apellido: string } | number) => {
             const response = await fetch(`${ENDPOINT_API}/gestion_ppl/ppls/id/${id}`);
             if (!response.ok) throw new Error('Error al obtener la persona');
             return response.json();

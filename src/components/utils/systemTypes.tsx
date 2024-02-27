@@ -311,6 +311,9 @@ interface expediente_tipo{
 }
 
 export type datosJudicialesType = {
+    primera_vez_en_prision: boolean;
+    cantidad_de_veces_que_ingreso: number;
+    expediente_numero_de_documento: string | null;
     id_persona:number | null;
     numeroDeIdentificacion:string;
     situacionJudicial: boolean;
@@ -340,6 +343,9 @@ export type datosJudicialesType = {
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
+    expediente_numero_de_documento: '',
+    cantidad_de_veces_que_ingreso:0,
+    primera_vez_en_prision: true,
     id_persona:null,
     numeroDeIdentificacion:"",
     situacionJudicial: false,
