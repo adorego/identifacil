@@ -2,7 +2,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid,
     InputLabel,
@@ -12,7 +12,7 @@ import {
     RadioGroup,
     Select,
     SelectChangeEvent,
-    Stack,
+    Stack, TextField,
     Typography
 } from "@mui/material";
 import React, {FC, useEffect, useState} from "react";
@@ -20,11 +20,12 @@ import {RequestResponse, api_request} from "@/lib/api-request";
 import {datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 
 import {DatePicker} from "@mui/x-date-pickers";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {MuiFileInput} from "mui-file-input";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {fetchData} from "@/components/utils/utils";
 
 interface oficiosDTO {
     oficios: Array<oficio>;
@@ -38,7 +39,7 @@ interface oficio {
 
 interface causa {
     id: number;
-    numero_expediente: string;
+    numeroDeExpediente: string;
     anho: string;
     caratula_causa: string;
     condenado: boolean;
@@ -56,51 +57,78 @@ interface BloqueJudicialProps {
     id_persona: number | null;
 }
 
+
 const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicialesInicial, id_persona}) => {
 
-    const estadoInicial = datosIniciales ? datosIniciales : datosJudicialesInicial;
-    const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(estadoInicial)
-    const [causas, setCausas] = useState<Array<causa>>([]);
-    const [oficios, setOficios] = useState<Array<oficio>>([]);
-    const {openSnackbar} = useGlobalContext();
 
+    const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
+    const [causas, setCausas] = useState<Array<causa>>([]);
+    const [hechosPunibles, setHechosPunibles] = useState<Array<{ id: number; nombre: string; }>>([]);
+    // const [oficios, setOficios] = useState<Array<oficio>>([]);
+    const {openSnackbar} = useGlobalContext();
+    const API_URL_REGISTRO = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}`
+
+    // console.log(datosIniciales)
 
     useEffect(
         () => {
-            const getCausas = async (numeroDeIdentificacion: string | null) => {
-                if (id_persona) {
-                    const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/causas?ci=${datosIniciales.numeroDeIdentificacion}`;
+            if (datosIniciales) {
+                setEstadoFormularioJudicial((prev: any) => {
 
-                    try {
-                        const respuesta: RequestResponse = await api_request<causasDTO>(url, {
-                            method: 'GET',
-                            headers: {
-                                'Content-type': 'application/json'
-                            }
-                        });
-                        console.log("Respuesta:", respuesta);
-                        if (respuesta.success && respuesta.datos) {
-                            transformarSetearCausas(respuesta.datos.causas)
-                        } else {
-                            log.error(`Error al consultar las causas:${respuesta.error?.message}`);
-                            openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
-                        }
+                    const oficioJudicialBuscado = datosIniciales.ingresos_a_prision[0].documentos_que_ordenan_prision.find(documento => documento.tipo === "oficio judicial");
+                    const resolucionBuscado = datosIniciales.ingresos_a_prision[0].documentos_que_ordenan_prision.find(documento => documento.tipo === "resolucion MJ");
 
-                    } catch (error) {
-                        log.error(`Error al consultar las causas:${error}`);
-                        openSnackbar(`Error en la consulta de datos:${error}`, "error");
-                    }
 
-                } else {
-                    openSnackbar("Se necesita de la cedula para recuperar las causas", "error");
-                }
+                    return ({
+                        ...prev,
+                        ...datosIniciales,
+                        primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
+                        cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
+                        /*oficioJudicial:{
+                            ...prev.oficioJudicial,
+                            numeroDeDocumento: datosIniciales.expediente_numero_de_documento
+                            numeroDeDocumento: datosIniciales.expediente_numero_de_documento
+    ,                   },*/
+                        expediente: {
+                            ...prev.expediente,
+                            numeroDeDocumento: datosIniciales.expediente_numero_de_documento,
+                            fechaDeDocumento: dayjs(datosIniciales.expediente_fecha_de_documento)
+                            ,
+                        },
+                        causa: datosIniciales.ingresos_a_prision[0].causa.id,
+                        hechoPunible: datosIniciales.hecho_punible?.id,
+                        sentenciaDefinitiva: datosIniciales.sentencia_definitiva,
+                        fecha_ingreso_a_establecimiento: dayjs(datosIniciales.ingresos_a_prision[0].fecha_ingreso),
+                        oficioJudicial: {
+                            ...prev.oficioJudicial,
+                            numeroDeDocumento: oficioJudicialBuscado?.numero_documento,
+                            fechaDeDocumento:dayjs(oficioJudicialBuscado?.fecha),
+                            documento: oficioJudicialBuscado?.ruta
+                        },
+                        resolucion: {
+                            ...prev.oficioJudicial,
+                            numeroDeDocumento: resolucionBuscado?.numero_documento,
+                            fechaDeDocumento:dayjs(resolucionBuscado?.fecha),
+                            documento: resolucionBuscado?.ruta
+                        },
+                    })
+                })
             }
-            // getCausas(datosIniciales);
+
+
+            fetchData(`${API_URL_REGISTRO}/datos_penales/causas`).then(res => {
+                // console.log(res)
+                setCausas(res)
+            })
+            fetchData(`${API_URL_REGISTRO}/datos_penales/hechos_punibles`).then(res => {
+                // console.log(res)
+                setHechosPunibles(res.hechosPunibles)
+            })
 
         }, []
     )
 
-    useEffect(
+    /*useEffect(
         () => {
             const getOficios = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/oficios`;
@@ -111,7 +139,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             'Content-type': 'application/json'
                         }
                     });
-                    console.log("Respuesta:", respuesta);
+                    // console.log("Respuesta:", respuesta);
                     if (respuesta.success && respuesta.datos) {
                         setOficios(respuesta.datos.oficios);
                     } else {
@@ -128,15 +156,15 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
             getOficios();
 
         }, []
-    )
+    )*/
 
-    const transformarSetearCausas = (causas: Array<causa>) => {
+    /*const transformarSetearCausas = (causas: Array<causa>) => {
         console.log("Causas:", causas);
         setCausas(causas);
 
-    }
-    const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log(event.target.name, event.target.value);
+    }*/
+    const onDatoChange = (event: any) => {
+        // console.log(event);
         setEstadoFormularioJudicial(
             (previus) => {
                 return (
@@ -237,11 +265,11 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
 
     const onExpedienteFechaChange = (value: Dayjs | null, context: any) => {
         setEstadoFormularioJudicial(
-            (previus) => {
+            (prev) => {
                 return (
                     {
-                        ...previus,
-                        expediente: Object.assign({}, {...previus.expediente, fechaDeDocumento: value})
+                        ...prev,
+                        expediente: Object.assign({}, {...prev.expediente, fechaDeDocumento: value})
 
                     }
                 )
@@ -249,32 +277,33 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
         )
     }
 
-    const onOptionSelectChange = (event: SelectChangeEvent) => {
-        console.log("Value:", event.target.value);
+    const onOptionSelectChange = (event: SelectChangeEvent<string | number | null>) => {
+        // console.log("Value:", event.target.value);
         setEstadoFormularioJudicial(
             (previus) => {
                 return (
                     {
                         ...previus,
                         [event.target.name]: event.target.value,
-                        [`event.target.name_modificado`]: true
+                        [`${event.target.name}_modificado`]: true
 
                     }
                 )
             }
         )
     }
+
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         if (id_persona != null) {
             const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales`;
             const formData = crearFormData(estadoFormularioJudicial, id_persona);
 
+            console.log(estadoFormularioJudicial)
+
             const respuesta = await api_request(url, {
                 method: 'POST',
                 body: formData,
-
-
             })
             if (respuesta.success) {
                 openSnackbar("Datos guardados correctamente", "success")
@@ -293,28 +322,31 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
     const crearFormData = (datos: datosJudicialesType, id_persona: number): FormData => {
         const formData = new FormData();
         const propiedades: Array<string> = Object.getOwnPropertyNames(datos);
-        formData.append('numeroDeIdentificacion', String(id_persona));
-        formData.append('situacionJudicial', datos.situacionJudicial);
+
+        formData.append('id_persona', String(id_persona));
+        formData.append('situacionJudicial', String(datos.situacionJudicial));
         formData.append('situacionJudicial_modificado', String(datos.situacionJudicial_modificado));
         formData.append('primeraVezEnPrision', String(datos.primeraVezEnPrision));
         formData.append('primeraVezEnPrision_modificado', String(datos.primeraVezEnPrision_modificado));
         formData.append('cantidadDeIngresos', String(datos.cantidadDeIngresos));
-        formData.append('cantidadDeIngresos_modificado', String(datos.cantidadDeIngresos_modificado));
-        formData.append('causa', datos.causa);
+        formData.append('causa', String(datos.causa));
+        formData.append('caratula', String(datos.caratula));
+        formData.append('hechoPunible', String(datos.hechoPunible));
         formData.append('causa_modificado', String(datos.causa_modificado));
-        formData.append('oficio', datos.oficio);
-        formData.append('oficio_modificado', String(datos.oficio_modificado));
-        formData.append('ultimoTrabajo', datos.oficio);
-        formData.append('ultimoTrabajo_modificado', String(datos.oficio_modificado));
-        formData.append('oficioJudicial.numeroDeDocumento', datos.oficioJudicial.numeroDeDocumento);
-        formData.append('oficioJudicial.fechaDeDocumento', datos.oficioJudicial.fechaDeDocumento?.toISOString() ? datos.oficioJudicial.fechaDeDocumento?.toISOString() : "");
+        /*formData.append('oficio', datos.oficio);
+        formData.append('oficio_modificado', String(datos.oficio_modificado));*/
+        formData.append('oficioJudicial_numeroDeDocumento', datos.oficioJudicial.numeroDeDocumento);
+        formData.append('oficioJudicial_fechaDeDocumento', datos.oficioJudicial.fechaDeDocumento?.toISOString() ? datos.oficioJudicial.fechaDeDocumento?.toISOString() : "");
         formData.append('oficioJudicial_documento', datos.oficioJudicial.documento ? datos.oficioJudicial.documento : "");
         formData.append('oficioJudicial_modificado', String(datos.oficioJudicial_modificado));
-        formData.append('resolucion.numeroDeDocumento', datos.resolucion.numeroDeDocumento);
-        formData.append('resolucion.fechaDeDocumento', datos.resolucion.fechaDeDocumento?.toISOString() ? datos.resolucion.fechaDeDocumento?.toISOString() : "");
+        formData.append('resolucion_numeroDeDocumento', datos.resolucion.numeroDeDocumento);
+        formData.append('resolucion_fechaDeDocumento', datos.resolucion.fechaDeDocumento?.toISOString() ? datos.resolucion.fechaDeDocumento?.toISOString() : "");
         formData.append('resolucion_documento', datos.resolucion.documento ? datos.resolucion.documento : "");
-        formData.append('expediente.numeroDeDocumento', datos.expediente.numeroDeDocumento);
-        formData.append('expediente.fechaDeDocumento', datos.expediente.fechaDeDocumento?.toISOString() ? datos.expediente.fechaDeDocumento?.toISOString() : "");
+        formData.append('expediente_numeroDeDocumento', datos.expediente.numeroDeDocumento);
+        formData.append('expediente_fechaDeDocumento', datos.expediente.fechaDeDocumento?.toISOString() ? datos.expediente.fechaDeDocumento?.toISOString() : "");
+        formData.append('fecha_ingreso_a_establecimiento', datos.fecha_ingreso_a_establecimiento?.toISOString() ? datos.fecha_ingreso_a_establecimiento?.toISOString() : "");
+        formData.append('sentenciaDefinitiva', datos.sentenciaDefinitiva ? datos.sentenciaDefinitiva : "");
+        formData.append('sentenciaDefinitiva', datos.sentenciaDefinitiva ? datos.sentenciaDefinitiva : "");
 
         return formData;
 
@@ -329,7 +361,9 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
             }}
             noValidate
             autoComplete="off">
-
+            <Typography variant='h6' mb={3}>
+                Formulario de datos judiciales
+            </Typography>
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <FormControl>
@@ -342,20 +376,20 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             name="situacionJudicial"
                         >
                             <FormControlLabel
-                                value="procesado"
+                                value={false}
                                 control={<Radio/>}
                                 label="Procesado"/>
                             <FormControlLabel
-                                value="condenado"
+                                value={true}
                                 control={<Radio/>}
                                 label="Condenado"/>
                         </RadioGroup>
                     </FormControl>
                 </Grid>
             </Grid>
-            <Grid container mt={5}>
+            <Grid container mt={2}>
                 <Grid item sm={12}>
-                    <Stack spacing={2} direction={"row"} justifyContent={"flex-start"} alignContent={"flex-start"}>
+                    <Stack spacing={2} direction={"row"} justifyContent={"flex-start"} alignItems={"end"}>
                         <FormControl>
                             <FormLabel id="primeraVezPrision">Primera vez en prisión:</FormLabel>
                             <RadioGroup
@@ -375,38 +409,77 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             </RadioGroup>
                         </FormControl>
 
-                        <FormControl>
-                            <InputLabel htmlFor="cantidadDeIngresos">Cantidad de veces de ingreso</InputLabel>
-                            <OutlinedInput
-                                disabled={estadoFormularioJudicial.primeraVezEnPrision}
-                                name="cantidadDeIngresos"
-                                value={estadoFormularioJudicial.cantidadDeIngresos}
-                                onChange={onDatoChange}
-                                label="Cantidad de veces de ingreso"/>
-                        </FormControl>
+                        {!estadoFormularioJudicial.primeraVezEnPrision ?
+                            <FormControl>
+                                <InputLabel htmlFor="cantidadDeIngresos">Cantidad de veces de ingreso</InputLabel>
+                                <OutlinedInput
+                                    disabled={estadoFormularioJudicial.primeraVezEnPrision}
+                                    name="cantidadDeIngresos"
+                                    value={estadoFormularioJudicial.cantidadDeIngresos}
+                                    onChange={onDatoChange}
+                                    label="Cantidad de veces de ingreso"/>
+                            </FormControl>
+                            : null}
                     </Stack>
                 </Grid>
             </Grid>
-            <Grid container spacing={2} mt={5}>
+            <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
-                    <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase'}}>Causa relacionada a la
-                        prisión</Typography>
+                    <FormControl fullWidth>
+                        <InputLabel>Caratula</InputLabel>
+                        <OutlinedInput
+                            label='Caratula'
+                            name='caratula'
+                            value={estadoFormularioJudicial.caratula}
+                            onChange={onDatoChange}
+                            multiline
+                            rows={2}
+                            maxRows={4}
+                        />
+                    </FormControl>
+
                 </Grid>
-                <Grid item sm={6} sx={{mt: "5px", mb: "5px"}}>
+            </Grid>
+            <Grid container spacing={2} mt={1}>
+
+                <Grid item sm={12} mt={1}>
                     <FormControl fullWidth variant="outlined">
-                        <InputLabel htmlFor="causa">Causas</InputLabel>
+                        <InputLabel shrink htmlFor="causa">Causa</InputLabel>
                         <Select
                             value={estadoFormularioJudicial.causa}
                             onChange={onOptionSelectChange}
                             name="causa"
-                            label="seleccionar causa">
-
-
+                            label="Causa">
                             {causas ? causas.map(
                                 (data: causa, id) => {
                                     return (
-                                        <MenuItem key={id}
-                                                  value={data.id}>{String(`${data.numero_expediente}-${data.anho}-${data.caratula_causa}`)}</MenuItem>
+                                        <MenuItem key={id} value={data.id}>
+                                            {`${data.numeroDeExpediente}/${data.anho} - ${data.caratula_causa}`}
+                                        </MenuItem>
+                                    )
+                                }
+                            ) : null}
+                        </Select>
+                        <FormHelperText>Causa relacionada a la prisión</FormHelperText>
+                    </FormControl>
+                </Grid>
+
+            </Grid>
+            <Grid container spacing={2} mt={1}>
+                <Grid item sm={12}>
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel htmlFor="hechoPunible">Hechos Punibles</InputLabel>
+                        <Select
+                            value={estadoFormularioJudicial.hechoPunible}
+                            onChange={onOptionSelectChange}
+                            name="hechoPunible"
+                            label="Hechos punibles">
+                            {hechosPunibles ? hechosPunibles.map(
+                                (data: { id: number; nombre: string }) => {
+                                    return (
+                                        <MenuItem key={data.id} value={data.id}>
+                                            {`${data.nombre}`}
+                                        </MenuItem>
                                     )
                                 }
                             ) : null}
@@ -417,16 +490,18 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
             </Grid>
             <Grid container spacing={2}>
                 <Grid item sm={12}>
-                    <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "20px"}}>Documento que ordena
-                        la reclusión</Typography>
+                    <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "20px"}}>
+                        Documentos que ordena la reclusión
+                    </Typography>
                 </Grid>
                 <Grid item sm={12}>
-                    <Typography variant='h6'>Oficio judicial</Typography>
-                    <Grid container spacing={2}>
-                        <Grid item>
-                            <FormControl fullWidth sx={{marginTop: '17px',}}>
+                    <Typography variant='subtitle1' pt={0}>Oficio judicial</Typography>
+                    <Grid container spacing={2} alignItems='center'>
+                        <Grid item sm={3}>
+                            <FormControl fullWidth>
                                 <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
                                 <OutlinedInput
+                                    required
                                     name="oficioJudicial.numeroDeDocumento"
                                     value={estadoFormularioJudicial.oficioJudicial.numeroDeDocumento}
                                     label="Nro. de documento"
@@ -434,59 +509,71 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                             </FormControl>
                         </Grid>
                         <Grid item>
-                            <DemoContainer components={['DatePicker']}>
+                            <FormControl>
+
                                 <DatePicker
                                     value={estadoFormularioJudicial.oficioJudicial.fechaDeDocumento}
                                     format="DD/MM/YYYY"
                                     onChange={onOficioJudicialFechaChange}
                                     label={"Fecha del documento"}/>
-                            </DemoContainer>
+
+                            </FormControl>
+
 
                         </Grid>
-                        <Grid item >
-                            <FormControl sx={{pt: "8px"}}>
+                        <Grid item sm={5}>
+                            <FormControl fullWidth>
                                 <MuiFileInput
+                                    required
                                     title="Titulo"
-                                    sx={{mt: "8px"}}
                                     value={estadoFormularioJudicial.oficioJudicial.documento}
                                     variant="outlined"
                                     label="Seleccionar documento"
                                     getInputText={(value) => value ? value.name : ''}
-                                    onChange={onFileOficioJudicialChange}/>
+                                    onChange={onFileOficioJudicialChange}
+                                />
                             </FormControl>
 
                         </Grid>
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid container spacing={2}>
-                <Grid item sm={12}>
-                    <Typography variant='h6'>Resolución MJ/DGEP</Typography>
-                </Grid>
 
-                <Grid item >
+
+            <Grid container spacing={2} mt={1}>
+                <Grid item sm={12}>
+                    <Typography variant='subtitle1' pt={0}>Resolución MJ/DGEP</Typography>
+                </Grid>
+            </Grid>
+            <Grid container spacing={2} alignItems='center'>
+                <Grid item sm={3}>
                     <FormControl fullWidth>
                         <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
                         <OutlinedInput
+                            required
                             name="resolucion.numeroDeDocumento"
                             value={estadoFormularioJudicial.resolucion.numeroDeDocumento}
                             label="Nro. de documento"
                             onChange={onObjectChange}/>
                     </FormControl>
                 </Grid>
-                <Grid item >
-                    <DemoContainer components={['DatePicker']} sx={{mt: "-15px"}}>
+                <Grid item>
+                    <FormControl>
+
                         <DatePicker
+
                             value={estadoFormularioJudicial.resolucion.fechaDeDocumento}
                             format="DD/MM/YYYY"
                             onChange={onResolucionMJFechaChange}
                             label={"Fecha del documento"}/>
-                    </DemoContainer>
+
+                    </FormControl>
 
                 </Grid>
                 <Grid item>
-                    <FormControl>
+                    <FormControl fullWidth>
                         <MuiFileInput
+                            required
                             value={estadoFormularioJudicial.resolucion.documento}
                             variant="outlined"
                             label="Seleccionar documento"
@@ -494,30 +581,88 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                     </FormControl>
                 </Grid>
             </Grid>
-            <Grid container spacing={2} mt={2}>
+
+            <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
-                    <Typography variant='h6'>Nro. de Expediente</Typography>
+                    <Typography variant='subtitle1' pt={0}>Nro. de Expediente</Typography>
                 </Grid>
+            </Grid>
+            <Grid container spacing={2} alignItems='center'>
                 <Grid item sm={3}>
-                    <FormControl fullWidth sx={{marginTop: '8px',}}>
+                    <FormControl fullWidth>
                         <InputLabel htmlFor="documentoOficioJudicial">Nro. de documento</InputLabel>
                         <OutlinedInput
+                            required
                             name="expediente.numeroDeDocumento"
                             value={estadoFormularioJudicial.expediente.numeroDeDocumento}
                             label="Nro. de documento"
                             onChange={onObjectChange}/>
                     </FormControl>
                 </Grid>
-                <Grid item >
-                    <DemoContainer components={['DatePicker']}>
+                <Grid item>
+                    <FormControl>
                         <DatePicker
+
                             value={estadoFormularioJudicial.expediente.fechaDeDocumento}
                             format="DD/MM/YYYY"
                             onChange={onExpedienteFechaChange}
-                            sx={{margin: '0 !important'}}
                             label={"Fecha del documento"}/>
-                    </DemoContainer>
+                    </FormControl>
                 </Grid>
+            </Grid>
+            <Grid container spacing={2}>
+                <Grid item sm={12}>
+                    <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "20px"}}>
+                        Duracion total de la condena en años
+                    </Typography>
+                </Grid>
+                <Grid item sm={6}>
+
+                    <FormControl fullWidth sx={{m: 1}}>
+                        <InputLabel htmlFor="outlined-adornment-amount">S.D. Nro</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-amount"
+                            name="sentenciaDefinitiva"
+                            label="S.D. Nro."
+                            onChange={onDatoChange}
+                            value={estadoFormularioJudicial.sentenciaDefinitiva}
+                        />
+                    </FormControl>
+
+                </Grid>
+                <Grid item sm={3}>
+                    <FormControl fullWidth sx={{m: 1}}>
+                        <InputLabel htmlFor="outlined-adornment-amount">Años</InputLabel>
+                        <OutlinedInput
+                            id="outlined-adornment-amount"
+                            name="sentenciaDefinitiva"
+                            label="Años"
+                            onChange={onDatoChange}
+                            value={estadoFormularioJudicial.sentenciaDefinitiva}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item sm={12}>
+                    <FormControl fullWidth>
+                        <DemoContainer components={['DatePicker']}>
+                            <DatePicker
+                                value={estadoFormularioJudicial.fecha_ingreso_a_establecimiento}
+                                format="DD/MM/YYYY"
+                                name='fecha_ingreso_a_establecimiento'
+
+                                onChange={(newValue: Dayjs | null) => {
+                                    setEstadoFormularioJudicial(prevState => ({
+                                        ...prevState,
+                                        fecha_ingreso_a_establecimiento: newValue,
+                                        fecha_ingreso_a_establecimiento_modificado: true,
+                                    }))
+                                }}
+                                label="Fecha de ingreso"/>
+                        </DemoContainer>
+                    </FormControl>
+                </Grid>
+            </Grid>
+            <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
                     <Button onClick={onFormSubmit} variant='contained'>
                         Guardar

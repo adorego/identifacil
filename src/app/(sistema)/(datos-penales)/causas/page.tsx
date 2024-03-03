@@ -1,3 +1,4 @@
+'use client'
 import {API_REGISTRO} from '@/../config'
 import * as React from 'react';
 
@@ -7,6 +8,7 @@ import {Box, CircularProgress, Paper} from "@mui/material";
 import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import TituloComponent from "@/components/titulo/tituloComponent";
+import {useEffect, useState} from "react";
 
 const header = [
     { id: 'caratula_causa', label: 'Caratula' },
@@ -19,25 +21,40 @@ const header = [
 ]
 
 
-
+/*
 async function getCausas(){
-
-    const res = await fetch(`${API_REGISTRO}/datos_penales/causas`)
-
+    const res = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`)
     if(!res.ok) throw new Error('Something went wrong')
 
     return await res.json()
-}
+}*/
 
-export default async function Page(){
+export default function Page(){
 
-    // const [data, setData] = useState(null);
-    const causas = await getCausas()
+    const [data, setData] = useState(null);
+    async function fetchData() {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
 
-    console.log(causas)
+            return await response.json();
+        } catch (error) {
+            console.error('Error al realizar la solicitud fetch:', error);
+            return null; // o manejar el error de manera adecuada
+        }
+    }
 
-    const data = null
-    /*useEffect(() => {
+    useEffect(() => {
+        fetchData()
+            .then(fetchedData => {
+                setData(fetchedData);
+            });
+    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+
+    /*const data = null
+    useEffect(() => {
         const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`;
         fetchData(apiUrl)
             .then(fetchedData => {
@@ -45,7 +62,7 @@ export default async function Page(){
             });
     }, []);*/
 
-    if (!causas) {
+    if (!data) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -71,7 +88,7 @@ export default async function Page(){
                     </Box>
                     <CustomTable
                         headers={header}
-                        data={causas}
+                        data={data}
                         showId={true}
                         options={{
                             rowsPerPageCustom:5,
