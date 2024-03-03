@@ -142,7 +142,7 @@ export default function SidebarDrawer()
                 {/* Menu de Dashboard */}
                 <SidebarItem
                     icon={<AirportShuttle/>}
-                    label="Dashboard"
+                    label="Inicio"
                     path="/inicio"
                     isActive={pathname === '/inicio'}
                 />

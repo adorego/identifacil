@@ -42,7 +42,7 @@ export const causaInitialData = {
     despacho_judicial: null,
     circunscripcion: null,
     ciudad: null,
-    hechos_punibles:Array<number|null>,
+    hechos_punibles:Array<1>,
     ppls:Array<number|null>,
     tiempo_de_condena: null,
     fecha_de_aprehension: null,
