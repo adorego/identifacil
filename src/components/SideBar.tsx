@@ -206,7 +206,7 @@ export default function SideBar() {
                                     icon={<Settings/>}
                                     label="Causas"
                                     path="/causas"
-                                    isActive={pathname === '/causas'}
+                                    isActive={pathname === '/expedientes'}
                                 />
                             </List>
                             <List sx={{marginLeft: "20px"}} component="div" disablePadding>

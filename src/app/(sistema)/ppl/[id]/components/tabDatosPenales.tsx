@@ -76,7 +76,7 @@ export default function TabDatosPersonales() {
                                             rowsPerPageCustom:5,
                                             deleteOption: false,
                                             pagination: true,
-                                            targetURL: '/causas'
+                                            targetURL: '/expedientes'
                                         }}
                                     />
                                 </Box>

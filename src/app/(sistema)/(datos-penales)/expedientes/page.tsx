@@ -11,19 +11,17 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 
 const header = [
-    { id: 'caratula_causa', label: 'Caratula' },
-    { id: 'numeroDeExpediente', label: 'Nro. de la causa' },
-    { id: 'numeroDeDocumento', label: 'Documento' },
-    { id: 'anho', label: 'Año' },
-    { id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento' },
-    { id: 'condenado', label: 'Condenado' },
-    { id: 'estado_procesal', label: 'Situación procesal' },
+    { id: 'caratula_expediente', label: 'Caratula' },
+    { id: 'numeroDeExpediente', label: 'Nro. expediente' },
+    { id: 'fechaDeExpediente', label: 'Fecha expediente', type: 'date' },
+    { id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento', type: 'date' },
+    { id: 'condenado', label: 'Condenado', type: 'boolean' },
 ]
 
 
 /*
 async function getCausas(){
-    const res = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`)
+    const res = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`)
     if(!res.ok) throw new Error('Something went wrong')
 
     return await res.json()
@@ -34,7 +32,7 @@ export default function Page(){
     const [data, setData] = useState(null);
     async function fetchData() {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -55,7 +53,7 @@ export default function Page(){
 
     /*const data = null
     useEffect(() => {
-        const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/causas`;
+        const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`;
         fetchData(apiUrl)
             .then(fetchedData => {
                 setData(fetchedData);
@@ -78,8 +76,9 @@ export default function Page(){
 
     return(
         <>
+
             <Box mb={3}>
-                <TituloComponent titulo='Causas' newEntry={'/causas/crear'}/>
+                <TituloComponent titulo='Causas' newEntry={'/expedientes/crear'}/>
             </Box>
             <Paper>
                 <Box>
@@ -94,7 +93,7 @@ export default function Page(){
                             rowsPerPageCustom:5,
                             deleteOption: false,
                             pagination: true,
-                            targetURL: '/causas'
+                            targetURL: '/expedientes'
                         }}
                     />
                 </Box>
