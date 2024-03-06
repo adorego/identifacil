@@ -66,10 +66,10 @@ const rowStyle = {
     width: '100px',
 
 }
-const formatDate = (dateString:string | null | number) => {
-    if(dateString){
+const formatDate = (dateString: string | null | number) => {
+    if (dateString) {
         const date = new Date(dateString);
-        const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+        const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
         // @ts-ignore
         return date.toLocaleDateString(undefined, options);
     }
@@ -214,10 +214,17 @@ function CustomTable({
                                     {headers.map((header) => {
                                         if (header.id === 'id' && !showId) return null;
 
-                                        return <TableCell sx={(header.id == 'id' ? rowStyle : {})}
-                                                          key={header.id}>
-                                            {header.type === 'date' ? formatDate(row[header.id]) : row[header.id]}
-                                        </TableCell>;
+                                        return (
+                                            <TableCell
+                                                sx={(header.id == 'id' ? rowStyle : {})}
+                                                key={header.id}>
+
+                                                {header.type === 'date' ? formatDate(row[header.id]) : null }
+                                                {(header.type === 'boolean' && header.id == 'condenado') ? (row[header.id]? 'Condenado' : 'Procesado') : null }
+                                                {(header.type !== 'date' && header.type !== 'boolean') ? row[header.id] : null}
+
+                                            </TableCell>
+                                        );
                                     })}
                                     {(options.targetURL || options.deleteOption) ? (
                                         <TableCell sx={rowStyle}>
@@ -265,6 +272,7 @@ function CustomTable({
                         }
                     </TableBody>
                 </Table>
+                {/* block pagination */}
                 <>
                     {options.pagination ?
                         (

@@ -5,14 +5,14 @@ export type CausaType = {
     id: number | null;
     numeroDeExpediente: number | null;
     numeroDeDocumento: number | null;
-    anho: number | null;
+    fechaDeExpediente: Dayjs | string | null;
     condenado: boolean;
     estado_procesal: string | null;
-    caratula_causa: string | null;
+    caratula_expediente: string | null;
     despacho_judicial: number | null;
     circunscripcion: number | null;
     ciudad: number | null;
-    hechos_punibles:{id:number; nombre: string;}[];
+    hechosPuniblesCausas: [];
     ppls:Array<{id_persona:number |null; nombre: string;  apellido: string}>;
     tiempo_de_condena: number | null;
     fecha_de_aprehension: Dayjs | null;
@@ -21,6 +21,7 @@ export type CausaType = {
     tiene_anhos_extra_de_seguridad: boolean; // booleano local para saber si mostrar el controlador
     tiempo_de_seguridad: number | null;
     sentencia_definitiva: string | null;
+    sentencia_tiempo: string | null;
     juzgado_de_tribunal_de_sentencia: string | number | null;
     secretaria: string | null;
     lugar_del_hecho: string | null;
@@ -38,14 +39,14 @@ export const causaInitialData : CausaType = {
     id: null,
     numeroDeExpediente:0,
     numeroDeDocumento: 0,
-    anho: 0,
+    fechaDeExpediente: '',
     condenado: false,
     estado_procesal:'',
-    caratula_causa: '',
+    caratula_expediente: '',
     despacho_judicial: null,
     circunscripcion: 0,
     ciudad: null,
-    hechos_punibles:[],
+    hechosPuniblesCausas: [],
     ppls:[],
     tiempo_de_condena: 0,
     fecha_de_aprehension: null,
@@ -54,6 +55,7 @@ export const causaInitialData : CausaType = {
     tiene_anhos_extra_de_seguridad: false, // booleano local para saber si mostrar el controlador
     tiempo_de_seguridad: 0,
     sentencia_definitiva:'',
+    sentencia_tiempo:'',
     juzgado_de_tribunal_de_sentencia:'',
     secretaria:'',
     lugar_del_hecho:'',
@@ -76,11 +78,11 @@ export const causaInitialDataPoblado = {
     anho: '2023',
     condenado: true,
     estado_procesal: 'Privado de su libertad',
-    caratula_causa: 'Robo a mano armada a ferreteria',
+    caratula_expediente: 'Robo a mano armada a ferreteria',
     despacho_judicial: 1,
     circunscripcion: 1,
     ciudad: 1,
-    hechos_punibles:[],
+    hechosPuniblesCausas:[],
     ppls:[],
     tiempo_de_condena: '11',
     fecha_de_aprehension: '1989-07-19',

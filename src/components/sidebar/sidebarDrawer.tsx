@@ -142,7 +142,7 @@ export default function SidebarDrawer()
                 {/* Menu de Dashboard */}
                 <SidebarItem
                     icon={<AirportShuttle/>}
-                    label="Dashboard"
+                    label="Inicio"
                     path="/inicio"
                     isActive={pathname === '/inicio'}
                 />
@@ -233,9 +233,9 @@ export default function SidebarDrawer()
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
                             icon={<span className='subIcon'></span>}
-                            label="Causas"
-                            path="/causas"
-                            isActive={pathname === '/causas'}
+                            label="Expedientes"
+                            path="/expedientes"
+                            isActive={pathname === '/expedientes'}
                         />
                     </List>
                     {/*<List sx={{marginLeft: "20px"}} component="div" disablePadding>

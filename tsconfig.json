@@ -21,6 +21,8 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/registro/IdentificationForm.tsx.back", "src/app/(sistema)/(datos-penales)/causas/page.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/registro/IdentificationForm.tsx.back",
+    "src/app/(sistema)/(datos-penales)/expedientes/page.tsx"
+  ],
   "exclude": ["node_modules"]
 }
