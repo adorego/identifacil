@@ -15,7 +15,7 @@ import {
     Typography
 } from "@mui/material";
 import {handleInputChange} from "@/components/utils/formUtils";
-import {causaInitialData, causaInitialDataPoblado, CausaType} from "@/components/utils/penalesType";
+import {causaInitialData, CausaType, PPLsEnExpedienteDTO} from "@/components/utils/penalesType";
 import {fetchData, fetchFormData, postEntity} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
@@ -24,7 +24,7 @@ import dayjs, {Dayjs} from "dayjs";
 import MenuItem from "@mui/material/MenuItem";
 import ModalPersona from "@/app/(sistema)/(datos-penales)/componentes/ModalPersona";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {forEachEntryModule} from "next/dist/build/webpack/utils";
+
 
 type camposFormType = {
     id: number;
@@ -39,9 +39,6 @@ type formDatosType = {
     ciudad: camposFormType;
 }
 
-const hechosPuniblesIntitial: camposFormType = [
-    {id: 1, nombre: 'asesinato'}
-]
 
 type HechoPunible = {
     id: number;
@@ -232,15 +229,16 @@ export default function FormCausa({params}: { params: { id: number | string } })
         }))
     }
 
-    const handlerPersona = (persona: { id_persona: number | null; nombre: string; apellido: string; }) => {
+    // TODO: Fix any type
+    const handlerPersona = (persona: any) => {
         if(datosFormulario.ppls[0] == null){
-            setDatosFormularios(prev => ({
+            setDatosFormularios((prev) : CausaType | any => ({
                 ...prev,
-                ppls: [persona]
+                ppls: [...prev.ppls, persona]
             }))
         }else{
             if ((!datosFormulario.ppls.some(item => item.id_persona == persona.id_persona) && datosFormulario.ppls[0] !== null)) {
-                setDatosFormularios(prev => ({
+                setDatosFormularios((prev) : CausaType | any => ({
                     ...prev,
                     ppls: [...prev.ppls, persona]
                 }))
@@ -267,18 +265,20 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
         const post_mehtod = isEditMode == 'crear' ? 'POST' : 'PUT'
         const endpoint_api = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`
-        const stateForm = {
+
+        const stateForm : any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
             defensor: 1,
-            ppls: datosFormulario.ppls.map(item => item.id_persona),
+            // @ts-ignore
+            // ppls: datosFormulario.ppls.map((item) : PPLsEnExpedienteDTO | null => item.id_persona),
             despacho_judicial: null,
         }
 
         // console.log(selecciones.map(item => Object.values(item)))
-        console.log(isEditMode)
-        // console.log(datosFormulario.defensor)
-        postEntity(
+        // console.log(isEditMode)
+        console.log(stateForm)
+        /*postEntity(
             post_mehtod,
             endpoint_api,
             'expedientes',
@@ -287,7 +287,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
             setLoading,
             openSnackbar,
             router
-        );
+        );*/
     }
 
 
@@ -352,30 +352,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             name="numeroDeDocumento"
                             onChange={handleChange}/>
                     </Grid>
-                    <Grid item sm={3}>
-                        <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='fechaDeExpediente'
-                                value={datosFormulario.fechaDeExpediente ? dayjs(datosFormulario.fechaDeExpediente) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fechaDeExpediente: newValue,
-                                    }))
-                                }}
-                                label="Fecha de aprension y detención"/>
-
-                        </FormControl>
-                        {/*<TextField
-                            fullWidth
-                            label="Fecha expediente"
-                            variant="outlined"
-                            value={dayjs(datosFormulario.fechaDeExpediente)}
-                            name="fechaDeExpediente"
-                            onChange={handleChange}/>*/}
-                    </Grid>
-
                 </Grid>
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={6}>
@@ -404,6 +380,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <TextField
                             fullWidth
                             label="Caratula"
+                            placeholder='Agregar una caratula...'
                             multiline
                             rows={2}
                             variant="outlined"
@@ -501,15 +478,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 name="sentencia_definitiva"
                                 onChange={handleChange}/>
                         </Grid>
-                        <Grid item sm={2}>
-                            <TextField
-                                fullWidth
-                                label="Meses"
-                                variant="outlined"
-                                value={datosFormulario.sentencia_tiempo}
-                                name="sentencia_definitiva"
-                                onChange={handleChange}/>
-                        </Grid>
                     </Grid>
                     : null}
                 {/*<Grid item sm={6}>
@@ -562,38 +530,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <Divider>Expdiente extendido</Divider>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} mt={1}>
-                    <Grid item sm={6}>
-                        <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='fechaAprension'
-                                value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fecha_de_aprehension: newValue,
-     /*                                   fecha_de_aprehension_modificado: true,*/
-                                    }))
-                                }}
-                                label="Fecha de aprension y detención"/>
 
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
-                        <Stack spacing={2} direction='row' alignItems='center'>
-                            <Typography variant='overline'>
-                                Tiempo de condena:
-                            </Typography>
-                            <TextField
-                                label="Meses"
-                                variant="outlined"
-                                value={datosFormulario.tiempo_de_condena}
-                                name="tiempo_de_condena"
-                                onChange={handleChange}/>
-                        </Stack>
-                    </Grid>
-                </Grid>
                 {/*<Grid item sm={3}>
                         <TextField
                             fullWidth
@@ -613,65 +550,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             onChange={handleChange}/>
                     </Grid>*/}
 
-                <Grid container spacing={2} mt={1} alignItems={'end'}>
-                    <Grid item sm={6}>
-                        <FormControl>
-                            <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medida de
-                                seguridad?</FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="anhosDeExtraSeguridad"
-                                name="tiene_anhos_extra_de_seguridad"
-                                onChange={handleBooleanChange}
-                                value={datosFormulario.tiene_anhos_extra_de_seguridad}
-                            >
-                                <FormControlLabel value={false} control={<Radio/>} label="No"/>
-                                <FormControlLabel value={true} control={<Radio/>} label="Si"/>
 
-
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    {datosFormulario.tiene_anhos_extra_de_seguridad?
-                    <Grid item sm={2}>
-                        <TextField
-                            fullWidth
-                            label="Meses"
-                            variant="outlined"
-                            value={datosFormulario.tiempo_de_seguridad}
-                            name="tiempo_de_seguridad"
-                            onChange={handleChange}/>
-                    </Grid>
-                        : null}
-                    {/*<Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Años"
-                            variant="outlined"
-                            value={datosFormulario.tiempo_de_seguridad}
-                            name="anosDeCondenaPorMedidasDeSeguridad"
-                            onChange={handleChange}/>
-                    </Grid>*/}
-                </Grid>
 
                 <Grid container spacing={2} mt={1}>
-
-                    <Grid item sm={6}>
-                        <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='compurgamiento'
-                                value={datosFormulario.fecha_de_compurgamiento_inicial ? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fecha_de_compurgamiento_inicial: newValue,
-                                        fecha_de_compurgamiento_inicial_modificado: true,
-                                    }))
-                                }}
-                                label="Compurgamiento inicial"/>
-                        </FormControl>
-                    </Grid>
                     <Grid item sm={3}>
                         {/*<FormControl fullWidth>
                             <DatePicker
@@ -743,27 +624,41 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             onChange={handleChange}/>
                     </Grid>
                     <Grid item sm={6}>
+
                         <FormControl fullWidth>
                             <DatePicker
                                 format="DD/MM/YYYY"
-                                name='fechaHecho'
-                                value={dayjs('11/1/2001')}
-                                onChange={handleChange}
-                                disabled
+                                name='fecha_de_hecho'
+                                onChange={(newValue: Dayjs | null) => {
+                                    setDatosFormularios(prevState => ({
+                                        ...prevState,
+                                        fecha_de_hecho: newValue,
+                                    }))
+                                }}
+                                value={datosFormulario.fecha_de_hecho? dayjs(datosFormulario.fecha_de_hecho) : null}
                                 label="Fecha del hecho"/>
                         </FormControl>
                     </Grid>
-                    <Grid item sm={6}>
+                    <Grid item sm={3}>
                         <TextField
                             fullWidth
-                            label="Lugar del hecho"
+                            label="Ciudad"
+                            variant="outlined"
+                            value={datosFormulario.ciudad}
+                            name="ciudad"
+                            onChange={handleChange}/>
+                    </Grid>
+                    <Grid item sm={3}>
+                        <TextField
+                            fullWidth
+                            label="Bario"
                             variant="outlined"
                             value={datosFormulario.lugar_del_hecho}
                             name="lugar_del_hecho"
                             onChange={handleChange}/>
                     </Grid>
 
-                    <Grid item sm={12}>
+                    <Grid item sm={6}>
                         <TextField
                             fullWidth
                             label="Link de la noticia"
@@ -775,57 +670,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     <Grid item sm={12}>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} mt={1}>
-                    <Grid item sm={12}>
-                        <Typography>Defensor</Typography>
-                    </Grid>
-                    <Grid item sm={3}>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
-                            <Select
-                                label="Tipo"
-                                variant="outlined"
-                                value={datosFormulario.defensor.tipo}
-                                name="tipo"
-                                onChange={handleDefensor}
-                            >
-                                <MenuItem value={'publico'}>Publico</MenuItem>
-                                <MenuItem value={'privado'}>Privado</MenuItem>
-                            </Select>
-                        </FormControl>
 
-                    </Grid>
-                    <Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Nombre del Defensor"
-                            variant="outlined"
-                            value={datosFormulario.defensor.nombre ? datosFormulario.defensor.nombre : ''}
-                            name="nombre"
-                            onChange={handleDefensor}/>
-                    </Grid>
-                    <Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Nombre del Defensor"
-                            variant="outlined"
-                            value={datosFormulario.defensor.apellido ? datosFormulario.defensor.apellido : ''}
-                            name="apellido"
-                            onChange={handleDefensor}/>
-                    </Grid>
-                    <Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Telefono"
-                            variant="outlined"
-                            value={datosFormulario.defensor.telefono ? datosFormulario.defensor.telefono : ''}
-                            name="telefono"
-                            onChange={handleDefensor}/>
-                    </Grid>
-                </Grid>
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
-                        <Typography>PPLs vinculados</Typography>
+                        <Typography variant='h6'>PPLs vinculados</Typography>
                     </Grid>
                     <Grid item sm={12} mt={1}>
                         <ModalPersona onHandlerPersona={handlerPersona}/>
@@ -835,13 +683,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <ul>
                             {(datosFormulario.ppls.length > 0 && datosFormulario.ppls[0] !== null) ?
 
-                                (datosFormulario.ppls.map((item: {
-                                    id_persona: number | null;
-                                    nombre: string;
-                                    apellido: string
-                                }) => (
+                                (datosFormulario.ppls.map((item: any) => (
                                     <li key={item.id_persona}>
-                                        {item.nombre} {item.apellido}
+                                        {item.nombre} {item.apellido} ({item.apodo})
                                         <IconButton aria-label="delete" size="small"
                                                     onClick={(persona) => handleDeletePPL(item.id_persona)}>
                                             <DeleteIcon fontSize="inherit"/>
