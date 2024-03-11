@@ -112,8 +112,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
         })
 
         // Ciudades
-        fetchData(`${ENDPOINT_API}/datos_penales/circunscripciones`).then((res) => {
-            setStateCamposForm(prev => ({...prev, ciudad: [...res.circunscripciones]}))
+        fetchData(`${ENDPOINT_API}/datos_penales/ciudades`).then((res) => {
+            setStateCamposForm(prev => ({...prev, ciudad: [...res.ciudades]}))
         })
 
     }, []);
@@ -235,11 +235,15 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 sentencia_definitiva: item.sentencia_definitiva,
                                 fecha_sentencia_definitiva: item.fecha_sentencia_definitiva,
                                 condena:{
-                                    anhos: item?.condena?.anhos,
-                                    meses: item?.condena?.meses
+                                    anhos: item?.condena?.tiempo_de_condena.anhos,
+                                    meses: item?.condena?.tiempo_de_condena.meses
                                 },
                                 fecha_de_aprehension: item.fecha_de_aprehension,
                                 tiene_anhos_extra_por_medida_de_seguridad: item.condena.tiene_anhos_extra_por_medida_de_seguridad,
+                                anhos_extra_por_medida_de_seguridad: {
+                                    anhos:item.condena.anhos_extra_por_medida_de_seguridad.anhos,
+                                    meses:item.condena.anhos_extra_por_medida_de_seguridad.meses
+                                },
                                 fecha_de_compurgamiento_inicial: item.condena.fecha_de_compurgamiento_inicial,
 
 
@@ -405,7 +409,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
         const stateForm : any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
-            defensor: 1,
             despacho_judicial: 1,
         }
 
@@ -414,6 +417,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
         if(stateForm.hechosPuniblesCausas.length <= 0){
             openSnackbar('Debe agregar al menos un hecho punible', 'error')
+        }
+        if(!stateForm.caratula_expediente){
+            openSnackbar('Debe agregar la caratula', 'error')
         }
 
         // ValidacionesExpedientes(stateForm)
@@ -644,13 +650,31 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         </FormControl>
                     </Grid>
                     <Grid item sm={3}>
-                        <TextField
+                        <FormControl fullWidth>
+                            <InputLabel id="ciudad-field">Ciudad</InputLabel>
+                            <Select
+                                labelId="circunscripcion-field"
+                                id="ciudad"
+                                name='ciudad'
+                                value={datosFormulario.ciudad}
+                                label="circunscripcion"
+                                onChange={handleChange}
+                            >
+                                <MenuItem value={0}>Seleccionar circunscripcion</MenuItem>
+                                {stateCamposForm.ciudad.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                                ))}
+
+
+                            </Select>
+                        </FormControl>
+                        {/*<TextField
                             fullWidth
                             label="Ciudad"
                             variant="outlined"
                             value={datosFormulario.ciudad}
                             name="ciudad"
-                            onChange={handleChange}/>
+                            onChange={handleChange}/>*/}
                     </Grid>
                     <Grid item sm={3}>
                         <TextField

@@ -446,7 +446,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                     <Grid container spacing={2} mt={1} alignItems={'end'}>
                         <Grid item sm={12}>
                             <FormControl>
-                                <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medida de
+                                <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medid de
                                     seguridad?</FormLabel>
                                 <RadioGroup
                                     row
