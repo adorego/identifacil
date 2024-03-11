@@ -12,14 +12,14 @@ import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 
 const header = [
-    { id: 'caratula', label: 'Caratula' },
-    { id: 'nroCausa', label: 'Nro. de la causa' },
-    { id: 'hechoPunible', label: 'Hecho punible' },
-    { id: 'compurgamiento', label: 'Compurgamiento' },
-    { id: 'situacionProcesal', label: 'Situación procesal' },
+    { id: 'id', label: 'ID' },
+    { id: 'caratula_expediente', label: 'Caratula' },
+    { id: 'numeroDeExpediente', label: 'Nro. de expediente' },
+    { id: 'condenado', label: 'Situación procesal', type: 'boolean' },
+    { id: 'fecha_del_hecho', label: 'Fecha del hecho', type: 'date' },
 ]
 
-export default function TabDatosPersonales() {
+export default function TabDatosPersonales({idPersona=null}) {
     const [value, setValue] = React.useState('1');
     const [data, setData] = useState(null);
 
@@ -27,6 +27,7 @@ export default function TabDatosPersonales() {
         const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`;
         fetchData(apiUrl)
             .then(fetchedData => {
+
                 setData(fetchedData);
             });
     }, []);
@@ -51,6 +52,7 @@ export default function TabDatosPersonales() {
     return (
         <Box mt={3}>
             <Paper elevation={1}>
+
                 <Box>
                     {/* Tabs*/}
 

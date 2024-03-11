@@ -415,29 +415,28 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
         const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
 
-        if(stateForm.hechosPuniblesCausas.length <= 0){
-            openSnackbar('Debe agregar al menos un hecho punible', 'error')
-        }
-        if(!stateForm.caratula_expediente){
-            openSnackbar('Debe agregar la caratula', 'error')
+        if(stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == ""){
+            openSnackbar('Falta completar campor requeridos', 'error')
+        }else{
+            // ValidacionesExpedientes(stateForm)
+            // Funcion para validar campos requeridos del form
+            console.log(stateForm)
+            // console.log(post_mehtod)
+            // console.log(JSON.stringify(stateForm))
+
+            postEntity(
+                post_mehtod,
+                endpoint_api,
+                'expedientes',
+                params,
+                stateForm,
+                setLoading,
+                openSnackbar,
+                router
+            )
         }
 
-        // ValidacionesExpedientes(stateForm)
-        // Funcion para validar campos requeridos del form
-        console.log(stateForm)
-        // console.log(post_mehtod)
-        // console.log(JSON.stringify(stateForm))
 
-        postEntity(
-            post_mehtod,
-            endpoint_api,
-            'expedientes',
-            params,
-            stateForm,
-            setLoading,
-            openSnackbar,
-            router
-        )
     }
 
 
@@ -471,6 +470,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={4}>
                         <TextField
+                            error={datosFormulario.numeroDeExpediente == ''}
+                            helperText={datosFormulario.numeroDeExpediente == "" ? '* Campo requerido' : ''}
                             fullWidth
                             label="Nro. de expediente"
                             variant="outlined"
@@ -506,6 +507,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <TextField
                             fullWidth
                             label="Caratula"
+                            error={datosFormulario.caratula_expediente == ''}
+                            helperText={datosFormulario.caratula_expediente == "" ? '* Campo requerido' : ''}
                             placeholder='Agregar una caratula...'
                             multiline
                             rows={2}
@@ -555,6 +558,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 <Grid container spacing={2} mt={1}>
                     <Grid item>
                         <Button variant='contained' onClick={handleAgregar}>Agregar Hecho Punible</Button>
+                        <div></div>
+                        <Typography variant='caption' color='error' ml={2}>
+                            * Campo requerido
+                        </Typography>
                     </Grid>
                 </Grid>
                 {datosFormulario.condenado ?

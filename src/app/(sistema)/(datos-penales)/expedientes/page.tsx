@@ -79,7 +79,7 @@ export default function Page(){
         <>
 
             <Box mb={3}>
-                <TituloComponent titulo='Causas' newEntry={'/expedientes/crear'}/>
+                <TituloComponent titulo='Expedientes' newEntry={'/expedientes/crear'}/>
             </Box>
             <Paper>
                 <Box>

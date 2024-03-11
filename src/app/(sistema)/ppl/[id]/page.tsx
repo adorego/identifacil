@@ -295,7 +295,8 @@ export default function Page({ params }: { params: { id: number } }) {
                             <NestedInformacionPreso datosPersona={data} />
                         </TabPanel>
                         <TabPanel value="2" sx={{p:'0'}}>
-                            <TabDatosPersonales />
+
+                            <TabDatosPersonales idPersona={data.id_persona}/>
                         </TabPanel>
                     </Box>
                 </TabContext>
