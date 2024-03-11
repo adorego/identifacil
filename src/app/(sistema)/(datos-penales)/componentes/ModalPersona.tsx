@@ -198,6 +198,9 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
     const handleSubmit = (e: any) =>{
         e.preventDefault();
         // console.log(personasSeleccionadas)
+
+
+        // @ts-ignore
         if(personasSeleccionadas.id_persona !== 0){
             /*setDatosFormulario((prev: any) =>({
                 ...prev,
@@ -207,12 +210,17 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                 apodo: persona[0].apodo,
             }))*/
 
+
             onHandlerPersona({
                 ...datosFormulario,
                 hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
+                // @ts-ignore
                 id_persona: personasSeleccionadas.id_persona,
+                // @ts-ignore
                 nombre: personasSeleccionadas.nombre,
+                // @ts-ignore
                 apellido: personasSeleccionadas.apellido,
+                // @ts-ignore
                 apodo: personasSeleccionadas.apodo,
             })
             setSeleccionesEnPPL([])
