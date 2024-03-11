@@ -19,7 +19,7 @@ const header = [
     { id: 'fecha_del_hecho', label: 'Fecha del hecho', type: 'date' },
 ]
 
-export default function TabDatosPersonales({idPersona=null}) {
+export default function TabDatosPersonales({idPersona=null} : { idPersona: number | null | undefined }) {
     const [value, setValue] = React.useState('1');
     const [data, setData] = useState(null);
 
@@ -27,7 +27,7 @@ export default function TabDatosPersonales({idPersona=null}) {
         const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`;
         fetchData(apiUrl)
             .then(fetchedData => {
-
+                console.log(idPersona)
                 setData(fetchedData);
             });
     }, []);
