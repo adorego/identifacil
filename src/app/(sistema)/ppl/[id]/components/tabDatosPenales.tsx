@@ -27,8 +27,12 @@ export default function TabDatosPersonales({idPersona=null} : { idPersona: numbe
         const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`;
         fetchData(apiUrl)
             .then(fetchedData => {
-                console.log(idPersona)
-                setData(fetchedData);
+
+                setData(fetchedData.filter((expediente:any) =>
+                    expediente.ppls_en_expediente.some((ppl:any) =>
+                        ppl.ppl.persona.id === idPersona
+                    )
+                ));
             });
     }, []);
 
