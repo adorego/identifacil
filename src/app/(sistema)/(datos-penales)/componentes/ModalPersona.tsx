@@ -11,12 +11,13 @@ import {
     MenuItem,
     Select,
     FormLabel,
-    RadioGroup, FormControlLabel, Radio, TextField
+    RadioGroup, FormControlLabel, Radio, TextField, Stack, FormHelperText
 } from "@mui/material";
 import {fetchData} from "@/components/utils/utils";
 import {SelectChangeEvent} from "@mui/material/Select";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
+import {useGlobalContext} from "@/app/Context/store";
 
 const initialState = {apellido: "", id_persona: null, nombre: ""}
 
@@ -59,22 +60,31 @@ const initialStateForm = {
     fecha_de_compurgamiento_inicial: null,
     fecha_de_compurgamiento_recalculada: []
 }
-const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:string; apellido:string;})=>(void)}>= ({onHandlerPersona})=>{
+const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
+
+
+const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:string; apellido:string;},)=>(void), editPersona: {} | null, onOpen: boolean, onClose: ()=>void}>= ({onHandlerPersona, editPersona=null, onOpen, onClose})=>{
     const { open, handleOpen, handleClose } = useModal();
-    // const [personasVinculadas, setPersonasVinculadas] = useState<{id_persona:number | null; nombre:string; apellido:string;}>(initialState)
     const [personasLista, setPersonasLista] = useState<Array<any>>([])
+    const [defensoresLista, setDefensoresLista] = useState<Array<any>>([])
     const [datosFormulario, setDatosFormulario] = useState<any>(initialStateForm)
     const [seleccionesEnPPL, setSeleccionesEnPPL] = useState<HechoPunibleConCausa[]>([]);
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
-    const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
+    const {openSnackbar, closeSnackbar} = useGlobalContext();
 
     useEffect(() => {
+        // Se obtiene datos de lista de PPLs
         fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res=>{
             setPersonasLista(prev=>([...res]))
         })
-    }, []);
 
-    useEffect(() => {
+
+
+        // Se obtiene datos de
+        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/defensores`).then(res=>{
+            setDefensoresLista(prev=>([...res.defensores]))
+        })
+
         // Hechos punibles
         fetchData(`${ENDPOINT_API}/datos_penales/hechos_punibles`).then((res) => {
 
@@ -97,9 +107,25 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
             setHechosPunibles(prev => ([...res.hechosPunibles]))
         })
-
-
     }, []);
+
+    /**Si es que hay un dato para mostrar carga el formulario con datos precargados de PPL
+     * */
+    useEffect(() => {
+        //console.log(editPersona)
+        if (editPersona) {
+            setDatosFormulario(editPersona); // Asume que editPersona tiene la forma correcta
+        }
+    }, [editPersona, onOpen]);
+
+    /** Para controlar si es que debe abrir o cerrar el modal desde fuera del modal
+     * */
+    useEffect(() => {
+        if(onOpen){
+
+        handleOpen()
+        }
+    }, [onOpen]);
 
     const handleSelectChange = (event: SelectChangeEvent<number>) =>{
         /*const persona = personasLista.filter((item : {id_persona:number; nombre:string; apellido: string;})=> item.id_persona == event.target.value)
@@ -110,19 +136,27 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
             [event.target.name]: event.target.value
         }))
     };
+
+    const handleEditPersona = ()=>{
+        handleOpen()
+        console.log(editPersona)
+        // setDatosFormulario(editPersona)
+    }
+
     const handleChange = (event: any) =>{
         const persona = personasLista.filter((item : {id_persona:number; nombre:string; apellido: string;})=> item.id_persona == event.target.value)
         // setPersonasVinculadas(persona[0]);
+        // console.log(persona[0].id_persona)
         if(event.target.name == 'id_persona'){
             setDatosFormulario((prev: any) =>({
                 ...prev,
+                id_persona: persona[0].id_persona,
                 nombre: persona[0].nombre,
                 apellido: persona[0].apellido,
                 apodo: persona[0].apodo,
             }))
         }
 
-        console.log(persona)
         setDatosFormulario((prev: any) =>({
             ...prev,
             [event.target.name]: event.target.value,
@@ -150,17 +184,22 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
     const handleSubmit = (e: any) =>{
         e.preventDefault();
-        /*{console.log({
-            ...datosFormulario,
-            hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item))
-        })}*/
-        // {console.log(seleccionesEnPPL)}
-        onHandlerPersona({
-            ...datosFormulario,
-            hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item))
-        })
-        setDatosFormulario(initialState)
-        handleClose()
+
+        if(datosFormulario.id_persona !== 0){
+
+            onHandlerPersona({
+                ...datosFormulario,
+                hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item))
+            })
+            setSeleccionesEnPPL([])
+            setDatosFormulario(initialStateForm)
+            handleClose()
+        }else{
+            openSnackbar("Debe seleccionar un PPL", "error")
+            setTimeout(()=>{
+                closeSnackbar()
+            }, 5000)
+        }
     }
 
     const handleHechoPunibleChange = (index: number, nuevoHechoPunibleId: number) => {
@@ -189,13 +228,23 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
         });
         setSeleccionesEnPPL(nuevasSelecciones);
     };
+
     return(
         <>
+           <Stack spacing={2} direction='row' justifyContent='space-between'>
+                <Typography variant='h6'>PPLs vinculados</Typography>
+                <Button onClick={handleOpen} variant={'contained'}>
+                    Agregar PPL
+                </Button>
+           </Stack>
 
-            <Button onClick={handleOpen} variant={'contained'}>
-                Agregar PPL
-            </Button>
-            <ModalComponent open={open} onClose={handleClose} title='Agregar PPL' >
+            <ModalComponent open={open} onClose={()=> {
+                handleClose()
+                onClose()
+                setSeleccionesEnPPL([])
+                setDatosFormulario(initialStateForm)
+
+            }} title='Agregar PPL' >
                 <Box>
 
                     <Grid container spacing={2} mt={2}>
@@ -212,13 +261,14 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                     onChange={handleChange}
                                 >
 
-                                    <MenuItem value={0}>Seleccionar PPL</MenuItem>
+                                    <MenuItem value={0}>Seleccionar PPL *</MenuItem>
                                     {personasLista.map((item : {
                                         id_persona: number; nombre:string; apellido: string;},index)=>(
                                         <MenuItem key={index} value={item.id_persona}>{item.nombre}</MenuItem>
                                     ))}
 
                                 </Select>
+                                <FormHelperText>Requerido</FormHelperText>
                             </FormControl>
                             : null}
                         </Grid>
@@ -294,9 +344,9 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                 >
 
                                     <MenuItem value={0}>Seleccionar defensor</MenuItem>
-                                    {personasLista.map((item : {
-                                        id_persona: number; nombre:string; apellido: string;},index)=>(
-                                        <MenuItem key={index} value={item.id_persona}>{item.nombre}</MenuItem>
+                                    {defensoresLista.map((item : {
+                                        id: number; nombre:string; apellido: string;},index)=>(
+                                        <MenuItem key={index} value={item.id}>{item.nombre} {item.apellido}</MenuItem>
                                     ))}
 
                                 </Select>
@@ -327,7 +377,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                         }))
                                     }}
                                     value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
-                                    label="Fecha de emision odc"
+                                    label="Fecha de emision sentencia"
                                 />
                             </FormControl>
                         </Grid>
@@ -471,11 +521,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </FormControl>
                         </Grid>
                     </Grid>
-
-
-
                     <Grid container spacing={2} mt={1}>
-
                         <Grid item sm={12}>
                             <Button variant={'contained'} onClick={handleSubmit}>
                                 Guardar
@@ -483,6 +529,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                         </Grid>
                     </Grid>
                 </Box>
+
             </ModalComponent>
         </>
     )

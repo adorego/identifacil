@@ -11,9 +11,10 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 
 const header = [
-    { id: 'caratula_expediente', label: 'Caratula' },
+    { id: 'id', label: 'id' },
     { id: 'numeroDeExpediente', label: 'Nro. expediente' },
-    { id: 'fechaDeExpediente', label: 'Fecha expediente', type: 'date' },
+    { id: 'caratula_expediente', label: 'Caratula' },
+    { id: 'fecha_del_hecho', label: 'Fecha del hecho', type: 'date' },
     { id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento', type: 'date' },
     { id: 'condenado', label: 'Condenado', type: 'boolean' },
 ]
@@ -90,7 +91,7 @@ export default function Page(){
                         data={data}
                         showId={true}
                         options={{
-                            rowsPerPageCustom:5,
+                            rowsPerPageCustom:10,
                             deleteOption: false,
                             pagination: true,
                             targetURL: '/expedientes'

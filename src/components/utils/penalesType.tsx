@@ -31,24 +31,24 @@ export interface PPLsEnExpedienteDTO {
     fecha_de_compurgamiento_recalculada:Array<DisminucionDePena>
 }
 export type CausaType = {
+    /*numeroDeDocumento: string;*/
+    numeroDeExpediente: string | null;
     condenado:boolean;
     estado_procesal:string;
     caratula_expediente:string;
     despacho_judicial:number;
     hechosPuniblesCausas:Array<HechoPunibleCausaType>;
-    ppls:Array<PPLsEnExpedienteDTO>;
+    ppls_en_expediente:Array<PPLsEnExpedienteDTO>;
     circunscripcion:number;
     ciudad:number;
     barrio:number;
-    numeroDeDocumento:number;
     anho:number;
     juzgado_de_tribunal_de_sentencia:string;
     secretaria:string;
     lugar_del_hecho:string;
     link_de_noticia:string;
-    fecha_de_hecho: Dayjs | null;
+    fecha_del_hecho: Dayjs | null;
     id: number | null;
-    numeroDeExpediente: number | null;
     fechaDeExpediente: Dayjs | string | null;
     sentencia_definitiva: string | null;
     defensor: {
@@ -62,8 +62,8 @@ export type CausaType = {
 
 export const causaInitialData : CausaType = {
     id: null,
-    numeroDeExpediente:0,
-    numeroDeDocumento: 0,
+    numeroDeExpediente:'',
+    /*numeroDeDocumento: 0,*/
     fechaDeExpediente: '',
     condenado: false,
     estado_procesal:'',
@@ -72,10 +72,10 @@ export const causaInitialData : CausaType = {
     circunscripcion: 0,
     ciudad: 0,
     barrio: 0,
-    fecha_de_hecho: null,
+    fecha_del_hecho: null,
     anho:0,
     hechosPuniblesCausas: [],
-    ppls:[],
+    ppls_en_expediente:[],
     sentencia_definitiva:'',
     juzgado_de_tribunal_de_sentencia:'',
     secretaria:'',

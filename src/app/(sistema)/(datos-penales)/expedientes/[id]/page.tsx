@@ -14,7 +14,7 @@ export default async function Page({ params }: { params: { id: number } }) {
 
     return(
         <>
-            <TituloComponent titulo='Causa' />
+            <TituloComponent titulo='Expedientes judiciales' />
             <Box mt={3}>
                 <Paper>
                     <Box p={3}>
