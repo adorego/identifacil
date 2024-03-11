@@ -16,7 +16,6 @@ export default function Identificacion(){
    const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
    const [identificationData, setIdentificationData] = useState<IdentificationResponse>(initialResponse)
 
-
    const agregar_reconocimiento = async (reconocimiento:IReconocimiento) =>{
     const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
     console.log('url:', url);
