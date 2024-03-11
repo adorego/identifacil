@@ -11,7 +11,7 @@ import {
     MenuItem,
     Select,
     FormLabel,
-    RadioGroup, FormControlLabel, Radio, TextField, Stack, FormHelperText
+    RadioGroup, FormControlLabel, Radio, TextField, Stack, FormHelperText, Autocomplete
 } from "@mui/material";
 import {fetchData} from "@/components/utils/utils";
 import {SelectChangeEvent} from "@mui/material/Select";
@@ -65,10 +65,23 @@ const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO
 
 const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:string; apellido:string;},)=>(void), editPersona: {} | null, onOpen: boolean, onClose: ()=>void}>= ({onHandlerPersona, editPersona=null, onOpen, onClose})=>{
     const { open, handleOpen, handleClose } = useModal();
+
+    // State de PPLS para poblar el selector
     const [personasLista, setPersonasLista] = useState<Array<any>>([])
+
+    // State de
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<Array<{ id_persona: number; nombre: string; apellido: string; }>>([])
+
+    // State para guardar defensores
     const [defensoresLista, setDefensoresLista] = useState<Array<any>>([])
+
+    // State para datos de forumlarios
     const [datosFormulario, setDatosFormulario] = useState<any>(initialStateForm)
+
+    // State para guardar los hechos punibles seleccionados
     const [seleccionesEnPPL, setSeleccionesEnPPL] = useState<HechoPunibleConCausa[]>([]);
+
+    // State para guardar lista de hechos punibles y causas
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
     const {openSnackbar, closeSnackbar} = useGlobalContext();
 
@@ -184,12 +197,23 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
     const handleSubmit = (e: any) =>{
         e.preventDefault();
-
-        if(datosFormulario.id_persona !== 0){
+        // console.log(personasSeleccionadas)
+        if(personasSeleccionadas.id_persona !== 0){
+            /*setDatosFormulario((prev: any) =>({
+                ...prev,
+                id_persona: persona[0].id_persona,
+                nombre: persona[0].nombre,
+                apellido: persona[0].apellido,
+                apodo: persona[0].apodo,
+            }))*/
 
             onHandlerPersona({
                 ...datosFormulario,
-                hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item))
+                hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
+                id_persona: personasSeleccionadas.id_persona,
+                nombre: personasSeleccionadas.nombre,
+                apellido: personasSeleccionadas.apellido,
+                apodo: personasSeleccionadas.apodo,
             })
             setSeleccionesEnPPL([])
             setDatosFormulario(initialStateForm)
@@ -246,9 +270,33 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
             }} title='Agregar PPL' >
                 <Box>
-
                     <Grid container spacing={2} mt={2}>
+
+
                         <Grid item sm={12}>
+                            <FormControl fullWidth>
+                                <Autocomplete
+                                    fullWidth={true}
+                                    value={personasSeleccionadas[0]}
+                                    /*onChange={(event: any, newValue: string | null) => {
+                                        setValue(newValue);
+                                    }}*/
+                                    onChange={(event, newValue:any) => {
+                                        // @ts-ignore
+                                        setPersonasSeleccionadas((prev: any)=>({
+                                            ...newValue
+
+                                        }));
+                                    }}
+
+                                    id="controllable-states-demo"
+                                    options={personasLista}
+                                    getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` }
+                                    renderInput={(params) => <TextField {...params} label="PPL AUTOCOMPLETE" />}
+                                />
+                            </FormControl>
+                        </Grid>
+                        {/*<Grid item sm={12}>
                             { (personasLista.length >0) ?
                             <FormControl fullWidth>
                                 <InputLabel id="demo-simple-select-label">PPL</InputLabel>
@@ -260,18 +308,16 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                     name='id_persona'
                                     onChange={handleChange}
                                 >
-
                                     <MenuItem value={0}>Seleccionar PPL *</MenuItem>
                                     {personasLista.map((item : {
                                         id_persona: number; nombre:string; apellido: string;},index)=>(
                                         <MenuItem key={index} value={item.id_persona}>{item.nombre}</MenuItem>
                                     ))}
-
                                 </Select>
                                 <FormHelperText>Requerido</FormHelperText>
                             </FormControl>
                             : null}
-                        </Grid>
+                        </Grid>*/}
                         <Grid item sm={12}>
                             <FormControl>
                                 <FormLabel id="117-procesal-field">Situacion procesal</FormLabel>
@@ -345,8 +391,8 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
                                     <MenuItem value={0}>Seleccionar defensor</MenuItem>
                                     {defensoresLista.map((item : {
-                                        id: number; nombre:string; apellido: string;},index)=>(
-                                        <MenuItem key={index} value={item.id}>{item.nombre} {item.apellido}</MenuItem>
+                                        id: number; nombre:string; apellido: string; tipo: string},index)=>(
+                                        <MenuItem key={index} value={item.id}> {item.apellido}, {item.nombre} - <span style={{textTransform: 'uppercase'}}>{item.tipo}</span></MenuItem>
                                     ))}
 
                                 </Select>
@@ -399,7 +445,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                         ...prevState,
                                         condena: {
                                             ...prevState.condena,
-                                            anhos: parseInt(event.target.value),
+                                            anhos: event.target.value ? parseInt(event.target.value) : 0,
                                         },
                                     }))
                                 }}
@@ -416,7 +462,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                         ...prevState,
                                         condena: {
                                             ...prevState.condena,
-                                            meses: parseInt(event.target.value),
+                                            meses: event.target.value ? parseInt(event.target.value) : 0,
                                         },
                                     }))
                                 }}
@@ -475,7 +521,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                         ...prevState,
                                         anhos_extra_por_medida_de_seguridad: {
                                             ...prevState.anhos_extra_por_medida_de_seguridad,
-                                            anhos: parseInt(event.target.value)
+                                            anhos: event.target.value ? parseInt(event.target.value) : 0
                                         },
                                     }))
                                 }}
@@ -492,7 +538,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                         ...prevState,
                                         anhos_extra_por_medida_de_seguridad: {
                                             ...prevState.anhos_extra_por_medida_de_seguridad,
-                                            meses: parseInt(event.target.value)
+                                            meses: event.target.value ? parseInt(event.target.value) : null
                                         },
                                     }))
                                 }}

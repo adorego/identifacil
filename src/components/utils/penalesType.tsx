@@ -50,6 +50,7 @@ export type CausaType = {
     fecha_del_hecho: Dayjs | null;
     id: number | null;
     fechaDeExpediente: Dayjs | string | null;
+    fecha_sentencia_definitiva: Dayjs | string | null;
     sentencia_definitiva: string | null;
     defensor: {
         id: number | null;
@@ -77,6 +78,7 @@ export const causaInitialData : CausaType = {
     hechosPuniblesCausas: [],
     ppls_en_expediente:[],
     sentencia_definitiva:'',
+    fecha_sentencia_definitiva:null,
     juzgado_de_tribunal_de_sentencia:'',
     secretaria:'',
     lugar_del_hecho:'',

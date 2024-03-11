@@ -223,8 +223,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         if(data.hechosPuniblesCausas.length > 0 ){
                             setSelecciones(data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})))
                         }
+                        console.log(data.ppls_en_expediente)
                         if(data.ppls_en_expediente.length > 0){
-                            console.log('hola>???')
                             ppl_ajustado = data.ppls_en_expediente.map(( item : any )=>({
                                 id_persona:item.ppl?.persona?.id,
                                 nombre: item.ppl?.persona?.nombre,
@@ -233,18 +233,18 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 hechosPuniblesCausas: item.hechosPuniblesCausas,
                                 defensor: item.defensor?.id,
                                 sentencia_definitiva: item.sentencia_definitiva,
-                                fecha_sentencia_definitiva: item.fecha_sentencia_definitiva,
+                                fecha_sentencia_definitiva: item?.fecha_sentencia_definitiva,
                                 condena:{
                                     anhos: item?.condena?.tiempo_de_condena.anhos,
                                     meses: item?.condena?.tiempo_de_condena.meses
                                 },
                                 fecha_de_aprehension: item.fecha_de_aprehension,
-                                tiene_anhos_extra_por_medida_de_seguridad: item.condena.tiene_anhos_extra_por_medida_de_seguridad,
+                                tiene_anhos_extra_por_medida_de_seguridad: item.condena?.tiene_anhos_extra_por_medida_de_seguridad,
                                 anhos_extra_por_medida_de_seguridad: {
-                                    anhos:item.condena.anhos_extra_por_medida_de_seguridad.anhos,
-                                    meses:item.condena.anhos_extra_por_medida_de_seguridad.meses
+                                    anhos:item.condena?.anhos_extra_por_medida_de_seguridad.anhos,
+                                    meses:item.condena?.anhos_extra_por_medida_de_seguridad.meses
                                 },
-                                fecha_de_compurgamiento_inicial: item.condena.fecha_de_compurgamiento_inicial,
+                                fecha_de_compurgamiento_inicial: item.condena?.fecha_de_compurgamiento_inicial,
 
 
                             }))
@@ -481,7 +481,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} mt={1}>
-                    <Grid item sm={6}>
+                    <Grid item sm={4}>
                         <FormControl>
                             <FormLabel id="situacion-procesal-field">Situacion procesal</FormLabel>
                             <RadioGroup
@@ -498,6 +498,37 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             </RadioGroup>
                         </FormControl>
                     </Grid>
+                    {datosFormulario.condenado ?
+
+                        <Grid item sm={4}>
+                            <TextField
+                                fullWidth
+                                label="Nro. S.D. "
+                                variant="outlined"
+                                value={datosFormulario.sentencia_definitiva}
+                                name="sentencia_definitiva"
+                                onChange={handleChange}/>
+                        </Grid>
+                    : null}
+                    {datosFormulario.condenado ?
+                        <Grid item sm={4}>
+                            <FormControl fullWidth>
+                                <DatePicker
+                                    format="DD/MM/YYYY"
+                                    name='fecha_sentencia_definitiva'
+                                    onChange={(newValue: Dayjs | null) => {
+                                        setDatosFormularios((prevState: any) => ({
+                                            ...prevState,
+                                            fecha_sentencia_definitiva: newValue,
+                                        }))
+                                    }}
+                                    value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
+                                    label="Fecha documento"/>
+                            </FormControl>
+                        </Grid>
+                    : null}
+
+
                 </Grid>
 
                 {/* Hechos punibles */}
@@ -564,20 +595,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         </Typography>
                     </Grid>
                 </Grid>
-                {datosFormulario.condenado ?
-                    <Grid container spacing={2} mt={1}>
 
-                        <Grid item sm={3}>
-                            <TextField
-                                fullWidth
-                                label="Nro. S.D. "
-                                variant="outlined"
-                                value={datosFormulario.sentencia_definitiva}
-                                name="sentencia_definitiva"
-                                onChange={handleChange}/>
-                        </Grid>
-                    </Grid>
-                    : null}
 
 
 
@@ -660,14 +678,14 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <FormControl fullWidth>
                             <InputLabel id="ciudad-field">Ciudad</InputLabel>
                             <Select
-                                labelId="circunscripcion-field"
+                                labelId="ciudad-field"
                                 id="ciudad"
                                 name='ciudad'
                                 value={datosFormulario.ciudad}
-                                label="circunscripcion"
+                                label="Ciudad"
                                 onChange={handleChange}
                             >
-                                <MenuItem value={0}>Seleccionar circunscripcion</MenuItem>
+                                <MenuItem value={0}>Seleccionar ciudad</MenuItem>
                                 {stateCamposForm.ciudad.map((item, index) => (
                                     <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
                                 ))}
@@ -723,7 +741,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                     <TableRow>
                                         <TableCell >Nombre y Apellido</TableCell>
                                         <TableCell>Situacion procesal</TableCell>
-                                        <TableCell align="right">Compurgamiento</TableCell>
+                                        <TableCell align="right">Fercha de detencion</TableCell>
                                         <TableCell align="right">Acciones</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -740,9 +758,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                             <TableCell component="th" scope="row">
                                                 {item.condenado ? 'Condenado' : 'Procesado'}
                                             </TableCell>
-                                            <TableCell align="right">{formatDate(item.fecha_de_compurgamiento_inicial)}</TableCell>
-                                            <TableCell align="left">
-                                                <Stack spacing={2} direction='row'>
+                                            <TableCell align="right">{formatDate(item.fecha_de_aprehension)}</TableCell>
+                                            <TableCell align="right">
+                                                <Stack spacing={2} direction='row' justifyContent='right'>
                                                     <IconButton aria-label="edit" size="small"
                                                                 onClick={(persona) => handleEdit(item.id_persona)}>
                                                         <CreateIcon fontSize="inherit"/>

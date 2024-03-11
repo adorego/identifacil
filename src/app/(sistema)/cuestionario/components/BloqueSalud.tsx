@@ -268,9 +268,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         datosDelFormulario.vacunas_recibidas = datosSalud.vacunas_recibidas.map(objeto => objeto.id)
 
         const methodForm = datosSalud.id ? 'PUT' : 'POST';
-        console.log(JSON.stringify(datosDelFormulario))
-        console.log('TIPO FORM: ' + methodForm)
-
 
         const respuesta = await api_request(url, {
             method: methodForm,
