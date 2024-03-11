@@ -67,7 +67,7 @@ export const causaInitialData : CausaType = {
     /*numeroDeDocumento: 0,*/
     fechaDeExpediente: '',
     condenado: false,
-    estado_procesal:'',
+    estado_procesal:'default',
     caratula_expediente: '',
     despacho_judicial: 0,
     circunscripcion: 0,
