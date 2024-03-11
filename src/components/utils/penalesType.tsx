@@ -1,31 +1,56 @@
 import {Dayjs} from "dayjs";
 
+export type HechoPunibleCausaType = {
+    hecho_punible:number;
+    causa_judicial:number;
+}
+export interface DisminucionDePena{
+    descripcion:string;
+    fecha_recalculada:Date;
+    documento:string;
+}
 
+export interface PPLsEnExpedienteDTO {
+    id_persona:number;
+    condenado:boolean;
+    hechosPuniblesCausas:Array<HechoPunibleCausaType>;
+    defensor:number;
+    condena:{
+        anhos:number;
+        meses:number;
+    };
+    fecha_de_aprehension:Date;
+    tiene_anhos_extra_por_medida_de_seguridad:boolean;
+    anhos_extra_por_medida_de_seguridad:{
+        anhos:number;
+        meses:number;
+    }
+    sentencia_definitiva:string;
+    fecha_sentencia_definitiva:Date;
+    fecha_de_compurgamiento_inicial:Date;
+    fecha_de_compurgamiento_recalculada:Array<DisminucionDePena>
+}
 export type CausaType = {
+    /*numeroDeDocumento: string;*/
+    numeroDeExpediente: string | null;
+    condenado:boolean;
+    estado_procesal:string;
+    caratula_expediente:string;
+    despacho_judicial:number;
+    hechosPuniblesCausas:Array<HechoPunibleCausaType>;
+    ppls_en_expediente:Array<PPLsEnExpedienteDTO>;
+    circunscripcion:number;
+    ciudad:number;
+    barrio:number;
+    anho:number;
+    juzgado_de_tribunal_de_sentencia:string;
+    secretaria:string;
+    lugar_del_hecho:string;
+    link_de_noticia:string;
+    fecha_del_hecho: Dayjs | null;
     id: number | null;
-    numeroDeExpediente: number | null;
-    numeroDeDocumento: number | null;
     fechaDeExpediente: Dayjs | string | null;
-    condenado: boolean;
-    estado_procesal: string | null;
-    caratula_expediente: string | null;
-    despacho_judicial: number | null;
-    circunscripcion: number | null;
-    ciudad: number | null;
-    hechosPuniblesCausas: [];
-    ppls:Array<{id_persona:number |null; nombre: string;  apellido: string}>;
-    tiempo_de_condena: number | null;
-    fecha_de_aprehension: Dayjs | null;
-    fecha_de_compurgamiento_inicial: Dayjs | null;
-    fecha_de_compurgamiento_recalculada: Dayjs | null;
-    tiene_anhos_extra_de_seguridad: boolean; // booleano local para saber si mostrar el controlador
-    tiempo_de_seguridad: number | null;
     sentencia_definitiva: string | null;
-    sentencia_tiempo: string | null;
-    juzgado_de_tribunal_de_sentencia: string | number | null;
-    secretaria: string | null;
-    lugar_del_hecho: string | null;
-    link_de_noticia: string | null;
     defensor: {
         id: number | null;
         tipo: string | null;
@@ -37,25 +62,21 @@ export type CausaType = {
 
 export const causaInitialData : CausaType = {
     id: null,
-    numeroDeExpediente:0,
-    numeroDeDocumento: 0,
+    numeroDeExpediente:'',
+    /*numeroDeDocumento: 0,*/
     fechaDeExpediente: '',
     condenado: false,
     estado_procesal:'',
     caratula_expediente: '',
-    despacho_judicial: null,
+    despacho_judicial: 0,
     circunscripcion: 0,
-    ciudad: null,
+    ciudad: 0,
+    barrio: 0,
+    fecha_del_hecho: null,
+    anho:0,
     hechosPuniblesCausas: [],
-    ppls:[],
-    tiempo_de_condena: 0,
-    fecha_de_aprehension: null,
-    fecha_de_compurgamiento_inicial:null,
-    fecha_de_compurgamiento_recalculada:null,
-    tiene_anhos_extra_de_seguridad: false, // booleano local para saber si mostrar el controlador
-    tiempo_de_seguridad: 0,
+    ppls_en_expediente:[],
     sentencia_definitiva:'',
-    sentencia_tiempo:'',
     juzgado_de_tribunal_de_sentencia:'',
     secretaria:'',
     lugar_del_hecho:'',
@@ -71,33 +92,6 @@ export const causaInitialData : CausaType = {
 };
 
 
-export const causaInitialDataPoblado = {
-    id: null,
-    numeroDeExpediente:'1234',
-    numeroDeDocumento:'2023',
-    anho: '2023',
-    condenado: true,
-    estado_procesal: 'Privado de su libertad',
-    caratula_expediente: 'Robo a mano armada a ferreteria',
-    despacho_judicial: 1,
-    circunscripcion: 1,
-    ciudad: 1,
-    hechosPuniblesCausas:[],
-    ppls:[],
-    tiempo_de_condena: '11',
-    fecha_de_aprehension: '1989-07-19',
-    fecha_de_compurgamiento_inicial:'1989-07-19',
-    fecha_de_compurgamiento_recalculada: '1989-07-19',
-    tiene_anhos_extra_de_seguridad: true, // booleano local para saber si mostrar el controlador
-    tiempo_de_seguridad: '22',
-    sentencia_definitiva: '123456',
-    juzgado_de_tribunal_de_sentencia: 1,
-    secretaria: 'San Lorenzo2222',
-    lugar_del_hecho: 'Asuncion22',
-    link_de_noticia: 'Google.com',
-    defensor: 1
-
-};
 
 
 export type  audienciaType = {

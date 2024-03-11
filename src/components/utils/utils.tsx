@@ -40,6 +40,7 @@ export async function fetchData(url : string) {
 }
 
 export async function fetchFormData(id: any, entity: string) {
+    console.log(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${entity}?id=${id}`)
 
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${entity}?id=${id}`);
@@ -217,3 +218,14 @@ export async function getDatos(endpoint:string=""){
 
     return await res.json()
 }
+
+
+
+export const formatDate = (dateString: string | null | number) => {
+    if (dateString) {
+        const date = new Date(dateString);
+        const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
+        // @ts-ignore
+        return date.toLocaleDateString(undefined, options);
+    }
+};

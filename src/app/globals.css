@@ -88,10 +88,12 @@ thead tr th.MuiTableCell-root {
 
 .sidebarSippy .MuiButtonBase-root{
     border-radius: 10px;
+    padding: 8px 10px;
 }
 
 header.MuiPaper-root {
     border-bottom: 0;
+
 }
 
 .Mui-selected {

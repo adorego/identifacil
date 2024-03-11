@@ -9,14 +9,14 @@ import {
     Chip,
     CircularProgress, Divider,
     FormControl, FormControlLabel, FormLabel,
-    Grid, IconButton, InputLabel, Radio, RadioGroup, Select,
-    Stack,
+    Grid, IconButton, InputLabel, Paper, Radio, RadioGroup, Select,
+    Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     TextField,
     Typography
 } from "@mui/material";
 import {handleInputChange} from "@/components/utils/formUtils";
-import {causaInitialData, causaInitialDataPoblado, CausaType} from "@/components/utils/penalesType";
-import {fetchData, fetchFormData, postEntity} from "@/components/utils/utils";
+import {causaInitialData, CausaType, PPLsEnExpedienteDTO} from "@/components/utils/penalesType";
+import {fetchData, fetchFormData, formatDate, postEntity} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 import {DatePicker} from "@mui/x-date-pickers";
@@ -24,7 +24,9 @@ import dayjs, {Dayjs} from "dayjs";
 import MenuItem from "@mui/material/MenuItem";
 import ModalPersona from "@/app/(sistema)/(datos-penales)/componentes/ModalPersona";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {forEachEntryModule} from "next/dist/build/webpack/utils";
+import CreateIcon from '@mui/icons-material/Create';
+import ValidacionesExpedientes
+    from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/validacionesExpedientes";
 
 type camposFormType = {
     id: number;
@@ -39,9 +41,6 @@ type formDatosType = {
     ciudad: camposFormType;
 }
 
-const hechosPuniblesIntitial: camposFormType = [
-    {id: 1, nombre: 'asesinato'}
-]
 
 type HechoPunible = {
     id: number;
@@ -63,17 +62,18 @@ type HechoPunibleConCausa = {
 
 // TODO: Hacer completado de form cuando es update o /crear
 export default function FormCausa({params}: { params: { id: number | string } }) {
+
     //@ts-ignore
     const [datosFormulario, setDatosFormularios] = useState<CausaType>(causaInitialData);
     const [stateCamposForm, setStateCamposForm] = useState<formDatosType>({
-        hechos_punibles: [],
-        circunscripciones: [],
-        ciudad: [],
-        causas: []
+        hechos_punibles: [], circunscripciones: [], ciudad: [], causas: []
     })
-    const [privados_libertad, set_privados_libertad] = useState<Array<any>>([])
+
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
     const [selecciones, setSelecciones] = useState<HechoPunibleConCausa[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [editPersona, setEditPersona] = useState(null);
+
 
     const [loading, setLoading] = useState(true);
     const {openSnackbar} = useGlobalContext();
@@ -112,25 +112,83 @@ export default function FormCausa({params}: { params: { id: number | string } })
         })
 
         // Ciudades
-        fetchData(`${ENDPOINT_API}/datos_penales/circunscripciones`).then((res) => {
-            setStateCamposForm(prev => ({...prev, ciudad: [...res.circunscripciones]}))
+        fetchData(`${ENDPOINT_API}/datos_penales/ciudades`).then((res) => {
+            setStateCamposForm(prev => ({...prev, ciudad: [...res.ciudades]}))
         })
 
     }, []);
 
     /** Se obtiene los modelos completos de PPL con el ID guardado en el array de ppl de la causa*/
-    useEffect(() => {
+    /*useEffect(() => {
+        // console.log(datosFormulario)
 
-        /*if (datosFormulario.ppls.length > 0) {
+
+        //TODO: corregir tipo typescript
+        const JsonPPL = {
+            ppls:[
+                {
+                    id_persona:17,
+                    condenado:true,
+                    hechosPuniblesCausas:[[1,12]],
+                    defensor:1,
+                    sentencia_definitiva:1288888,
+                    fecha_sentencia_definitiva:"2018-01-21",
+                    condena:{
+                        anhos:9,
+                        meses:3
+                    },
+                    fecha_de_aprehension:"2021-03-21",
+                    tiene_anhos_extra_por_medida_de_seguridad:false,
+                    fecha_de_compurgamiento_inicial:"2050-12-21",
+                    fecha_de_compurgamiento_recalculada:[
+                        {
+                            descripcion:"Buen comportamiento",
+                            fecha_recalculada:"2045-01-01",
+                            documento:"documento1.pdf"
+                        }
+                    ]
+
+                }
+            ],
+        }
+        // @ts-ignore
+        if (datosFormulario.ppls_en_expediente.length > 0) {
+            const ppl_ajustado = datosFormulario.ppls_en_expediente.map(( item : any )=>({
+                id_persona:item.ppl?.persona?.id,
+                nombre: item.ppl?.persona?.nombre,
+                apellido: item.ppl?.persona?.apellido,
+                condenado:item.condena,
+                hechosPuniblesCausas: item.hechosPuniblesCausas,
+                defensor: item.defensor?.id,
+                sentencia_definitiva: item.sentencia_definitiva,
+                fecha_sentencia_definitiva: item.fecha_sentencia_definitiva,
+                condena:{
+                    anhos: item?.condena?.anhos,
+                    meses: item?.condena?.meses
+                },
+                fecha_de_aprehension: item.fecha_de_aprehension,
+                tiene_anhos_extra_por_medida_de_seguridad: item.tiene_anhos_extra_por_medida_de_seguridad,
+                fecha_de_compurgamiento_inicial: item.condena.fecha_de_compurgamiento_inicial,
+
+
+            }))
+            console.log(datosFormulario.ppls_en_expediente)
+            console.log(ppl_ajustado)
+            setDatosFormularios((prev : any) => ({
+                ...prev,
+                ppls_en_expediente: [...ppl_ajustado],
+            }))
+        }
+        /!*if (datosFormulario.ppls_en_expediente.length > 0) {
 
             const obtenerPersonaPorId = async (id: { id_persona: number | null; nombre: string; apellido: string } | number) => {
                 const response = await fetch(`${ENDPOINT_API}/gestion_ppl/ppls/id/${id}`);
                 if (!response.ok) throw new Error('Error al obtener la persona');
                 return response.json();
             };
-            if (datosFormulario.ppls.length > 0 && datosFormulario.ppls.every(id => typeof id === 'number')) {
+            if (datosFormulario.ppls_en_expediente.length > 0 && datosFormulario.ppls_en_expediente.every(id => typeof id === 'number')) {
 
-                const promesas = datosFormulario.ppls.map((id) => obtenerPersonaPorId(id)
+                const promesas = datosFormulario.ppls_en_expediente.map((id) => obtenerPersonaPorId(id)
                 );
 
 
@@ -148,25 +206,86 @@ export default function FormCausa({params}: { params: { id: number | string } })
             }
 
 
-        }*/
+        }*!/
 
-    }, [datosFormulario.ppls]);
+    }, [datosFormulario.ppls_en_expediente]);*/
+
+    /**
+     * Get data de datos guardados previamentes de expediente
+     * */
+    useEffect(() => {
+        if (isEditMode !== 'crear') {
+            setLoading(true);
+            fetchData( `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${params.id}`) // Usa la función importada
+                .then((data) => {
+                    if (data) {
+                        let ppl_ajustado =  []
+                        if(data.hechosPuniblesCausas.length > 0 ){
+                            setSelecciones(data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})))
+                        }
+                        if(data.ppls_en_expediente.length > 0){
+                            console.log('hola>???')
+                            ppl_ajustado = data.ppls_en_expediente.map(( item : any )=>({
+                                id_persona:item.ppl?.persona?.id,
+                                nombre: item.ppl?.persona?.nombre,
+                                apellido: item.ppl?.persona?.apellido,
+                                condenado:item.condenado,
+                                hechosPuniblesCausas: item.hechosPuniblesCausas,
+                                defensor: item.defensor?.id,
+                                sentencia_definitiva: item.sentencia_definitiva,
+                                fecha_sentencia_definitiva: item.fecha_sentencia_definitiva,
+                                condena:{
+                                    anhos: item?.condena?.tiempo_de_condena.anhos,
+                                    meses: item?.condena?.tiempo_de_condena.meses
+                                },
+                                fecha_de_aprehension: item.fecha_de_aprehension,
+                                tiene_anhos_extra_por_medida_de_seguridad: item.condena.tiene_anhos_extra_por_medida_de_seguridad,
+                                anhos_extra_por_medida_de_seguridad: {
+                                    anhos:item.condena.anhos_extra_por_medida_de_seguridad.anhos,
+                                    meses:item.condena.anhos_extra_por_medida_de_seguridad.meses
+                                },
+                                fecha_de_compurgamiento_inicial: item.condena.fecha_de_compurgamiento_inicial,
+
+
+                            }))
+                        }
+                        console.log(data)
+                       console.log(ppl_ajustado)
+
+                        setDatosFormularios({
+                            ...data,
+                            //hechos_punibles: data.hechos_punibles.map((item: { id: any; }) => (item.id)),
+                            hechosPuniblesCausas: data.hechosPuniblesCausas.length > 0 ? data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})) : null,
+                            despacho_judicial: data.despacho_judicial ? data.despacho_judicial.id : null,
+                            circunscripcion: data.circunscripcion ? data.circunscripcion.id : null,
+                            ciudad: data.ciudad ? data.ciudad.id : null,
+                            ppls_en_expediente: ppl_ajustado,
+                        });
+                    }
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        } else {
+
+        }
+    }, [isEditMode, params.id]);
 
     const handleChange = (event: any) => {
         event.preventDefault();
 
         handleInputChange(event, datosFormulario, setDatosFormularios);
-        if (event.target.name == 'numeroDeDocumento') {
-            setDatosFormularios(prevState => ({
+        /*if (event.target.name == 'numeroDeExpediente') {
+            setDatosFormularios((prevState: any) => ({
                 ...prevState,
-                numeroDeExpediente: parseInt(event.target.value),
+                numeroDeDocumento: parseInt(event.target.value),
             }))
-        }
+        }*/
     };
 
     const handleBooleanChange = (event: any) => {
         event.preventDefault();
-        setDatosFormularios(prevState => ({
+        setDatosFormularios((prevState: any) => ({
             ...prevState,
             [event.target.name]: event.target.value == 'true',
         }))
@@ -213,9 +332,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
     };
 
 
-    const handleDefensor = (event: { target: { name: any; value: any; }; }) => {
+    //TODO: Corregir any de parametro
+    const handleDefensor = (event: any) => {
         console.log(event.target.name)
-        setDatosFormularios(prev => ({
+        // @ts-ignore
+        setDatosFormularios((prev:any) => ({
             ...prev,
             defensor: {
                 ...prev.defensor,
@@ -225,24 +346,26 @@ export default function FormCausa({params}: { params: { id: number | string } })
     }
 
     const handleDespachoJudicial = (event: { target: { name: any; value: any; }; }) => {
-        setDatosFormularios(prev => ({
+        setDatosFormularios((prev: any) => ({
             ...prev,
             despacho_judicial: parseInt(event.target.value),
             juzgado_de_tribunal_de_sentencia: String(event.target.value),
         }))
     }
 
-    const handlerPersona = (persona: { id_persona: number | null; nombre: string; apellido: string; }) => {
-        if(datosFormulario.ppls[0] == null){
-            setDatosFormularios(prev => ({
+    // TODO: Fix any type
+    const handlerPersona = (persona: any) => {
+        // console.log(persona)
+        if(datosFormulario.ppls_en_expediente[0] == null){
+            setDatosFormularios((prev: { ppls_en_expediente: any; }) : CausaType | any => ({
                 ...prev,
-                ppls: [persona]
+                ppls_en_expediente: [...prev.ppls_en_expediente, persona]
             }))
         }else{
-            if ((!datosFormulario.ppls.some(item => item.id_persona == persona.id_persona) && datosFormulario.ppls[0] !== null)) {
-                setDatosFormularios(prev => ({
+            if ((!datosFormulario.ppls_en_expediente.some((item: { id_persona: any; }) => item.id_persona == persona.id_persona) && datosFormulario.ppls_en_expediente[0] !== null)) {
+                setDatosFormularios((prev: { ppls_en_expediente: any; }) : CausaType | any => ({
                     ...prev,
-                    ppls: [...prev.ppls, persona]
+                    ppls_en_expediente: [...prev.ppls_en_expediente, persona]
                 }))
             }
         }
@@ -255,68 +378,69 @@ export default function FormCausa({params}: { params: { id: number | string } })
      * @param persona
      */
     const handleDeletePPL = (persona: number | null) => {
-
-        setDatosFormularios(prev => ({
+        console.log(persona)
+        setDatosFormularios((prev: any) => ({
             ...prev,
-            ppls: datosFormulario.ppls.filter(item => item.id_persona !== persona)
+            ppls_en_expediente: datosFormulario.ppls_en_expediente.filter((item: { id_persona: number | null; }) => item.id_persona !== persona)
         }))
     }
 
+    const handleCloseModal = () =>{
+        setIsModalOpen(false)
+    }
+
+    const handleOpenModal = (func: () => void) =>{
+        func()
+    }
+    const handleEdit = (id_persona: number | null = null) =>{
+
+        const personaParaEditar = datosFormulario.ppls_en_expediente.find((item: { id_persona: number | null; }) => item.id_persona == id_persona);
+        // @ts-ignore
+        setEditPersona(personaParaEditar);
+        setIsModalOpen(true); // Esto abrirá el modal
+
+    }
 
     const handleSubmit = () => {
 
         const post_mehtod = isEditMode == 'crear' ? 'POST' : 'PUT'
         const endpoint_api = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`
-        const stateForm = {
+
+        const stateForm : any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
-            defensor: 1,
-            ppls: datosFormulario.ppls.map(item => item.id_persona),
-            despacho_judicial: null,
+            despacho_judicial: 1,
         }
 
-        // console.log(selecciones.map(item => Object.values(item)))
-        console.log(isEditMode)
-        // console.log(datosFormulario.defensor)
-        postEntity(
-            post_mehtod,
-            endpoint_api,
-            'expedientes',
-            params,
-            stateForm,
-            setLoading,
-            openSnackbar,
-            router
-        );
+
+        const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
+
+        if(stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == ""){
+            openSnackbar('Falta completar campor requeridos', 'error')
+        }else{
+            // ValidacionesExpedientes(stateForm)
+            // Funcion para validar campos requeridos del form
+            console.log(stateForm)
+            // console.log(post_mehtod)
+            // console.log(JSON.stringify(stateForm))
+
+            postEntity(
+                post_mehtod,
+                endpoint_api,
+                'expedientes',
+                params,
+                stateForm,
+                setLoading,
+                openSnackbar,
+                router
+            )
+        }
+
+
     }
 
 
-    useEffect(() => {
-        if (isEditMode !== 'crear') {
-            setLoading(true);
-            fetchFormData(params.id, '/datos_penales/expedientes') // Usa la función importada
-                .then((data) => {
-                    if (data) {
-                        if(data.hechosPuniblesCausas.length > 0 ){
-                            setSelecciones(data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})))
-                        }
-                        setDatosFormularios({
-                            ...data,
-                            //hechos_punibles: data.hechos_punibles.map((item: { id: any; }) => (item.id)),
-                            hechosPuniblesCausas: data.hechosPuniblesCausas.length > 0 ? data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})) : null,
-                            despacho_judicial: data.despacho_judicial ? data.despacho_judicial.id : null,
-                            circunscripcion: data.circunscripcion ? data.circunscripcion.id : null,
-                            ciudad: data.ciudad ? data.ciudad.id : null,
-                        });
-                    }
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        } else {
 
-        }
-    }, [isEditMode, params.id]);
 
     if (datosFormulario.id == 0 && isEditMode !== 'crear') {
         return (
@@ -334,6 +458,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     return (
         <>
+
             <Box>
                 <Grid container spacing={2}>
                     <Grid item sm={12}>
@@ -343,39 +468,17 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} mt={1}>
-                    <Grid item sm={3}>
+                    <Grid item sm={4}>
                         <TextField
+                            error={datosFormulario.numeroDeExpediente == ''}
+                            helperText={datosFormulario.numeroDeExpediente == "" ? '* Campo requerido' : ''}
                             fullWidth
                             label="Nro. de expediente"
                             variant="outlined"
                             value={datosFormulario.numeroDeExpediente}
-                            name="numeroDeDocumento"
+                            name="numeroDeExpediente"
                             onChange={handleChange}/>
                     </Grid>
-                    <Grid item sm={3}>
-                        <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='fechaDeExpediente'
-                                value={datosFormulario.fechaDeExpediente ? dayjs(datosFormulario.fechaDeExpediente) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fechaDeExpediente: newValue,
-                                    }))
-                                }}
-                                label="Fecha de aprension y detención"/>
-
-                        </FormControl>
-                        {/*<TextField
-                            fullWidth
-                            label="Fecha expediente"
-                            variant="outlined"
-                            value={dayjs(datosFormulario.fechaDeExpediente)}
-                            name="fechaDeExpediente"
-                            onChange={handleChange}/>*/}
-                    </Grid>
-
                 </Grid>
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={6}>
@@ -404,6 +507,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <TextField
                             fullWidth
                             label="Caratula"
+                            error={datosFormulario.caratula_expediente == ''}
+                            helperText={datosFormulario.caratula_expediente == "" ? '* Campo requerido' : ''}
+                            placeholder='Agregar una caratula...'
                             multiline
                             rows={2}
                             variant="outlined"
@@ -411,42 +517,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             name="caratula_expediente"
                             onChange={handleChange}/>
                     </Grid>
-                    {/*<Grid item sm={6}>
 
-                        {stateCamposForm.hechos_punibles.length > 0 ?
-                            <Autocomplete
-                                multiple
-                                id="hechos-punibles"
-
-                                options={stateCamposForm.hechos_punibles ? stateCamposForm.hechos_punibles : []} // Usa las opciones por defecto
-                                value={datosFormulario.hechos_punibles}
-                                onChange={(event, newValue) => {
-                                    setDatosFormularios(prev => ({...prev, hechos_punibles: newValue,}));
-                                }}
-
-                                getOptionLabel={(option) => option.nombre}
-                                renderTags={(value, getTagProps) =>
-                                    //@ts-ignore
-                                    value.map((option: { id: number, nombre: string }, index) => (
-                                        <Chip
-                                            //@ts-ignore
-                                            key={option.id}
-                                            label={option.nombre}
-                                            {...getTagProps({index})} />
-                                    ))
-                                }
-                                renderInput={(params) => (
-                                    <TextField
-                                        {...params}
-                                        variant="outlined"
-                                        label="Hecho punible"
-                                        placeholder="Seleccione hechos punibles"
-                                        sx={{margin: '0 !important', width: '100% !important'}}
-                                    />
-                                )}
-                            />
-                            : null}
-                    </Grid>*/}
                 </Grid>
 
                 {selecciones.map((seleccion, index) => (
@@ -487,6 +558,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 <Grid container spacing={2} mt={1}>
                     <Grid item>
                         <Button variant='contained' onClick={handleAgregar}>Agregar Hecho Punible</Button>
+                        <div></div>
+                        <Typography variant='caption' color='error' ml={2}>
+                            * Campo requerido
+                        </Typography>
                     </Grid>
                 </Grid>
                 {datosFormulario.condenado ?
@@ -501,60 +576,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 name="sentencia_definitiva"
                                 onChange={handleChange}/>
                         </Grid>
-                        <Grid item sm={2}>
-                            <TextField
-                                fullWidth
-                                label="Meses"
-                                variant="outlined"
-                                value={datosFormulario.sentencia_tiempo}
-                                name="sentencia_definitiva"
-                                onChange={handleChange}/>
-                        </Grid>
                     </Grid>
                     : null}
-                {/*<Grid item sm={6}>
-                        <FormControl fullWidth>
-                            <InputLabel id="hechosPunibles-field">Hechos punibles</InputLabel>
-                            <Select
-                                labelId="hechosPunibles-field"
-                                id="hechosPunibles-1"
-                                name='hechosPunibles-1'
-                                value={stateHechosPunibles[1].hecho_punible|| ""}
-                                label="Hechos punibles"
-                                onChange={(event)=>handleHechoPunible(event)}
-                            >
-                                <MenuItem value={0}>Seleccionar hecho punible</MenuItem>
-                                {stateCamposForm.hechos_punibles.map((item, index) => (
-                                    <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                                ))}
 
-
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
-                        <FormControl fullWidth>
-                            <InputLabel id="expedientes-field">Causas</InputLabel>
-                            <Select
-                                labelId="expedientes-field"
-                                id="expedientes-1"
-                                name='expedientes'
-                                value={datosFormulario.expedientes}
-                                label="Causas"
-                                onChange={handleChange}
-                            >
-                                <MenuItem value={0}>Seleccionar causa</MenuItem>
-                                {stateCamposForm.expedientes.map((item, index) => {
-
-                                    return(
-                                        <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                                    )
-                                })}
-
-
-                            </Select>
-                        </FormControl>
-                    </Grid>*/}
 
 
                 <Grid container spacing={2} mt={1}>
@@ -562,133 +586,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <Divider>Expdiente extendido</Divider>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} mt={1}>
-                    <Grid item sm={6}>
-                        <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='fechaAprension'
-                                value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fecha_de_aprehension: newValue,
-     /*                                   fecha_de_aprehension_modificado: true,*/
-                                    }))
-                                }}
-                                label="Fecha de aprension y detención"/>
 
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={6}>
-                        <Stack spacing={2} direction='row' alignItems='center'>
-                            <Typography variant='overline'>
-                                Tiempo de condena:
-                            </Typography>
-                            <TextField
-                                label="Meses"
-                                variant="outlined"
-                                value={datosFormulario.tiempo_de_condena}
-                                name="tiempo_de_condena"
-                                onChange={handleChange}/>
-                        </Stack>
-                    </Grid>
-                </Grid>
-                {/*<Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Años"
-                            variant="outlined"
-                            value={datosFormulario.tiempo_de_condena}
-                            name="tiempoDeCondenaAnos"
-                            onChange={handleChange}/>
-                    </Grid>*/}
-                {/*<Grid item sm={2}>
-                        <TextField
-                            fullWidth
-                            label="Meses"
-                            variant="outlined"
-                            value={datosFormulario.tiempo_de_condena}
-                            name="tiempo_de_condena"
-                            onChange={handleChange}/>
-                    </Grid>*/}
-
-                <Grid container spacing={2} mt={1} alignItems={'end'}>
-                    <Grid item sm={6}>
-                        <FormControl>
-                            <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medida de
-                                seguridad?</FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="anhosDeExtraSeguridad"
-                                name="tiene_anhos_extra_de_seguridad"
-                                onChange={handleBooleanChange}
-                                value={datosFormulario.tiene_anhos_extra_de_seguridad}
-                            >
-                                <FormControlLabel value={false} control={<Radio/>} label="No"/>
-                                <FormControlLabel value={true} control={<Radio/>} label="Si"/>
-
-
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    {datosFormulario.tiene_anhos_extra_de_seguridad?
-                    <Grid item sm={2}>
-                        <TextField
-                            fullWidth
-                            label="Meses"
-                            variant="outlined"
-                            value={datosFormulario.tiempo_de_seguridad}
-                            name="tiempo_de_seguridad"
-                            onChange={handleChange}/>
-                    </Grid>
-                        : null}
-                    {/*<Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Años"
-                            variant="outlined"
-                            value={datosFormulario.tiempo_de_seguridad}
-                            name="anosDeCondenaPorMedidasDeSeguridad"
-                            onChange={handleChange}/>
-                    </Grid>*/}
-                </Grid>
-
-                <Grid container spacing={2} mt={1}>
-
-                    <Grid item sm={6}>
-                        <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='compurgamiento'
-                                value={datosFormulario.fecha_de_compurgamiento_inicial ? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fecha_de_compurgamiento_inicial: newValue,
-                                        fecha_de_compurgamiento_inicial_modificado: true,
-                                    }))
-                                }}
-                                label="Compurgamiento inicial"/>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={3}>
-                        {/*<FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='fechaCompurgamientoCalculada'
-                                value={datosFormulario.fecha_de_compurgamiento_recalculada ? dayjs(datosFormulario.fecha_de_compurgamiento_recalculada) : null}
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios(prevState => ({
-                                        ...prevState,
-                                        fecha_de_compurgamiento_recalculada: newValue,
-                                        fecha_de_compurgamiento_recalculada_modificado: true,
-                                    }))
-                                }}
-                                label="Compurgamiento recalculado"/>
-                        </FormControl>*/}
-                    </Grid>
-                </Grid>
                 <Grid container spacing={2} mt={1}>
 
                     <Grid item sm={6}>
@@ -743,27 +641,59 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             onChange={handleChange}/>
                     </Grid>
                     <Grid item sm={6}>
+
                         <FormControl fullWidth>
                             <DatePicker
                                 format="DD/MM/YYYY"
-                                name='fechaHecho'
-                                value={dayjs('11/1/2001')}
-                                onChange={handleChange}
-                                disabled
+                                name='fecha_del_hecho'
+                                onChange={(newValue: Dayjs | null) => {
+                                    setDatosFormularios((prevState: any) => ({
+                                        ...prevState,
+                                        fecha_del_hecho: newValue,
+                                    }))
+                                }}
+                                value={datosFormulario.fecha_del_hecho? dayjs(datosFormulario.fecha_del_hecho) : null}
                                 label="Fecha del hecho"/>
                         </FormControl>
                     </Grid>
-                    <Grid item sm={6}>
+                    <Grid item sm={3}>
+                        <FormControl fullWidth>
+                            <InputLabel id="ciudad-field">Ciudad</InputLabel>
+                            <Select
+                                labelId="circunscripcion-field"
+                                id="ciudad"
+                                name='ciudad'
+                                value={datosFormulario.ciudad}
+                                label="circunscripcion"
+                                onChange={handleChange}
+                            >
+                                <MenuItem value={0}>Seleccionar circunscripcion</MenuItem>
+                                {stateCamposForm.ciudad.map((item, index) => (
+                                    <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                                ))}
+
+
+                            </Select>
+                        </FormControl>
+                        {/*<TextField
+                            fullWidth
+                            label="Ciudad"
+                            variant="outlined"
+                            value={datosFormulario.ciudad}
+                            name="ciudad"
+                            onChange={handleChange}/>*/}
+                    </Grid>
+                    <Grid item sm={3}>
                         <TextField
                             fullWidth
-                            label="Lugar del hecho"
+                            label="Bario"
                             variant="outlined"
                             value={datosFormulario.lugar_del_hecho}
                             name="lugar_del_hecho"
                             onChange={handleChange}/>
                     </Grid>
 
-                    <Grid item sm={12}>
+                    <Grid item sm={6}>
                         <TextField
                             fullWidth
                             label="Link de la noticia"
@@ -775,73 +705,67 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     <Grid item sm={12}>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} mt={1}>
-                    <Grid item sm={12}>
-                        <Typography>Defensor</Typography>
-                    </Grid>
-                    <Grid item sm={3}>
-                        <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">Tipo</InputLabel>
-                            <Select
-                                label="Tipo"
-                                variant="outlined"
-                                value={datosFormulario.defensor.tipo}
-                                name="tipo"
-                                onChange={handleDefensor}
-                            >
-                                <MenuItem value={'publico'}>Publico</MenuItem>
-                                <MenuItem value={'privado'}>Privado</MenuItem>
-                            </Select>
-                        </FormControl>
 
-                    </Grid>
-                    <Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Nombre del Defensor"
-                            variant="outlined"
-                            value={datosFormulario.defensor.nombre ? datosFormulario.defensor.nombre : ''}
-                            name="nombre"
-                            onChange={handleDefensor}/>
-                    </Grid>
-                    <Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Nombre del Defensor"
-                            variant="outlined"
-                            value={datosFormulario.defensor.apellido ? datosFormulario.defensor.apellido : ''}
-                            name="apellido"
-                            onChange={handleDefensor}/>
-                    </Grid>
-                    <Grid item sm={3}>
-                        <TextField
-                            fullWidth
-                            label="Telefono"
-                            variant="outlined"
-                            value={datosFormulario.defensor.telefono ? datosFormulario.defensor.telefono : ''}
-                            name="telefono"
-                            onChange={handleDefensor}/>
-                    </Grid>
-                </Grid>
                 <Grid container spacing={2} mt={1}>
-                    <Grid item sm={12}>
-                        <Typography>PPLs vinculados</Typography>
-                    </Grid>
+
                     <Grid item sm={12} mt={1}>
-                        <ModalPersona onHandlerPersona={handlerPersona}/>
+                        <ModalPersona
+                            onHandlerPersona={handlerPersona}
+                            editPersona={editPersona}
+                            onClose={handleCloseModal}
+                            onOpen={isModalOpen}/>
                     </Grid>
 
                     <Grid item sm={12}>
-                        <ul>
-                            {(datosFormulario.ppls.length > 0 && datosFormulario.ppls[0] !== null) ?
+                        <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell >Nombre y Apellido</TableCell>
+                                        <TableCell>Situacion procesal</TableCell>
+                                        <TableCell align="right">Compurgamiento</TableCell>
+                                        <TableCell align="right">Acciones</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {(datosFormulario.ppls_en_expediente?.length > 0 && datosFormulario.ppls_en_expediente[0] !== null) ?
 
-                                (datosFormulario.ppls.map((item: {
-                                    id_persona: number | null;
-                                    nombre: string;
-                                    apellido: string
-                                }) => (
+                                        (datosFormulario.ppls_en_expediente.map((item: any, index:number) => (
+                                        <TableRow
+                                            key={index}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+
+                                            <TableCell align="left">{item.nombre + ' ' + item.apellido}</TableCell>
+                                            <TableCell component="th" scope="row">
+                                                {item.condenado ? 'Condenado' : 'Procesado'}
+                                            </TableCell>
+                                            <TableCell align="right">{formatDate(item.fecha_de_compurgamiento_inicial)}</TableCell>
+                                            <TableCell align="left">
+                                                <Stack spacing={2} direction='row'>
+                                                    <IconButton aria-label="edit" size="small"
+                                                                onClick={(persona) => handleEdit(item.id_persona)}>
+                                                        <CreateIcon fontSize="inherit"/>
+                                                    </IconButton>
+                                                    <IconButton aria-label="delete" size="small"
+                                                            onClick={(persona) => handleDeletePPL(item.id_persona)}>
+                                                    <DeleteIcon fontSize="inherit"/>
+                                                </IconButton>
+
+                                                </Stack>
+                                            </TableCell>
+                                        </TableRow>
+                                        )))
+                                        : null}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                        {/*<ul>
+                            {(datosFormulario.ppls_en_expediente.length > 0 && datosFormulario.ppls[0] !== null) ?
+
+                                (datosFormulario.ppls_en_expediente.map((item: any) => (
                                     <li key={item.id_persona}>
-                                        {item.nombre} {item.apellido}
+                                        {item.nombre} {item.apellido} ({item.apodo})
                                         <IconButton aria-label="delete" size="small"
                                                     onClick={(persona) => handleDeletePPL(item.id_persona)}>
                                             <DeleteIcon fontSize="inherit"/>
@@ -853,11 +777,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <div>
                             {privados_libertad.map((persona, index) => (
                                 <div key={index}>
-                                    {/* Renderiza la información de la persona aquí */}
+                                     Renderiza la información de la persona aquí
                                     {persona.nombre}
                                 </div>
                             ))}
-                        </div>
+                        </div>*/}
                     </Grid>
 
                 </Grid>
