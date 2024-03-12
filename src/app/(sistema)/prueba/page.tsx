@@ -15,7 +15,7 @@ const Prueba =()=>{
                     condenado: true,
                     estado_procesal:"Con prisión domiciliaria",
                     caratula_expediente:"Asesinato en tercer grado",
-                    //hechosPuniblesCausas:[[4,7]]
+                    hechosPuniblesCausas:[[4,7]]
                 }
                 
                 const datosSerializados = JSON.stringify(datosAEnviar);
