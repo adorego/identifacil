@@ -279,24 +279,17 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
             }} title='Agregar PPL' >
                 <Box>
                     <Grid container spacing={2} mt={2}>
-
-
                         <Grid item sm={12}>
                             <FormControl fullWidth>
                                 <Autocomplete
                                     fullWidth={true}
                                     value={personasSeleccionadas[0]}
-                                    /*onChange={(event: any, newValue: string | null) => {
-                                        setValue(newValue);
-                                    }}*/
                                     onChange={(event, newValue:any) => {
                                         // @ts-ignore
                                         setPersonasSeleccionadas((prev: any)=>({
                                             ...newValue
-
                                         }));
                                     }}
-
                                     id="controllable-states-demo"
                                     options={personasLista}
                                     getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` }

@@ -314,6 +314,7 @@ export type datosJudicialesType = {
     hecho_punible: {
         id: number |null;
     };
+    numero_de_expediente: number | null;
     sentencia_definitiva: string;
     primera_vez_en_prision: boolean;
     cantidad_de_veces_que_ingreso: number;
@@ -361,6 +362,7 @@ export type datosJudicialesType = {
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
+    numero_de_expediente: null,
     hecho_punible: {
         id: null,
     },
