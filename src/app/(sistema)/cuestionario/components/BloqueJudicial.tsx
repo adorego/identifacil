@@ -1,4 +1,5 @@
 import {
+    Autocomplete,
     Box,
     Button,
     FormControl,
@@ -51,7 +52,6 @@ interface causasDTO {
     success: boolean;
 }
 
-
 interface BloqueJudicialProps {
     datosIniciales?: datosJudicialesType;
     id_persona: number | null;
@@ -61,6 +61,7 @@ type HechoPunibleConCausa = {
     hechoPunibleId: number;
     causaId: number;
 };
+
 type HechoPunible = {
     id: number;
     nombre: string;
@@ -74,10 +75,24 @@ type Causa = {
     nombre: string;
 };
 
+type ExpedienteType = [{
+    id: number;
+    numeroDeExpediente: string;
+    caratula_expediente: string;
+}] | null;
+
+type datosFormularioType = {
+    expedientes: ExpedienteType;
+    hechos_punibles: Array<{}>;
+    causas: [];
+    expedientesSeleccionados:{};
+}
 const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicialesInicial, id_persona}) => {
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
     const [selecciones, setSelecciones] = useState<HechoPunibleConCausa[]>([]);
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
+    const [datosFormulario, setDatosFormulario] = useState<any>({})
+
     const {openSnackbar} = useGlobalContext();
     const ENDPOINT_API = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}`
 
@@ -128,6 +143,14 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                 })
             }
 
+            /** Metodo para obetener datos de expedientes y poblar la lista en el form
+             * */
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`).then(res => {
+                setDatosFormulario((prev: any)=>({
+                    ...prev,
+                    expedientes: res
+                }))
+            })
 
             /*fetchData(`${API_URL_REGISTRO}/datos_penales/causas`).then(res => {
 
@@ -138,6 +161,9 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                 setHechosPunibles(res.hechosPunibles)
             })*/
             // Hechos punibles
+
+            /** Obtiene lista de hechos punibles para poblar la lista
+             * */
             fetchData(`${ENDPOINT_API}/datos_penales/hechos_punibles`).then((res) => {
                 console.log(res)
 
@@ -190,6 +216,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
         });
         setSelecciones(nuevasSelecciones);
     };
+
     const handleAgregar = () => {
         const nuevaSeleccion = {hechoPunibleId: hechosPunibles[0].id, causaId: hechosPunibles[0].causas[0].id};
         setSelecciones([...selecciones, nuevaSeleccion]);
@@ -200,41 +227,14 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
         setSelecciones(nuevasSelecciones);
     };
 
-    /*useEffect(
-        () => {
-            const getOficios = async () => {
-                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/oficios`;
-                try {
-                    const respuesta: RequestResponse = await api_request<oficiosDTO>(url, {
-                        method: 'GET',
-                        headers: {
-                            'Content-type': 'application/json'
-                        }
-                    });
-                    // console.log("Respuesta:", respuesta);
-                    if (respuesta.success && respuesta.datos) {
-                        setOficios(respuesta.datos.oficios);
-                    } else {
-                        log.error(`Error al consultar los oficios:${respuesta.error?.message}`);
-                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
-                    }
 
-                } catch (error) {
-                    log.error(`Error al consultar los oficios:${error}`);
-                    openSnackbar(`Error en la consulta de datos:${error}`, "error");
-                }
-            }
-
-            getOficios();
-
-        }, []
-    )*/
 
     /*const transformarSetearCausas = (expedientes: Array<causa>) => {
         console.log("Causas:", expedientes);
         setCausas(expedientes);
 
     }*/
+
     const onDatoChange = (event: any) => {
         // console.log(event);
         setEstadoFormularioJudicial(
@@ -397,6 +397,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
         const propiedades: Array<string> = Object.getOwnPropertyNames(datos);
 
         formData.append('id_persona', String(id_persona));
+        formData.append('numero_de_expediente', String(datosFormulario.expedientesSeleccionados.id ? datosFormulario.expedientesSeleccionados.id : null));
         /*formData.append('situacionJudicial', String(datos.situacionJudicial));*/
         formData.append('situacionJudicial_modificado', String(datos.situacionJudicial_modificado));
         formData.append('primeraVezEnPrision', String(datos.primeraVezEnPrision));
@@ -421,6 +422,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
         formData.append('sentenciaDefinitiva', datos.sentenciaDefinitiva ? datos.sentenciaDefinitiva : "");
         formData.append('sentenciaDefinitiva', datos.sentenciaDefinitiva ? datos.sentenciaDefinitiva : "");
 
+        console.log(formData)
         return formData;
 
 
@@ -437,29 +439,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
             <Typography variant='h6' mb={3}>
                 Formulario de datos judiciales
             </Typography>
-            {/*<Grid container spacing={2}>
-                <Grid item sm={12}>
-                    <FormControl>
-                        <FormLabel id="situacionJudicial">Situación judicial</FormLabel>
-                        <RadioGroup
-                            value={estadoFormularioJudicial.situacionJudicial}
-                            onChange={onDatoChange}
-                            row
-                            aria-labelledby="situacionJudicial"
-                            name="situacionJudicial"
-                        >
-                            <FormControlLabel
-                                value={false}
-                                control={<Radio/>}
-                                label="Procesado"/>
-                            <FormControlLabel
-                                value={true}
-                                control={<Radio/>}
-                                label="Condenado"/>
-                        </RadioGroup>
-                    </FormControl>
-                </Grid>
-            </Grid>*/}
+
             <Grid container mt={2}>
                 <Grid item sm={6} alignSelf='center'>
                     <Stack spacing={2} direction={"row"} alignItems='end'>
@@ -515,14 +495,186 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                     </FormControl>
                 </Grid>
             </Grid>
-
-            {/* Bloque Expediente Judicial*/}
-           <Box mt={3} sx={{
+            <Box mt={3} sx={{
                 border: '1px solid #E2E8F0',
                 background: 'rgba(244,246,248, 0.30)',
                 padding: '16px',
                 borderRadius: '8px'
-           }}>
+            }}>
+                <Grid container spacing={2}>
+                    <Grid item sm={12}>
+                        <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase'}}>
+                            Expediente judicial
+                        </Typography>
+                    </Grid>
+                    <Grid item sm={12}>
+                        <FormControl fullWidth>
+                            <Autocomplete
+                                fullWidth
+                                value={datosFormulario.expedientesSeleccionados}
+                                onChange={(event, newValue:any) => {
+                                    // @ts-ignore
+                                    setDatosFormulario((prev: any)=>({
+                                        ...prev,
+                                        expedientesSeleccionados:newValue
+                                   }));
+                                }}
+                                id="controllable-states-demo"
+                                options={datosFormulario.expedientes}
+                                getOptionLabel={(option:{numeroDeExpediente: string; caratula_expediente: string})  => `${option.numeroDeExpediente} -- ${option.caratula_expediente}` }
+                                renderInput={(params) => <TextField sx={{width: '100% !important'}} {...params} label="Expediente" />}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item sm={12}>
+                        <Button variant='contained'>
+                            Agregar Expediente
+                        </Button>
+
+                            { false ?
+                                <Box>
+                                    <Grid container spacing={2} mt={2}>
+                                        <Grid item sm={12}>
+                                            <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase'}}>
+                                                DETALLE EXPEDIENTE JUDICIAL
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item sm={4}>
+                                            <TextField label='Numero de expediente'/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid container spacing={2} mt={1}>
+                                        <Grid item sm={4}>
+                                            <FormControl>
+                                                <FormLabel id="situacion-procesal-field">Situacion procesal</FormLabel>
+                                                <RadioGroup
+                                                    row
+                                                    aria-labelledby="situacion-procesal-field"
+                                                    name="condenado"
+                                                    /*onChange={handleBooleanChange}*/
+                                                    value={datosFormulario.condenado}
+                                                >
+                                                    <FormControlLabel value={false} control={<Radio/>} label="Procesado"/>
+                                                    <FormControlLabel value={true} control={<Radio/>} label="Condenado"/>
+
+
+                                                </RadioGroup>
+                                            </FormControl>
+                                        </Grid>
+                                        {datosFormulario.condenado ?
+
+                                            <Grid item sm={4}>
+                                                <TextField
+                                                    fullWidth
+                                                    label="Nro. S.D. "
+                                                    variant="outlined"
+                                                    value={datosFormulario.sentencia_definitiva}
+                                                    name="sentencia_definitiva"
+                                                    /*onChange={handleChange}*/
+                                                />
+                                            </Grid>
+                                            : null}
+                                        {datosFormulario.condenado ?
+                                            <Grid item sm={4}>
+                                                <FormControl fullWidth>
+                                                    <DatePicker
+                                                        format="DD/MM/YYYY"
+                                                        name='fecha_sentencia_definitiva'
+                                                        /*onChange={(newValue: Dayjs | null) => {
+                                                            setDatosFormularios((prevState: any) => ({
+                                                                ...prevState,
+                                                                fecha_sentencia_definitiva: newValue,
+                                                            }))
+                                                        }}*/
+                                                        value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
+                                                        label="Fecha documento"/>
+                                                </FormControl>
+                                            </Grid>
+                                            : null}
+
+
+                                    </Grid>
+                                    <Grid container spacing={2} mt={1}>
+                                        <Grid item sm={12}>
+                                            <TextField
+                                                fullWidth
+                                                label="Caratula"
+                                                error={datosFormulario.caratula_expediente == ''}
+                                                helperText={datosFormulario.caratula_expediente == "" ? '* Campo requerido' : ''}
+                                                placeholder='Agregar una caratula...'
+                                                multiline
+                                                rows={2}
+                                                variant="outlined"
+                                                value={datosFormulario.caratula_expediente}
+                                                name="caratula_expediente"
+                                                /*onChange={handleChange}*/
+                                            />
+                                        </Grid>
+
+                                    </Grid>
+                                    {selecciones.map((seleccion, index) => (
+                                        <Grid container spacing={2} mt={1} key={index}>
+                                            <Grid item sm={6}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="hechosPunibles-field">Hechos punibles</InputLabel>
+                                                    <Select
+                                                        label='Hechos punibles'
+                                                        value={seleccion.hechoPunibleId}
+                                                        onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
+                                                    >
+                                                        {hechosPunibles.map((hp) => (
+                                                            <MenuItem key={hp.id} value={hp.id}>{hp.nombre}</MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item sm={5}>
+                                                <FormControl fullWidth>
+                                                    <InputLabel id="causas-field">Causas</InputLabel>
+                                                    <Select
+                                                        label='causas'
+                                                        value={seleccion.causaId}
+                                                        onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
+                                                    >
+                                                        {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => (
+                                                            <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
+                                                        ))}
+                                                    </Select>
+                                                </FormControl>
+                                            </Grid>
+                                            <Grid item sm={1} alignItems='center'>
+                                                <button onClick={() => handleEliminar(index)}>X</button>
+                                            </Grid>
+                                        </Grid>
+                                    ))}
+                                    <Grid container spacing={2} mt={1}>
+                                        <Grid item>
+                                            <Button variant='contained' onClick={handleAgregar}>Agregar Hecho Punible</Button>
+                                        </Grid>
+                                    </Grid>
+                                </Box>
+                            : null}
+
+                    </Grid>
+                    {/*<Grid item sm={6}>
+                        <FormControl fullWidth>
+                            <InputLabel id="expedientes-field">Expediente judicial</InputLabel>
+                            <Select
+                                label='Expediente judicial'
+                                value={seleccion.hechoPunibleId}
+                                onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
+                            >
+                                <MenuItem value={0}>Selecionar expediente judicial</MenuItem>
+                                {datosFormulario.expedientes?.map((item : { id: number; numeroDeExpediente: string; caratula_expediente: string }, index: number) => (
+                                    <MenuItem key={index} value={item.id}>{`${item.numeroDeExpediente} - ${item.caratula_expediente}`}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </Grid>*/}
+                </Grid>
+            </Box>
+            {/* Bloque Expediente Judicial*/}
+            {/*
                 <Grid container spacing={2}>
                     <Grid item sm={12}>
                         <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase'}}>
@@ -629,7 +781,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                        </Button>
                    </Grid>
                </Grid>
-           </Box>
+           </Box>*/}
              <Box mt={3} sx={{
                 border: '1px solid #E2E8F0',
                 background: 'rgba(244,246,248, 0.30)',
@@ -686,8 +838,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = datosJudicial
                         </Grid>
                     </Grid>
                 </Grid>
-
-
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
                         <Typography variant='subtitle1' pt={0}>Resolución MJ/DGEP</Typography>
