@@ -21,7 +21,7 @@ const Prueba =()=>{
                 const datosSerializados = JSON.stringify(datosAEnviar);
                 console.log("Datos:", datosAEnviar);
                 console.log("Datos serializados:", datosSerializados);
-                const respuesta = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`,{
+                const respuesta = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/prueba_post`,{
                     
                     method:"POST",
                     headers:{
