@@ -31,6 +31,14 @@ const Prueba =()=>{
                     
                 });
                 console.log("Respuesta de la API:", respuesta);
+                const respuesta2 = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expediente`,{
+                    method:"POST",
+                    headers:{
+                        'Content-Type':'application/json',
+                    },
+                    body: datosSerializados
+                })
+                console.log("Respuesta de la API expedientes:", respuesta2);
                 setEnviarPost(false);
             }
             enviarPost ? enviar_expediente() : null;
