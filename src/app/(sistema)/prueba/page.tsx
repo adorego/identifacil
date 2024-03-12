@@ -31,7 +31,7 @@ const Prueba =()=>{
                     
                 });
                 console.log("Respuesta de la API:", respuesta);
-                const respuesta2 = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/expedientes`,{
+                const respuesta2 = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`,{
                     method:"POST",
                     headers:{
                         'Content-Type':'application/json',
