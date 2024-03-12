@@ -26,9 +26,8 @@ const Prueba =()=>{
                     headers:{
                         'Content-Type':'application/json',
                     },
-                    body:{
-                        datosSerializados
-                    }
+                    body: datosSerializados
+                    
                 });
                 console.log("Respuesta de la API:", respuesta);
                 setEnviarPost(false);
