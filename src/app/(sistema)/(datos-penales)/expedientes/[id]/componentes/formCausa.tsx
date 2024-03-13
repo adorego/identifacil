@@ -409,7 +409,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
         const stateForm : any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
-            despacho_judicial: 1,
+           
         }
 
 
