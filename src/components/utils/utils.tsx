@@ -177,12 +177,12 @@ export const postForm = async (
         setLoading(true);
 
         const method = isEditMode ? 'PUT' : 'POST';
-        console.log(JSON.stringify(stateForm))
+        //console.log(JSON.stringify(stateForm))
         const url = isEditMode
             ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${stateForm.id}`
             : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
 
-        console.log(url)
+        // console.log(url)
         const response = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
@@ -200,6 +200,7 @@ export const postForm = async (
             if(redirect){
                 router.push(`/${endpoint}`);
             }
+            return response
         } else {
             throw new Error('Error en la petición');
         }

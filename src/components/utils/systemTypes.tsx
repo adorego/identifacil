@@ -337,7 +337,7 @@ export type datosJudicialesType = {
     oficioJudicial_modificado:boolean;
     resolucion: resolucion_tipo;
     resolucion_modificado:boolean;
-    expediente: expediente_tipo;
+    expediente: number | null;
     expediente_modificado:boolean;
     caratula: string;
     caratula_modificado:boolean;
@@ -402,10 +402,7 @@ export const datosJudicialesInicial:datosJudicialesType = {
         documento:null
     },
     resolucion_modificado:false,
-    expediente: {
-        numeroDeDocumento:"",
-        fechaDeDocumento:null
-    },
+    expediente: null,
     expediente_modificado:false,
     caratula: "",
     caratula_modificado:false,

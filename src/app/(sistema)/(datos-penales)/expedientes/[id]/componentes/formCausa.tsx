@@ -256,7 +256,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             ...data,
                             //hechos_punibles: data.hechos_punibles.map((item: { id: any; }) => (item.id)),
                             hechosPuniblesCausas: data.hechosPuniblesCausas.length > 0 ? data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})) : null,
-                            despacho_judicial: data.despacho_judicial ? data.despacho_judicial.id : null,
+                            /*despacho_judicial: data.despacho_judicial ? data.despacho_judicial.id : null,*/
                             circunscripcion: data.circunscripcion ? data.circunscripcion.id : null,
                             ciudad: data.ciudad ? data.ciudad.id : null,
                             ppls_en_expediente: ppl_ajustado,
@@ -348,7 +348,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const handleDespachoJudicial = (event: { target: { name: any; value: any; }; }) => {
         setDatosFormularios((prev: any) => ({
             ...prev,
-            despacho_judicial: parseInt(event.target.value),
+            /*despacho_judicial: parseInt(event.target.value),*/
             juzgado_de_tribunal_de_sentencia: String(event.target.value),
         }))
     }
@@ -409,7 +409,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
         const stateForm : any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
-            despacho_judicial: 1,
         }
 
 
