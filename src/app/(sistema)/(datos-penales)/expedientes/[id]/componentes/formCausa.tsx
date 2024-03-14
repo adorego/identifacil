@@ -392,6 +392,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const handleOpenModal = (func: () => void) =>{
         func()
     }
+
     const handleEdit = (id_persona: number | null = null) =>{
 
         const personaParaEditar = datosFormulario.ppls_en_expediente.find((item: { id_persona: number | null; }) => item.id_persona == id_persona);
@@ -437,8 +438,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
     }
-
-
 
 
     if (datosFormulario.id == 0 && isEditMode !== 'crear') {

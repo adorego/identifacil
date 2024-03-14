@@ -32,7 +32,9 @@ interface datosPersonales {
     id_persona: number | null;
     numeroDeIdentificacion: string | null;
     nombre: string;
+    tiene_cedula: boolean;
     nombre_modificado: boolean;
+    codigo_genero: number;
     apellido: string;
     apellido_modificado: boolean;
     apodo: string;
@@ -41,7 +43,7 @@ interface datosPersonales {
     estadoCivil_modificado: boolean;
     fechaDeNacimiento: Dayjs | null;
     fechaDeNacimiento_modificado: boolean;
-    nacionalidad: string;
+    nacionalidad: number;
     nacionalidad_modificado: boolean;
     lugarDeNacimiento: string;
     lugarDeNacimiento_modificado: boolean;
@@ -75,10 +77,12 @@ const datosPersonalesInicial: datosPersonales = {
     numeroDeIdentificacion: null,
     nombre: '',
     apellido: '',
+    tiene_cedula: true,
     apodo: '',
+    codigo_genero: 0,
     estadoCivil: '',
     fechaDeNacimiento: null,
-    nacionalidad: '',
+    nacionalidad: 0,
     lugarDeNacimiento: '',
     sexo: '',
     tipoDeDocumento: '',
@@ -118,9 +122,13 @@ export interface BloqueDatosPersonalesProps {
 
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) => {
+    console.log(datosDeIdentificacion)
+
+
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial,
-        fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento, "DD-MM-YYYY"),
+        fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento),
+        tiene_cedula: datosDeIdentificacion.tiene_cedula,
         fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
         numeroDeIdentificacion: datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
@@ -128,6 +136,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
         apellido_modificado: true,
+        codigo_genero: datosDeIdentificacion.codigo_genero,
+        nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 0,
 
     });
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
@@ -135,6 +145,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     const {openSnackbar} = useGlobalContext();
 
 
+    /** Efecto para obtener datos para elementos del formulario
+     * */
     useEffect(
         () => {
 
@@ -161,14 +173,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
             }
 
-            console.log("Consultando nacionalidades");
-            getNacionalidades();
-
-        }, []
-    )
-
-    useEffect(
-        () => {
             const getEstadosCiviles = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
                 try {
@@ -189,7 +193,16 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
             }
+
             getEstadosCiviles();
+            getNacionalidades();
+
+        }, []
+    )
+
+    useEffect(
+        () => {
+
         }, []
     )
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -297,6 +310,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             Nombre
                         </InputLabel>
                         <OutlinedInput
+                            disabled
                             readOnly={true}
                             label="Nombre"
                             name="nombre"
@@ -311,6 +325,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             Apellido
                         </InputLabel>
                         <OutlinedInput
+                            disabled
                             readOnly={true}
                             label="Apellido"
                             name="apellido"
@@ -318,7 +333,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             onChange={onDatoChange}/>
                     </FormControl>
                 </Grid>
-                <Grid item sm={4}>
+                <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="apodo">
                             Apodo
@@ -330,7 +345,72 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             onChange={onDatoChange}/>
                     </FormControl>
                 </Grid>
-                <Grid item sm={4}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Nacionalidad</InputLabel>
+                        <Select
+                            value={datosPersonalesState.nacionalidad}
+                            onChange={onDatoSelectChange}
+                            label="Nacionalidad"
+                            name="nacionalidad"
+                        >
+                            {nacionalidades ? nacionalidades.map(
+                                (data, id) => {
+                                    return (
+                                        <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
+                                    )
+                                }
+                            ) : null}
+
+
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Tipo de documento</InputLabel>
+                        <OutlinedInput
+                            fullWidth
+                            value={datosPersonalesState.tiene_cedula ? 'Cedula de Identidad Policial' : 'Otro'}
+                            label="Tipo de documento"
+                            name="tipo_documento"
+                            disabled
+                            inputProps={{readOnly: true,}}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Numero de documento</InputLabel>
+                        <OutlinedInput
+                            fullWidth
+                            value={datosPersonalesState.numeroDeIdentificacion}
+                            label="Numero de documento"
+                            name="numeroDeIdentificacion"
+                            disabled
+                            inputProps={{readOnly: true,}}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item sm={6}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel htmlFor="estado_civil">
+                            Genero
+                        </InputLabel>
+                        <Select
+                            id="estado_civil_id"
+                            name="codigo_genero"
+                            label='Genero'
+                            value={datosPersonalesState.codigo_genero}
+                        >
+
+                            <MenuItem value={1}>Femenino</MenuItem>
+                            <MenuItem value={2}>Masculino</MenuItem>
+
+
+                        </Select>
+                    </FormControl>
+                </Grid><Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="estado_civil">
                             Estado Civil
@@ -353,36 +433,28 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid item sm={4}>
+                <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <DatePicker
 
-                            value={datosPersonalesState.fechaDeNacimiento}
+                            value={datosPersonalesState.fechaDeNacimiento ? dayjs(datosPersonalesState.fechaDeNacimiento, 'DD/MM/YYYY') : null}
                             format="DD/MM/YYYY"
+                            disabled
                             onChange={onFechaNacimientoChange}
                             label={"Fecha de nacimiento"}
                         />
                     </FormControl>
                 </Grid>
-                <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Nacionalidad</InputLabel>
-                        <Select
-                            value={datosPersonalesState.nacionalidad}
-                            onChange={onDatoSelectChange}
-                            label="Nacionalidad"
-                            name="nacionalidad"
-                        >
-                            {nacionalidades ? nacionalidades.map(
-                                (data, id) => {
-                                    return (
-                                        <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
-                                    )
-                                }
-                            ) : null}
-
-
-                        </Select>
+                <Grid item sm={6}>
+                    <FormControl fullWidth={true}>
+                        <TextField
+                            autoComplete="off"
+                            disabled
+                            fullWidth
+                            label="Edad"
+                            name="edad"
+                            value={datosPersonalesState.fechaDeNacimiento ? dayjs().diff(dayjs(datosDeIdentificacion.fecha_nacimiento), 'year') : null}
+                        />
                     </FormControl>
                 </Grid>
                 <Grid item xs={6}>

@@ -217,7 +217,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
         postForm(
             false,
             'datos_penales/expedientes',
-            'expedientes',
+            'q',
             testData,
             setLoading,
             openSnackbar,
