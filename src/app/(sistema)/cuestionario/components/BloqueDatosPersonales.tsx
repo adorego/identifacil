@@ -5,7 +5,7 @@ import {
     FormControlLabel,
     FormLabel,
     Grid,
-    InputLabel,
+    InputLabel, ListSubheader,
     MenuItem,
     OutlinedInput,
     Radio,
@@ -136,7 +136,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
         apellido_modificado: true,
-        codigo_genero: datosDeIdentificacion.codigo_genero,
+        codigo_genero: datosDeIdentificacion.codigo_genero ? datosDeIdentificacion.codigo_genero : 0,
         nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 0,
 
     });
@@ -221,7 +221,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         )
     }
 
-    const onDatoSelectChange = (event: SelectChangeEvent) => {
+    const onDatoSelectChange = (event: SelectChangeEvent<number | string>) => {
         setDatosPersonalesState(
             (previus) => {
                 return (
@@ -299,7 +299,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     }
 
     return (
-        <Box component={'form'} autoComplete="off">
+        <Box component={'form'} autoComplete="off" mx={2}>
             <Typography variant='h6'>
                 Datos Personales
             </Typography>
@@ -422,6 +422,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             value={datosPersonalesState.estadoCivil}
                             onChange={onDatoSelectChange}
                         >
+                                        <MenuItem value={0}>Seleccionar estado civil</MenuItem>
                             {estadosCiviles ? estadosCiviles.map(
                                 (estadoCivil, id) => {
                                     return (
@@ -523,7 +524,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 </Grid>
                 <Grid item sm={12}>
                     <Typography variant='h6'>
-                        Pueblo indigenas
+                        Pueblos indigenas
                     </Typography>
                 </Grid>
                 <Grid item xs={4}>
@@ -546,16 +547,55 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </RadioGroup>
                     </FormControl>
                 </Grid>
-                <Grid item sm={8}>
-                    <TextField
-                        fullWidth
-                        label="Nombre de la etnia"
-                        name="nombreEtnia"
-                        value={datosPersonalesState.nombreEtnia}
-                        onChange={onDatoChange}
-                        disabled={!datosPersonalesState.pueblosIndigenas}
-                    />
+                {datosPersonalesState.pueblosIndigenas ?
+                <Grid item sm={6}>
+                    <FormControl className='pueblosSelector' fullWidth variant="outlined">
+                        <InputLabel>Pueblos indigena</InputLabel>
+                        <Select
+                            value={datosPersonalesState.nombreEtnia}
+                            onChange={onDatoSelectChange}
+                            label="Pueblos indigena"
+                            name="nombreEtnia"
+                        >
+                            <MenuItem value={'0'}>Seleccionar pueblo indigena</MenuItem>
+                            <ListSubheader>Guarani</ListSubheader>
+                            <MenuItem value={'141'}>Aché</MenuItem>
+                            <MenuItem value={'142'}>Avá Guarani</MenuItem>
+                            <MenuItem value={'143'}>Mbyá Guarani</MenuItem>
+                            <MenuItem value={'144'}>Paî Tavyterã</MenuItem>
+                            <MenuItem value={'145'}>Guaraní Occidental</MenuItem>
+                            <MenuItem value={'146'}>Guaraní Ñandeva</MenuItem>
+
+                            <ListSubheader>Lengua Maskoy</ListSubheader>
+                            <MenuItem value={'251'}>Enlhet Norte</MenuItem>
+                            <MenuItem value={'252'}>Enxet Sur</MenuItem>
+                            <MenuItem value={'253'}>Sanapana</MenuItem>
+                            <MenuItem value={'254'}>Angaité</MenuItem>
+                            <MenuItem value={'255'}>Guaná</MenuItem>
+                            <MenuItem value={'256'}>Toba Maskoy</MenuItem>
+
+                            <ListSubheader>Mataco Mataguayo</ListSubheader>
+                            <MenuItem value={'361'}>Nivaclé</MenuItem>
+                            <MenuItem value={'362'}>Maká</MenuItem>
+                            <MenuItem value={'363'}>Manjui</MenuItem>
+
+                            <ListSubheader>Zamuco</ListSubheader>
+                            <MenuItem value={'361'}>Ayoreo</MenuItem>
+                            <MenuItem value={'362'}>Ybytoso</MenuItem>
+                            <MenuItem value={'363'}>Tomárãho</MenuItem>
+
+                            <ListSubheader>Guaicurú</ListSubheader>
+                            <MenuItem value={'581'}>Qom</MenuItem>
+
+                            <ListSubheader>Códigos especiales</ListSubheader>
+                            <MenuItem value={'990'}>Otros pueblos indígena n.c.p(Especifique)</MenuItem>
+                            <MenuItem value={'997'}>No indigena</MenuItem>
+                            <MenuItem value={'999'}>Ignorado</MenuItem>
+                        </Select>
+                    </FormControl>
+
                 </Grid>
+                : null}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Comunidad LGBTI

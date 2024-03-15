@@ -59,6 +59,7 @@ function a11yProps(index: number) {
 
 
 type datosPersonaType = {
+    numero_de_identificacion: any;
     id_persona: number | null;
     nombre: string;
     apellido: string;
@@ -96,6 +97,7 @@ const datosPersonaInitial: datosPersonaType = {
     nombre: "",
     apellido: "",
     genero: 1,
+    numero_de_identificacion: "",
     apodo: "",
     fechaDeNacimiento: "",
     datosPersonales: {
@@ -173,6 +175,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                         pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
                                         nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
                                         perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
+                                        numero_de_identificacion: datosPersona.numero_de_identificacion
 
                                     }}/> : ''
                                 }

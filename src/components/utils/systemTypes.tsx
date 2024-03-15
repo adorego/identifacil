@@ -124,7 +124,7 @@ export type saludMentalType = {
 
 export type saludFisicaType = {
     id: number | null;
-    discapacidad_fisica: "fisica" | "motora" | "ninguna" | "intelectual" | "visual" | "auditivas" | "otros";
+    discapacidad_fisica: "fisica" | "motora" | "ninguna" | "intelectual" | "visual" | "auditivas" | "otros" | string;
     discapacidad_fisica_modificado: boolean;
     explicacion_de_discapacidad: string | null;
     explicacion_de_discapacidad_modificado: boolean;
