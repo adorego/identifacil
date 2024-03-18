@@ -17,6 +17,7 @@ const nineMonthsFromNow = dayjs().add(9, 'month');
 interface BloqueSaludProps {
     id_persona: number | null;
     datosAlmacenados?: datosDeSalud2Type;
+    codigo_genero: number;
 }
 
 interface datosSaludSelect {
@@ -77,7 +78,7 @@ const SaludFisicaInicial = {
     otros: false
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
+const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero=2}) => {
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
     const [stateSaludFisica, setStateSaludFisica] = useState<SaludFisicaType>(SaludFisicaInicial)
@@ -100,8 +101,10 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 }
             })
 
+            if(datosAlmacenados.saludFisica.discapacidad_fisica !== 'ninguna'){
+                setStateSaludFisica(JSON.parse(datosAlmacenados.saludFisica.discapacidad_fisica))
+            }
 
-            setStateSaludFisica(JSON.parse(datosAlmacenados.saludFisica.discapacidad_fisica))
         }
     }, [datosAlmacenados])
 
@@ -586,6 +589,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 </Grid>
 
                 {/* MATERNIDAD */}
+                {codigo_genero == 1 ?
                 <Grid container spacing={2}>
                     <Grid item sm={12}>
                         <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
@@ -645,6 +649,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             : null}
                     </Grid>
                 </Grid>
+                : null }
 
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>

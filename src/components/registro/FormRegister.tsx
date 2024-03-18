@@ -115,11 +115,22 @@ export default function FormRegister() {
     }
 
     const generar_request_enviar = async () => {
-        console.log("Entro en generar_request_enviar");
+
         if (identidad.current != null) {
+
+            let numero_identificacion = '';
+
+            if(identidad.current?.es_extranjero){
+                numero_identificacion = identidad.current.numeroDeIdentificacion ? identidad.current.numeroDeIdentificacion : '';
+            }else {
+                numero_identificacion = identidad.current.cedula_identidad ? identidad.current.cedula_identidad : ""
+            }
+
+            console.log(numero_identificacion)
+
             const formData = new FormData();
             formData.append('tipo_identificacion', '1');
-            formData.append('numero_identificacion', identidad.current.cedula_identidad ? identidad.current.cedula_identidad : "");
+            formData.append('numero_identificacion', numero_identificacion);
             formData.append('prontuario', identidad.current.prontuario ? identidad.current.prontuario : "");
             formData.append('es_extranjero', String(identidad.current.es_extranjero));
             formData.append('tiene_cedula', String(identidad.current.tiene_cedula));
@@ -224,7 +235,7 @@ export default function FormRegister() {
                         }
                     )}
                 </Stepper>
-                <Box sx={{
+                <Box className='registerContainerIdentifier' sx={{
                     backgroundColor: '#FFF',
                     paddingY: '20px',
                     paddingX: '30px',
