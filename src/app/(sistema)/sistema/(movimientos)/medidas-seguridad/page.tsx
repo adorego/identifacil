@@ -31,7 +31,7 @@ export default function Page(){
     // Se obtiene datos de la API
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/medidaSeguridad');
+            const response = await fetch('http://localhost:6000/medidaSeguridad');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }

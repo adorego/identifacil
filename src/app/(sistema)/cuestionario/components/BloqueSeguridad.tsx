@@ -8,7 +8,7 @@ import {
     InputLabel,
     OutlinedInput,
     Radio,
-    RadioGroup
+    RadioGroup, Typography
 } from "@mui/material";
 import React, {FC, useEffect, useState} from "react";
 import {datosSeguridadInicial, datosSeguridadType} from "@/components/utils/systemTypes";
@@ -116,7 +116,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
             }}
             noValidate
             autoComplete="off"
+            mx={2}
         >
+            <Typography variant='h6' mb={3}>
+                Formulario de Seguridad
+            </Typography>
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <FormControl>

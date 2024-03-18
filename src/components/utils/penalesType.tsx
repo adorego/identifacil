@@ -36,7 +36,6 @@ export type CausaType = {
     condenado:boolean;
     estado_procesal:string;
     caratula_expediente:string;
-    despacho_judicial:number;
     hechosPuniblesCausas:Array<HechoPunibleCausaType>;
     ppls_en_expediente:Array<PPLsEnExpedienteDTO>;
     circunscripcion:number;
@@ -69,7 +68,6 @@ export const causaInitialData : CausaType = {
     condenado: false,
     estado_procesal:'default',
     caratula_expediente: '',
-    despacho_judicial: 0,
     circunscripcion: 0,
     ciudad: 0,
     barrio: 0,

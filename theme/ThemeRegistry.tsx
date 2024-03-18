@@ -36,12 +36,15 @@ const themeOptions: ThemeOptions = {
                 // Name of the slot
                 root: {
                     height: '38px',
-                    backgroundColor: '#00A76F',
                 },
                 outlined: {
                     // Aquí puedes personalizar el estilo del botón outlined
                     background: '#FFF',
                 },
+                contained: {
+                    backgroundColor: '#00A76F',
+                    textTransform: 'capitalize'
+                }
             },
         },
         MuiInputBase:{

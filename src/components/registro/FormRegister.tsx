@@ -278,7 +278,7 @@ export default function FormRegister() {
                             </Grid>
                         }
                         {botonesDeFlujo.mostrarBotonSiguiente &&
-                            <Grid item xs={'auto'}>
+                            <Grid item>
                                 <Button disabled={!botonesDeFlujo.habilitarBotonSiguiente} variant="contained"
                                         onClick={onStepForward} endIcon={<KeyboardArrowRight/>}>
                                     Siguiente

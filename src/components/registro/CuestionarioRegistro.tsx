@@ -50,7 +50,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
 
     return (
         <div>
-            <h2>Cuestionario de Ingreso</h2>
+            <Typography variant='h6' textTransform='uppercase' mb={2}>Cuestionario de Ingreso</Typography>
 
             <Box className=''>
                 {/* Acordeon Salud */}
@@ -68,6 +68,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionDetails>
 
                 </Accordion>
+
                 <Accordion expanded={expanded === 'salud'} onChange={handleAccordionChange('salud')}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon/>}

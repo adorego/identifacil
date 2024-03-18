@@ -202,14 +202,6 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
         // @ts-ignore
         if(personasSeleccionadas.id_persona !== 0){
-            /*setDatosFormulario((prev: any) =>({
-                ...prev,
-                id_persona: persona[0].id_persona,
-                nombre: persona[0].nombre,
-                apellido: persona[0].apellido,
-                apodo: persona[0].apodo,
-            }))*/
-
 
             onHandlerPersona({
                 ...datosFormulario,
@@ -279,24 +271,17 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
             }} title='Agregar PPL' >
                 <Box>
                     <Grid container spacing={2} mt={2}>
-
-
                         <Grid item sm={12}>
                             <FormControl fullWidth>
                                 <Autocomplete
                                     fullWidth={true}
                                     value={personasSeleccionadas[0]}
-                                    /*onChange={(event: any, newValue: string | null) => {
-                                        setValue(newValue);
-                                    }}*/
                                     onChange={(event, newValue:any) => {
                                         // @ts-ignore
                                         setPersonasSeleccionadas((prev: any)=>({
                                             ...newValue
-
                                         }));
                                     }}
-
                                     id="controllable-states-demo"
                                     options={personasLista}
                                     getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` }
@@ -344,6 +329,89 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </FormControl>
                         </Grid>
                     </Grid>
+                    {datosFormulario.condenado ?
+                    <Grid container spacing={2} mt={1}>
+                        <Grid item sm={12}>
+                            <Typography variant='overline'>
+                                Duracion total de la condena
+                            </Typography>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <TextField
+                                fullWidth
+                                label="anhos"
+                                variant="outlined"
+                                onChange={(event : React.ChangeEvent<HTMLInputElement>) => {
+                                    setDatosFormulario((prevState: any) => ({
+                                        ...prevState,
+                                        condena: {
+                                            ...prevState.condena,
+                                            anhos: event.target.value ? parseInt(event.target.value) : 0,
+                                        },
+                                    }))
+                                }}
+                                value={datosFormulario?.condena?.anhos}
+                                name="anhos"
+                            />
+                            <FormHelperText>* Requerido</FormHelperText>
+                        </Grid><Grid item sm={6}>
+                        <TextField
+                            fullWidth
+                            label="meses"
+                            variant="outlined"
+                            onChange={(event : React.ChangeEvent<HTMLInputElement>) => {
+                                setDatosFormulario((prevState: any) => ({
+                                    ...prevState,
+                                    condena: {
+                                        ...prevState.condena,
+                                        meses: event.target.value ? parseInt(event.target.value) : 0,
+                                    },
+                                }))
+                            }}
+                            value={datosFormulario?.condena?.meses}
+                            name="meses"
+                        />
+                        <FormHelperText>* Requerido</FormHelperText>
+                    </Grid>
+                    </Grid>
+                    : null }
+                    {datosFormulario.condenado ?
+                        <Grid container spacing={2} mt={1}>
+                            <Grid item sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Sentencia definitiva"
+                                    variant="outlined"
+                                    value={datosFormulario.sentencia_definitiva}
+                                    onChange={handleChange}
+                                    name="sentencia_definitiva"
+                                />
+                            </Grid>
+                            <Grid item sm={6}>
+                                <FormControl fullWidth>
+                                    <DatePicker
+                                        format="DD/MM/YYYY"
+                                        name='fecha_sentencia_definitiva'
+                                        onChange={(newValue: Dayjs | null) => {
+                                            setDatosFormulario((prevState: any) => ({
+                                                ...prevState,
+                                                fecha_sentencia_definitiva: newValue,
+                                            }))
+                                        }}
+                                        value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
+                                        label="Fecha de emision sentencia"
+                                    />
+                                </FormControl>
+                            </Grid>
+                        </Grid>
+                        : null}
+                    <Grid container spacing={2} mt={1}>
+                        <Grid item sm={12}>
+                            <Typography variant='overline'>
+                                Duracion total de la condena
+                            </Typography>
+                        </Grid>
+                    </Grid>
                     {seleccionesEnPPL.map((seleccion, index) => (
                         <Grid container spacing={2} mt={1} key={index}>
                             <Grid item sm={6}>
@@ -379,7 +447,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </Grid>
                         </Grid>
                     ))}
-                    <Grid container spacing={2} mt={1}>
+                    <Grid container spacing={2} sx={{mt:"10px"}}>
                         <Grid item>
                             <Button variant='contained' onClick={handleAgregar}>Agregar Hecho Punible</Button>
                         </Grid>
@@ -407,78 +475,8 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </FormControl>
                         </Grid>
                     </Grid>
-                    {datosFormulario.condenado ?
-                    <Grid container spacing={2} mt={1}>
-                        <Grid item sm={6}>
-                            <TextField
-                                fullWidth
-                                label="Sentencia definitiva"
-                                variant="outlined"
-                                value={datosFormulario.sentencia_definitiva}
-                                onChange={handleChange}
-                                name="sentencia_definitiva"
-                            />
-                        </Grid>
-                        <Grid item sm={6}>
-                            <FormControl fullWidth>
-                                <DatePicker
-                                    format="DD/MM/YYYY"
-                                    name='fecha_sentencia_definitiva'
-                                    onChange={(newValue: Dayjs | null) => {
-                                        setDatosFormulario((prevState: any) => ({
-                                            ...prevState,
-                                            fecha_sentencia_definitiva: newValue,
-                                        }))
-                                    }}
-                                    value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
-                                    label="Fecha de emision sentencia"
-                                />
-                            </FormControl>
-                        </Grid>
-                    </Grid>
-                    : null}
-                    <Grid container spacing={2} mt={1}>
-                        <Grid item sm={12}>
-                            <Typography variant='overline'>
-                                Duracion total de la condena
-                            </Typography>
-                        </Grid>
-                        <Grid item sm={6}>
-                            <TextField
-                                fullWidth
-                                label="anhos"
-                                variant="outlined"
-                                onChange={(event : React.ChangeEvent<HTMLInputElement>) => {
-                                    setDatosFormulario((prevState: any) => ({
-                                        ...prevState,
-                                        condena: {
-                                            ...prevState.condena,
-                                            anhos: event.target.value ? parseInt(event.target.value) : 0,
-                                        },
-                                    }))
-                                }}
-                                value={datosFormulario?.condena?.anhos}
-                                name="anhos"
-                            />
-                        </Grid><Grid item sm={6}>
-                            <TextField
-                                fullWidth
-                                label="meses"
-                                variant="outlined"
-                                onChange={(event : React.ChangeEvent<HTMLInputElement>) => {
-                                    setDatosFormulario((prevState: any) => ({
-                                        ...prevState,
-                                        condena: {
-                                            ...prevState.condena,
-                                            meses: event.target.value ? parseInt(event.target.value) : 0,
-                                        },
-                                    }))
-                                }}
-                                value={datosFormulario?.condena?.meses}
-                                name="meses"
-                            />
-                        </Grid>
-                    </Grid>
+
+
                     <Grid container spacing={2} mt={1}>
                         <Grid item sm={6}>
                             <FormControl fullWidth>

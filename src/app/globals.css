@@ -69,7 +69,14 @@ thead tr th.MuiTableCell-root {
 .customTable th, .customTable td {
     padding: 24px;
 }
-
+.pueblosSelector .MuiListSubheader-root {
+    border-bottom: 1px solid #ede9e9;
+    font-weight: bold;
+    color: #333;
+}
+.MuiButtonBase-root.MuiAccordionSummary-root.Mui-expanded {
+    border-bottom: 1px solid #bdbdbd4d;
+}
 .tabPills button {
     border: 1px solid #212121;
     border-radius: 40px;
