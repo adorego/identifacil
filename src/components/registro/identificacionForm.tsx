@@ -42,11 +42,13 @@ const alternativasFormularioInicial: alternativasDelFormulario = {
 const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [alternativaFormulario, setAlternativaFormulario] = useState<alternativasDelFormulario>(alternativasFormularioInicial);
     const {openSnackbar} = useGlobalContext();
+
     useEffect(
         () => {
             props.habilitarBotonSiguiente(false);
         }, [alternativaFormulario]
     )
+
     const onNacionalidadChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAlternativaFormulario(
             (previus: alternativasDelFormulario) => {
@@ -70,7 +72,7 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
     }
 
     return (
-        <Box sx={{padding: "10px"}} >
+        <Box sx={{padding: "10px"}} component={'form'} autoComplete="off">
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6' textTransform='uppercase'>
@@ -78,7 +80,7 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
                     </Typography>
                 </Grid>
                 <Grid item sm={6}>
-                    <FormLabel id="nacionalidad">¿Es Paraguayo?</FormLabel>
+                    <FormLabel id="nacionalidad">¿Tiene Cédula Paraguaya?</FormLabel>
                     <RadioGroup row defaultValue="SI" onChange={onNacionalidadChangeHandler}
                                 value={alternativaFormulario.paraguayo} name="nacionalidad-opciones">
                         <FormControlLabel value={true} control={<Radio/>} label="SI"/>
@@ -115,6 +117,7 @@ export default IdentificacionForm;
 export interface DatosDeIdentificacion {
     id_persona: number | null;
     cedula_identidad?: string | null;
+    numeroDeIdentificacion?: string;
     prontuario?: string;
     es_extranjero: boolean;
     tiene_cedula: boolean;
@@ -159,6 +162,8 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
         setCedula(event.target.value);
     }
 
+    /** Se realiza consulta a los datos de la policia para obtener los datos del PPL paraguayo y con cedula
+     * */
     const onConsultarRegistroCivil = async () => {
         setConsultaLoading(true)
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_CONSULTACI_API}/get_datos_ci/`;
@@ -174,19 +179,28 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
             });
             if (response.ok) {
                 const data: DatosCedulaDTO = await response.json();
-                console.log(data);
+
                 if (data.exito && data.datosDeCedula.nombres != "") {
                     // console.log(data);
+                    // se verifica que los datos de la persona a ingresar sea mayor a 18 años
                     const datosDeidentificacionAGenerar = {
                         ...data.datosDeCedula,
                         tiene_cedula: true,
                         es_extranjero: false,
                         id_persona: null,
                     }
-                    setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
-                    props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                    props.habilitarBotonSiguiente(true);
-                    setConsultaLoading(false)
+                    if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
+                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
+                        props.actualizarIdentificacion(datosDeidentificacionAGenerar);
+                        openSnackbar('Persona no puede ingresar. Debe ser mayor de edad.', 'error')
+                        setConsultaLoading(false)
+                    } else {
+                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
+                        props.actualizarIdentificacion(datosDeidentificacionAGenerar);
+                        props.habilitarBotonSiguiente(true);
+                        setConsultaLoading(false)
+                    }
+
                 }
             } else {
                 log.error("Error al consultar el documento:", await response.json())
@@ -201,6 +215,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
         }
 
     }
+
     return (
         <>
             <Grid container spacing={2} mt={3}>
@@ -219,7 +234,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     <LoadingButton
                         sx={{
                             minHeight: "100%",
-                            px:"40px",
+                            px: "40px",
                         }}
                         onClick={onConsultarRegistroCivil}
                         loading={consultaLoading}
@@ -313,9 +328,11 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
             props.actualizarIdentificacion({
                 ...formularioDeDatosDeIdentificacion,
                 fecha_nacimiento: formularioDeDatosDeIdentificacion.fecha_nacimiento.toISOString(),
+                numeroDeIdentificacion: formularioDeDatosDeIdentificacion.numeroDeIdentificacion,
                 tiene_cedula: true,
                 es_extranjero: true,
                 id_persona: null,
+
             });
             props.habilitarBotonSiguiente(true);
         } else {
@@ -329,11 +346,12 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
             (previus) => {
                 return {
                     ...previus,
-                    codigo_de_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
+                    codigo_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
                 }
             }
         )
     }
+
     const onChangeFechaDeNacimiento = (value: Dayjs | null) => {
         setFormularioDeDatosDeIdentificacion(
             (previus) => {
@@ -344,6 +362,7 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
             }
         )
     }
+
     const onTextChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormularioDeDatosDeIdentificacion(
             (estadoPrevio) => {
@@ -355,18 +374,20 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
         )
     }
     return (
-        <>
+        <Box component={'form'} autoComplete="off">
+
             <Grid container spacing={2} mt={3}>
                 <Grid item xs={6}>
-                    <TextField autoComplete="off"
-                               id="numeroDeIdentificacion"
-                               value={formularioDeDatosDeIdentificacion.numeroDeIdentificacion}
-                               name="numeroDeIdentificacion"
-                               onChange={onTextChangeHandler}
-                               fullWidth
-                               label={"Ingrese número de identificación extranjera"}
-                               variant="outlined"
-                               required/>
+                    <TextField
+                        autoComplete='off'
+                        id="numeroDeIdentificacion"
+                        value={formularioDeDatosDeIdentificacion.numeroDeIdentificacion}
+                        name="numeroDeIdentificacion"
+                        onChange={onTextChangeHandler}
+                        fullWidth
+                        label={"Ingrese número de identificación extranjera"}
+                        variant="outlined"
+                        required/>
                 </Grid>
 
                 <Grid item xs={6}>
@@ -434,7 +455,7 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
 
 
             </Grid>
-        </>
+        </Box>
 
     )
 
@@ -458,6 +479,7 @@ const datosInicialesDeFormularioDePPLSinCedula = {
     fecha_nacimiento: dayjs(),
     codigo_genero: 2,
 }
+
 const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] =
         useState<DatosDeIdentificacionSinCedula>(datosInicialesDeFormularioDePPLSinCedula);
@@ -468,6 +490,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
 
     const onGuardarHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log("Fecha de nacimiento:", formularioDeDatosDeIdentificacion.fecha_nacimiento?.toISOString());
+
         if (formularioDeDatosDeIdentificacion.fecha_nacimiento && formularioDeDatosDeIdentificacion.nombres.length > 2
             && formularioDeDatosDeIdentificacion.apellidos.length > 2 && formularioDeDatosDeIdentificacion.prontuario.length > 1
             && formularioDeDatosDeIdentificacion.codigo_genero) {
@@ -490,7 +513,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
             (previus) => {
                 return {
                     ...previus,
-                    codigo_de_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
+                    codigo_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
                 }
             }
         )
@@ -517,6 +540,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
     }
     return (
         <>
+            {console.log(formularioDeDatosDeIdentificacion)}
             <Grid container spacing={2} mt={3}>
                 <Grid item xs={6}>
                     <TextField autoComplete="off"

@@ -25,6 +25,7 @@ import BloqueSeguridad from '@/app/(sistema)/cuestionario/components/BloqueSegur
 import { DatosDeIdentificacion } from "./identificacionForm";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Identificacion from "@/app/(sistema)/identificacion/page";
+import BloqueGaleria from "@/app/(sistema)/cuestionario/components/BloqueGaleria";
 
 // const steps = [
 //   'Reconocimiento',
@@ -80,6 +81,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     <AccordionDetails>
 
                         <BloqueSalud
+                            codigo_genero={datosDeIdentidad.codigo_genero}
                             id_persona={id_persona}/>
                     </AccordionDetails>
                 </Accordion>
@@ -144,7 +146,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                 </Accordion>
 
                 {/* Acordeon Fotografia */}
-                {/*<Accordion>
+                <Accordion>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel2a-content"
@@ -153,23 +155,10 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     <Typography  sx={{fontWeight: 'bold'}}>Fotografias</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <Typography>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                        malesuada lacus ex, sit amet blandit leo lobortis eget.
-                    </Typography>
+                    <BloqueGaleria />
                 </AccordionDetails>
-            </Accordion>*/}
-                {/* <Grid container spacing={2} mt={2}>
-                <Grid item sm={12}>
-                    <Button variant='contained' onClick={(event) => handleSubmitCuestionario(event, 'continuar')} sx={{marginRight: '20px',}}>
-                        Continuar
-                    </Button>
+            </Accordion>
 
-                    <Button variant='outlined'  onClick={(event) => handleSubmitCuestionario(event, 'atras')}>
-                        Volver atras
-                    </Button>
-                </Grid>
-            </Grid> */}
             </Box>
         </div>
     )

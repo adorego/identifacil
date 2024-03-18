@@ -187,7 +187,8 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                 <BloqueSalud
                                      id_persona={datosPersona.id_persona}
                                      datosAlmacenados={datosPersona.datosDeSalud}
-                                 />
+                                  codigo_genero={datosPersona.genero}
+                                />
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={2}>

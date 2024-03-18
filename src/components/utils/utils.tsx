@@ -1,5 +1,5 @@
 
-import dayjs from 'dayjs';
+import dayjs, {Dayjs} from 'dayjs';
 import {API_REGISTRO} from "../../../config";
 
 /*export default deleteRecord = async (id) => {
@@ -230,3 +230,12 @@ export const formatDate = (dateString: string | null | number) => {
         return date.toLocaleDateString(undefined, options);
     }
 };
+
+/*export const getYearsDate = (fechaMayor:string = null |Dayjs, fechaMenor: string | Dayjs) : string =>{
+
+    const fechaMayor1 =
+
+    return fechaMayor.diff(dayjs(fechaMenor), 'year')
+}*/
+
+

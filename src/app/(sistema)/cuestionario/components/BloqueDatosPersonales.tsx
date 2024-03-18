@@ -2,7 +2,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid,
     InputLabel, ListSubheader,
@@ -30,7 +30,7 @@ import {useGlobalContext} from "@/app/Context/store";
 
 interface datosPersonales {
     id_persona: number | null;
-    numeroDeIdentificacion: string | null;
+    numeroDeIdentificacion: string | any;
     nombre: string;
     tiene_cedula: boolean;
     nombre_modificado: boolean;
@@ -69,6 +69,10 @@ interface datosPersonales {
     perteneceAComunidadLGTBI_modificado: boolean;
     grupoLGTBI: string;
     grupoLGTBI_modificado: boolean;
+    mantiene_contacto_con_consulado_o_embajada: boolean;
+    nombre_de_contacto_en_consulado_o_embajada: string;
+    numero_de_contacto_en_consulado_o_embajada: string;
+    pais_de_embajada: number;
 
 }
 
@@ -113,6 +117,10 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
+    mantiene_contacto_con_consulado_o_embajada: false,
+    nombre_de_contacto_en_consulado_o_embajada: '',
+    numero_de_contacto_en_consulado_o_embajada: '',
+    pais_de_embajada: 0,
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -131,7 +139,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         tiene_cedula: datosDeIdentificacion.tiene_cedula,
         fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
-        numeroDeIdentificacion: datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
+        numeroDeIdentificacion: datosDeIdentificacion.es_extranjero ? datosDeIdentificacion.numeroDeIdentificacion : datosDeIdentificacion.cedula_identidad ,
         nombre: datosDeIdentificacion.nombres,
         nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
@@ -275,6 +283,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
             datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
             // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+            console.log(datosDelFormulario);
+
             const respuesta = await api_request(url, {
                 method: 'POST',
                 body: JSON.stringify(datosDelFormulario),
@@ -411,29 +421,29 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </Select>
                     </FormControl>
                 </Grid><Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="estado_civil">
-                            Estado Civil
-                        </InputLabel>
-                        <Select
-                            id="estado_civil_id"
-                            name="estadoCivil"
-                            label='Estado Civil'
-                            value={datosPersonalesState.estadoCivil}
-                            onChange={onDatoSelectChange}
-                        >
-                                        <MenuItem value={0}>Seleccionar estado civil</MenuItem>
-                            {estadosCiviles ? estadosCiviles.map(
-                                (estadoCivil, id) => {
-                                    return (
-                                        <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
-                                    )
-                                }
-                            ) : null}
+                <FormControl fullWidth={true}>
+                    <InputLabel htmlFor="estado_civil">
+                        Estado Civil
+                    </InputLabel>
+                    <Select
+                        id="estado_civil_id"
+                        name="estadoCivil"
+                        label='Estado Civil'
+                        value={datosPersonalesState.estadoCivil}
+                        onChange={onDatoSelectChange}
+                    >
+                        <MenuItem value={0}>Seleccionar estado civil</MenuItem>
+                        {estadosCiviles ? estadosCiviles.map(
+                            (estadoCivil, id) => {
+                                return (
+                                    <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
+                                )
+                            }
+                        ) : null}
 
-                        </Select>
-                    </FormControl>
-                </Grid>
+                    </Select>
+                </FormControl>
+            </Grid>
                 <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <DatePicker
@@ -522,6 +532,82 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         />
                     </FormControl>
                 </Grid>
+            </Grid>
+
+
+            {/* Bloque Extranjero*/}
+            {datosDeIdentificacion.es_extranjero ?
+                <Grid container spacing={2} my={2}>
+                    <Grid item sm={12}>
+                        <Typography variant='h6'>
+                            Datos de Extranjeros
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <FormControl fullWidth variant="outlined">
+                            <FormLabel>Mantiene contacto con la embajada:</FormLabel>
+                            <RadioGroup
+                                value={datosPersonalesState.mantiene_contacto_con_consulado_o_embajada}
+                                onChange={onOptionSelectChange}
+                                row
+                                aria-labelledby="mantiene_contacto_con_consulado_o_embajada"
+                                name="mantiene_contacto_con_consulado_o_embajada">
+                                <FormControlLabel
+                                    value={true}
+                                    control={<Radio/>}
+                                    label="Si"/>
+                                <FormControlLabel
+                                    value={false}
+                                    control={<Radio/>}
+                                    label="No"/>
+                            </RadioGroup>
+                        </FormControl>
+                    </Grid>
+                    {datosPersonalesState.mantiene_contacto_con_consulado_o_embajada ?
+                    (
+                        <>
+                            <Grid item xs={3}>
+                                <TextField
+                                    fullWidth
+                                    name='nombre_de_contacto_en_consulado_o_embajada'
+                                    label='Nombre de contacto'
+                                    onChange={onDatoChange}
+                                    value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    fullWidth
+                                    name='numero_de_contacto_en_consulado_o_embajada'
+                                    label='Número de contacto de contacto'
+                                    onChange={onDatoChange}
+                                    value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth variant="outlined">
+                                    <InputLabel>Pais de embajada</InputLabel>
+                                    <Select
+                                        value={datosPersonalesState.pais_de_embajada}
+                                        onChange={onDatoSelectChange}
+                                        label="Pais de embajada"
+                                        name="pais_de_embajada"
+                                    >
+                                        <MenuItem value={1}>Brasil</MenuItem>
+                                        <MenuItem value={2}>Argentina</MenuItem>
+                                        <MenuItem value={3}>Chile</MenuItem>
+                                        <MenuItem value={3}>Bolivia</MenuItem>
+                                    </Select>
+                                    <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
+                                </FormControl>
+                            </Grid>
+                        </>
+                    )
+                    : null}
+                </Grid>
+
+                : null}
+            <Grid container spacing={2} my={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Pueblos indigenas
@@ -548,54 +634,54 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 {datosPersonalesState.pueblosIndigenas ?
-                <Grid item sm={6}>
-                    <FormControl className='pueblosSelector' fullWidth variant="outlined">
-                        <InputLabel>Pueblos indigena</InputLabel>
-                        <Select
-                            value={datosPersonalesState.nombreEtnia}
-                            onChange={onDatoSelectChange}
-                            label="Pueblos indigena"
-                            name="nombreEtnia"
-                        >
-                            <MenuItem value={'0'}>Seleccionar pueblo indigena</MenuItem>
-                            <ListSubheader>Guarani</ListSubheader>
-                            <MenuItem value={'141'}>Aché</MenuItem>
-                            <MenuItem value={'142'}>Avá Guarani</MenuItem>
-                            <MenuItem value={'143'}>Mbyá Guarani</MenuItem>
-                            <MenuItem value={'144'}>Paî Tavyterã</MenuItem>
-                            <MenuItem value={'145'}>Guaraní Occidental</MenuItem>
-                            <MenuItem value={'146'}>Guaraní Ñandeva</MenuItem>
+                    <Grid item sm={6}>
+                        <FormControl className='pueblosSelector' fullWidth variant="outlined">
+                            <InputLabel>Pueblos indigena</InputLabel>
+                            <Select
+                                value={datosPersonalesState.nombreEtnia}
+                                onChange={onDatoSelectChange}
+                                label="Pueblos indigena"
+                                name="nombreEtnia"
+                            >
+                                <MenuItem value={'0'}>Seleccionar pueblo indigena</MenuItem>
+                                <ListSubheader>Guarani</ListSubheader>
+                                <MenuItem value={'141'}>Aché</MenuItem>
+                                <MenuItem value={'142'}>Avá Guarani</MenuItem>
+                                <MenuItem value={'143'}>Mbyá Guarani</MenuItem>
+                                <MenuItem value={'144'}>Paî Tavyterã</MenuItem>
+                                <MenuItem value={'145'}>Guaraní Occidental</MenuItem>
+                                <MenuItem value={'146'}>Guaraní Ñandeva</MenuItem>
 
-                            <ListSubheader>Lengua Maskoy</ListSubheader>
-                            <MenuItem value={'251'}>Enlhet Norte</MenuItem>
-                            <MenuItem value={'252'}>Enxet Sur</MenuItem>
-                            <MenuItem value={'253'}>Sanapana</MenuItem>
-                            <MenuItem value={'254'}>Angaité</MenuItem>
-                            <MenuItem value={'255'}>Guaná</MenuItem>
-                            <MenuItem value={'256'}>Toba Maskoy</MenuItem>
+                                <ListSubheader>Lengua Maskoy</ListSubheader>
+                                <MenuItem value={'251'}>Enlhet Norte</MenuItem>
+                                <MenuItem value={'252'}>Enxet Sur</MenuItem>
+                                <MenuItem value={'253'}>Sanapana</MenuItem>
+                                <MenuItem value={'254'}>Angaité</MenuItem>
+                                <MenuItem value={'255'}>Guaná</MenuItem>
+                                <MenuItem value={'256'}>Toba Maskoy</MenuItem>
 
-                            <ListSubheader>Mataco Mataguayo</ListSubheader>
-                            <MenuItem value={'361'}>Nivaclé</MenuItem>
-                            <MenuItem value={'362'}>Maká</MenuItem>
-                            <MenuItem value={'363'}>Manjui</MenuItem>
+                                <ListSubheader>Mataco Mataguayo</ListSubheader>
+                                <MenuItem value={'361'}>Nivaclé</MenuItem>
+                                <MenuItem value={'362'}>Maká</MenuItem>
+                                <MenuItem value={'363'}>Manjui</MenuItem>
 
-                            <ListSubheader>Zamuco</ListSubheader>
-                            <MenuItem value={'361'}>Ayoreo</MenuItem>
-                            <MenuItem value={'362'}>Ybytoso</MenuItem>
-                            <MenuItem value={'363'}>Tomárãho</MenuItem>
+                                <ListSubheader>Zamuco</ListSubheader>
+                                <MenuItem value={'361'}>Ayoreo</MenuItem>
+                                <MenuItem value={'362'}>Ybytoso</MenuItem>
+                                <MenuItem value={'363'}>Tomárãho</MenuItem>
 
-                            <ListSubheader>Guaicurú</ListSubheader>
-                            <MenuItem value={'581'}>Qom</MenuItem>
+                                <ListSubheader>Guaicurú</ListSubheader>
+                                <MenuItem value={'581'}>Qom</MenuItem>
 
-                            <ListSubheader>Códigos especiales</ListSubheader>
-                            <MenuItem value={'990'}>Otros pueblos indígena n.c.p(Especifique)</MenuItem>
-                            <MenuItem value={'997'}>No indigena</MenuItem>
-                            <MenuItem value={'999'}>Ignorado</MenuItem>
-                        </Select>
-                    </FormControl>
+                                <ListSubheader>Códigos especiales</ListSubheader>
+                                <MenuItem value={'990'}>Otros pueblos indígena n.c.p(Especifique)</MenuItem>
+                                <MenuItem value={'997'}>No indigena</MenuItem>
+                                <MenuItem value={'999'}>Ignorado</MenuItem>
+                            </Select>
+                        </FormControl>
 
-                </Grid>
-                : null}
+                    </Grid>
+                    : null}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Comunidad LGBTI
