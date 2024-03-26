@@ -245,7 +245,7 @@ export default function SideBar() {
                                     path="/movimientos/traslados"
                                     isActive={pathname === '/movimientos/traslados'}
                                 />
-                                <SidebarItem
+                                {/*<SidebarItem
                                     icon={<Settings/>}
                                     label="Salidas especiales"
                                     path="/movimientos/salidasEspeciales"
@@ -263,7 +263,7 @@ export default function SideBar() {
                                     path="/movimientos/bajas"
                                     isActive={pathname === '/movimientos/bajas'}
                                 />
-
+*/}
                             </List>
                         </Collapse>
 
@@ -353,7 +353,7 @@ export default function SideBar() {
                                     isActive={pathname === '/sistema/motivos-traslados'}
                                 />
 
-                                <SidebarItem
+                                {/*<SidebarItem
                                     icon={<Settings/>}
                                     label="Personal"
                                     path="/sistema/personal"
@@ -365,7 +365,7 @@ export default function SideBar() {
                                     label="Vehiculo"
                                     path="/sistema/vehiculo"
                                     isActive={pathname === '/sistema/vehiculo'}
-                                />
+                                />*/}
 
 
                             </List>

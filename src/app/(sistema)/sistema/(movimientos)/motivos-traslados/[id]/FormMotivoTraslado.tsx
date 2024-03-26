@@ -1,6 +1,6 @@
 'use client'
 
-import {Button, Grid, Paper, Stack, TextField} from "@mui/material";
+import {Box, Button, CircularProgress, Grid, Paper, Stack, TextField} from "@mui/material";
 import * as React from "react";
 import {useEffect, useState} from "react";
 import {useGlobalContext} from "@/app/Context/store";
@@ -9,14 +9,16 @@ import {useRouter} from "next/navigation";
 
 interface MyState {
     id: number;
-    descripcion: string;
+    nombre: string;
     lastUpdate: string;
 
 }
 
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
+
 const initialState: MyState = {
     id: 0,
-    descripcion: "",
+    nombre: "",
     lastUpdate: ""
 }
 
@@ -26,28 +28,34 @@ export default function FormMotivoTraslado({params}: {
     }
 }) {
     const [stateForm, setStateForm] = useState<MyState>(initialState);
-    const [loading, setLoading] = React.useState(false);
+    const [loading, setLoading] = React.useState(true);
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
-    const isEditMode = params && params.id;
+    // @ts-ignore
+    const isEditMode = params.id !== 'crear';
 
 
     // Cargar datos para edición
     useEffect(() => {
+
         if (isEditMode) {
-            fetch(`http://localhost:5000/motivoTraslados?id=${params.id}`)
+            setLoading(true)
+            fetch(`${API_URL}/movimientos/motivos_de_traslado/${params.id}`)
                 .then(response => response.json())
                 .then(data => {
                     // Asegúrate de que el array no esté vacío y de que el objeto tenga las propiedades necesarias
-                    if (data.length > 0 && data[0].descripcion) {
-                        setStateForm({
-                            id: data[0].id,
-                            descripcion: data[0].descripcion,
-                            lastUpdate: '' // Asegúrate de definir un valor por defecto para las propiedades faltantes
-                        });
-                    }
+
+                        if (data) {
+                            // Los nombress de form y atributos del state deben ser lo mismo que el endpoint
+                            // o sino deberian hacer una normalizacion
+                            setStateForm(data);
+                        }
+
+                    setLoading(false)
                 })
                 .catch(error => console.error('Error:', error));
+        }else{
+            setLoading(false)
         }
     }, [isEditMode, params.id]);
 
@@ -67,11 +75,11 @@ export default function FormMotivoTraslado({params}: {
 
         try {
             // @ts-ignore
-            const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
+            const method = isEditMode ? 'PUT' : 'POST';
             // @ts-ignore
-            const url = isEditMode !== 'crear'
-                ? `http://localhost:5000/motivoTraslados/${params.id}`
-                : 'http://localhost:5000/motivoTraslados';
+            const url = isEditMode ?
+                `${API_URL}/movimientos/motivos_de_traslado/${params.id}`
+                : `${API_URL}/movimientos/motivos_de_traslado/`;
 
             const response = await fetch(url, {
                 method: method,
@@ -82,8 +90,8 @@ export default function FormMotivoTraslado({params}: {
 
             if (response.ok) {
                 // @ts-ignore
-                const message = isEditMode !== 'crear'
-                    ? 'Medida de seguridad actualizada correctamente.'
+                const message = isEditMode ?
+                    'Medida de seguridad actualizada correctamente.'
                     : 'Medida de seguridad creada correctamente.';
                 openSnackbar(message, 'success');
                 router.push('/sistema/motivos-traslados');
@@ -107,6 +115,20 @@ export default function FormMotivoTraslado({params}: {
         router.push('/sistema/motivos-traslados');
     }
 
+    if (loading) {
+        return (
+            <Box sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '35vh',
+            }}>
+                <CircularProgress />
+            </Box>
+        );
+    }
+
     return (
         <>
 
@@ -115,10 +137,10 @@ export default function FormMotivoTraslado({params}: {
                     <TextField
                         fullWidth
                         onChange={handleChange}
-                        name="descripcion"
-                        value={stateForm.descripcion}
-                        id="chapa"
-                        label="Descripción"
+                        name="nombre"
+                        value={stateForm.nombre}
+                        id="nombre"
+                        label="nombre"
                         variant="outlined"/>
                 </Grid>
             </Grid>
