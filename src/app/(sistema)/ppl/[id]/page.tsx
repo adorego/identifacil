@@ -44,6 +44,7 @@ type dataType = {
     nombre: string;
     apellido: string;
     apodo: string;
+    foto: string;
     fechaDeNacimiento: string;
     establecimiento_penitenciario?: string | number;
     genero: number;
@@ -79,6 +80,7 @@ const initialData = {
     nombre: '',
     apellido: '',
     apodo: '',
+    foto: '',
     fechaDeNacimiento: '',
     establecimiento_penitenciario: '',
     genero: 2,
@@ -140,7 +142,6 @@ export default function Page({ params }: { params: { id: number } }) {
             <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2}>
                 <TituloComponent titulo='PPL' />
             </Stack>
-            {/*@ts-ignore*/}
 
             <Grid container sx={{
                 bgcolor: "#FFF",
@@ -162,7 +163,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                             borderRadius: '10px',
                                         }}
                                     />*/}
-                                    <Image src={avatar} alt={''} width={120} style={{borderRadius: '10px',}}/>
+                                    <img src={`${process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER}${data.foto}`} className='imageProfile'/>
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
 

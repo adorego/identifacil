@@ -105,7 +105,7 @@ export default function Page(){
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/motivos-traslados/crear',
                         targetURL:`/sistema/motivos-traslados`,
-                        deleteOption: true
+                        deleteOption: false
                     }}
                 />
 

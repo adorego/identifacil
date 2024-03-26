@@ -28,7 +28,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
     const [loading, setLoading] = useState(true);
     const { openSnackbar } = useGlobalContext();
     const router = useRouter();
-    const isEditMode = params && params.id;
+    const isEditMode = params.id !== 'crear';
 
     const handleLoading = (value:boolean):void =>{
         // console.log('ahora ' + value);
@@ -60,6 +60,8 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
                 handleLoading(false);
             });
 
+        }else {
+            handleLoading(false);
         }
     }, [isEditMode, params.id]);
 
@@ -80,11 +82,11 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
             setLoading(true);
 
             // @ts-ignore
-            const method = isEditMode !== 'crear' ? 'PUT' : 'POST';
+            const method = isEditMode ? 'PUT' : 'POST';
             console.log('metodo: ' + isEditMode)
 
             // @ts-ignore
-            const url = isEditMode !== 'crear'
+            const url = isEditMode
                 ? `${API_URL}/movimientos/medidas_de_seguridad/${params.id}`
                 : `${API_URL}/movimientos/medidas_de_seguridad/`;
 
@@ -97,8 +99,8 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
             setLoading(false);
             if (response.ok) {
                 // @ts-ignore
-                const message = (isEditMode !== 'crear')
-                    ? 'Medida de seguridad actualizada correctamente.'
+                const message = isEditMode ?
+                    'Medida de seguridad actualizada correctamente.'
                     : 'Medida de seguridad creada correctamente.';
                 openSnackbar(message, 'success');
                 router.push('/sistema/medidas-seguridad');
@@ -136,7 +138,6 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
 
     return(
         <>
-            {console.log(stateForm)}
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={6}>
                     <TextField

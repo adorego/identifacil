@@ -16,6 +16,9 @@
     margin-top: 30px;
     height: 250px;
 }
+img.imageProfile {
+    width: 100%;
+}
 /*nav.MuiList-root.MuiList-padding {
   padding: 20px;
 }*/

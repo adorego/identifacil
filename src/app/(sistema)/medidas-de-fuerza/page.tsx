@@ -47,7 +47,7 @@ export default function Page(){
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
         // @ts-ignore
-        fetchData().then(fetchedData => setData(Object.keys(fetchedData).map(key => (fetchedData[key]))));
+        // fetchData().then(fetchedData => setData(Object.keys(fetchedData).map(key => (fetchedData[key]))));
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
 
@@ -109,20 +109,20 @@ export default function Page(){
                 <TituloComponent titulo='Medidas de seguridad' />
                 <Box mt={4}>
                     <CustomTable
-                    showId={true}
-                    headers={header}
-                    data={data}
-                    // @ts-ignore
-                    deleteRecord={handleOpenModal}
-                    options={{
-                        title: 'Lista de medidas de seguridad',
-                        pagination:true,
-                        rowsPerPageCustom: 5,
-                        newRecord: '/sistema/medidas-seguridad/crear',
-                        targetURL:`/sistema/medidas-seguridad`,
-                        deleteOption: false,
-                    }}
-                />
+                        showId={true}
+                        headers={header}
+                        data={data}
+                        // @ts-ignore
+                        deleteRecord={handleOpenModal}
+                        options={{
+                            title: 'Lista de medidas de seguridad',
+                            pagination:true,
+                            rowsPerPageCustom: 5,
+                            newRecord: '/sistema/medidas-seguridad/crear',
+                            targetURL:`/sistema/medidas-seguridad`,
+                            deleteOption: true,
+                        }}
+                    />
                     <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
                 </Box>
 
