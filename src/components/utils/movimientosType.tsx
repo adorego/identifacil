@@ -1,3 +1,5 @@
+import {Dayjs} from "dayjs";
+
 export type PPLType = {
     nombre: string;
     apellido: string;
@@ -10,17 +12,18 @@ export type PPLType = {
 
 export type TrasladoForm = {
     id: number;
-    documento: string;
-    fechaDocumento: string;
-    fechaTraslado: string;
-    autorizo: string;
-    motivoTraslado: string;
-    vehiculoId: string;
-    medidasSeguridad: string;
+    numero_de_documento: string;
+    fechaDocumento: Dayjs | null;
+    fechaTraslado: Dayjs | null;
+    autorizo: number;
+    motivoTraslado: number;
+    vehiculoId: number;
+    medidasSeguridad: [number] | number;
     descripcionMotivo: string;
-    custodia: string;
-    chofer: string;
-    destinoTraslado: string;
+    custodia: number;
+    chofer: number;
+    origenTraslado: number;
+    destinoTraslado: number;
     documentoAdjunto: any;
     PPLs: PPLType[];
     lastUpdate: string;
@@ -51,6 +54,7 @@ export interface Vehiculo {
 }
 
 export interface pplTraslado {
+    id_persona: number;
     id: string; // O número, según tu API
     nombre: string;
     apellido: string;

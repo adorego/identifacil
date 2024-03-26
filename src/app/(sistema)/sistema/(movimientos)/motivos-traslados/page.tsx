@@ -10,6 +10,9 @@ import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
+import {fetchData} from "@/components/utils/utils";
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Page(){
     const { openSnackbar } = useGlobalContext();
@@ -20,32 +23,20 @@ export default function Page(){
     // Datos para armar el header de la tabla
     const header = [
         { id: 'id', label: 'ID' },
-        { id: 'descripcion', label: 'Motivos de traslados' },
+        { id: 'nombre', label: 'Motivos de traslados' },
         { id: 'lastUpdate', label: 'Ultima actualización' },
     ]
 
-    const URL_PATH : string = `http://localhost:5000/motivoTraslados`;
+
 
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
-    async function fetchData() {
-        try {
-            const response = await fetch(URL_PATH);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            // const data = await response.json();
-            // return data
-            return await response.json();
-        } catch (error) {
-            console.error('Error al realizar la solicitud fetch:', error);
-            return null; // o manejar el error de manera adecuada
-        }
-    }
+
 
     useEffect(() => {
-        fetchData()
+        fetchData(`${API_URL}/movimientos/motivos_de_traslado`)
             .then(fetchedData => {
-                setData(fetchedData);
+                //@ts-ignore
+                setData(Object.keys(fetchedData).map(key=>fetchedData[key]));
             });
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
@@ -114,7 +105,7 @@ export default function Page(){
                         pagination:true,
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/motivos-traslados/crear',
-                        targetURL:`/sistema/motivos-traslados/`,
+                        targetURL:`/sistema/motivos-traslados`,
                         deleteOption: true
                     }}
                 />
