@@ -1,5 +1,5 @@
 
-import dayjs from 'dayjs';
+import dayjs, {Dayjs} from 'dayjs';
 import {API_REGISTRO} from "../../../config";
 
 /*export default deleteRecord = async (id) => {
@@ -41,6 +41,7 @@ export async function fetchData(url : string) {
 }
 
 export async function fetchFormData(id: any, entity: string) {
+    console.log(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${entity}?id=${id}`)
 
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${entity}?id=${id}`);
@@ -178,12 +179,12 @@ export const postForm = async (
         setLoading(true);
 
         const method = isEditMode ? 'PUT' : 'POST';
-        console.log(JSON.stringify(stateForm))
+        //console.log(JSON.stringify(stateForm))
         const url = isEditMode
             ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${stateForm.id}`
             : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
 
-        console.log(url)
+        // console.log(url)
         const response = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
@@ -201,6 +202,7 @@ export const postForm = async (
             if(redirect){
                 router.push(`/${targetRedirect}`);
             }
+            return response
         } else {
             throw new Error('Error en la petición');
         }
@@ -219,3 +221,23 @@ export async function getDatos(endpoint:string=""){
 
     return await res.json()
 }
+
+
+
+export const formatDate = (dateString: string | null | number) => {
+    if (dateString) {
+        const date = new Date(dateString);
+        const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
+        // @ts-ignore
+        return date.toLocaleDateString(undefined, options);
+    }
+};
+
+/*export const getYearsDate = (fechaMayor:string = null |Dayjs, fechaMenor: string | Dayjs) : string =>{
+
+    const fechaMayor1 =
+
+    return fechaMayor.diff(dayjs(fechaMenor), 'year')
+}*/
+
+

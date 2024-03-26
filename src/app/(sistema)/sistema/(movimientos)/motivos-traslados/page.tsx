@@ -28,7 +28,6 @@ export default function Page(){
     ]
 
 
-
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
 
 

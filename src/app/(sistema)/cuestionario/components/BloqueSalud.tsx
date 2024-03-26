@@ -9,6 +9,7 @@ import {DatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {api_request} from "@/lib/api-request"
+import Checkbox from "@mui/material/Checkbox";
 
 
 
@@ -16,6 +17,7 @@ const nineMonthsFromNow = dayjs().add(9, 'month');
 interface BloqueSaludProps {
     id_persona: number | null;
     datosAlmacenados?: datosDeSalud2Type;
+    codigo_genero: number;
 }
 
 interface datosSaludSelect {
@@ -57,30 +59,54 @@ const datosSaludSelectInicial: datosSaludSelect = {
 }
 
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial}) => {
+type SaludFisicaType = {
+    Ninguna: boolean;
+    Fisica: boolean;
+    Motora: boolean;
+    Intelectual: boolean;
+    Visual: boolean;
+    Auditiva: boolean;
+    otros: boolean;
+}
+const SaludFisicaInicial = {
+    Ninguna: false,
+    Fisica: false,
+    Motora: false,
+    Intelectual: false,
+    Visual: false,
+    Auditiva: false,
+    otros: false
+}
+
+const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero=2}) => {
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
-    const options = ['Option 1', 'Option 2'];
+    const [stateSaludFisica, setStateSaludFisica] = useState<SaludFisicaType>(SaludFisicaInicial)
 
+    const options = ['Option 1', 'Option 2'];
 
     const [valueAutocomplete, setValueAutocomplete] = React.useState<string | null>(options[0]);
     const [inputValue, setInputValue] = React.useState('');
 
-
-
     const {openSnackbar} = useGlobalContext();
+
+
 
     useEffect(() => {
         if (datosAlmacenados) {
-            setDatosSalud(prev => {
+            setDatosSalud((prev) => {
                 return {
                     ...prev,
-                    ...datosAlmacenados
+                    ...datosAlmacenados,
                 }
             })
+
+            if(datosAlmacenados.saludFisica.discapacidad_fisica !== 'ninguna'){
+                setStateSaludFisica(JSON.parse(datosAlmacenados.saludFisica.discapacidad_fisica))
+            }
+
         }
     }, [datosAlmacenados])
-
 
     const onTiempoDeGestacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.currentTarget.value);
@@ -108,8 +134,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
 
     }
-
-
 
     const onGruposSanguineoChange = (event: SelectChangeEvent<number | string | any>) => {
         const grupoSanguineoSelected = datosSaludSelectInicial.grupo_sanguineo.find(objeto => objeto.id === Number(event.target.value)) || {id: null, nombre: null};
@@ -179,7 +203,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     };
 
-
     const handleSelectChange = (event: SelectChangeEvent<number | string>) => {
         setDatosSalud(prev => {
             return {
@@ -246,6 +269,15 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     };
 
 
+    const handleSaludFisica = (e: any) =>{
+        console.log(e.target.name)
+
+        setStateSaludFisica(prev=>({
+            ...prev,
+            [e.target.name]: e.target.checked
+        }))
+    }
+
     const onDatosSaludSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
@@ -264,13 +296,12 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         // TODO: Verificar este type para enviar los datos
         // @ts-ignore
         datosDelFormulario.grupo_sanguineo = datosSalud.grupo_sanguineo?.id
+
+        datosDelFormulario.saludFisica.discapacidad_fisica = JSON.stringify(stateSaludFisica).toString();
         // @ts-ignore
         datosDelFormulario.vacunas_recibidas = datosSalud.vacunas_recibidas.map(objeto => objeto.id)
 
         const methodForm = datosSalud.id ? 'PUT' : 'POST';
-        console.log(JSON.stringify(datosDelFormulario))
-        console.log('TIPO FORM: ' + methodForm)
-
 
         const respuesta = await api_request(url, {
             method: methodForm,
@@ -286,7 +317,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
             // log.error("Error al guardar los datos", respuesta.datos);
         }
 
-        console.log("Respuesta:", respuesta);
+
     }
 
 /*    if (!datosSalud.id) {
@@ -309,6 +340,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     return (
         <>
+
             <Box
                 component="form"
                 sx={{
@@ -556,6 +588,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
                 </Grid>
 
+                {/* MATERNIDAD */}
+                {codigo_genero == 1 ?
                 <Grid container spacing={2}>
                     <Grid item sm={12}>
                         <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
@@ -571,7 +605,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                     handleBooleanChange(event, 'saludGeneral')
                                 }}
                                 row
-                                aria-labelledby="gestioacion"
+                                aria-labelledby="gestacion"
                                 name="gestacion">
                                 <FormControlLabel
                                     value={true}
@@ -615,6 +649,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             : null}
                     </Grid>
                 </Grid>
+                : null }
 
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>
@@ -797,31 +832,31 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 >
                                     <FormControlLabel
                                         value="ninguna"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.Ninguna} onChange={handleSaludFisica} name='Ninguna'/>}
                                         label="Ninguna"/>
                                     <FormControlLabel
                                         value="fisica"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.Fisica} onChange={handleSaludFisica} name='Fisica'/>}
                                         label="Fisica"/>
                                     <FormControlLabel
                                         value="motora"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.Motora} onChange={handleSaludFisica} name='Motora'/>}
                                         label="Motora"/>
                                     <FormControlLabel
                                         value="intelectual"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.Intelectual} onChange={handleSaludFisica} name='Intelectual'/>}
                                         label="Intelectual"/>
                                     <FormControlLabel
                                         value="visual"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.Visual} onChange={handleSaludFisica} name='Visual'/>}
                                         label="Visual"/>
                                     <FormControlLabel
                                         value="auditiva"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.Auditiva} onChange={handleSaludFisica} name='Auditiva'/>}
                                         label="Auditiva"/>
                                     <FormControlLabel
                                         value="otros"
-                                        control={<Radio/>}
+                                        control={<Checkbox checked={stateSaludFisica.otros} onChange={handleSaludFisica} name='otros'/>}
                                         label="otros"/>
                                 </RadioGroup>
                             </FormControl>

@@ -8,15 +8,15 @@ import {
     InputLabel,
     OutlinedInput,
     Radio,
-    RadioGroup
+    RadioGroup, Typography
 } from "@mui/material";
 import {FC, useEffect, useState} from "react";
-import React from "react";
 import {datosEducacionInicial, datosEducacionType} from "../../../../components/utils/systemTypes";
+
+import React from "react";
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
-
 
 export interface BloqueEducacionProps {
     id_persona: number | null;
@@ -123,8 +123,11 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
             }}
             noValidate
             autoComplete="off"
+            mx={2}
         >
-
+            <Typography variant='h6' mb={3}>
+                Formulario de Educacion
+            </Typography>
             <Grid container spacing={2}>
                 <Grid item sm={6}>
                     <FormControl>

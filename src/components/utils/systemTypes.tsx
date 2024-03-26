@@ -124,7 +124,7 @@ export type saludMentalType = {
 
 export type saludFisicaType = {
     id: number | null;
-    discapacidad_fisica: "fisica" | "motora" | "ninguna" | "intelectual" | "visual" | "auditivas" | "otros";
+    discapacidad_fisica: "fisica" | "motora" | "ninguna" | "intelectual" | "visual" | "auditivas" | "otros" | string;
     discapacidad_fisica_modificado: boolean;
     explicacion_de_discapacidad: string | null;
     explicacion_de_discapacidad_modificado: boolean;
@@ -314,6 +314,7 @@ export type datosJudicialesType = {
     hecho_punible: {
         id: number |null;
     };
+    numero_de_expediente: number | null;
     sentencia_definitiva: string;
     primera_vez_en_prision: boolean;
     cantidad_de_veces_que_ingreso: number;
@@ -336,7 +337,7 @@ export type datosJudicialesType = {
     oficioJudicial_modificado:boolean;
     resolucion: resolucion_tipo;
     resolucion_modificado:boolean;
-    expediente: expediente_tipo;
+    expediente: number | null;
     expediente_modificado:boolean;
     caratula: string;
     caratula_modificado:boolean;
@@ -361,6 +362,7 @@ export type datosJudicialesType = {
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
+    numero_de_expediente: null,
     hecho_punible: {
         id: null,
     },
@@ -400,10 +402,7 @@ export const datosJudicialesInicial:datosJudicialesType = {
         documento:null
     },
     resolucion_modificado:false,
-    expediente: {
-        numeroDeDocumento:"",
-        fechaDeDocumento:null
-    },
+    expediente: null,
     expediente_modificado:false,
     caratula: "",
     caratula_modificado:false,

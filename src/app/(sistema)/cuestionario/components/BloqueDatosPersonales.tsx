@@ -2,10 +2,10 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid,
-    InputLabel,
+    InputLabel, ListSubheader,
     MenuItem,
     OutlinedInput,
     Radio,
@@ -30,9 +30,11 @@ import {useGlobalContext} from "@/app/Context/store";
 
 interface datosPersonales {
     id_persona: number | null;
-    numeroDeIdentificacion: string | null;
+    numeroDeIdentificacion: string | any;
     nombre: string;
+    tiene_cedula: boolean;
     nombre_modificado: boolean;
+    codigo_genero: number;
     apellido: string;
     apellido_modificado: boolean;
     apodo: string;
@@ -41,7 +43,7 @@ interface datosPersonales {
     estadoCivil_modificado: boolean;
     fechaDeNacimiento: Dayjs | null;
     fechaDeNacimiento_modificado: boolean;
-    nacionalidad: string;
+    nacionalidad: number;
     nacionalidad_modificado: boolean;
     lugarDeNacimiento: string;
     lugarDeNacimiento_modificado: boolean;
@@ -67,6 +69,10 @@ interface datosPersonales {
     perteneceAComunidadLGTBI_modificado: boolean;
     grupoLGTBI: string;
     grupoLGTBI_modificado: boolean;
+    mantiene_contacto_con_consulado_o_embajada: boolean;
+    nombre_de_contacto_en_consulado_o_embajada: string;
+    numero_de_contacto_en_consulado_o_embajada: string;
+    pais_de_embajada: number;
 
 }
 
@@ -75,10 +81,12 @@ const datosPersonalesInicial: datosPersonales = {
     numeroDeIdentificacion: null,
     nombre: '',
     apellido: '',
+    tiene_cedula: true,
     apodo: '',
+    codigo_genero: 0,
     estadoCivil: '',
     fechaDeNacimiento: null,
-    nacionalidad: '',
+    nacionalidad: 0,
     lugarDeNacimiento: '',
     sexo: '',
     tipoDeDocumento: '',
@@ -109,6 +117,10 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
+    mantiene_contacto_con_consulado_o_embajada: false,
+    nombre_de_contacto_en_consulado_o_embajada: '',
+    numero_de_contacto_en_consulado_o_embajada: '',
+    pais_de_embajada: 0,
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -118,16 +130,22 @@ export interface BloqueDatosPersonalesProps {
 
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) => {
+    console.log(datosDeIdentificacion)
+
+
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial,
-        fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento, "DD-MM-YYYY"),
+        fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento),
+        tiene_cedula: datosDeIdentificacion.tiene_cedula,
         fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
-        numeroDeIdentificacion: datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null,
+        numeroDeIdentificacion: datosDeIdentificacion.es_extranjero ? datosDeIdentificacion.numeroDeIdentificacion : datosDeIdentificacion.cedula_identidad ,
         nombre: datosDeIdentificacion.nombres,
         nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
         apellido_modificado: true,
+        codigo_genero: datosDeIdentificacion.codigo_genero ? datosDeIdentificacion.codigo_genero : 0,
+        nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 0,
 
     });
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
@@ -135,6 +153,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     const {openSnackbar} = useGlobalContext();
 
 
+    /** Efecto para obtener datos para elementos del formulario
+     * */
     useEffect(
         () => {
 
@@ -161,14 +181,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
             }
 
-            console.log("Consultando nacionalidades");
-            getNacionalidades();
-
-        }, []
-    )
-
-    useEffect(
-        () => {
             const getEstadosCiviles = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
                 try {
@@ -189,7 +201,16 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
             }
+
             getEstadosCiviles();
+            getNacionalidades();
+
+        }, []
+    )
+
+    useEffect(
+        () => {
+
         }, []
     )
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,7 +229,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         )
     }
 
-    const onDatoSelectChange = (event: SelectChangeEvent) => {
+    const onDatoSelectChange = (event: SelectChangeEvent<number | string>) => {
         setDatosPersonalesState(
             (previus) => {
                 return (
@@ -262,6 +283,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
             datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
             // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
+            console.log(datosDelFormulario);
+
             const respuesta = await api_request(url, {
                 method: 'POST',
                 body: JSON.stringify(datosDelFormulario),
@@ -286,7 +309,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     }
 
     return (
-        <Box component={'form'} autoComplete="off">
+        <Box component={'form'} autoComplete="off" mx={2}>
             <Typography variant='h6'>
                 Datos Personales
             </Typography>
@@ -297,6 +320,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             Nombre
                         </InputLabel>
                         <OutlinedInput
+                            disabled
                             readOnly={true}
                             label="Nombre"
                             name="nombre"
@@ -311,6 +335,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             Apellido
                         </InputLabel>
                         <OutlinedInput
+                            disabled
                             readOnly={true}
                             label="Apellido"
                             name="apellido"
@@ -318,7 +343,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             onChange={onDatoChange}/>
                     </FormControl>
                 </Grid>
-                <Grid item sm={4}>
+                <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="apodo">
                             Apodo
@@ -328,40 +353,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             name="apodo"
                             value={datosPersonalesState.apodo}
                             onChange={onDatoChange}/>
-                    </FormControl>
-                </Grid>
-                <Grid item sm={4}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="estado_civil">
-                            Estado Civil
-                        </InputLabel>
-                        <Select
-                            id="estado_civil_id"
-                            name="estadoCivil"
-                            label='Estado Civil'
-                            value={datosPersonalesState.estadoCivil}
-                            onChange={onDatoSelectChange}
-                        >
-                            {estadosCiviles ? estadosCiviles.map(
-                                (estadoCivil, id) => {
-                                    return (
-                                        <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
-                                    )
-                                }
-                            ) : null}
-
-                        </Select>
-                    </FormControl>
-                </Grid>
-                <Grid item sm={4}>
-                    <FormControl fullWidth={true}>
-                        <DatePicker
-
-                            value={datosPersonalesState.fechaDeNacimiento}
-                            format="DD/MM/YYYY"
-                            onChange={onFechaNacimientoChange}
-                            label={"Fecha de nacimiento"}
-                        />
                     </FormControl>
                 </Grid>
                 <Grid item xs={6}>
@@ -383,6 +374,98 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
 
                         </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Tipo de documento</InputLabel>
+                        <OutlinedInput
+                            fullWidth
+                            value={datosPersonalesState.tiene_cedula ? 'Cedula de Identidad Policial' : 'Otro'}
+                            label="Tipo de documento"
+                            name="tipo_documento"
+                            disabled
+                            inputProps={{readOnly: true,}}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel>Numero de documento</InputLabel>
+                        <OutlinedInput
+                            fullWidth
+                            value={datosPersonalesState.numeroDeIdentificacion}
+                            label="Numero de documento"
+                            name="numeroDeIdentificacion"
+                            disabled
+                            inputProps={{readOnly: true,}}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item sm={6}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel htmlFor="estado_civil">
+                            Genero
+                        </InputLabel>
+                        <Select
+                            id="estado_civil_id"
+                            name="codigo_genero"
+                            label='Genero'
+                            value={datosPersonalesState.codigo_genero}
+                        >
+
+                            <MenuItem value={1}>Femenino</MenuItem>
+                            <MenuItem value={2}>Masculino</MenuItem>
+
+
+                        </Select>
+                    </FormControl>
+                </Grid><Grid item sm={6}>
+                <FormControl fullWidth={true}>
+                    <InputLabel htmlFor="estado_civil">
+                        Estado Civil
+                    </InputLabel>
+                    <Select
+                        id="estado_civil_id"
+                        name="estadoCivil"
+                        label='Estado Civil'
+                        value={datosPersonalesState.estadoCivil}
+                        onChange={onDatoSelectChange}
+                    >
+                        <MenuItem value={0}>Seleccionar estado civil</MenuItem>
+                        {estadosCiviles ? estadosCiviles.map(
+                            (estadoCivil, id) => {
+                                return (
+                                    <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
+                                )
+                            }
+                        ) : null}
+
+                    </Select>
+                </FormControl>
+            </Grid>
+                <Grid item sm={6}>
+                    <FormControl fullWidth={true}>
+                        <DatePicker
+
+                            value={datosPersonalesState.fechaDeNacimiento ? dayjs(datosPersonalesState.fechaDeNacimiento, 'DD/MM/YYYY') : null}
+                            format="DD/MM/YYYY"
+                            disabled
+                            onChange={onFechaNacimientoChange}
+                            label={"Fecha de nacimiento"}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item sm={6}>
+                    <FormControl fullWidth={true}>
+                        <TextField
+                            autoComplete="off"
+                            disabled
+                            fullWidth
+                            label="Edad"
+                            name="edad"
+                            value={datosPersonalesState.fechaDeNacimiento ? dayjs().diff(dayjs(datosDeIdentificacion.fecha_nacimiento), 'year') : null}
+                        />
                     </FormControl>
                 </Grid>
                 <Grid item xs={6}>
@@ -449,9 +532,85 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         />
                     </FormControl>
                 </Grid>
+            </Grid>
+
+
+            {/* Bloque Extranjero*/}
+            {datosDeIdentificacion.es_extranjero ?
+                <Grid container spacing={2} my={2}>
+                    <Grid item sm={12}>
+                        <Typography variant='h6'>
+                            Datos de Extranjeros
+                        </Typography>
+                    </Grid>
+                    <Grid item xs={3}>
+                        <FormControl fullWidth variant="outlined">
+                            <FormLabel>Mantiene contacto con la embajada:</FormLabel>
+                            <RadioGroup
+                                value={datosPersonalesState.mantiene_contacto_con_consulado_o_embajada}
+                                onChange={onOptionSelectChange}
+                                row
+                                aria-labelledby="mantiene_contacto_con_consulado_o_embajada"
+                                name="mantiene_contacto_con_consulado_o_embajada">
+                                <FormControlLabel
+                                    value={true}
+                                    control={<Radio/>}
+                                    label="Si"/>
+                                <FormControlLabel
+                                    value={false}
+                                    control={<Radio/>}
+                                    label="No"/>
+                            </RadioGroup>
+                        </FormControl>
+                    </Grid>
+                    {datosPersonalesState.mantiene_contacto_con_consulado_o_embajada ?
+                    (
+                        <>
+                            <Grid item xs={3}>
+                                <TextField
+                                    fullWidth
+                                    name='nombre_de_contacto_en_consulado_o_embajada'
+                                    label='Nombre de contacto'
+                                    onChange={onDatoChange}
+                                    value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <TextField
+                                    fullWidth
+                                    name='numero_de_contacto_en_consulado_o_embajada'
+                                    label='Número de contacto de contacto'
+                                    onChange={onDatoChange}
+                                    value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
+                                />
+                            </Grid>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth variant="outlined">
+                                    <InputLabel>Pais de embajada</InputLabel>
+                                    <Select
+                                        value={datosPersonalesState.pais_de_embajada}
+                                        onChange={onDatoSelectChange}
+                                        label="Pais de embajada"
+                                        name="pais_de_embajada"
+                                    >
+                                        <MenuItem value={1}>Brasil</MenuItem>
+                                        <MenuItem value={2}>Argentina</MenuItem>
+                                        <MenuItem value={3}>Chile</MenuItem>
+                                        <MenuItem value={3}>Bolivia</MenuItem>
+                                    </Select>
+                                    <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
+                                </FormControl>
+                            </Grid>
+                        </>
+                    )
+                    : null}
+                </Grid>
+
+                : null}
+            <Grid container spacing={2} my={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6'>
-                        Pueblo indigenas
+                        Pueblos indigenas
                     </Typography>
                 </Grid>
                 <Grid item xs={4}>
@@ -474,16 +633,55 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </RadioGroup>
                     </FormControl>
                 </Grid>
-                <Grid item sm={8}>
-                    <TextField
-                        fullWidth
-                        label="Nombre de la etnia"
-                        name="nombreEtnia"
-                        value={datosPersonalesState.nombreEtnia}
-                        onChange={onDatoChange}
-                        disabled={!datosPersonalesState.pueblosIndigenas}
-                    />
-                </Grid>
+                {datosPersonalesState.pueblosIndigenas ?
+                    <Grid item sm={6}>
+                        <FormControl className='pueblosSelector' fullWidth variant="outlined">
+                            <InputLabel>Pueblos indigena</InputLabel>
+                            <Select
+                                value={datosPersonalesState.nombreEtnia}
+                                onChange={onDatoSelectChange}
+                                label="Pueblos indigena"
+                                name="nombreEtnia"
+                            >
+                                <MenuItem value={'0'}>Seleccionar pueblo indigena</MenuItem>
+                                <ListSubheader>Guarani</ListSubheader>
+                                <MenuItem value={'141'}>Aché</MenuItem>
+                                <MenuItem value={'142'}>Avá Guarani</MenuItem>
+                                <MenuItem value={'143'}>Mbyá Guarani</MenuItem>
+                                <MenuItem value={'144'}>Paî Tavyterã</MenuItem>
+                                <MenuItem value={'145'}>Guaraní Occidental</MenuItem>
+                                <MenuItem value={'146'}>Guaraní Ñandeva</MenuItem>
+
+                                <ListSubheader>Lengua Maskoy</ListSubheader>
+                                <MenuItem value={'251'}>Enlhet Norte</MenuItem>
+                                <MenuItem value={'252'}>Enxet Sur</MenuItem>
+                                <MenuItem value={'253'}>Sanapana</MenuItem>
+                                <MenuItem value={'254'}>Angaité</MenuItem>
+                                <MenuItem value={'255'}>Guaná</MenuItem>
+                                <MenuItem value={'256'}>Toba Maskoy</MenuItem>
+
+                                <ListSubheader>Mataco Mataguayo</ListSubheader>
+                                <MenuItem value={'361'}>Nivaclé</MenuItem>
+                                <MenuItem value={'362'}>Maká</MenuItem>
+                                <MenuItem value={'363'}>Manjui</MenuItem>
+
+                                <ListSubheader>Zamuco</ListSubheader>
+                                <MenuItem value={'361'}>Ayoreo</MenuItem>
+                                <MenuItem value={'362'}>Ybytoso</MenuItem>
+                                <MenuItem value={'363'}>Tomárãho</MenuItem>
+
+                                <ListSubheader>Guaicurú</ListSubheader>
+                                <MenuItem value={'581'}>Qom</MenuItem>
+
+                                <ListSubheader>Códigos especiales</ListSubheader>
+                                <MenuItem value={'990'}>Otros pueblos indígena n.c.p(Especifique)</MenuItem>
+                                <MenuItem value={'997'}>No indigena</MenuItem>
+                                <MenuItem value={'999'}>Ignorado</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                    </Grid>
+                    : null}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Comunidad LGBTI

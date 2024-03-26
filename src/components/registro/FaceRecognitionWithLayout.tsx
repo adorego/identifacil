@@ -22,7 +22,9 @@ export default function FaceRecognitionWithLayout(props: FaceRecognitionProps) {
         <Box sx={{position: 'relative', width: "100%",}} >
             <Box sx={{
                 position: 'absolute',
-                display: `${!props.showSpinner ? 'none' : 'null'}`,
+                display: `${!props.showSpinner ? 'none' : 'flex'}`,
+                alignItems: 'center',
+                justifyContent: 'center',
                 backgroundColor: 'hsla(0,0%,100%,1)',
                 visibility: '',
                 width: "500px",

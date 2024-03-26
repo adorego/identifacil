@@ -76,6 +76,7 @@ export default function SideBar() {
     const { sidebarStatus, setSidebarStatus} = useGlobalContext();
 
     const handleSidebar = () =>{
+
         setSidebarStatus(!sidebarStatus);
     }
 

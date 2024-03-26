@@ -1,31 +1,34 @@
-import React, {FC, useEffect, useState} from "react";
 import {
     Box,
     Button,
     FormControl,
     FormControlLabel,
     FormLabel,
-    Grid, IconButton,
+    Grid,
+    IconButton,
     Radio,
-    RadioGroup, Stack, TextField, Typography,
+    RadioGroup,
+    Stack,
+    TextField,
+    Typography,
 } from "@mui/material";
-import {useGlobalContext} from "@/app/Context/store";
-import {useModal} from "@/components/modal/UseModal";
-import {ModalComponent} from "@/components/modal/ModalComponent";
-import {FormularioCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/FormularioCirculoFamiliar";
-import {TablaCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/TablaCirculoFamiliar";
-
+import React, {FC, useEffect, useState} from "react";
 import {
     circuloFamiliarStateInitial,
     circuloFamiliarStateType,
     datosFamiliaresInicial,
     datosFamiliaresType,
-
 } from "@/components/utils/systemTypes";
-import {postForm} from "@/components/utils/utils";
-import {useRouter} from "next/navigation";
-import {Delete} from "@mui/icons-material";
 
+import {Delete} from "@mui/icons-material";
+import {FormularioCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/FormularioCirculoFamiliar";
+import {ModalComponent} from "@/components/modal/ModalComponent";
+import {TablaCirculoFamiliar} from "@/app/(sistema)/cuestionario/components/TablaCirculoFamiliar";
+import {postForm} from "@/components/utils/utils";
+import {useGlobalContext} from "@/app/Context/store";
+import {useModal} from "@/components/modal/UseModal";
+import {useRouter} from "next/navigation";
+import AddIcon from "@mui/icons-material/Add";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -170,7 +173,11 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 '& .MuiTextField-root': {m: 1, width: '25ch'},
             }}
             noValidate
+            mx={2}
             autoComplete="off">
+            <Typography variant='h6' mb={3}>
+                Formulario de salud
+            </Typography>
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <FormControl>
@@ -194,7 +201,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 </Grid>
                 <Grid item sm={12}>
                     <FormControl>
-                        <FormLabel id="circuloFamiliarLabel">Tiene Círculo Familiar en el Sistema:</FormLabel>
+                        <FormLabel id="circuloFamiliarLabel">¿Cuenta con algún familiar dentro del sistema penitenciario?</FormLabel>
                         <RadioGroup
                             value={estadoFormularioDatosFamiliares.tieneCirculoFamiliar}
                             onChange={onSelectChange}
@@ -214,35 +221,76 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 </Grid>
             </Grid>
             {estadoFormularioDatosFamiliares.tieneCirculoFamiliar?
-            <Grid container spacing={2}>
+            <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
-                    <Button onClick={handleOpen} variant={'contained'}>
-                        Agregar circulo New
-                    </Button>
+                    <Box sx={{
+                        border: '1px solid #E2E8F0',
+                        background: 'rgba(244,246,248, 0.30)',
+                        padding: '16px',
+                        borderRadius: '8px'
+                    }}>
+
+                        <Stack spacing={0} direction='row' justifyContent='space-between' >
+                            <FormLabel id="circuloFamiliarLabel">Circulo familiar</FormLabel>
+
+                            <Button onClick={handleOpen} variant='outlined' startIcon={<AddIcon />}>
+                                Agregar miembro
+                            </Button>
+                        </Stack>
+                        <Box mt={2}>
+
+                            { stateCirculoFamiliar.length > 0
+                                ? <TablaCirculoFamiliar rows={stateCirculoFamiliar} handleDelete={handleDeleteFamiliar} />
+                                : null
+                            }
+
+                        </Box>
+                    </Box>
                     <ModalComponent
                         open={open}
                         onClose={handleClose}
                         title='Agregar miembro del circulo familiar'>
                         <FormularioCirculoFamiliar  onClose={handleClose} onHandleChangeCirculo={handleChangeCirculo}/>
                     </ModalComponent>
-
-                    <Box mt={2}>
-                        { stateCirculoFamiliar.length > 0
-                                ? <TablaCirculoFamiliar rows={stateCirculoFamiliar} handleDelete={handleDeleteFamiliar} />
-                                : null
-                        }
-
-                    </Box>
                 </Grid>
             </Grid>
             : null}
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
-                    <Typography variant={'subtitle1'}>
-                        Concubino
-                    </Typography>
-                    {estadoFormularioDatosFamiliares.concubino ?
-                    <Stack spacing={2} direction={'row'}>
+                    <Box sx={{
+                        border: '1px solid #E2E8F0',
+                        background: 'rgba(244,246,248, 0.30)',
+                        padding: '16px',
+                        borderRadius: '8px'
+                    }}>
+
+                        <Stack spacing={2} direction='row' justifyContent='space-between' >
+
+                            <Typography variant={'subtitle1'}>
+                                Concubino
+                            </Typography>
+                            {estadoFormularioDatosFamiliares.concubino ?
+                                null
+                                : <Button variant='outlined' startIcon={<AddIcon />} onClick={()=>setEstadoFormularioDatosFamiliares(
+                                    prev=>{
+                                        const newState = { ...prev };
+                                        // Solo modificar concubino si existe
+                                        if(!prev.concubino){
+                                            newState.concubino = {
+                                                id: null, // Asumiendo que quieres establecer id a null
+                                                nombres: null,
+                                                apellidos: null,
+                                                numeroDeIdentificacion: null,
+                                            };
+                                        }
+                                        return newState;
+                                    })}>
+                                    Aregar concubino
+                                </Button>}
+                        </Stack>
+
+                        {estadoFormularioDatosFamiliares.concubino ?
+                        <Stack spacing={2} direction={'row'}>
 
                             <TextField
                                 label="Nombre"
@@ -269,25 +317,9 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                                 <Delete/>
                             </IconButton>
 
-                    </Stack>
-                    :
-                    <Button variant={'contained'} onClick={()=>setEstadoFormularioDatosFamiliares(
-                        prev=>{
-                            const newState = { ...prev };
-                            // Solo modificar concubino si existe
-                            if(!prev.concubino){
-                                newState.concubino = {
-                                    id: null, // Asumiendo que quieres establecer id a null
-                                    nombres: null,
-                                    apellidos: null,
-                                    numeroDeIdentificacion: null,
-                                };
-                            }
-                            return newState;
-                    })}>
-                        Aregar concubino
-                    </Button>
-                    }
+                        </Stack>
+                        : null}
+                    </Box>
                 </Grid>
             </Grid>
             <Grid container spacing={2} mt={2}>

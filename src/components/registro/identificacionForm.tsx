@@ -13,15 +13,16 @@ import {
     RadioGroup,
     Select,
     SelectChangeEvent,
-    TextField
+    TextField, Typography
 } from "@mui/material";
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
 import {FC, useEffect, useState} from "react";
-import {Save, Storage} from '@mui/icons-material';
+import {Save, Storage, Sort} from '@mui/icons-material';
 import dayjs, {Dayjs} from "dayjs";
 
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {LoadingButton} from "@mui/lab";
 
 export interface IdentificacionProps {
     habilitarBotonSiguiente: (arg0: boolean) => void;
@@ -41,11 +42,13 @@ const alternativasFormularioInicial: alternativasDelFormulario = {
 const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [alternativaFormulario, setAlternativaFormulario] = useState<alternativasDelFormulario>(alternativasFormularioInicial);
     const {openSnackbar} = useGlobalContext();
+
     useEffect(
         () => {
             props.habilitarBotonSiguiente(false);
         }, [alternativaFormulario]
     )
+
     const onNacionalidadChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setAlternativaFormulario(
             (previus: alternativasDelFormulario) => {
@@ -69,18 +72,23 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
     }
 
     return (
-        <Box sx={{padding: "10px"}} >
-            <Grid container mb={2} spacing={2}>
-                <Grid item sm={3}>
-                    <FormLabel id="nacionalidad">Es Paraguayo ?</FormLabel>
+        <Box sx={{padding: "10px"}} component={'form'} autoComplete="off">
+            <Grid container spacing={2}>
+                <Grid item sm={12}>
+                    <Typography variant='h6' textTransform='uppercase'>
+                        Datos policiales
+                    </Typography>
+                </Grid>
+                <Grid item sm={6}>
+                    <FormLabel id="nacionalidad">¿Tiene Cédula Paraguaya?</FormLabel>
                     <RadioGroup row defaultValue="SI" onChange={onNacionalidadChangeHandler}
                                 value={alternativaFormulario.paraguayo} name="nacionalidad-opciones">
                         <FormControlLabel value={true} control={<Radio/>} label="SI"/>
                         <FormControlLabel value={false} control={<Radio/>} label="NO"/>
                     </RadioGroup>
                 </Grid>
-                <Grid item sm={3}>
-                    <FormLabel id="nacionalidad">Tiene Cedula de Identidad ?</FormLabel>
+                <Grid item sm={6}>
+                    <FormLabel id="nacionalidad">¿Tiene documento de identidad ?</FormLabel>
                     <RadioGroup row defaultValue="NO" onChange={onTieneCedulaChangeHandler}
                                 value={alternativaFormulario.conDocumentoDeIdentidad} name="cedula-opciones">
                         <FormControlLabel value={true} control={<Radio/>} label="SI"/>
@@ -109,6 +117,7 @@ export default IdentificacionForm;
 export interface DatosDeIdentificacion {
     id_persona: number | null;
     cedula_identidad?: string | null;
+    numeroDeIdentificacion?: string;
     prontuario?: string;
     es_extranjero: boolean;
     tiene_cedula: boolean;
@@ -144,6 +153,8 @@ interface DatosCedulaDTO {
 const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [cedula, setCedula] = useState<string>("");
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] = useState<DatosDeIdentificacion>(datosInicialesDelFormularioDeIdentificacion)
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
     const {openSnackbar} = useGlobalContext();
     // console.log("Formulario:", formularioDeDatosDeIdentificacion);
 
@@ -151,7 +162,10 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
         setCedula(event.target.value);
     }
 
+    /** Se realiza consulta a los datos de la policia para obtener los datos del PPL paraguayo y con cedula
+     * */
     const onConsultarRegistroCivil = async () => {
+        setConsultaLoading(true)
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_CONSULTACI_API}/get_datos_ci/`;
         try {
             const headers = new Headers();
@@ -165,18 +179,28 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
             });
             if (response.ok) {
                 const data: DatosCedulaDTO = await response.json();
-                console.log(data);
+
                 if (data.exito && data.datosDeCedula.nombres != "") {
                     // console.log(data);
+                    // se verifica que los datos de la persona a ingresar sea mayor a 18 años
                     const datosDeidentificacionAGenerar = {
                         ...data.datosDeCedula,
                         tiene_cedula: true,
                         es_extranjero: false,
                         id_persona: null,
                     }
-                    setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
-                    props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                    props.habilitarBotonSiguiente(true);
+                    if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
+                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
+                        props.actualizarIdentificacion(datosDeidentificacionAGenerar);
+                        openSnackbar('Persona no puede ingresar. Debe ser mayor de edad.', 'error')
+                        setConsultaLoading(false)
+                    } else {
+                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
+                        props.actualizarIdentificacion(datosDeidentificacionAGenerar);
+                        props.habilitarBotonSiguiente(true);
+                        setConsultaLoading(false)
+                    }
+
                 }
             } else {
                 log.error("Error al consultar el documento:", await response.json())
@@ -186,74 +210,88 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
         } catch (error) {
             log.error("Hubo un error durante la consulta de la CI:", error);
             openSnackbar("Error al consultar los datos", "error");
+            setConsultaLoading(false)
             // setError({error:true, msg:'Hubo un error en la consulta de la cedula'})
         }
 
     }
-    return (
-        <Grid container spacing={2}>
-            <Grid item xs={6}>
-                <TextField autoComplete="off"
-                           id="cedula"
-                           value={cedula}
-                           name="cedula"
-                           onChange={onCedulaChangeHandler}
-                           fullWidth
-                           label={"Ingrese cedula paraguaya"}
-                           variant="outlined"
-                           required/>
-            </Grid>
-            <Grid item xs={2}>
-                <Button
-                    sx={{minHeight: "100%"}}
-                    onClick={onConsultarRegistroCivil}
-                    variant="contained"
-                    endIcon={<Storage/>}>
-                    Consultar
-                </Button>
-            </Grid>
-            <Grid item xs={6}>
-                <TextField
-                    id="nombres"
-                    name="nombres"
-                    value={formularioDeDatosDeIdentificacion.nombres}
-                    fullWidth
-                    label="Nombres"
-                    variant="outlined"
-                    disabled={true}/>
-            </Grid>
-            <Grid item xs={6}>
-                <TextField
-                    id="apellido"
-                    name="apellidos"
-                    value={formularioDeDatosDeIdentificacion.apellidos}
-                    fullWidth
-                    label="Apellidos"
-                    variant="outlined"
-                    disabled={true}/>
-            </Grid>
-            <Grid item xs={6}>
-                <TextField
-                    fullWidth
-                    value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
-                    label="Fecha de Nacimiento"/>
 
+    return (
+        <>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <TextField autoComplete="off"
+                               id="cedula"
+                               value={cedula}
+                               name="cedula"
+                               onChange={onCedulaChangeHandler}
+                               fullWidth
+                               label={"Ingrese cedula paraguaya"}
+                               variant="outlined"
+                               required/>
+                </Grid>
+                <Grid item xs={2}>
+                    <LoadingButton
+                        sx={{
+                            minHeight: "100%",
+                            px: "40px",
+                        }}
+                        onClick={onConsultarRegistroCivil}
+                        loading={consultaLoading}
+                        loadingPosition='end'
+                        variant="contained"
+                        endIcon={<Sort/>}>
+                        <span>Consultar</span>
+                    </LoadingButton>
+                </Grid>
             </Grid>
-            <Grid item xs={6}>
-                <FormControl fullWidth>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
                     <TextField
-                        id="genero"
-                        name="genero"
-                        value={formularioDeDatosDeIdentificacion.codigo_genero == 1 ? 'femenino' : formularioDeDatosDeIdentificacion.codigo_genero == 2 ? 'masculino' : ''}
+                        id="nombres"
+                        name="nombres"
+                        value={formularioDeDatosDeIdentificacion.nombres}
                         fullWidth
-                        label="Genero"
+                        label="Nombres"
                         variant="outlined"
                         disabled={true}/>
-                </FormControl>
+                </Grid>
+                <Grid item xs={6}>
+                    <TextField
+                        id="apellido"
+                        name="apellidos"
+                        value={formularioDeDatosDeIdentificacion.apellidos}
+                        fullWidth
+                        label="Apellidos"
+                        variant="outlined"
+                        disabled={true}/>
+                </Grid>
             </Grid>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <TextField
+                        fullWidth
+                        disabled
+                        value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
+                        label="Fecha de Nacimiento"/>
+
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth>
+                        <TextField
+                            id="genero"
+                            name="genero"
+                            value={formularioDeDatosDeIdentificacion.codigo_genero == 1 ? 'femenino' : formularioDeDatosDeIdentificacion.codigo_genero == 2 ? 'masculino' : ''}
+                            fullWidth
+                            label="Genero"
+                            variant="outlined"
+                            disabled={true}/>
+                    </FormControl>
+                </Grid>
 
 
-        </Grid>
+            </Grid>
+        </>
     )
 }
 
@@ -290,9 +328,11 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
             props.actualizarIdentificacion({
                 ...formularioDeDatosDeIdentificacion,
                 fecha_nacimiento: formularioDeDatosDeIdentificacion.fecha_nacimiento.toISOString(),
+                numeroDeIdentificacion: formularioDeDatosDeIdentificacion.numeroDeIdentificacion,
                 tiene_cedula: true,
                 es_extranjero: true,
                 id_persona: null,
+
             });
             props.habilitarBotonSiguiente(true);
         } else {
@@ -306,11 +346,12 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
             (previus) => {
                 return {
                     ...previus,
-                    codigo_de_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
+                    codigo_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
                 }
             }
         )
     }
+
     const onChangeFechaDeNacimiento = (value: Dayjs | null) => {
         setFormularioDeDatosDeIdentificacion(
             (previus) => {
@@ -321,6 +362,7 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
             }
         )
     }
+
     const onTextChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormularioDeDatosDeIdentificacion(
             (estadoPrevio) => {
@@ -332,80 +374,89 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
         )
     }
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={6}>
-                <TextField autoComplete="off"
-                           id="numeroDeIdentificacion"
-                           value={formularioDeDatosDeIdentificacion.numeroDeIdentificacion}
-                           name="numeroDeIdentificacion"
-                           onChange={onTextChangeHandler}
-                           fullWidth
-                           label={"Ingrese número de identificación extranjera"}
-                           variant="outlined"
-                           required/>
-            </Grid>
+        <Box component={'form'} autoComplete="off">
 
-            <Grid item xs={6}>
-                <TextField
-                    id="nombres"
-                    name="nombres"
-                    value={formularioDeDatosDeIdentificacion.nombres}
-                    fullWidth
-                    onChange={onTextChangeHandler}
-                    label="Nombres"
-                    variant="outlined"
-                    required/>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <TextField
+                        autoComplete='off'
+                        id="numeroDeIdentificacion"
+                        value={formularioDeDatosDeIdentificacion.numeroDeIdentificacion}
+                        name="numeroDeIdentificacion"
+                        onChange={onTextChangeHandler}
+                        fullWidth
+                        label={"Ingrese número de identificación extranjera"}
+                        variant="outlined"
+                        required/>
+                </Grid>
+
+                <Grid item xs={6}>
+                    <TextField
+                        id="nombres"
+                        name="nombres"
+                        value={formularioDeDatosDeIdentificacion.nombres}
+                        fullWidth
+                        onChange={onTextChangeHandler}
+                        label="Nombres"
+                        variant="outlined"
+                        required/>
+                </Grid>
             </Grid>
-            <Grid item xs={6}>
-                <TextField
-                    id="apellido"
-                    name="apellidos"
-                    value={formularioDeDatosDeIdentificacion.apellidos}
-                    fullWidth
-                    onChange={onTextChangeHandler}
-                    label="Apellidos"
-                    variant="outlined"
-                    required/>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <TextField
+                        id="apellido"
+                        name="apellidos"
+                        value={formularioDeDatosDeIdentificacion.apellidos}
+                        fullWidth
+                        onChange={onTextChangeHandler}
+                        label="Apellidos"
+                        variant="outlined"
+                        required/>
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth={true}>
+                        <DatePicker
+                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
+                            format="DD/MM/YYYY"
+                            onChange={(newValue) => onChangeFechaDeNacimiento(newValue)}
+                            label={"Fecha de nacimiento"}
+                        />
+                    </FormControl>
+
+                </Grid>
             </Grid>
-            <Grid item xs={6}>
-                <FormControl fullWidth={true}>
-                    <DatePicker
-                        value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
-                        format="DD/MM/YYYY"
-                        onChange={(newValue) => onChangeFechaDeNacimiento(newValue)}
-                        label={"Fecha de nacimiento"}
-                    />
-                </FormControl>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="id_selector_genero">
+                            Genero
+                        </InputLabel>
+                        <Select
+                            id="id_selector_genero"
+                            label="Genero"
+                            onChange={onGeneroChangeHandler}
+                            value={formularioDeDatosDeIdentificacion.codigo_genero}>
+                            <MenuItem value={1}>Femenino</MenuItem>
+                            <MenuItem value={2}>Masculino</MenuItem>
+                        </Select>
+
+                    </FormControl>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button
+                        sx={{minHeight: "100%"}}
+                        onClick={onGuardarHandler}
+                        variant="contained"
+                        endIcon={<Save/>}>
+                        Guardar
+                    </Button>
+                </Grid>
+
 
             </Grid>
-            <Grid item xs={6}>
-                <FormControl fullWidth>
-                    <InputLabel htmlFor="id_selector_genero">
-                        Genero
-                    </InputLabel>
-                    <Select
-                        id="id_selector_genero"
-                        label="Genero"
-                        onChange={onGeneroChangeHandler}
-                        value={formularioDeDatosDeIdentificacion.codigo_genero}>
-                        <MenuItem value={1}>Femenino</MenuItem>
-                        <MenuItem value={2}>Masculino</MenuItem>
-                    </Select>
+        </Box>
 
-                </FormControl>
-            </Grid>
-            <Grid item xs={2}>
-                <Button
-                    sx={{minHeight: "100%"}}
-                    onClick={onGuardarHandler}
-                    variant="contained"
-                    endIcon={<Save/>}>
-                    Guardar
-                </Button>
-            </Grid>
-
-
-        </Grid>
     )
 
 
@@ -428,6 +479,7 @@ const datosInicialesDeFormularioDePPLSinCedula = {
     fecha_nacimiento: dayjs(),
     codigo_genero: 2,
 }
+
 const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] =
         useState<DatosDeIdentificacionSinCedula>(datosInicialesDeFormularioDePPLSinCedula);
@@ -438,6 +490,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
 
     const onGuardarHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log("Fecha de nacimiento:", formularioDeDatosDeIdentificacion.fecha_nacimiento?.toISOString());
+
         if (formularioDeDatosDeIdentificacion.fecha_nacimiento && formularioDeDatosDeIdentificacion.nombres.length > 2
             && formularioDeDatosDeIdentificacion.apellidos.length > 2 && formularioDeDatosDeIdentificacion.prontuario.length > 1
             && formularioDeDatosDeIdentificacion.codigo_genero) {
@@ -460,7 +513,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
             (previus) => {
                 return {
                     ...previus,
-                    codigo_de_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
+                    codigo_genero: typeof (event.target.value) === 'string' ? parseInt(event.target.value) : event.target.value
                 }
             }
         )
@@ -486,82 +539,90 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
         )
     }
     return (
-        <Grid container spacing={2}>
-            <Grid item xs={6}>
-                <TextField autoComplete="off"
-                           id="prontuario"
-                           value={formularioDeDatosDeIdentificacion.prontuario}
-                           name="prontuario"
-                           onChange={onTextChangeHandler}
-                           fullWidth
-                           label={"Ingrese número de prontuario"}
-                           variant="outlined"
-                           required/>
-            </Grid>
+        <>
+            {console.log(formularioDeDatosDeIdentificacion)}
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <TextField autoComplete="off"
+                               id="prontuario"
+                               value={formularioDeDatosDeIdentificacion.prontuario}
+                               name="prontuario"
+                               onChange={onTextChangeHandler}
+                               fullWidth
+                               label={"Ingrese número de prontuario"}
+                               variant="outlined"
+                               required/>
+                </Grid>
 
-            <Grid item xs={6}>
-                <TextField
-                    id="nombres"
-                    name="nombres"
-                    value={formularioDeDatosDeIdentificacion.nombres}
-                    fullWidth
-                    onChange={onTextChangeHandler}
-                    label="Nombres"
-                    variant="outlined"
-                    required/>
+                <Grid item xs={6}>
+                    <TextField
+                        id="nombres"
+                        name="nombres"
+                        value={formularioDeDatosDeIdentificacion.nombres}
+                        fullWidth
+                        onChange={onTextChangeHandler}
+                        label="Nombres"
+                        variant="outlined"
+                        required/>
+                </Grid>
             </Grid>
-            <Grid item xs={6}>
-                <TextField
-                    id="apellido"
-                    name="apellidos"
-                    value={formularioDeDatosDeIdentificacion.apellidos}
-                    fullWidth
-                    onChange={onTextChangeHandler}
-                    label="Apellidos"
-                    variant="outlined"
-                    required/>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <TextField
+                        id="apellido"
+                        name="apellidos"
+                        value={formularioDeDatosDeIdentificacion.apellidos}
+                        fullWidth
+                        onChange={onTextChangeHandler}
+                        label="Apellidos"
+                        variant="outlined"
+                        required/>
+                </Grid>
+                <Grid item xs={6}>
+                    <FormControl fullWidth={true}>
+                        <DatePicker
+                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
+                            format="DD/MM/YYYY"
+                            onChange={(newValue) => onChangeFechaDeNacimiento(newValue)}
+                            label={"Fecha de nacimiento"}
+                        />
+                    </FormControl>
+
+                </Grid>
             </Grid>
-            <Grid item xs={6}>
-                <FormControl fullWidth={true}>
-                    <DatePicker
-                        value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
-                        format="DD/MM/YYYY"
-                        onChange={(newValue) => onChangeFechaDeNacimiento(newValue)}
-                        label={"Fecha de nacimiento"}
-                    />
-                </FormControl>
+            <Grid container spacing={2} mt={3}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor="id_selector_genero">
+                            Genero
+                        </InputLabel>
+                        <Select
+                            id="id_selector_genero"
+                            label="Genero"
+                            onChange={onGeneroChangeHandler}
+                            value={formularioDeDatosDeIdentificacion.codigo_genero}>
+                            <MenuItem value={1}>Femenino</MenuItem>
+                            <MenuItem value={2}>Masculino</MenuItem>
+                        </Select>
+
+                    </FormControl>
+                </Grid>
+                <Grid item xs={2}>
+                    <Button
+                        sx={{minHeight: "100%"}}
+                        onClick={onGuardarHandler}
+                        variant="contained"
+                        endIcon={<Save/>}>
+                        Guardar
+                    </Button>
+                </Grid>
+
 
             </Grid>
-            <Grid item xs={6}>
-                <FormControl fullWidth>
-                    <InputLabel htmlFor="id_selector_genero">
-                        Genero
-                    </InputLabel>
-                    <Select
-                        id="id_selector_genero"
-                        label="Genero"
-                        onChange={onGeneroChangeHandler}
-                        value={formularioDeDatosDeIdentificacion.codigo_genero}>
-                        <MenuItem value={1}>Femenino</MenuItem>
-                        <MenuItem value={2}>Masculino</MenuItem>
-                    </Select>
+        </>
 
-                </FormControl>
-            </Grid>
-            <Grid item xs={2}>
-                <Button
-                    sx={{minHeight: "100%"}}
-                    onClick={onGuardarHandler}
-                    variant="contained"
-                    endIcon={<Save/>}>
-                    Guardar
-                </Button>
-            </Grid>
-
-
-        </Grid>
     )
 
 
-}  
+}
 
