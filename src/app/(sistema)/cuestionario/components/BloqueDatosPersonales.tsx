@@ -73,6 +73,7 @@ interface datosPersonales {
     nombre_de_contacto_en_consulado_o_embajada: string;
     numero_de_contacto_en_consulado_o_embajada: string;
     pais_de_embajada: number;
+    foto: string | null;
 
 }
 
@@ -121,6 +122,7 @@ const datosPersonalesInicial: datosPersonales = {
     nombre_de_contacto_en_consulado_o_embajada: '',
     numero_de_contacto_en_consulado_o_embajada: '',
     pais_de_embajada: 0,
+    foto: '',
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -146,6 +148,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         apellido_modificado: true,
         codigo_genero: datosDeIdentificacion.codigo_genero ? datosDeIdentificacion.codigo_genero : 0,
         nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 0,
+        foto: datosDeIdentificacion.foto ? datosDeIdentificacion.foto : ''
 
     });
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
@@ -313,161 +316,177 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             <Typography variant='h6'>
                 Datos Personales
             </Typography>
-            <Grid container spacing={2} my={2}>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="nombre">
-                            Nombre
-                        </InputLabel>
-                        <OutlinedInput
-                            disabled
-                            readOnly={true}
-                            label="Nombre"
-                            name="nombre"
-                            value={datosPersonalesState.nombre}
-                            onChange={onDatoChange}
-                        />
-                    </FormControl>
+
+            <Grid container spacing={2}>
+                <Grid item sm={3}>
+                    {/*{console.log(datosPersonalesState.foto)}*/}
+                    <Box className='contenedorFotoPerfil'>
+                        <img src={`${process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER}${datosPersonalesState.foto}`} alt=""/>
+                    </Box>
                 </Grid>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="apellido">
-                            Apellido
-                        </InputLabel>
-                        <OutlinedInput
-                            disabled
-                            readOnly={true}
-                            label="Apellido"
-                            name="apellido"
-                            value={datosPersonalesState.apellido}
-                            onChange={onDatoChange}/>
-                    </FormControl>
-                </Grid>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="apodo">
-                            Apodo
-                        </InputLabel>
-                        <OutlinedInput
-                            label="Apodo"
-                            name="apodo"
-                            value={datosPersonalesState.apodo}
-                            onChange={onDatoChange}/>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Nacionalidad</InputLabel>
-                        <Select
-                            value={datosPersonalesState.nacionalidad}
-                            onChange={onDatoSelectChange}
-                            label="Nacionalidad"
-                            name="nacionalidad"
-                        >
-                            {nacionalidades ? nacionalidades.map(
-                                (data, id) => {
-                                    return (
-                                        <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
-                                    )
-                                }
-                            ) : null}
+                <Grid item sm={9}>
+                    <Grid container spacing={2} my={2}>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="nombre">
+                                    Nombre
+                                </InputLabel>
+                                <OutlinedInput
+                                    disabled
+                                    readOnly={true}
+                                    label="Nombre"
+                                    name="nombre"
+                                    value={datosPersonalesState.nombre}
+                                    onChange={onDatoChange}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="apellido">
+                                    Apellido
+                                </InputLabel>
+                                <OutlinedInput
+                                    disabled
+                                    readOnly={true}
+                                    label="Apellido"
+                                    name="apellido"
+                                    value={datosPersonalesState.apellido}
+                                    onChange={onDatoChange}/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="apodo">
+                                    Apodo
+                                </InputLabel>
+                                <OutlinedInput
+                                    label="Apodo"
+                                    name="apodo"
+                                    value={datosPersonalesState.apodo}
+                                    onChange={onDatoChange}/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel>Nacionalidad</InputLabel>
+                                <Select
+                                    value={datosPersonalesState.nacionalidad}
+                                    onChange={onDatoSelectChange}
+                                    label="Nacionalidad"
+                                    name="nacionalidad"
+                                >
+                                    {nacionalidades ? nacionalidades.map(
+                                        (data, id) => {
+                                            return (
+                                                <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
+                                            )
+                                        }
+                                    ) : null}
 
 
-                        </Select>
-                    </FormControl>
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel>Tipo de documento</InputLabel>
+                                <OutlinedInput
+                                    fullWidth
+                                    value={datosPersonalesState.tiene_cedula ? 'Cedula de Identidad Policial' : 'Otro'}
+                                    label="Tipo de documento"
+                                    name="tipo_documento"
+                                    disabled
+                                    inputProps={{readOnly: true,}}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel>Numero de documento</InputLabel>
+                                <OutlinedInput
+                                    fullWidth
+                                    value={datosPersonalesState.numeroDeIdentificacion}
+                                    label="Numero de documento"
+                                    name="numeroDeIdentificacion"
+                                    disabled
+                                    inputProps={{readOnly: true,}}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="estado_civil">
+                                    Genero
+                                </InputLabel>
+                                <Select
+                                    id="estado_civil_id"
+                                    name="codigo_genero"
+                                    label='Genero'
+                                    value={datosPersonalesState.codigo_genero}
+                                >
+
+                                    <MenuItem value={1}>Femenino</MenuItem>
+                                    <MenuItem value={2}>Masculino</MenuItem>
+
+
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="estado_civil">
+                                    Estado Civil
+                                </InputLabel>
+                                <Select
+                                    id="estado_civil_id"
+                                    name="estadoCivil"
+                                    label='Estado Civil'
+                                    value={datosPersonalesState.estadoCivil}
+                                    onChange={onDatoSelectChange}
+                                >
+                                    <MenuItem value={0}>Seleccionar estado civil</MenuItem>
+                                    {estadosCiviles ? estadosCiviles.map(
+                                        (estadoCivil, id) => {
+                                            return (
+                                                <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
+                                            )
+                                        }
+                                    ) : null}
+
+                                </Select>
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <DatePicker
+
+                                    value={datosPersonalesState.fechaDeNacimiento ? dayjs(datosPersonalesState.fechaDeNacimiento, 'DD/MM/YYYY') : null}
+                                    format="DD/MM/YYYY"
+                                    disabled
+                                    onChange={onFechaNacimientoChange}
+                                    label={"Fecha de nacimiento"}
+                                />
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true}>
+                                <TextField
+                                    autoComplete="off"
+                                    disabled
+                                    fullWidth
+                                    label="Edad"
+                                    name="edad"
+                                    value={datosPersonalesState.fechaDeNacimiento ? dayjs().diff(dayjs(datosDeIdentificacion.fecha_nacimiento), 'year') : null}
+                                />
+                            </FormControl>
+                        </Grid>
+                    </Grid>
                 </Grid>
-                <Grid item xs={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel>Tipo de documento</InputLabel>
-                        <OutlinedInput
-                            fullWidth
-                            value={datosPersonalesState.tiene_cedula ? 'Cedula de Identidad Policial' : 'Otro'}
-                            label="Tipo de documento"
-                            name="tipo_documento"
-                            disabled
-                            inputProps={{readOnly: true,}}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item xs={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel>Numero de documento</InputLabel>
-                        <OutlinedInput
-                            fullWidth
-                            value={datosPersonalesState.numeroDeIdentificacion}
-                            label="Numero de documento"
-                            name="numeroDeIdentificacion"
-                            disabled
-                            inputProps={{readOnly: true,}}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="estado_civil">
-                            Genero
-                        </InputLabel>
-                        <Select
-                            id="estado_civil_id"
-                            name="codigo_genero"
-                            label='Genero'
-                            value={datosPersonalesState.codigo_genero}
-                        >
-
-                            <MenuItem value={1}>Femenino</MenuItem>
-                            <MenuItem value={2}>Masculino</MenuItem>
-
-
-                        </Select>
-                    </FormControl>
-                </Grid><Grid item sm={6}>
-                <FormControl fullWidth={true}>
-                    <InputLabel htmlFor="estado_civil">
-                        Estado Civil
-                    </InputLabel>
-                    <Select
-                        id="estado_civil_id"
-                        name="estadoCivil"
-                        label='Estado Civil'
-                        value={datosPersonalesState.estadoCivil}
-                        onChange={onDatoSelectChange}
-                    >
-                        <MenuItem value={0}>Seleccionar estado civil</MenuItem>
-                        {estadosCiviles ? estadosCiviles.map(
-                            (estadoCivil, id) => {
-                                return (
-                                    <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
-                                )
-                            }
-                        ) : null}
-
-                    </Select>
-                </FormControl>
             </Grid>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <DatePicker
+            <Grid container spacing={2} my={2}>
 
-                            value={datosPersonalesState.fechaDeNacimiento ? dayjs(datosPersonalesState.fechaDeNacimiento, 'DD/MM/YYYY') : null}
-                            format="DD/MM/YYYY"
-                            disabled
-                            onChange={onFechaNacimientoChange}
-                            label={"Fecha de nacimiento"}
-                        />
-                    </FormControl>
-                </Grid>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <TextField
-                            autoComplete="off"
-                            disabled
-                            fullWidth
-                            label="Edad"
-                            name="edad"
-                            value={datosPersonalesState.fechaDeNacimiento ? dayjs().diff(dayjs(datosDeIdentificacion.fecha_nacimiento), 'year') : null}
-                        />
-                    </FormControl>
-                </Grid>
+
                 <Grid item xs={6}>
                     <TextField
                         autoComplete="off"

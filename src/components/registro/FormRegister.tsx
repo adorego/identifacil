@@ -33,6 +33,7 @@ const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmaci
 export const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo', 'Ocuurio un error'];
 
 export interface RegistroResponse {
+    foto1: any;
     success: boolean;
     id_persona: number;
 }
@@ -150,7 +151,8 @@ export default function FormRegister() {
             contadorReconocimiento.current = 0;
             try {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
-                console.log('url:', url);
+                // console.log('url:', url);
+
                 setProgresoRegistro(EstadosProgreso[2]);
                 const result = await fetch(url, {
                     method: 'POST',
@@ -164,7 +166,11 @@ export default function FormRegister() {
                     log.error("Ocurrio un error durante el registro:", data);
                 } else {
                     const data: RegistroResponse = await result.json() as RegistroResponse;
+                    console.log('verificacion de foto')
+                    console.log(data)
                     identidad.current.id_persona = data.id_persona;
+                    identidad.current.foto = data.foto1;
+                    // AGREGAR FOTO DE PERFIL
                     setRegistroRealizado(true);
                     setProgresoRegistro(EstadosProgreso[0]);
                     onStepForward();
@@ -257,9 +263,11 @@ export default function FormRegister() {
                     }
 
                     {activeStep === 2 && identidad.current && identidad.current.id_persona &&
-                        <CuestionarioRegistro datosDeIdentidad={
-                            identidad.current
-                        } id_persona={identidad.current.id_persona}/>}
+                        <CuestionarioRegistro
+                            datosDeIdentidad={identidad.current}
+                            id_persona={identidad.current.id_persona}
+                        />
+                    }
 
                     {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente"/>}
 
