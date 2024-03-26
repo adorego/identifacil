@@ -56,7 +56,7 @@ const Prueba =()=>{
     return(
         <>
         {/* <Button sx={{backgroundColor:"lightskyblue",color:"black"}} onClick={onClickHandler}>Enviar expediente</Button> */}
-        <img src="http://localhost:4001/public/1130650_1.jpg" width={200} height={200} />
+        <img src="/api/registro/archivos/foto.jpg" width={200} height={200} />
         </>
     )
 }
