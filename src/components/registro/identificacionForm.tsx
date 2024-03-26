@@ -125,6 +125,7 @@ export interface DatosDeIdentificacion {
     apellidos: string;
     fecha_nacimiento: string;
     codigo_genero: number;
+    foto: string;
 }
 
 const datosInicialesDelFormularioDeIdentificacion: DatosDeIdentificacion = {
@@ -137,6 +138,7 @@ const datosInicialesDelFormularioDeIdentificacion: DatosDeIdentificacion = {
     apellidos: "",
     fecha_nacimiento: "",
     codigo_genero: 0,
+    foto: '',
 }
 
 interface DatosCedulaDTO {
@@ -188,6 +190,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                         tiene_cedula: true,
                         es_extranjero: false,
                         id_persona: null,
+                        foto: ''
                     }
                     if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
@@ -332,6 +335,7 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                 tiene_cedula: true,
                 es_extranjero: true,
                 id_persona: null,
+                foto: '',
 
             });
             props.habilitarBotonSiguiente(true);
@@ -500,6 +504,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                 tiene_cedula: false,
                 es_extranjero: false,
                 id_persona: null,
+                foto: '',
             });
             props.habilitarBotonSiguiente(true);
         } else {

@@ -7,7 +7,15 @@
     background: rgba(0, 167, 111, 0.08);
     color: #00A76F;
 }
-
+.contenedorFotoPerfil img {
+    object-fit: cover;
+    width: 100%;
+    height: auto;
+}
+.contenedorFotoPerfil {
+    margin-top: 30px;
+    height: 250px;
+}
 /*nav.MuiList-root.MuiList-padding {
   padding: 20px;
 }*/

@@ -8,7 +8,7 @@ import FormMedidasSeguridad from "@/app/(sistema)/sistema/(movimientos)/medidas-
 
 
 export default function Page({ params }: { params: { id: number } }) {
-    const URL_PARAM : string = `${process.env.NEXT_PUBLIC_API_URL}/medidaSeguridad/${params.id}`;
+    const URL_PARAM : string = `${process.env.NEXT_PUBLIC_API_URL}/movimientos/medidas_de_seguridad/${params.id}`;
 
 
     // TODO: Hay que configurar mejor para que el loding funcione

@@ -16,15 +16,18 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 import {reclsusosData} from "@/app/dummyData/data";
+import {fetchData} from "@/components/utils/utils";
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'documento', label: 'Orden judicial'},
-    {id: 'fechaDocumento', label: 'Fecha documento'},
-    {id: 'fechaTraslado', label: 'Fecha traslado'},
+    {id: 'numero_de_documento', label: 'Documento traslado'},
+    {id: 'fecha_de_documento', label: 'Fecha documento'},
+    {id: 'fecha_de_traslado', label: 'Fecha traslado'},
     {id: 'origenTraslado', label: 'Origen'},
     {id: 'destinoTraslado', label: 'Destino'},
 ]
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 const trasladosDummy = reclsusosData();
 
@@ -55,6 +58,7 @@ export default function Ppl() {
             openSnackbar(result.message, "error");
         }
     };
+
     const handleDeleteRecord = (id:number)=>{
         // @ts-ignore
         //Actualiza el store local con el ID que se obtuvo dentro de CustomTable
@@ -65,36 +69,35 @@ export default function Ppl() {
         handleDelete(id);
 
     }
-    async function fetchData() {
-        try {
-            const response = await fetch('http://localhost:5000/traslados');
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            // const data = await response.json();
-            // return data
-            return await response.json();
-        } catch (error) {
-            console.error('Error al realizar la solicitud fetch:', error);
-            return null; // o manejar el error de manera adecuada
-        }
-    }
+
+
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
-    /*useEffect(() => {
-        fetchData()
+    useEffect(() => {
+        fetchData(`${API_URL}/movimientos`)
             .then(fetchedData => {
+                /*console.log(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
+                    ...item,
+                    destinoTraslado: item.destinoTraslado.nombre,
+                    origenTraslado: item.origenTraslado.nombre
+                })))*/
+                // TODO: veritifcar porque hace problema typescript aca
 
-                setData(fetchedData);
+                //@ts-ignore
+                setData(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
+                    ...item,
+                    destinoTraslado: item.destinoTraslado.nombre,
+                    origenTraslado: item.origenTraslado.nombre
+                })));
             });
-    }, []); */
+    }, []);
 
     const handleFitros = (value : any) => {
-        console.log(value)
+        // console.log(value)
         setFilterData(value)
     }
 
-    if (!trasladosDummy.rowsCustom) {
+    if (!data) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -116,14 +119,15 @@ export default function Ppl() {
             }}>
                 {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
                 {/*Elemento de tabla de traslados filtros */}
-                <Box px={3} py={3}>
-                    <FiltrosTables dataSinFiltro={trasladosDummy.rowsCustom} handleFiltro={handleFitros}/>
-                </Box>
+                {/*<Box px={3} py={3}>
+                    <FiltrosTables dataSinFiltro={data} handleFiltro={handleFitros}/>
+                </Box>*/}
 
                 {/* Elemento Tabla de Traslado*/}
                 <Box>
                     <CustomTable
-                        data={filterData ? filterData : trasladosDummy.rowsCustom}
+                        data={filterData ? filterData : data}
+                        /*data={data}*/
                         headers={header2}
                         showId={true}
                         deleteRecord={handleOpenModal}

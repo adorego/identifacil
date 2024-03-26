@@ -14,7 +14,7 @@ import {useGlobalContext} from "@/app/Context/store";
 // Datos para armar el header de la tabla
 const header = [
     { id: 'id', label: 'ID' },
-    { id: 'medidaSeguridad', label: 'Medida de seguridad' },
+    { id: 'nombre', label: 'Medida de seguridad' },
     { id: 'lastUpdate', label: 'Ultima actualización' },
 ]
 
@@ -31,7 +31,7 @@ export default function Page(){
     // Se obtiene datos de la API
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:6000/medidaSeguridad');
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/movimientos/medidas_de_seguridad`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -46,10 +46,8 @@ export default function Page(){
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
-        fetchData()
-            .then(fetchedData => {
-                setData(fetchedData);
-            });
+        // @ts-ignore
+        fetchData().then(fetchedData => setData(Object.keys(fetchedData).map(key => (fetchedData[key]))));
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
 
@@ -105,11 +103,12 @@ export default function Page(){
 
 
     return(
+        <>
+            <Box>
 
-        <Box>
-            <TituloComponent titulo='Medidas de seguridad' />
-            <Box mt={4}>
-                <CustomTable
+                <TituloComponent titulo='Medidas de seguridad' />
+                <Box mt={4}>
+                    <CustomTable
                     showId={true}
                     headers={header}
                     data={data}
@@ -120,13 +119,14 @@ export default function Page(){
                         pagination:true,
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/medidas-seguridad/crear',
-                        targetURL:`/sistema/medidas-seguridad/`,
+                        targetURL:`/sistema/medidas-seguridad`,
                         deleteOption: true,
                     }}
                 />
-                <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
-            </Box>
+                    <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
+                </Box>
 
-        </Box>
+            </Box>
+        </>
     )
 }

@@ -10,15 +10,17 @@ import log from "loglevel";
 
 interface MyState {
     id: number;
-    medidaSeguridad: string;
+    nombre: string;
     lastUpdate: string;
 
 }
 const initialState: MyState = {
     id: 0,
-    medidaSeguridad: "",
+    nombre: "",
     lastUpdate: ""
 }
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
 // TODO: Corregir errores de Tyepescrit en is edit mode
 export default function FormMedidasSeguridad({params} : { params: { id: number | string } }){
@@ -38,14 +40,15 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
     useEffect(() => {
         if (isEditMode) {
             handleLoading(true);
-            fetch(`${process.env.NEXT_PUBLIC_API_URL}/medidaSeguridad?id=${params.id}`)
+            fetch(`${API_URL}/movimientos/medidas_de_seguridad/${params.id}`)
                 .then(response => response.json())
                 .then(data => {
                     // Asegúrate de que el array no esté vacío y de que el objeto tenga las propiedades necesarias
-                    if (data.length > 0) {
+
+                    if (data) {
                         // Los nombress de form y atributos del state deben ser lo mismo que el endpoint
                         // o sino deberian hacer una normalizacion
-                        setStateForm(data[0]);
+                        setStateForm(data);
                     }
                 }).then( ()=>{
                     handleLoading(false);
@@ -82,8 +85,8 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
 
             // @ts-ignore
             const url = isEditMode !== 'crear'
-                ? `http://localhost:5000/medidaSeguridad/${params.id}`
-                : 'http://localhost:5000/medidaSeguridad';
+                ? `${API_URL}/movimientos/medidas_de_seguridad/${params.id}`
+                : `${API_URL}/movimientos/medidas_de_seguridad/`;
 
             const response = await fetch(url, {
                 method: method,
@@ -133,14 +136,15 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
 
     return(
         <>
+            {console.log(stateForm)}
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={6}>
                     <TextField
                         fullWidth
                         onChange={handleChange}
-                        name="medidaSeguridad"
-                        value={stateForm.medidaSeguridad ?? ''}
-                        id="chapa"
+                        name="nombre"
+                        value={stateForm.nombre ?? ''}
+                        id="nombre"
                         label="Medidas de seguridad"
                         variant="outlined" />
                 </Grid>

@@ -11,7 +11,8 @@ const Cuestionario = () =>{
                 fecha_nacimiento:"20-07-1989",
                 codigo_genero:2,
                 es_extranjero:false,
-                tiene_cedula:true
+                tiene_cedula:true,
+                foto:'',
             }} />
         </>
 

@@ -43,6 +43,7 @@ interface CuestionarioRegistroProps {
 const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, id_persona}) => {
     const [expanded, setExpanded] = useState('');
     console.log(datosDeIdentidad)
+    console.log(id_persona)
 
     const handleAccordionChange = (panel: string) => (_: any, isExpanded: boolean) => {
         setExpanded(isExpanded ? panel : '');

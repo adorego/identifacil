@@ -32,6 +32,7 @@ export async function fetchData(url : string) {
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
+
         return await response.json();
     } catch (error) {
         console.error('Error al realizar la solicitud fetch:', error);
@@ -171,7 +172,8 @@ export const postForm = async (
     setLoading: (arg0: boolean) => void,
     openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
     router: any,
-    redirect: boolean = false
+    redirect: boolean = false,
+    targetRedirect: string = '',
 ) => {
     try {
         setLoading(true);
@@ -198,7 +200,7 @@ export const postForm = async (
 
             openSnackbar(message, 'success');
             if(redirect){
-                router.push(`/${endpoint}`);
+                router.push(`/${targetRedirect}`);
             }
             return response
         } else {
