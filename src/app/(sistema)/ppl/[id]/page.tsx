@@ -73,6 +73,7 @@ type dataType = {
     datosEducacion: datosEducacionType;
     datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
+    registro_de_fotos: Array<{nombre:string; foto:string}>;
 }
 
 const initialData = {
@@ -82,6 +83,7 @@ const initialData = {
     apodo: '',
     foto: '',
     fechaDeNacimiento: '',
+    registro_de_fotos: [],
     establecimiento_penitenciario: '',
     genero: 2,
     fecha_nacimiento: '',
@@ -116,7 +118,7 @@ export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState('1');
     const [data, setData] = React.useState<dataType>(initialData);
     const [loading, setLoading] = React.useState(true);
-
+    const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : null;
 
 
     useEffect(() => {
@@ -163,7 +165,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                             borderRadius: '10px',
                                         }}
                                     />*/}
-                                    <img src={`${process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER}${data.foto}`} className='imageProfile'/>
+                                    <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile'/>
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
 

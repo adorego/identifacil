@@ -316,6 +316,9 @@ export type datosJudicialesType = {
     };
     numero_de_expediente: number | null;
     sentencia_definitiva: string;
+    expediente_id: number | null;
+    pabellon: string;
+    celda: string;
     primera_vez_en_prision: boolean;
     cantidad_de_veces_que_ingreso: number;
     expediente_numero_de_documento: string | null;
@@ -363,10 +366,13 @@ export type datosJudicialesType = {
 
 export const datosJudicialesInicial:datosJudicialesType = {
     numero_de_expediente: null,
+    expediente_id: null,
     hecho_punible: {
         id: null,
     },
     sentencia_definitiva: '',
+    pabellon: '',
+    celda: '',
     ingresos_a_prision:[
         {
             causa: {id:0},

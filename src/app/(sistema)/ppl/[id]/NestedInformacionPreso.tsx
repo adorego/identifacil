@@ -22,6 +22,7 @@ import BloqueJudicial from "../../cuestionario/components/BloqueJudicial";
 import BloqueSalud from "../../cuestionario/components/BloqueSalud";
 import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
 import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
+import BloqueGaleria from "@/app/(sistema)/cuestionario/components/BloqueGaleria";
 
 
 interface TabPanelProps {
@@ -89,6 +90,7 @@ type datosPersonaType = {
     datosEducacion: datosEducacionType;
     datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
+    registro_de_fotos: Array<{ nombre: string; foto: string; }>
 }
 
 
@@ -122,7 +124,8 @@ const datosPersonaInitial: datosPersonaType = {
     datosFamiliares: datosFamiliaresInicial,
     datosEducacion: datosEducacionInicial,
     datosDeSalud: datosDeSalud2Initial,
-    datosJudiciales: datosJudicialesInicial
+    datosJudiciales: datosJudicialesInicial,
+    registro_de_fotos: [],
 }
 
 export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: { datosPersona: datosPersonaType }) {
@@ -150,6 +153,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                 <Tab label="Educacion" {...a11yProps(3)} />
                                 <Tab label="Familiares" {...a11yProps(4)} />
                                 <Tab label="Judiciales" {...a11yProps(5)} />
+                                <Tab label="Galeria" {...a11yProps(6)} />
                             </Tabs>
                         </Grid>
                         <Grid item sm={10}>
@@ -213,6 +217,10 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                 <BloqueJudicial id_persona={datosPersona.id_persona}
                                                 datosIniciales={datosPersona.datosJudiciales}/>
                             </CustomTabPanel>
+{}
+                            <CustomTabPanel value={value} index={6}>
+                                <BloqueGaleria datosIniciales={datosPersona.registro_de_fotos} id_persona={datosPersona.id_persona}/>
+                            </CustomTabPanel>
                         </Grid>
                     </Grid>
                 </Box>
@@ -220,3 +228,4 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
         </Box>
     )
 }
+
