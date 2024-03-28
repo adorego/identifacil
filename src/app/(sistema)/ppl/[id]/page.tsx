@@ -118,7 +118,7 @@ export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState('1');
     const [data, setData] = React.useState<dataType>(initialData);
     const [loading, setLoading] = React.useState(true);
-    const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : null;
+    const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
 
     useEffect(() => {

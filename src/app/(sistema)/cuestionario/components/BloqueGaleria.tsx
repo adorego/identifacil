@@ -30,7 +30,7 @@ const galeriaInitial = [
 
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
-const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : null;
+const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
 export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:number|null; datosIniciales: TipoGaleria}){
     const [loading, setLoading] = useState(true);
