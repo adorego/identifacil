@@ -236,13 +236,13 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
                                         </IconButton>
 
                                         <ImgComponent urlImg={item.foto}/>
-                                        <Box mt={1}>
-                                            {index}
+                                        {/*<Box mt={1}>
+
                                             <TextField
                                                 label='Nombre de la fotografia'
                                                 value={item.nombre}
                                             />
-                                        </Box>
+                                        </Box>*/}
                                     </div>
                                 </Grid>
                             ))
