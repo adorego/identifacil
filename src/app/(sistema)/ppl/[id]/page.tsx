@@ -165,7 +165,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                             borderRadius: '10px',
                                         }}
                                     />*/}
-                                    <img src={`${data.foto}`} className='imageProfile'/>
+                                    <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile'/>
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
 

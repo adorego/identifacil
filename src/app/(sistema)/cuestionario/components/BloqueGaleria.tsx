@@ -130,7 +130,6 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
         const formData = new FormData();
         const contentType = 'image/jpeg'; // You should set the correct MIME type
 
-
         formData.append("id_persona", id_persona? id_persona.toString() : '');
 
 
@@ -145,14 +144,15 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
         })
 
         // SI es PUT entonces algunas imagenes podrian ser FILE/URL Entonces hay que bajar y volver a subir
-        //
-        console.log(isEditMode)
+
+
         if(isEditMode){
             let counter = 0
             for (const fileData of stateGaleria) {
                 counter++
-                if (fileData.foto.startsWith('http')) {
+                if (fileData.foto.startsWith('http') || fileData.foto.startsWith('/archivo')) {
                     console.log(`El elemento ${fileData.nombre} es una URL - ${counter}`);
+
                     const fileBlob = await downloadFile(fileData.foto);
                     formData.append(`nombre_foto${counter}`, `nombre_foto${counter}`);
                     formData.append(`foto${counter}`, blobToFile(fileBlob, fileData.nombre), `${id_persona}_${fileData.nombre}.jpg`);
