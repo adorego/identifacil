@@ -200,7 +200,7 @@ export const postForm = async (
 
             openSnackbar(message, 'success');
             if(redirect){
-                router.push(`/${targetRedirect}`);
+                router.push(`${targetRedirect}`);
             }
             return response
         } else {

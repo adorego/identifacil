@@ -49,7 +49,17 @@ img.imageProfile {
 .secondaryData {
     color: #b3b3b3;
 }
-
+button.CapturadorFoto {
+    background: #f1f1f1;
+    height: 150px;
+    width: 100%;
+    border-radius: 10px;
+    border: 2px dashed #a3a3a3;
+    color: #919EAB;
+}
+button.CapturadorFoto:hover {
+    cursor: pointer;
+}
 thead tr th.MuiTableCell-root {
     background: #f4f6f8;
     FONT-WEIGHT: 600;
@@ -148,3 +158,29 @@ header.MuiPaper-root {
     transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
 }
 
+
+
+.ContainerCam {
+    align-items: center;
+    min-height: 100vh;
+    margin: 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.imgCam {
+    width: 400px;
+    object-fit: cover;
+}
+.imgCam video {
+    width: 100%;
+}
+.AppCam {
+    display: flex;
+    align-items: center;
+    width: 150vw;
+    justify-content: center;
+    background-color: #262b36;
+}

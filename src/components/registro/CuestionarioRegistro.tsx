@@ -37,7 +37,7 @@ import BloqueGaleria from "@/app/(sistema)/cuestionario/components/BloqueGaleria
 //TODO: numeroDeIdentificacion ver que tipo debe ser y datos de identidad
 interface CuestionarioRegistroProps {
     datosDeIdentidad:DatosDeIdentificacion;
-    id_persona: number;
+    id_persona: number | null;
 }
 
 const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, id_persona}) => {
@@ -156,7 +156,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     <Typography  sx={{fontWeight: 'bold'}}>Fotografias</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <BloqueGaleria />
+                    <BloqueGaleria id_persona={id_persona} datosIniciales={[]}/>
                 </AccordionDetails>
             </Accordion>
 
