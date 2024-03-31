@@ -61,7 +61,7 @@ function a11yProps(index: number) {
 
 type datosPersonaType = {
     numero_de_identificacion: any;
-    id_persona: number | null;
+    id_persona: number;
     nombre: string;
     apellido: string;
     genero: number;

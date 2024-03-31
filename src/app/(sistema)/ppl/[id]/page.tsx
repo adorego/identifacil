@@ -40,7 +40,7 @@ interface datosConcubino {
 }
 
 type dataType = {
-    id_persona: number | null;
+    id_persona: number;
     nombre: string;
     apellido: string;
     apodo: string;
@@ -77,7 +77,7 @@ type dataType = {
 }
 
 const initialData = {
-    id_persona: null,
+    id_persona: 0,
     nombre: '',
     apellido: '',
     apodo: '',
