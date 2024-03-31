@@ -26,6 +26,8 @@ import {useGlobalContext} from "@/app/Context/store";
 import {fetchData} from "@/components/utils/utils";
 import FormExpedientesEmebed from "@/app/(sistema)/ppl/[id]/components/formExpedientesEmbed";
 import {Close} from "@mui/icons-material";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import {useRouter} from "next/navigation";
 
 
 interface BloqueJudicialProps {
@@ -51,6 +53,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
     const [showExpdientesForm, setShowExpdientesForm] = useState(false)
     const {openSnackbar} = useGlobalContext();
     const isEditMode = !!datosIniciales?.id;
+    const router: AppRouterInstance = useRouter();
 
     const handleShowExpedientesForm = () => {
         setShowExpdientesForm(!showExpdientesForm)
@@ -75,6 +78,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                 id_persona: id_persona,
                 establecimiento_penitenciario: 1,
             }))
+
+            console.log(datosIniciales)
 
             // Se verifica que existan datos iniciales para cargar el estado
             if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
@@ -246,70 +251,111 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
         }))
     }
 
+    const postData = async (url:string, data:any, method:string, headers:any = null) =>{
+        return await api_request(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: data,
+        })
+    }
+
+    const postDataJudicial = async (url:string, data:any, method:boolean) =>{
+        return await api_request(url, {
+            method: isEditMode ? 'PUT' : 'POST',
+            body: data,
+        })
+    }
+
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${isEditMode ? ('/' + estadoFormularioJudicial.id) : ''}`;
+        const url_patch_expediente = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${datosFormulario.expedientesSeleccionados.id}/ppls`;
+        const formData = new FormData();
+        /** Se obtiene expediente judicial de datos iniciales pre existentes */
+        const expedienteInicial = datosIniciales !== null && datosIniciales.ingresos_a_prision !== undefined
+            ? datosIniciales.ingresos_a_prision[0]?.expedienteJudicial.id
+            : null;
+
 
         if (id_persona != null) {
 
-            const formData = new FormData();
-
             /** Se arma el formdata para enviar en la peticion POST O PUT */
             Object.keys(estadoFormularioJudicial).forEach((key: string) => {
-                console.log(key)
+
                 // @ts-ignore
+                const valor = estadoFormularioJudicial[key]
 
-                    // @ts-ignore
-                    const valor = estadoFormularioJudicial[key]
+                switch (typeof valor) {
+                    case 'string':
+                        formData.append(key, valor as string);
+                        break;
+                    case 'number':
+                        formData.append(key, String(valor));
+                        break;
+                    case 'object':
+                        if (isDayjs(valor)) formData.append(key, valor.toISOString());
+                        if (isFile(valor))  formData.append(key, valor);
 
-                    switch (typeof valor) {
-                        case 'string':
-                            formData.append(key, valor as string);
-                            break;
-                        case 'number':
-                            formData.append(key, String(valor));
-                            break;
-                        case 'object':
+                        break;
+                    case 'boolean':
+                        formData.append(key, String(valor));
+                        break;
 
-                            if (isDayjs(valor)) {
-                                formData.append(key, valor.toISOString());
+                    default:
+                        console.log(typeof valor);
 
-                            }
-                            if (isFile(valor)) {
-                                formData.append(key, valor);
-                            }
-                            break;
-                        case 'boolean':
-                            formData.append(key, String(valor));
-                            break;
-
-                        default:
-                            console.log(typeof valor);
-
-                    }
-
+                }
 
             })
 
-            /** bloque para controlar si el PPL existe en el expediente id adjuntado para poder actualizar el Expediente */
-            if (isEditMode) {
-                // TODO: primero controlar si el PPL exist en el expediente
+
+
+            console.log('check 3')
+
+            /** Solicitud para actualizacion del formulario judicial se verifica que el nuevo expediente seleccionaddo sea diferente al inicial */
+            if(estadoFormularioJudicial.expediente_id !== expedienteInicial){
+                console.log('check 4: Expediente inicial y actualizado son diferentes')
+
+                Promise.all([
+                    await postData(url_patch_expediente, JSON.stringify({ppls:[estadoFormularioJudicial.id_persona]}), 'PATCH').then(res=>{
+                        console.log('respuestas de peticion patch')
+                        if(res.success){
+                            openSnackbar('PPL asignado a expediente correctamente')
+
+                        }
+                    }),
+                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res=>{
+                        console.log('respuestas de peticion datos judiciales')
+                        if(res.success){
+                            openSnackbar('Datos judiciales actualizado correctamente')
+
+                        }
+                    })
+                ]).then(
+                    (values) => {
+                        console.log(values);
+                    },
+                    (reason) => {
+                        console.log(reason);
+                    },
+                );
+
             }
+            else {
+                try {
+                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res=>{
+                        console.log('respuestas de peticion datos judiciales')
+                        if(res.success){
+                            openSnackbar('Datos judiciales actualizado correctamente')
 
+                        }
 
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${isEditMode ? ('/' + estadoFormularioJudicial.id) : ''}`;
-
-            const respuesta = await api_request(url, {
-                method: isEditMode ? 'PUT' : 'POST',
-                body: formData,
-            })
-            if (respuesta.success) {
-                openSnackbar("Datos guardados correctamente", "success")
-            } else {
-                if (respuesta.error) {
-                    openSnackbar(`Error al guardar los datos`, `error`);
-                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                    })
+                } catch (err){
+                    console.log('err')
                 }
             }
+
 
         } else {
             openSnackbar("Falta el número de identificación", "error");
@@ -533,7 +579,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                                         />
                                         {
                                             estadoFormularioJudicial.oficioJudicial_documento ?
-                                                <a href={datosFormulario.oficioJudicial_documento} >ver documento </a>
+                                                <a href={datosFormulario.oficioJudicial_documento} target='_blank'>ver documento </a>
                                                 : null
                                         }
                                     </FormControl>
@@ -601,7 +647,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                                 />
                                 {
                                     estadoFormularioJudicial.resolucion_documento ?
-                                        <a href={datosFormulario.resolucion_documento} > ver documento </a>
+                                        <a href={datosFormulario.resolucion_documento} target='_blank'> ver documento </a>
                                         : null
                                 }
                             </FormControl>

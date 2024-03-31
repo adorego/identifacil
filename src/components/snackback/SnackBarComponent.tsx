@@ -31,7 +31,7 @@ const SnackbarComponent = () => {
             autoHideDuration={6000}
             onClose={closeSnackbar}
             message={snackbar.message}
-            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
 
             <Alert onClose={handleClose} sx={{ width: '100%' }} severity={(snackbar.severity ? snackbar.severity : 'success')}>

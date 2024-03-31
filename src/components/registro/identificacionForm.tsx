@@ -76,7 +76,7 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6' textTransform='uppercase'>
-                        Datos policiales
+                        Datos policiales!
                     </Typography>
                 </Grid>
                 <Grid item sm={6}>
@@ -88,12 +88,19 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
                     </RadioGroup>
                 </Grid>
                 <Grid item sm={6}>
-                    <FormLabel id="nacionalidad">¿Tiene documento de identidad ?</FormLabel>
+                    {!alternativaFormulario.paraguayo ?
+                    (
+                        <>
+
+                        <FormLabel id="nacionalidad">¿Tiene documento de identidad ?</FormLabel>
                     <RadioGroup row defaultValue="NO" onChange={onTieneCedulaChangeHandler}
                                 value={alternativaFormulario.conDocumentoDeIdentidad} name="cedula-opciones">
                         <FormControlLabel value={true} control={<Radio/>} label="SI"/>
                         <FormControlLabel value={false} control={<Radio/>} label="NO"/>
                     </RadioGroup>
+                        </>
+                        )
+                    : null}
                 </Grid>
             </Grid>
             {alternativaFormulario.conDocumentoDeIdentidad && alternativaFormulario.paraguayo &&
@@ -156,9 +163,49 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     const [cedula, setCedula] = useState<string>("");
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] = useState<DatosDeIdentificacion>(datosInicialesDelFormularioDeIdentificacion)
     const [consultaLoading, setConsultaLoading] = useState(false)
+    const [stateEsPPL, setStateEsPPL] = useState<Boolean>(false)
+    const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
     const {openSnackbar} = useGlobalContext();
     // console.log("Formulario:", formularioDeDatosDeIdentificacion);
+
+    const consultarPPL = async (cedula:string | null) =>{
+
+        if(cedula !== null){
+            try{
+
+                await fetch(`${API_URL}/gestion_ppl/ppls/cedula/${cedula}`)
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if(data.establecimiento){
+                            openSnackbar('Esta persona ya se encuentra registrada como PPL', 'warning')
+                            props.habilitarBotonSiguiente(false);
+                            setStateEsPPL(true)
+                        }
+                    }).catch(err=>{
+                        console.log(err)
+                        setStateEsPPL(false)
+                    })
+            } catch (error) {
+                console.log('Esta persona no existe en la base datos como PPL', 'success')
+                setStateEsPPL(false)
+            }
+        }
+
+
+    }
+
+
+    useEffect(() => {
+        if(formularioDeDatosDeIdentificacion.cedula_identidad !== undefined){
+            // @ts-ignore
+            if(formularioDeDatosDeIdentificacion.cedula_identidad?.length > 0) {
+                consultarPPL(formularioDeDatosDeIdentificacion.cedula_identidad)
+            }
+        }
+
+    }, [formularioDeDatosDeIdentificacion.cedula_identidad]);
+
 
     const onCedulaChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
         setCedula(event.target.value);
@@ -167,6 +214,8 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     /** Se realiza consulta a los datos de la policia para obtener los datos del PPL paraguayo y con cedula
      * */
     const onConsultarRegistroCivil = async () => {
+        console.log('consula estado civil')
+
         setConsultaLoading(true)
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_CONSULTACI_API}/get_datos_ci/`;
         try {
@@ -200,7 +249,11 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     } else {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                        props.habilitarBotonSiguiente(true);
+                        if(!stateEsPPL){
+                            props.habilitarBotonSiguiente(true);
+                        }else{
+                            props.habilitarBotonSiguiente(false);
+                        }
                         setConsultaLoading(false)
                     }
 
