@@ -19,7 +19,7 @@ interface ContextProps {
     sidebarStatus: boolean;
     setSidebarStatus: Dispatch<SetStateAction<boolean>>;
     snackbar: SnackType;
-    openSnackbar: (message: string, severity: SnackType['severity']) => void;
+    openSnackbar: (message: string, severity?: SnackType['severity']) => void;
     closeSnackbar: () => void;
     selectedEstablecimiento: number;
     setSelectedEstablecimiento: Dispatch<SetStateAction<number>>;
@@ -57,7 +57,7 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({childr
     const [selectedEstablecimiento, setSelectedEstablecimiento] = useState<number>(0);
 
 
-    const openSnackbar = (message: string, severity: string) => {
+    const openSnackbar = (message: string, severity: string = 'success') => {
         const validSeverities: SnackType['severity'][] = ['success', 'info', 'warning', 'error', ''];
         const computedSeverity: SnackType['severity'] = validSeverities.includes(severity as SnackType['severity']) ? severity as SnackType['severity'] : 'info';
 

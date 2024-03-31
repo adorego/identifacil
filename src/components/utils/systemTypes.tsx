@@ -310,113 +310,64 @@ interface expediente_tipo{
     fechaDeDocumento:Dayjs | null;
 }
 
-export type datosJudicialesType = {
-    hecho_punible: {
-        id: number |null;
-    };
-    numero_de_expediente: number | null;
-    sentencia_definitiva: string;
-    expediente_id: number | null;
-    pabellon: string;
-    celda: string;
-    primera_vez_en_prision: boolean;
-    cantidad_de_veces_que_ingreso: number;
-    expediente_numero_de_documento: string | null;
-    expediente_fecha_de_documento: string | null;
-    id_persona:number | null;
-    numeroDeIdentificacion:string;
-    situacionJudicial: boolean;
-    situacionJudicial_modificado:boolean;
-    primeraVezEnPrision: boolean;
-    primeraVezEnPrision_modificado:boolean;
-    cantidadDeIngresos: number;
-    cantidadDeIngresos_modificado:boolean;
-    causa: number | null;
-    causa_modificado:boolean;
-    /*oficio: string;
-    oficio_modificado:boolean;*/
-
-    oficioJudicial: oficio_tipo;
-    oficioJudicial_modificado:boolean;
-    resolucion: resolucion_tipo;
-    resolucion_modificado:boolean;
-    expediente: number | null;
-    expediente_modificado:boolean;
-    caratula: string;
-    caratula_modificado:boolean;
-    hechoPunible: string;
-    hechoPunible_modificado:boolean;
-    sentenciaDefinitiva?: string;
-    sentenciaDefinitiva_modificado:boolean;
-    fecha_ingreso_a_establecimiento: Dayjs | null;
-    ingresos_a_prision:Array<{
-        causa: {
-            id: number | null;
+export type datosIncialesJudiciales = {
+    id?: number;
+    primera_vez_en_prision?: boolean;
+    cantidad_de_veces_que_ingreso?: number;
+    ingresos_a_prision?: Array<{
+        celda: string;
+        pabellon: string;
+        fecha_ingreso: string|Dayjs|null;
+        establecimiento_penitenciario: {
+            id:number
+        };
+        expedienteJudicial:{
+            id:number;
         }
-        ,fecha_ingreso: string | Dayjs;
-        documentos_que_ordenan_prision:[{
-            id: number | null;
-            fecha: string;
-            tipo: string;
-            numero_documento: string;
-            ruta: string;
-        }]
-    }>
+        documentos_que_ordenan_prision?: Array<{
+            id:number;
+            numero_documento:string;
+            ruta:string;
+            tipo:string;
+        }>
+    }> | undefined;
+}
+
+export type datosJudicialesType = {
+    key?: string | number | object;
+    id?: number;
+
+    id_persona:number;
+    establecimiento_penitenciario:number;
+    primeraVezEnPrision:boolean;
+    cantidadDeIngresos:number;
+    fecha_ingreso_a_establecimiento:Dayjs | null;
+    pabellon:string;
+    celda:string;
+    expediente_id:number;
+    oficioJudicial_numeroDeDocumento:string;
+    oficioJudicial_fechaDeDocumento:Dayjs | null;
+    oficioJudicial_documento: File | null;
+    resolucion_numeroDeDocumento:string;
+    resolucion_fechaDeDocumento:Dayjs | null;
+    resolucion_documento: File | null;
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
-    numero_de_expediente: null,
-    expediente_id: null,
-    hecho_punible: {
-        id: null,
-    },
-    sentencia_definitiva: '',
+    id_persona: 0,
+    establecimiento_penitenciario: 0,
+    primeraVezEnPrision: true,
+    cantidadDeIngresos: 0,
+    fecha_ingreso_a_establecimiento: null,
     pabellon: '',
     celda: '',
-    ingresos_a_prision:[
-        {
-            causa: {id:0},
-            fecha_ingreso:'',
-            documentos_que_ordenan_prision:[{id: null, fecha: '', tipo:'',ruta: '', numero_documento: ''}]
-        }],
-
-    expediente_numero_de_documento: '',
-    expediente_fecha_de_documento: '',
-    cantidad_de_veces_que_ingreso:0,
-    primera_vez_en_prision: true,
-    id_persona:null,
-    numeroDeIdentificacion:"",
-    situacionJudicial: false,
-    situacionJudicial_modificado:false,
-    primeraVezEnPrision: true,
-    primeraVezEnPrision_modificado:false,
-    cantidadDeIngresos: 0,
-    cantidadDeIngresos_modificado:false,
-    causa: null,
-    causa_modificado:false,
-    /*oficio: "",
-    oficio_modificado:false,*/
-    oficioJudicial: {
-        numeroDeDocumento:"",
-        fechaDeDocumento:null,
-        documento:null,
-    },
-    oficioJudicial_modificado:false,
-    resolucion: {
-        numeroDeDocumento:"",
-        fechaDeDocumento:null,
-        documento:null
-    },
-    resolucion_modificado:false,
-    expediente: null,
-    expediente_modificado:false,
-    caratula: "",
-    caratula_modificado:false,
-    hechoPunible: "",
-    hechoPunible_modificado:false,
-    sentenciaDefinitiva: "",
-    sentenciaDefinitiva_modificado:false,
-    fecha_ingreso_a_establecimiento: null
+    expediente_id: 0,
+    oficioJudicial_numeroDeDocumento: '',
+    oficioJudicial_fechaDeDocumento: null,
+    oficioJudicial_documento: null,
+    resolucion_numeroDeDocumento: '',
+    resolucion_fechaDeDocumento: null,
+    resolucion_documento: null,
 }
 
 export type circuloFamiliarStateType = {

@@ -138,6 +138,10 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
             setHechosPunibles(prev => ([...res.hechosPunibles]))
         })*/
 
+        setFormState(prev=>({
+            ...prev,
+            id_persona: id_persona
+        }))
         fetch(`${ENDPOINT_API}/datos_penales/hechos_punibles`)
             .then(res=> res.json())
             .then(data => {
@@ -218,7 +222,16 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
             false,
             'datos_penales/expedientes',
             'q',
-            testData,
+            /*testData,*/
+            {
+                ...formState,
+                ppls_en_expediente: [
+                    {
+                        id_persona: formState.id_persona,
+                        condenado: false,
+                    }],
+                hechosPuniblesCausas: selecciones.map((item:any) => Object.values(item)),
+            },
             setLoading,
             openSnackbar,
             router,
@@ -254,6 +267,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
 
     return(
         <Box mt={3}>
+
             <Divider />
             <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
@@ -306,7 +320,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
 
                         <TextField
                             fullWidth
-                            label="Nro. de expediente"
+                            label="Nro. de Sentencia definitiva"
                             variant="outlined"
                             name="sentenficia_definitiva"
                             value={formState.sentenficia_definitiva}

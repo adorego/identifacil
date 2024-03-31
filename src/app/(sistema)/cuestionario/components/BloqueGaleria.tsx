@@ -20,21 +20,20 @@ const videoConstraints = {
 };
 
 type TipoGaleria = Array<TipoFoto>
-type TipoFoto = {nombre: string; foto:string; actualizado?: boolean}
+type TipoFoto = { nombre: string; foto: string; actualizado?: boolean }
 
-const fotoInitial = {foto:'', nombre:'', actualizado: false}
+const fotoInitial = {foto: '', nombre: '', actualizado: false}
 const galeriaInitial = [
     fotoInitial
 ]
 
 
-
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
-export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:number|null; datosIniciales: TipoGaleria}){
+export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona: number | null; datosIniciales: TipoGaleria }) {
     const [loading, setLoading] = useState(true);
-    const { openSnackbar } = useGlobalContext();
+    const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const isEditMode = datosIniciales.length > 0 //params.id !== 'crear';
 
@@ -42,18 +41,14 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
     const [saveButtonState, setSaveButtonState] = useState(false)
 
     const [open, setOpen] = React.useState(false);
-    const [img, setImg] = useState<string|null>(null);
-
-
-
-
+    const [img, setImg] = useState<string | null>(null);
 
 
     useEffect(() => {
-        if(datosIniciales.length > 0){
-            setStateGaleria(()=>{
+        if (datosIniciales.length > 0) {
+            setStateGaleria(() => {
 
-                return datosIniciales.map(item=>({
+                return datosIniciales.map(item => ({
                     nombre: item.nombre,
                     foto: `${ASSETS_URL}${item.foto}`
                 }))
@@ -66,8 +61,8 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
 
 
     useEffect(() => {
-        stateGaleria.forEach(item=>{
-            if(item.actualizado){
+        stateGaleria.forEach(item => {
+            if (item.actualizado) {
                 setSaveButtonState(true)
             }
         })
@@ -91,14 +86,14 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
         /*console.log(stateGaleria.length)
         console.log(stateGaleria.push(fotoInitial))
         console.log(stateGaleria.length)*/
-        if(img){
+        if (img) {
 
-            setStateGaleria((prev:TipoGaleria)=>([
+            setStateGaleria((prev: TipoGaleria) => ([
                 ...prev,
                 {
-                    nombre: `nombre_foto${stateGaleria.length+1}`,
+                    nombre: `nombre_foto${stateGaleria.length + 1}`,
                     foto: img,
-                    actualizado:true
+                    actualizado: true
                 }
             ]))
         }
@@ -107,7 +102,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
     };
 
 
-    const handleFotografia = () =>{
+    const handleFotografia = () => {
         /*setFormActualizado(prev=>({
             ...prev,
             [tipo]:true,
@@ -116,28 +111,28 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
         handleClickOpen()
     }
 
-    const handleCleanImg = (indexToRemove:number) =>{
-        setStateGaleria(prev=>prev.filter((item,index)=> index !== indexToRemove))
+    const handleCleanImg = (indexToRemove: number) => {
+        setStateGaleria(prev => prev.filter((item, index) => index !== indexToRemove))
         setSaveButtonState(true)
     }
 
-    const handleSubmit = () =>{
+    const handleSubmit = () => {
         postData()
 
     }
 
-    const postData = async ()=>{
+    const postData = async () => {
         const formData = new FormData();
         const contentType = 'image/jpeg'; // You should set the correct MIME type
 
-        formData.append("id_persona", id_persona? id_persona.toString() : '');
+        formData.append("id_persona", id_persona ? id_persona.toString() : '');
 
 
         // se recorre el estado y si es POST entonces arma toda formdata para enviar teniendo en cuenta que todas las bas64
-        stateGaleria.forEach((key, index)=>{
-            if(key.actualizado && !isEditMode){
-                formData.append(`nombre_foto${index+1}`, `${key.nombre}`);
-                formData.append(`foto${index+1}`, base64ToBlob(key.foto, contentType, `${id_persona}_${key.nombre}.jpg`), `${id_persona}_${key.nombre}.jpg`);
+        stateGaleria.forEach((key, index) => {
+            if (key.actualizado && !isEditMode) {
+                formData.append(`nombre_foto${index + 1}`, `${key.nombre}`);
+                formData.append(`foto${index + 1}`, base64ToBlob(key.foto, contentType, `${id_persona}_${key.nombre}.jpg`), `${id_persona}_${key.nombre}.jpg`);
             }
 
 
@@ -146,18 +141,18 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
         // SI es PUT entonces algunas imagenes podrian ser FILE/URL Entonces hay que bajar y volver a subir
 
 
-        if(isEditMode){
+        if (isEditMode) {
             let counter = 0
             for (const fileData of stateGaleria) {
                 counter++
                 if (fileData.foto.startsWith('http') || fileData.foto.startsWith('/archivo')) {
-                    console.log(`El elemento ${fileData.nombre} es una URL - ${counter}`);
+                    // console.log(`El elemento ${fileData.nombre} es una URL - ${counter}`);
 
                     const fileBlob = await downloadFile(fileData.foto);
                     formData.append(`nombre_foto${counter}`, `nombre_foto${counter}`);
                     formData.append(`foto${counter}`, blobToFile(fileBlob, fileData.nombre), `${id_persona}_${fileData.nombre}.jpg`);
                 } else if (fileData.foto.startsWith('data:image')) {
-                    console.log(`El elemento ${fileData.nombre} es un string base64 - ${counter}`);
+                    // console.log(`El elemento ${fileData.nombre} es un string base64 - ${counter}`);
                     formData.append(`nombre_foto${counter}`, `nombre_foto${counter}`);
                     formData.append(`foto${counter}`, base64ToBlob(fileData.foto, contentType, `${id_persona}_${fileData.nombre}.jpg`), `${id_persona}_${fileData.nombre}.jpg`);
 
@@ -167,22 +162,17 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
                 }
 
 
-                // Si la imagen es BLOG
-                // formData.append(`nombre_foto${counter}`, `${fileData.nombre}`);
-                // formData.append(`foto${counter}`, blobToFile(fileBlob, fileData.nombre), `${id_persona}_${fileData.nombre}.jpg`);
             }
         }
-
-
 
 
         try {
             setLoading(true);
 
 
-            const method = isEditMode ? 'PUT':'POST';
+            const method = isEditMode ? 'PUT' : 'POST';
 
-            console.log('metodo: ' +  method)
+            console.log('metodo: ' + method)
 
 
             const url = isEditMode
@@ -201,7 +191,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
                     'Fotos actualizada correctamente.'
                     : 'Fotos agregadas correctamente.';
                 openSnackbar(message, 'success');
-                /*router.push('/ppl');*/
+                router.push(`/gestion_ppl/ppls/id/${id_persona}`);
             } else {
                 throw new Error('Error en la petición');
             }
@@ -211,7 +201,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
         }
     }
 
-    return(
+    return (
         <>
 
             <Typography variant='h6'>
@@ -222,7 +212,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
                 {
                     stateGaleria.length > 0 ?
                         (
-                            stateGaleria.map((item:TipoFoto,index:number) => (
+                            stateGaleria.map((item: TipoFoto, index: number) => (
                                 <Grid key={index} item sm={6} md={3}>
                                     <div style={{position: 'relative'}}>
 
@@ -249,65 +239,18 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
 
 
                         )
-                        :''
+                        : ''
                 }
-                        {/*<div style={{position:'relative'}}>
 
-                            <IconButton aria-label="delete" onClick={()=>handleCleanImg('izquierdo')} sx={{
-                                position: "absolute",
-                                top: "-20px",
-                                right: "-20px",
-                            }}>
-                                <CancelIcon />
-                            </IconButton>
-                            <ImgComponent urlImg={stateGaleria.izquierdo}/>
-                            <Box>
-                                <TextField
-                                    label='Nombre de la fotografia'
-                                />
-                            </Box>
-                        </div>
-                        */}
                 {
                     stateGaleria.length <= 4 ?
-                    <Grid item sm={6} md={3}>
-                        <button className='CapturadorFoto' onClick={()=>handleFotografia()}>
-                            Agregar fotografia
-                        </button>
-                    </Grid>
+                        <Grid item sm={6} md={3}>
+                            <button className='CapturadorFoto' onClick={() => handleFotografia()}>
+                                Agregar fotografia
+                            </button>
+                        </Grid>
                         : null
                 }
-
-                        {/*{
-                            stateGaleria.izquierdo ?
-                                (
-                                    <div style={{position:'relative'}}>
-
-                                        <IconButton aria-label="delete" onClick={()=>handleCleanImg('izquierdo')} sx={{
-                                            position: "absolute",
-                                            top: "-20px",
-                                            right: "-20px",
-                                        }}>
-                                            <CancelIcon />
-                                        </IconButton>
-                                        <ImgComponent urlImg={stateGaleria.izquierdo}/>
-                                        <Box>
-                                            <TextField
-                                                label='Nombre de la fotografia'
-                                            />
-                                        </Box>
-                                    </div>
-                                )
-                        :
-                                (
-                                    <>
-                                        <button className='CapturadorFoto' onClick={()=>handleFotografia('izquierdo')}>
-                                            Agregar fotografia
-                                        </button>
-                                    </>
-
-                                )
-                        }*/}
 
 
             </Grid>
@@ -323,6 +266,8 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
                     </Button>
                 </Grid>
             </Grid>
+
+            {/* Componente */}
             <React.Fragment>
 
                 <Dialog
@@ -337,39 +282,40 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
                     <DialogContent>
 
                         {img === null ? (
-                        <>
-                            <div className='imgCam' >
-                                <Webcam
-                                    audio={false}
-                                    ref={webcamRef}
-                                    screenshotFormat="image/jpeg"
-                                    videoConstraints={videoConstraints}
-                                />
-                            </div>
+                            <>
+                                <div className='imgCam'>
+                                    <Webcam
+                                        audio={false}
+                                        ref={webcamRef}
+                                        screenshotFormat="image/jpeg"
+                                        videoConstraints={videoConstraints}
+                                    />
+                                </div>
 
-                            <div style={{
-                                textAlign: 'center',
-                                top: '-60px',
-                                position: 'relative',
-                            }}>
-                                <Button variant='contained' onClick={capture} startIcon={<CameraAlt />}>
-                                    Tomar fotografia
-                                </Button>
-                            </div>
+                                <div style={{
+                                    textAlign: 'center',
+                                    top: '-60px',
+                                    position: 'relative',
+                                }}>
+                                    <Button variant='contained' onClick={capture} startIcon={<CameraAlt/>}>
+                                        Tomar fotografia
+                                    </Button>
+                                </div>
 
-                        </>
+                            </>
                         ) : (
                             <>
                                 <div>
                                     <div>
-                                        <img src={img} alt="screenshot" />
+                                        <img src={img} alt="screenshot"/>
                                     </div>
                                     <div style={{
                                         textAlign: 'center',
                                         top: '-60px',
                                         position: 'relative',
                                     }}>
-                                        <Button variant='contained' onClick={() => setImg(null)}>Volver a tomar foto</Button>
+                                        <Button variant='contained' onClick={() => setImg(null)}>Volver a tomar
+                                            foto</Button>
                                     </div>
                                 </div>
 
@@ -386,25 +332,26 @@ export default function BloqueGaleria({id_persona, datosIniciales}:{id_persona:n
 }
 
 
+function ImgComponent({urlImg}: { urlImg: string }) {
 
-function ImgComponent({urlImg}:{urlImg:string}){
-
-    return(
+    return (
         <>
             <img src={urlImg} style={{
                 objectFit: 'cover',
                 width: '100%',
                 borderRadius: '10px',
-                maxHeight: '90%'}}
+                maxHeight: '90%'
+            }}
             />
         </>
 
-        )
+    )
 
 }
 
-
-function base64ToBlob(base64:string, contentType:string, name:string) {
+/** Convierte de Base 64 a Blob y luego a FILE
+ * */
+function base64ToBlob(base64: string, contentType: string, name: string) {
     const byteCharacters = atob(base64.split(',')[1]);
     const byteArrays = [];
 
@@ -424,12 +371,15 @@ function base64ToBlob(base64:string, contentType:string, name:string) {
     return new File([newBlobFile], name, {type: newBlobFile.type,});
 }
 
-
-function blobToFile(newBlobFile:Blob ,name:string){
+/** Convierte un BLOG a un archivo
+ * */
+function blobToFile(newBlobFile: Blob, name: string) {
     return new File([newBlobFile], name, {type: newBlobFile.type,});
 }
 
-async function downloadFile(url:string) {
+/** Baja de una url una imagen y convierte en BLOB
+ * */
+async function downloadFile(url: string) {
     const response = await fetch(url);
     return response.blob(); // Obtiene el contenido del archivo como Blob
 }

@@ -27,6 +27,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CreateIcon from '@mui/icons-material/Create';
 import ValidacionesExpedientes
     from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/validacionesExpedientes";
+import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
+import SubmitExpediente from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/submitExpediente";
+import {router} from "next/client";
 
 type camposFormType = {
     id: number;
@@ -77,7 +80,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     const [loading, setLoading] = useState(true);
     const {openSnackbar} = useGlobalContext();
-    const router = useRouter();
+    const router: AppRouterInstance = useRouter();
     const isEditMode = params && params.id;
     const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
@@ -216,33 +219,33 @@ export default function FormCausa({params}: { params: { id: number | string } })
     useEffect(() => {
         if (isEditMode !== 'crear') {
             setLoading(true);
-            fetchData( `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${params.id}`) // Usa la función importada
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${params.id}`) // Usa la función importada
                 .then((data) => {
                     if (data) {
-                        let ppl_ajustado =  []
-                        if(data.hechosPuniblesCausas.length > 0 ){
+                        let ppl_ajustado = []
+                        if (data.hechosPuniblesCausas.length > 0) {
                             setSelecciones(data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})))
                         }
                         console.log(data.ppls_en_expediente)
-                        if(data.ppls_en_expediente.length > 0){
-                            ppl_ajustado = data.ppls_en_expediente.map(( item : any )=>({
-                                id_persona:item.ppl?.persona?.id,
+                        if (data.ppls_en_expediente.length > 0) {
+                            ppl_ajustado = data.ppls_en_expediente.map((item: any) => ({
+                                id_persona: item.ppl?.persona?.id,
                                 nombre: item.ppl?.persona?.nombre,
                                 apellido: item.ppl?.persona?.apellido,
-                                condenado:item.condenado,
+                                condenado: item.condenado,
                                 hechosPuniblesCausas: item.hechosPuniblesCausas,
                                 defensor: item.defensor?.id,
                                 sentencia_definitiva: item.sentencia_definitiva,
                                 fecha_sentencia_definitiva: item?.fecha_sentencia_definitiva,
-                                condena:{
+                                condena: {
                                     anhos: item?.condena?.tiempo_de_condena.anhos,
                                     meses: item?.condena?.tiempo_de_condena.meses
                                 },
                                 fecha_de_aprehension: item.fecha_de_aprehension,
                                 tiene_anhos_extra_por_medida_de_seguridad: item.condena?.tiene_anhos_extra_por_medida_de_seguridad,
                                 anhos_extra_por_medida_de_seguridad: {
-                                    anhos:item.condena?.anhos_extra_por_medida_de_seguridad.anhos,
-                                    meses:item.condena?.anhos_extra_por_medida_de_seguridad.meses
+                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad.anhos,
+                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad.meses
                                 },
                                 fecha_de_compurgamiento_inicial: item.condena?.fecha_de_compurgamiento_inicial,
 
@@ -250,7 +253,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             }))
                         }
                         console.log(data)
-                       console.log(ppl_ajustado)
+                        console.log(ppl_ajustado)
 
                         setDatosFormularios({
                             ...data,
@@ -336,7 +339,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const handleDefensor = (event: any) => {
         console.log(event.target.name)
         // @ts-ignore
-        setDatosFormularios((prev:any) => ({
+        setDatosFormularios((prev: any) => ({
             ...prev,
             defensor: {
                 ...prev.defensor,
@@ -356,14 +359,14 @@ export default function FormCausa({params}: { params: { id: number | string } })
     // TODO: Fix any type
     const handlerPersona = (persona: any) => {
         // console.log(persona)
-        if(datosFormulario.ppls_en_expediente[0] == null){
-            setDatosFormularios((prev: { ppls_en_expediente: any; }) : CausaType | any => ({
+        if (datosFormulario.ppls_en_expediente[0] == null) {
+            setDatosFormularios((prev: { ppls_en_expediente: any; }): CausaType | any => ({
                 ...prev,
                 ppls_en_expediente: [...prev.ppls_en_expediente, persona]
             }))
-        }else{
+        } else {
             if ((!datosFormulario.ppls_en_expediente.some((item: { id_persona: any; }) => item.id_persona == persona.id_persona) && datosFormulario.ppls_en_expediente[0] !== null)) {
-                setDatosFormularios((prev: { ppls_en_expediente: any; }) : CausaType | any => ({
+                setDatosFormularios((prev: { ppls_en_expediente: any; }): CausaType | any => ({
                     ...prev,
                     ppls_en_expediente: [...prev.ppls_en_expediente, persona]
                 }))
@@ -385,15 +388,15 @@ export default function FormCausa({params}: { params: { id: number | string } })
         }))
     }
 
-    const handleCloseModal = () =>{
+    const handleCloseModal = () => {
         setIsModalOpen(false)
     }
 
-    const handleOpenModal = (func: () => void) =>{
+    const handleOpenModal = (func: () => void) => {
         func()
     }
 
-    const handleEdit = (id_persona: number | null = null) =>{
+    const handleEdit = (id_persona: number | null = null) => {
 
         const personaParaEditar = datosFormulario.ppls_en_expediente.find((item: { id_persona: number | null; }) => item.id_persona == id_persona);
         // @ts-ignore
@@ -402,40 +405,33 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     }
 
-    const handleSubmit = () => {
+    const testClick = (e:any) =>{
+        e.preventDefault()
+        console.log('test')
+    }
 
-        const post_mehtod = isEditMode == 'crear' ? 'POST' : 'PUT'
-        const endpoint_api = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`
+    const handleSubmit = (e:any) => {
+        e.preventDefault()
+        console.log('hola0')
+        postData()
 
-        const stateForm : any = {
-            ...datosFormulario,
-            hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
-           
-        }
+    }
 
 
-        const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
 
-        if(stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == ""){
-            openSnackbar('Falta completar campor requeridos', 'error')
-        }else{
-            // ValidacionesExpedientes(stateForm)
-            // Funcion para validar campos requeridos del form
-            console.log(stateForm)
-            // console.log(post_mehtod)
-            // console.log(JSON.stringify(stateForm))
-
-            postEntity(
-                post_mehtod,
-                endpoint_api,
-                'expedientes',
-                params,
-                stateForm,
-                setLoading,
+    const postData = async () => {
+        const post_mehtod = isEditMode != 'crear'
+        await SubmitExpediente(
+            {
+                isEditMode: post_mehtod,
                 openSnackbar,
-                router
-            )
-        }
+                datosFormulario,
+                params,
+                setLoading,
+                router,
+                selecciones
+            }
+        )
 
 
     }
@@ -508,7 +504,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 name="sentencia_definitiva"
                                 onChange={handleChange}/>
                         </Grid>
-                    : null}
+                        : null}
                     {datosFormulario.condenado ?
                         <Grid item sm={4}>
                             <FormControl fullWidth>
@@ -521,11 +517,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                             fecha_sentencia_definitiva: newValue,
                                         }))
                                     }}
-                                    value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
+                                    value={datosFormulario.fecha_sentencia_definitiva ? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
                                     label="Fecha documento"/>
                             </FormControl>
                         </Grid>
-                    : null}
+                        : null}
 
 
                 </Grid>
@@ -594,8 +590,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         </Typography>
                     </Grid>
                 </Grid>
-
-
 
 
                 <Grid container spacing={2} mt={1}>
@@ -669,7 +663,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                         fecha_del_hecho: newValue,
                                     }))
                                 }}
-                                value={datosFormulario.fecha_del_hecho? dayjs(datosFormulario.fecha_del_hecho) : null}
+                                value={datosFormulario.fecha_del_hecho ? dayjs(datosFormulario.fecha_del_hecho) : null}
                                 label="Fecha del hecho"/>
                         </FormControl>
                     </Grid>
@@ -735,10 +729,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                     <Grid item sm={12}>
                         <TableContainer component={Paper}>
-                            <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+                            <Table sx={{minWidth: 650}} size="small" aria-label="a dense table">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell >Nombre y Apellido</TableCell>
+                                        <TableCell>Nombre y Apellido</TableCell>
                                         <TableCell>Situacion procesal</TableCell>
                                         <TableCell align="right">Fercha de detencion</TableCell>
                                         <TableCell align="right">Acciones</TableCell>
@@ -747,31 +741,32 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 <TableBody>
                                     {(datosFormulario.ppls_en_expediente?.length > 0 && datosFormulario.ppls_en_expediente[0] !== null) ?
 
-                                        (datosFormulario.ppls_en_expediente.map((item: any, index:number) => (
-                                        <TableRow
-                                            key={index}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
+                                        (datosFormulario.ppls_en_expediente.map((item: any, index: number) => (
+                                            <TableRow
+                                                key={index}
+                                                sx={{'&:last-child td, &:last-child th': {border: 0}}}
+                                            >
 
-                                            <TableCell align="left">{item.nombre + ' ' + item.apellido}</TableCell>
-                                            <TableCell component="th" scope="row">
-                                                {item.condenado ? 'Condenado' : 'Procesado'}
-                                            </TableCell>
-                                            <TableCell align="right">{formatDate(item.fecha_de_aprehension)}</TableCell>
-                                            <TableCell align="right">
-                                                <Stack spacing={2} direction='row' justifyContent='right'>
-                                                    <IconButton aria-label="edit" size="small"
-                                                                onClick={(persona) => handleEdit(item.id_persona)}>
-                                                        <CreateIcon fontSize="inherit"/>
-                                                    </IconButton>
-                                                    <IconButton aria-label="delete" size="small"
-                                                            onClick={(persona) => handleDeletePPL(item.id_persona)}>
-                                                    <DeleteIcon fontSize="inherit"/>
-                                                </IconButton>
+                                                <TableCell align="left">{item.nombre + ' ' + item.apellido}</TableCell>
+                                                <TableCell component="th" scope="row">
+                                                    {item.condenado ? 'Condenado' : 'Procesado'}
+                                                </TableCell>
+                                                <TableCell
+                                                    align="right">{formatDate(item.fecha_de_aprehension)}</TableCell>
+                                                <TableCell align="right">
+                                                    <Stack spacing={2} direction='row' justifyContent='right'>
+                                                        <IconButton aria-label="edit" size="small"
+                                                                    onClick={(persona) => handleEdit(item.id_persona)}>
+                                                            <CreateIcon fontSize="inherit"/>
+                                                        </IconButton>
+                                                        <IconButton aria-label="delete" size="small"
+                                                                    onClick={(persona) => handleDeletePPL(item.id_persona)}>
+                                                            <DeleteIcon fontSize="inherit"/>
+                                                        </IconButton>
 
-                                                </Stack>
-                                            </TableCell>
-                                        </TableRow>
+                                                    </Stack>
+                                                </TableCell>
+                                            </TableRow>
                                         )))
                                         : null}
                                 </TableBody>
