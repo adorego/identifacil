@@ -191,7 +191,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
                     'Fotos actualizada correctamente.'
                     : 'Fotos agregadas correctamente.';
                 openSnackbar(message, 'success');
-                router.push(`/gestion_ppl/ppls/id/${id_persona}`);
+                router.push(`/ppl`);
             } else {
                 throw new Error('Error en la petición');
             }

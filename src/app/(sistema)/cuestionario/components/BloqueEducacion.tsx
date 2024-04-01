@@ -21,9 +21,10 @@ import {useGlobalContext} from "@/app/Context/store";
 export interface BloqueEducacionProps {
     id_persona: number | null;
     datosEducacionIniciales?: datosEducacionType;
+    handleAccordion?: (s: string)=>void;
 }
 
-const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales}) => {
+const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales, handleAccordion}) => {
     const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
     const {openSnackbar} = useGlobalContext();
 
@@ -98,6 +99,9 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
 
                 if (respuesta.success) {
                     openSnackbar("Datos guardados correctamente", "success")
+                    if(handleAccordion){
+                        handleAccordion('')
+                    }
                 } else {
                     if (respuesta.error) {
                         openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);

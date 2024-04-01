@@ -139,7 +139,7 @@ export interface BloqueDatosPersonalesProps {
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) => {
 
-    console.log(datosDeIdentificacion)
+    // console.log(datosDeIdentificacion)
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial

@@ -181,10 +181,15 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                             openSnackbar('Esta persona ya se encuentra registrada como PPL', 'warning')
                             props.habilitarBotonSiguiente(false);
                             setStateEsPPL(true)
+                        }else{
+                            console.log('holaaaaaa')
+                            props.habilitarBotonSiguiente(true);
+                            setStateEsPPL(false)
                         }
                     }).catch(err=>{
                         console.log(err)
                         setStateEsPPL(false)
+                        props.habilitarBotonSiguiente(true);
                     })
             } catch (error) {
                 console.log('Esta persona no existe en la base datos como PPL', 'success')
