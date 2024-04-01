@@ -66,7 +66,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionSummary>
                     <AccordionDetails>
                         {/* Bloque de formulario */}
-                        <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad}/>
+                        <BloqueDatosPersonales datosDeIdentificacion={datosDeIdentidad} handleAccordion={setExpanded}/>
                     </AccordionDetails>
 
                 </Accordion>
@@ -82,6 +82,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     <AccordionDetails>
 
                         <BloqueSalud
+                            handleAccordion={setExpanded}
                             codigo_genero={datosDeIdentidad.codigo_genero}
                             id_persona={id_persona}/>
                     </AccordionDetails>
@@ -96,7 +97,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionSummary>
                     <AccordionDetails>
                         {/* Bloque de formulario */}
-                        {datosDeIdentidad.id_persona && <BloqueEducacion id_persona={datosDeIdentidad.id_persona}/>}
+                        {datosDeIdentidad.id_persona && <BloqueEducacion handleAccordion={setExpanded}  id_persona={datosDeIdentidad.id_persona}/>}
                     </AccordionDetails>
 
                 </Accordion>
@@ -110,8 +111,10 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionSummary>
                     <AccordionDetails>
                         {/* Bloque de formulario */}
-                        {datosDeIdentidad.id_persona && <BloqueFamiliar
-                            id_persona={datosDeIdentidad.id_persona}/>}
+                        {datosDeIdentidad.id_persona &&
+                            <BloqueFamiliar
+                                id_persona={datosDeIdentidad.id_persona}/>
+                        }
                     </AccordionDetails>
 
                 </Accordion>

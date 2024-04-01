@@ -18,6 +18,7 @@ interface BloqueSaludProps {
     id_persona: number | null;
     datosAlmacenados?: datosDeSalud2Type;
     codigo_genero: number;
+    handleAccordion?: (s:string)=>void;
 }
 
 interface datosSaludSelect {
@@ -78,7 +79,7 @@ const SaludFisicaInicial = {
     otros: false
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero=2}) => {
+const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero=2, handleAccordion}) => {
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
     const [stateSaludFisica, setStateSaludFisica] = useState<SaludFisicaType>(SaludFisicaInicial)
@@ -312,9 +313,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         })
         if (respuesta.success) {
             openSnackbar("Datos guardados correctamente", "success")
+            if(handleAccordion){
+                handleAccordion('')
+            }
         } else {
             openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`, `error`);
             // log.error("Error al guardar los datos", respuesta.datos);
+
         }
 
 

@@ -27,6 +27,7 @@ import dayjs, {Dayjs} from "dayjs";
 import {DatosDeIdentificacion} from "@/components/registro/identificacionForm";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {FormValidator} from "@/app/middleware/formValidator";
 
 interface datosPersonales {
     id_persona: number | null;
@@ -85,7 +86,7 @@ const datosPersonalesInicial: datosPersonales = {
     tiene_cedula: true,
     apodo: '',
     codigo_genero: 0,
-    estadoCivil: '',
+    estadoCivil: '1',
     fechaDeNacimiento: null,
     nacionalidad: 0,
     lugarDeNacimiento: '',
@@ -127,12 +128,13 @@ const datosPersonalesInicial: datosPersonales = {
 
 export interface BloqueDatosPersonalesProps {
     datosDeIdentificacion: DatosDeIdentificacion;
+    handleAccordion?: (s: string)=>void;
 
 }
 
 
-const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) => {
-    console.log(datosDeIdentificacion)
+const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, handleAccordion}) => {
+    // console.log(datosDeIdentificacion)
 
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
@@ -141,7 +143,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         tiene_cedula: datosDeIdentificacion.tiene_cedula,
         fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
-        numeroDeIdentificacion: datosDeIdentificacion.es_extranjero ? datosDeIdentificacion.numeroDeIdentificacion : datosDeIdentificacion.cedula_identidad ,
+        numeroDeIdentificacion: datosDeIdentificacion.es_extranjero ? datosDeIdentificacion.numeroDeIdentificacion : datosDeIdentificacion.cedula_identidad,
         nombre: datosDeIdentificacion.nombres,
         nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
@@ -152,6 +154,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
     });
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+    const [datosObligatorios, setDatosObligatorios] = useState<Object>({})
     const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
     const {openSnackbar} = useGlobalContext();
 
@@ -160,7 +163,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
      * */
     useEffect(
         () => {
-
             const getNacionalidades = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/nacionalidades`;
                 try {
@@ -180,8 +182,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 } catch (error) {
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
-
-
             }
 
             const getEstadosCiviles = async () => {
@@ -208,28 +208,26 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             getEstadosCiviles();
             getNacionalidades();
 
+            setDatosObligatorios(prev=>({
+                ...prev,
+                estadoCivil: {
+                    requerido: true,
+                    actualizado: false,
+                },
+            }))
+
+
         }, []
     )
 
-    useEffect(
-        () => {
-
-        }, []
-    )
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // console.log(event.target.name);
-        setDatosPersonalesState(
-            (previus) => {
-                return (
-                    {
-                        ...previus,
-                        [event.target.name]: event.target.value,
-                        [`${event.target.name}_modificado`]: true
 
-                    }
-                )
-            }
-        )
+        setDatosPersonalesState(
+            (prev) => ({
+                ...prev,
+                [event.target.name]: event.target.value,
+                [`${event.target.name}_modificado`]: true
+            }))
     }
 
     const onDatoSelectChange = (event: SelectChangeEvent<number | string>) => {
@@ -248,12 +246,12 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     }
 
     const onOptionSelectChange = (event: ChangeEvent<HTMLInputElement>) => {
-        // console.log("Name of event:", event.target.name);
+
         setDatosPersonalesState(
-            (previus) => {
+            (prev) => {
                 return (
                     {
-                        ...previus,
+                        ...prev,
                         [event.target.name]: (event.target.value === 'true'),
                         [`${event.target.name}_modificado`]: true
                     }
@@ -263,49 +261,47 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     }
 
     const onFechaNacimientoChange = (value: Dayjs | null, context: PickerChangeHandlerContext<DateValidationError>) => {
-        // console.log(value);
+
         setDatosPersonalesState(
-            (previus) => {
-                return (
-                    {
-                        ...previus,
+            (prev) => ({
+                        ...prev,
                         fechaDeNacimiento: value,
                         fechaDeNacimiento_modificado: true
-
-
-                    }
-                )
-            }
+            })
         )
     }
 
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        if (datosDeIdentificacion.id_persona) {
+
+        console.log('test')
+        if (datosDeIdentificacion.id_persona && FormValidator(datosObligatorios, datosPersonalesState)) {
             const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
             const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
             datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
-            // console.log("Datos a enviar:", datosDelFormulario.numeroDeIdentificacion);
-            console.log(datosDelFormulario);
+
 
             const respuesta = await api_request(url, {
                 method: 'POST',
                 body: JSON.stringify(datosDelFormulario),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-
+                headers: {'Content-Type': 'application/json'}
             })
+
             if (respuesta.success) {
                 openSnackbar("Datos guardados correctamente", "success")
+                if (handleAccordion) {
+                    handleAccordion('')
+                }
             } else {
                 if (respuesta.error) {
                     openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                     log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                    if (handleAccordion) {
+                        handleAccordion('')
+                    }
                 }
             }
 
-            // console.log("Respuesta:", respuesta);
         } else {
             openSnackbar("Falta el número de identificación", "error");
         }
@@ -449,7 +445,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     {estadosCiviles ? estadosCiviles.map(
                                         (estadoCivil, id) => {
                                             return (
-                                                <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
+                                                <MenuItem key={id}
+                                                          value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
                                             )
                                         }
                                     ) : null}
@@ -583,46 +580,46 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </FormControl>
                     </Grid>
                     {datosPersonalesState.mantiene_contacto_con_consulado_o_embajada ?
-                    (
-                        <>
-                            <Grid item xs={3}>
-                                <TextField
-                                    fullWidth
-                                    name='nombre_de_contacto_en_consulado_o_embajada'
-                                    label='Nombre de contacto'
-                                    onChange={onDatoChange}
-                                    value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
-                                />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <TextField
-                                    fullWidth
-                                    name='numero_de_contacto_en_consulado_o_embajada'
-                                    label='Número de contacto de contacto'
-                                    onChange={onDatoChange}
-                                    value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
-                                />
-                            </Grid>
-                            <Grid item xs={3}>
-                                <FormControl fullWidth variant="outlined">
-                                    <InputLabel>Pais de embajada</InputLabel>
-                                    <Select
-                                        value={datosPersonalesState.pais_de_embajada}
-                                        onChange={onDatoSelectChange}
-                                        label="Pais de embajada"
-                                        name="pais_de_embajada"
-                                    >
-                                        <MenuItem value={1}>Brasil</MenuItem>
-                                        <MenuItem value={2}>Argentina</MenuItem>
-                                        <MenuItem value={3}>Chile</MenuItem>
-                                        <MenuItem value={3}>Bolivia</MenuItem>
-                                    </Select>
-                                    <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
-                                </FormControl>
-                            </Grid>
-                        </>
-                    )
-                    : null}
+                        (
+                            <>
+                                <Grid item xs={3}>
+                                    <TextField
+                                        fullWidth
+                                        name='nombre_de_contacto_en_consulado_o_embajada'
+                                        label='Nombre de contacto'
+                                        onChange={onDatoChange}
+                                        value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
+                                    />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <TextField
+                                        fullWidth
+                                        name='numero_de_contacto_en_consulado_o_embajada'
+                                        label='Número de contacto de contacto'
+                                        onChange={onDatoChange}
+                                        value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
+                                    />
+                                </Grid>
+                                <Grid item xs={3}>
+                                    <FormControl fullWidth variant="outlined">
+                                        <InputLabel>Pais de embajada</InputLabel>
+                                        <Select
+                                            value={datosPersonalesState.pais_de_embajada}
+                                            onChange={onDatoSelectChange}
+                                            label="Pais de embajada"
+                                            name="pais_de_embajada"
+                                        >
+                                            <MenuItem value={1}>Brasil</MenuItem>
+                                            <MenuItem value={2}>Argentina</MenuItem>
+                                            <MenuItem value={3}>Chile</MenuItem>
+                                            <MenuItem value={3}>Bolivia</MenuItem>
+                                        </Select>
+                                        <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
+                                    </FormControl>
+                                </Grid>
+                            </>
+                        )
+                        : null}
                 </Grid>
 
                 : null}

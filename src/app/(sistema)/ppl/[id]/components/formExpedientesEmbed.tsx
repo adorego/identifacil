@@ -97,7 +97,7 @@ const testData = {
 
 }
 
-export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{id_persona?: null | number; onHandledata: (value:number)=>void }){
+export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{id_persona?: null | number; onHandledata: (arg1:number, arg2:string, arg3:string)=>void }){
 
     const [formState, setFormState] = useState<FormStateType>(formStateInitial);
     const [selecciones, setSelecciones] = useState<HechoPunibleConCausa[]>([]);
@@ -221,7 +221,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
         postForm(
             false,
             'datos_penales/expedientes',
-            'q',
+            'Expediente',
             /*testData,*/
             {
                 ...formState,
@@ -251,7 +251,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
         })
             .then(data=>{
                 console.log(data.id)
-                onHandledata(data.id)
+                onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente)
             })
     }
 

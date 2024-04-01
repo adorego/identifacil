@@ -234,7 +234,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                             <FormLabel id="circuloFamiliarLabel">Circulo familiar</FormLabel>
 
                             <Button onClick={handleOpen} variant='outlined' startIcon={<AddIcon />}>
-                                Agregar miembro
+                                Agregar familiar
                             </Button>
                         </Stack>
                         <Box mt={2}>
