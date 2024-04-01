@@ -116,8 +116,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
         }, []
     )
 
-    useEffect(
-        () => {
+    useEffect(() => {
 
             Promise.all(
                 [
@@ -174,7 +173,9 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                                width={600}
                                height={600}
                                ref={videoElementRef}
-                               id="videoElement" autoPlay></video>
+                               id="videoElement" autoPlay>
+
+                        </video>
 
                         <FaceDetectionOverlay
                             className={styles.relayCanvas}

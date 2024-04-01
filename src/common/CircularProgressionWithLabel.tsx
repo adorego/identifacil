@@ -7,10 +7,12 @@ const CircularProgressionWithLabel = (props:LinearProgressionWithLabelProps) =>{
   return(
       <Box sx={{ display: 'flex', flexDirection:'column', alignItems: 'center' }}>
             <Box sx={{  }}>
-              <CircularProgress size={90} />
+              <CircularProgress size={60} />
             </Box>
-            <Box sx={{}}>
-              <Typography variant="h5" color="text.secondary">{props.estado}</Typography>
+            <Box>
+              <Typography mt={3} variant="h6" color="text.secondary">
+                  {props.estado}
+              </Typography>
             </Box>
       </Box>
   )

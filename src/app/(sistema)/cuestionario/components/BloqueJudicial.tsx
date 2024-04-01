@@ -34,7 +34,9 @@ import {useRouter} from "next/navigation";
 interface BloqueJudicialProps {
     datosIniciales?: datosIncialesJudiciales | null;
     id_persona: number;
-    numero_documento?: string | null
+    numero_documento?: string | null;
+    handleAccordion?: (s: string)=> void;
+
 }
 
 type DocsOrdenanType = Array<{
@@ -47,7 +49,7 @@ type DocsOrdenanType = Array<{
 
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
-const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_persona,numero_documento=null}) => {
+const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_persona,numero_documento=null, handleAccordion}) => {
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
     const [stateErrors, setStateErrors] = useState<Object>({})
     const [validateFormValueState, setValidateFormValueState] = useState<boolean>(false)
@@ -309,7 +311,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                         console.log('respuestas de peticion patch')
                         if(res.success){
                             openSnackbar('PPL asignado a expediente correctamente')
-                            router.push(`/ppl}`)
+                            //router.push(`/ppl}`)
                             // router.push(`/ppl/${id_persona}`)
                         }
                     }),
@@ -317,7 +319,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                         console.log('respuestas de peticion datos judiciales')
                         if(res.success){
                             openSnackbar('Datos judiciales actualizado correctamente')
-                            router.push(`/ppl`)
+                            // router.push(`/ppl`)
                             // router.push(`/ppl/${id_persona}`)
                         }
                     })
@@ -330,8 +332,11 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                         console.log('respuestas de peticion datos judiciales')
                         if(res.success){
                             openSnackbar('Datos judiciales actualizado correctamente')
-                            router.push(`/ppl`)
+                            // router.push(`/ppl`)
                             // router.push(`/ppl/${id_persona}`)
+                            if(handleAccordion){
+                                handleAccordion('')
+                            }
                         }
 
                     })

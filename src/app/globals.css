@@ -184,3 +184,24 @@ header.MuiPaper-root {
     justify-content: center;
     background-color: #262b36;
 }
+
+.contenedorDeNotificaciones {
+    position: relative;
+    width: 100%;
+}
+.registerContainerIdentifier-active:before {
+    background: #0000008f;
+    position: fixed;
+    left: 0;
+    top: 0;
+    content: "";
+    width: 100%;
+    height: 100%;
+    z-index: 1200;
+}
+.innerWrapperDeNotificaciones {
+    position: absolute;
+    z-index: 1300;
+    border-radius: 12px;
+    box-shadow: 0 0 13px 0 rgba(0,0,0,0.55);
+}

@@ -31,8 +31,8 @@ const ConfirmacionRegistro: FC<ConfirmacionRegistroProps> = ({mensaje}: Confirma
                 {mensaje}
             </Typography>
             <Stack spacing={2} direction={"row"} mt={5} justifyContent={"center"}>
-                <Button variant={"contained"} onClick={() => router.push('/inicio/registro/visitante')}>
-                    Ingresar otro visitante
+                <Button variant={"contained"} onClick={() => router.push('/inicio/registro/ppl')}>
+                    Registrar otro PPL
                 </Button>
                 <Button variant={"outlined"} onClick={() => router.push('/inicio')}>
                     Volver al inicio

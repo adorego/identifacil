@@ -15,7 +15,7 @@ import {
     SelectChangeEvent,
     TextField, Typography
 } from "@mui/material";
-import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
+import {DatePicker, DateValidationError, MobileDatePicker, PickerChangeHandlerContext} from "@mui/x-date-pickers";
 import {FC, useEffect, useState} from "react";
 import {Save, Storage, Sort} from '@mui/icons-material';
 import dayjs, {Dayjs} from "dayjs";
@@ -126,6 +126,7 @@ export interface DatosDeIdentificacion {
     cedula_identidad?: string | null;
     numeroDeIdentificacion?: string;
     prontuario?: string;
+    tipo_identificacion?: number;
     es_extranjero: boolean;
     tiene_cedula: boolean;
     nombres: string;
@@ -171,7 +172,10 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
 
     const consultarPPL = async (cedula:string | null) =>{
 
+        const esMenor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') < 18)
+
         if(cedula !== null){
+
             try{
 
                 await fetch(`${API_URL}/gestion_ppl/ppls/cedula/${cedula}`)
@@ -189,7 +193,11 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     }).catch(err=>{
                         console.log(err)
                         setStateEsPPL(false)
-                        props.habilitarBotonSiguiente(true);
+                        if(!esMenor){
+                            props.habilitarBotonSiguiente(true);
+                        }else{
+                            props.habilitarBotonSiguiente(false);
+                        }
                     })
             } catch (error) {
                 console.log('Esta persona no existe en la base datos como PPL', 'success')
@@ -206,6 +214,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
             // @ts-ignore
             if(formularioDeDatosDeIdentificacion.cedula_identidad?.length > 0) {
                 consultarPPL(formularioDeDatosDeIdentificacion.cedula_identidad)
+                console.log('termino consulta de cedula es PPL?')
             }
         }
 
@@ -249,9 +258,12 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                        openSnackbar('Persona no puede ingresar. Debe ser mayor de edad.', 'error')
+                        console.log('es menor')
+                        openSnackbar('Persona no puede ingresar. Debe ser mayor de edad', 'error')
                         setConsultaLoading(false)
+
                     } else {
+                        console.log('es es mayor')
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
                         if(!stateEsPPL){
@@ -356,6 +368,12 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     )
 }
 
+
+
+
+
+
+
 interface DatosDeIdentificacionExtranjero {
     id_persona: number | null;
     numeroDeIdentificacion: string;
@@ -370,9 +388,11 @@ const datosInicialesDeFormularioDeExtranjero = {
     numeroDeIdentificacion: "",
     nombres: "",
     apellidos: "",
-    fecha_nacimiento: dayjs(),
+    fecha_nacimiento: null,
     codigo_genero: 2,
 }
+
+
 
 const FormularioParaExtranjero: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] =
@@ -383,9 +403,12 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
     const onGuardarHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log(formularioDeDatosDeIdentificacion);
 
-        if (formularioDeDatosDeIdentificacion.fecha_nacimiento && formularioDeDatosDeIdentificacion.nombres.length > 2
-            && formularioDeDatosDeIdentificacion.apellidos.length > 2 && formularioDeDatosDeIdentificacion.numeroDeIdentificacion.length > 1
+        if (formularioDeDatosDeIdentificacion.fecha_nacimiento
+            && formularioDeDatosDeIdentificacion.nombres.length > 2
+            && formularioDeDatosDeIdentificacion.apellidos.length > 2
+            && formularioDeDatosDeIdentificacion.numeroDeIdentificacion.length > 1
             && formularioDeDatosDeIdentificacion.codigo_genero) {
+
             props.actualizarIdentificacion({
                 ...formularioDeDatosDeIdentificacion,
                 fecha_nacimiento: formularioDeDatosDeIdentificacion.fecha_nacimiento.toISOString(),
@@ -394,9 +417,16 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                 es_extranjero: true,
                 id_persona: null,
                 foto: '',
-
             });
-            props.habilitarBotonSiguiente(true);
+            const esMenor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') < 18)
+            console.log(esMenor)
+            console.log(formularioDeDatosDeIdentificacion.fecha_nacimiento)
+            if(esMenor){
+                openSnackbar("No se puede registar menores de edad.", "error");
+                props.habilitarBotonSiguiente(false);
+            }else{
+                props.habilitarBotonSiguiente(true);
+            }
         } else {
             openSnackbar("Los campos de estar completos", "error");
         }
@@ -451,7 +481,8 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                         variant="outlined"
                         required/>
                 </Grid>
-
+                <Grid item xs={6}>
+                </Grid>
                 <Grid item xs={6}>
                     <TextField
                         id="nombres"
@@ -463,8 +494,6 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                         variant="outlined"
                         required/>
                 </Grid>
-            </Grid>
-            <Grid container spacing={2} mt={3}>
                 <Grid item xs={6}>
                     <TextField
                         id="apellido"
@@ -478,18 +507,27 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                 </Grid>
                 <Grid item xs={6}>
                     <FormControl fullWidth={true}>
-                        <DatePicker
-                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
+                        <MobileDatePicker
+                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento ? dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento) : null}
                             format="DD/MM/YYYY"
-                            onChange={(newValue) => onChangeFechaDeNacimiento(newValue)}
+                            maxDate={dayjs().subtract(18, 'year')}
+                            onChange={(newValue) => {
+                                const esMenor = (dayjs().diff(dayjs(newValue), 'year') < 18)
+                                if (esMenor){
+                                    openSnackbar('No se puede registrar un menor.', 'error')
+                                    onChangeFechaDeNacimiento(null)
+                                } else {
+                                    onChangeFechaDeNacimiento(newValue)
+                                }
+
+
+                            }}
                             label={"Fecha de nacimiento"}
                         />
                     </FormControl>
 
                 </Grid>
-            </Grid>
-            <Grid container spacing={2} mt={3}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                     <FormControl fullWidth>
                         <InputLabel htmlFor="id_selector_genero">
                             Genero
@@ -507,6 +545,7 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                 </Grid>
                 <Grid item xs={2}>
                     <Button
+                        fullWidth
                         sx={{minHeight: "100%"}}
                         onClick={onGuardarHandler}
                         variant="contained"
@@ -538,13 +577,15 @@ const datosInicialesDeFormularioDePPLSinCedula = {
     prontuario: "",
     nombres: "",
     apellidos: "",
-    fecha_nacimiento: dayjs(),
+    fecha_nacimiento: null,
     codigo_genero: 2,
 }
 
 const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: IdentificacionProps) => {
-    const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] =
-        useState<DatosDeIdentificacionSinCedula>(datosInicialesDeFormularioDePPLSinCedula);
+    const [
+        formularioDeDatosDeIdentificacion,
+        setFormularioDeDatosDeIdentificacion
+    ] = useState<DatosDeIdentificacionSinCedula>(datosInicialesDeFormularioDePPLSinCedula);
     const {openSnackbar} = useGlobalContext();
 
 
@@ -553,9 +594,12 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
     const onGuardarHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
         console.log("Fecha de nacimiento:", formularioDeDatosDeIdentificacion.fecha_nacimiento?.toISOString());
 
-        if (formularioDeDatosDeIdentificacion.fecha_nacimiento && formularioDeDatosDeIdentificacion.nombres.length > 2
-            && formularioDeDatosDeIdentificacion.apellidos.length > 2 && formularioDeDatosDeIdentificacion.prontuario.length > 1
+        if (formularioDeDatosDeIdentificacion.fecha_nacimiento
+            && formularioDeDatosDeIdentificacion.nombres.length > 2
+            && formularioDeDatosDeIdentificacion.apellidos.length > 2
+            && formularioDeDatosDeIdentificacion.prontuario.length > 1
             && formularioDeDatosDeIdentificacion.codigo_genero) {
+
             props.actualizarIdentificacion({
                 ...formularioDeDatosDeIdentificacion,
                 fecha_nacimiento: formularioDeDatosDeIdentificacion.fecha_nacimiento.toISOString(),
@@ -564,6 +608,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                 id_persona: null,
                 foto: '',
             });
+
             props.habilitarBotonSiguiente(true);
         } else {
             openSnackbar("Los campos deben estar completos antes de guardar", "error");
@@ -618,6 +663,8 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                 </Grid>
 
                 <Grid item xs={6}>
+                </Grid>
+                <Grid item xs={6}>
                     <TextField
                         id="nombres"
                         name="nombres"
@@ -628,8 +675,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                         variant="outlined"
                         required/>
                 </Grid>
-            </Grid>
-            <Grid container spacing={2} mt={3}>
+
                 <Grid item xs={6}>
                     <TextField
                         id="apellido"
@@ -643,18 +689,27 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                 </Grid>
                 <Grid item xs={6}>
                     <FormControl fullWidth={true}>
-                        <DatePicker
-                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento}
+                        <MobileDatePicker
+                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento ? dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento) : null}
                             format="DD/MM/YYYY"
-                            onChange={(newValue) => onChangeFechaDeNacimiento(newValue)}
+                            maxDate={dayjs().subtract(18, 'year')}
+                            onChange={(newValue) => {
+                                const esMenor = (dayjs().diff(dayjs(newValue), 'year') < 18)
+                                if (esMenor){
+                                    openSnackbar('No se puede registrar un menor.', 'error')
+                                    onChangeFechaDeNacimiento(null)
+                                } else {
+                                    onChangeFechaDeNacimiento(newValue)
+                                }
+
+
+                            }}
                             label={"Fecha de nacimiento"}
                         />
                     </FormControl>
 
                 </Grid>
-            </Grid>
-            <Grid container spacing={2} mt={3}>
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                     <FormControl fullWidth>
                         <InputLabel htmlFor="id_selector_genero">
                             Genero
@@ -672,6 +727,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                 </Grid>
                 <Grid item xs={2}>
                     <Button
+                        fullWidth
                         sx={{minHeight: "100%"}}
                         onClick={onGuardarHandler}
                         variant="contained"

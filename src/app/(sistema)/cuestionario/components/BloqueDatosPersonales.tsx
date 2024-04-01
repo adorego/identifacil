@@ -50,7 +50,7 @@ interface datosPersonales {
     lugarDeNacimiento_modificado: boolean;
     sexo: string;
     sexo_modificado: boolean;
-    tipoDeDocumento: string;
+    tipoDeDocumento: string | number;
     tipoDeDocumento_modificado: boolean;
     direccion: string;
     direccion_modificado: boolean;
@@ -88,10 +88,10 @@ const datosPersonalesInicial: datosPersonales = {
     codigo_genero: 0,
     estadoCivil: '1',
     fechaDeNacimiento: null,
-    nacionalidad: 0,
+    nacionalidad: 1,
     lugarDeNacimiento: '',
     sexo: '',
-    tipoDeDocumento: '',
+    tipoDeDocumento: 1,
     direccion: '',
     barrioCompania: '',
     numeroDeContacto: '',
@@ -134,13 +134,14 @@ export interface BloqueDatosPersonalesProps {
 
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, handleAccordion}) => {
-    // console.log(datosDeIdentificacion)
+    console.log(datosDeIdentificacion)
 
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial,
         fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento),
         tiene_cedula: datosDeIdentificacion.tiene_cedula,
+        tipoDeDocumento: datosDeIdentificacion.tipo_identificacion ? datosDeIdentificacion.tipo_identificacion : 1,
         fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
         numeroDeIdentificacion: datosDeIdentificacion.es_extranjero ? datosDeIdentificacion.numeroDeIdentificacion : datosDeIdentificacion.cedula_identidad,
@@ -387,14 +388,20 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         <Grid item xs={6}>
                             <FormControl fullWidth={true}>
                                 <InputLabel>Tipo de documento</InputLabel>
-                                <OutlinedInput
-                                    fullWidth
-                                    value={datosPersonalesState.tiene_cedula ? 'Cedula de Identidad Policial' : 'Otro'}
-                                    label="Tipo de documento"
+
+                                <Select
+                                    id="tipo_documento"
                                     name="tipo_documento"
-                                    disabled
-                                    inputProps={{readOnly: true,}}
-                                />
+                                    label='Tipo documento'
+                                    value={datosPersonalesState.tipoDeDocumento}
+                                >
+
+                                    <MenuItem value={1}>Cedula de identidad policial</MenuItem>
+                                    <MenuItem value={2}>Pasaporte</MenuItem>
+                                    <MenuItem value={3}>Prontuario</MenuItem>
+
+
+                                </Select>
                             </FormControl>
                         </Grid>
                         <Grid item xs={6}>

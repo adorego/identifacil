@@ -33,13 +33,15 @@ import AddIcon from "@mui/icons-material/Add";
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
     id_persona: number | null;
+    handleAccordion?: (s: string)=>void
 }
 
 
 const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     {
         id_persona,
-        datosFamiliaresIniciales = datosFamiliaresInicial
+        datosFamiliaresIniciales = datosFamiliaresInicial,
+        handleAccordion
     }) => {
 
     // por si llega null en el campo entonces carga los datos iniciales vacios
@@ -139,7 +141,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             concubino: null,
         }))
     }
-    const handleSubmit = (e: { preventDefault: () => void; })=>{
+    const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
         const circuloFamiliar = stateCirculoFamiliar.map(item => ({
             ...item,
@@ -157,12 +159,48 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             familiares_modificado: true,
         }
         const editMod = datosFamiliaresIniciales?.id ? true : false // Si es TRUE, entonces es PUT, si es FALSE es POST
-        console.log(datosFormulario)
-        console.log(editMod)
+        const redirect = false
 
 
 
-        postForm(editMod, 'datos_familiares', 'Datos Familiares', datosFormulario, setLoading, openSnackbar, router, false);
+        try {
+            setLoading(true);
+
+            const method = editMod ? 'PUT' : 'POST';
+            //console.log(JSON.stringify(stateForm))
+            const url = editMod
+                ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares/${datosFormulario.id}`
+                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`
+
+            // console.log(url)
+            const response = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(datosFormulario),
+            });
+
+            setLoading(false);
+
+            if (response.ok) {
+                const message = editMod
+                    ? `Datos Familiares actualizada correctamente.`
+                    : `Datos Familiares creada correctamente.`;
+
+                openSnackbar(message, 'success');
+                if(handleAccordion){
+                    handleAccordion('')
+                }
+                if(redirect){
+                    router.push(`/ppl`);
+                }
+                return response
+            } else {
+                throw new Error('Error en la petición');
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error('Error:', error);
+        }
     }
 
 
@@ -176,7 +214,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             mx={2}
             autoComplete="off">
             <Typography variant='h6' mb={3}>
-                Formulario de salud
+                Formulario de datos familiares
             </Typography>
             <Grid container spacing={2}>
                 <Grid item sm={12}>
@@ -285,7 +323,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                                         }
                                         return newState;
                                     })}>
-                                    Aregar concubino
+                                    Agregar concubino
                                 </Button>}
                         </Stack>
 

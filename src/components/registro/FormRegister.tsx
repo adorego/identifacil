@@ -118,19 +118,23 @@ export default function FormRegister() {
     const generar_request_enviar = async () => {
 
         if (identidad.current != null) {
-
+            identidad.current.tipo_identificacion = 1;
             let numero_identificacion = '';
 
             if(identidad.current?.es_extranjero){
                 numero_identificacion = identidad.current.numeroDeIdentificacion ? identidad.current.numeroDeIdentificacion : '';
+
+                identidad.current.tipo_identificacion = 2;
+                identidad.current.tiene_cedula = false;
             }else {
-                numero_identificacion = identidad.current.cedula_identidad ? identidad.current.cedula_identidad : ""
+                numero_identificacion = identidad.current.cedula_identidad ? identidad.current.cedula_identidad : "";
+                identidad.current.tipo_identificacion = 3;
             }
 
-            console.log(numero_identificacion)
+            console.log(identidad.current)
 
             const formData = new FormData();
-            formData.append('tipo_identificacion', '1');
+            formData.append('tipo_identificacion', String(identidad.current.tipo_identificacion));
             formData.append('numero_identificacion', numero_identificacion);
             formData.append('prontuario', identidad.current.prontuario ? identidad.current.prontuario : "");
             formData.append('es_extranjero', String(identidad.current.es_extranjero));
@@ -241,27 +245,33 @@ export default function FormRegister() {
                         }
                     )}
                 </Stepper>
-                <Box className='registerContainerIdentifier' sx={{
+                <Box className={`registerContainerIdentifier ${showSpinner ? 'registerContainerIdentifier-active' : ''}`} sx={{
                     backgroundColor: '#FFF',
                     paddingY: '20px',
                     paddingX: '30px',
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
-                    {activeStep === 0 && <IdentificacionForm
-                        habilitarBotonSiguiente={habilitarBotonSiguiente}
-                        actualizarIdentificacion={setIdentificacion}
-                    />}
-                    {activeStep === 1 && <FaceRecognitionWithLayout
-                        etiquetaLabel="Capturar"
-                        showSpinner={showSpinner}
-                        progresoRegistro={progresoRegistro}
-                        mensaje={mensaje}
-                        cerrar_dialogo={cerrar_dialogo}
-                        agregar_reconocimiento={agregar_reconocimiento}
-                        actualizar_progreso={actualizar_progreso}/>
+                    {/* Paso de identificacion policial */}
+                    {activeStep === 0 &&
+                        <IdentificacionForm
+                            habilitarBotonSiguiente={habilitarBotonSiguiente}
+                            actualizarIdentificacion={setIdentificacion}/>
                     }
 
+                    {/* Paso de Reconocimiento y registro facial */}
+                    {activeStep === 1 &&
+                        <FaceRecognitionWithLayout
+                            etiquetaLabel="Capturar"
+                            showSpinner={showSpinner}
+                            progresoRegistro={progresoRegistro}
+                            mensaje={mensaje}
+                            cerrar_dialogo={cerrar_dialogo}
+                            agregar_reconocimiento={agregar_reconocimiento}
+                            actualizar_progreso={actualizar_progreso}/>
+                    }
+
+                    {/* Paso de cuestionario */}
                     {activeStep === 2 && identidad.current && identidad.current.id_persona &&
                         <CuestionarioRegistro
                             datosDeIdentidad={identidad.current}

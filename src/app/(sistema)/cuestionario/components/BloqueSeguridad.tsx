@@ -20,9 +20,10 @@ import {useGlobalContext} from "@/app/Context/store";
 interface BloqueSeguridadProps {
     datosIniciales?: datosSeguridadType;
     id_persona: number | null;
+    handleAccordion?: (s: string) => void;
 }
 
-const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona}) => {
+const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona, handleAccordion}) => {
 
     console.log(id_persona)
     const estadoIncial = datosIniciales ? datosIniciales : datosSeguridadInicial
@@ -95,6 +96,9 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
 
             })
             if (respuesta.success) {
+                if(handleAccordion){
+                    handleAccordion('')
+                }
                 openSnackbar("Datos guardados correctamente", "success")
             } else {
                 if (respuesta.error) {
