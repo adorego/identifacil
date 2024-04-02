@@ -16,6 +16,7 @@ interface FaceDetectionOverlayProps {
     progreso: (progreso: number) => void;
     reset_capturar_foto: () => void;
     numero_de_capturas: number;
+    habilitarBotonDeCapturaDeFoto:(valor:boolean)=>void;
 
 }
 
@@ -34,7 +35,8 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
          capturar_foto,
          reset_capturar_foto,
          progreso,
-         numero_de_capturas
+         numero_de_capturas,
+         habilitarBotonDeCapturaDeFoto
      }) => {
         const intervalId = useRef<any>(null);
         const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -79,7 +81,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
             try {
                 if (videoElement) {
                     const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
-                    if (detectionResult) {
+                    if (detectionResult && detectionResult.detection.score > 0.8) {
                         if (overlayRef.current) {
                             const canvas = overlayRef.current;
                             const detectionForSize = faceapi.resizeResults(detectionResult, {
@@ -97,16 +99,20 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
                                     box: box,
                                     canvas: canvas
                                 }
-                                // if(capturar_foto){
-                                //    console.log("Se va a registrar el rostro");
-                                //   capturar_rostro_y_enviar(box, canvas,"foto1");
-                                //   setTimeout(capturar_rostro_y_enviar, 200, box, canvas, "foto2");
-                                //   setTimeout(capturar_rostro_y_enviar,400, box, canvas, "foto3");
-                                //   reset_capturar_foto();
-
-                                // }
+                                habilitarBotonDeCapturaDeFoto(true);
 
 
+                            }
+                        }
+                    }else{
+                        habilitarBotonDeCapturaDeFoto(false);
+                        if (overlayRef.current) {
+                            const canvas = overlayRef.current;
+                            canvas.width = videoElement.width;
+                            canvas.height = videoElement.height;
+                            const context = canvas.getContext('2d');
+                            if (context) {
+                                context.clearRect(0, 0, canvas.width, canvas.height);
                             }
                         }
                     }
