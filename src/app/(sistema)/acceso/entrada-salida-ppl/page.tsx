@@ -25,6 +25,7 @@ import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWith
 import {IReconocimiento} from "@/components/registro/FaceDetectionOverlay";
 import style from "./page.module.css";
 import {useGlobalContext} from "@/app/Context/store";
+import { error } from "console";
 
 const EstadosProgreso: Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos', 'Datos disponibles'];
 
@@ -92,15 +93,21 @@ export default function EntradaSalidaPPL() {
             console.log('Ocurrio un error:', data);
         } else {
             const data: IdentificationResponse = await response.json();
+            console.log("Datos devueltos:", data);
             setProgresoReconocimiento(EstadosProgreso[0]);
-            setPPLIdentificado(true);
-            setIdentificationData({
+            if(data.identificado){
+                setPPLIdentificado(true);
+                setIdentificationData({
+                identificado:data.identificado,
                 numeroDeIdentificacion: data.numeroDeIdentificacion,
                 nombres: data.nombres,
                 apellidos: data.apellidos,
-                esPPL: data.esPPL
-            })
-            // openSnackbar(`Persona Reconocida, nombre:${data.nombres}, apellido:${data.apellidos}, esPPL:${esPPL}`);
+                esPPL: data.esPPL })
+            }else{
+                openSnackbar(`PPL No identificado`,"error");
+            }
+            
+            
         }
     }
 

@@ -45,11 +45,11 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
     const [habilitarBotonCapturarFoto,setHabilitarBotonCapturarFoto] = useState<boolean>(false);
 
 
-    console.log("Loading es:",loading);
+    
 
     const conectar_con_webcam = (): MediaStream | null => {
         let mediaStream = null;
-        console.log("Se va a conectar la webcam");
+        //console.log("Se va a conectar la webcam");
         try {
             // console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
             if (navigator && navigator.mediaDevices) {
