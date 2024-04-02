@@ -51,20 +51,20 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTa
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        let datosFiltrados = dataSinFiltro.filter((item: { documento: string; destinoTraslado: string; }) => {
-            const filtroBusqueda = busqueda ? item.documento.toLowerCase().includes(busqueda.toLowerCase()) : true;
+        let datosFiltrados = dataSinFiltro.filter((item: { numeroDeExpediente: string; destinoTraslado: string; }) => {
+            const filtroBusqueda = busqueda ? item.numeroDeExpediente.toLowerCase().includes(busqueda.toLowerCase()) : true;
             const filtroDestino = destino ? item.destinoTraslado === destino : true;
 
             return filtroBusqueda && filtroDestino;
         });
 
         if (valueDateStart && valueDateEnd) {
-            datosFiltrados = filterByDateRange(datosFiltrados, valueDateStart, valueDateEnd, 'fechaTraslado');
+            datosFiltrados = filterByDateRange(datosFiltrados, valueDateStart, valueDateEnd, 'fecha_del_hecho');
         } else {
             // Si no hay fechas definidas, no se aplica el filtro de fecha
             console.log('Sin filtro de fecha aplicado');
         }
-
+        console.log(datosFiltrados)
         if (handleFiltro) {
             handleFiltro(datosFiltrados);
         }
@@ -79,12 +79,12 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTa
                         name="busqueda"
                         value={busqueda}
                         onChange={handleChange}
-                        label="Buscar por nombre o numero de ppl"
+                        label="Buscar por numero de documetno"
                         type='text'
                         variant="outlined"
                         fullWidth/>
                 </Grid>
-                <Grid item xs={3}>
+                {/*<Grid item xs={3}>
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Destino</InputLabel>
                         <Select
@@ -94,14 +94,14 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTa
                             label="Destino"
                             onChange={handleChangeDestino}
                         >
-                            <MenuItem value="">Todos los destinos</MenuItem> {/* Opción para no aplicar filtro de destino */}
+                            <MenuItem value="">Todos los destinos</MenuItem>  Opción para no aplicar filtro de destino
                             <MenuItem value={'Tacumbu'}>Tacumbu</MenuItem>
                             <MenuItem value={'destino2'}>Destino 2</MenuItem>
                             <MenuItem value={'destino3'}>Destino 3</MenuItem>
-                            {/* Agrega aquí más opciones si las necesitas */}
+                             Agrega aquí más opciones si las necesitas
                         </Select>
                     </FormControl>
-                </Grid>
+                </Grid>*/}
                 <Grid item xs={2}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker

@@ -156,6 +156,7 @@ export default function FormRegister() {
             formData.append('establecimiento', String(1));
 
             contadorReconocimiento.current = 0;
+
             try {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_persona`;
                 // console.log('url:', url);
@@ -169,8 +170,8 @@ export default function FormRegister() {
                 if (!result.ok) {
                     const data = await result.json();
                     setProgresoRegistro(EstadosProgreso[3]);
-                    setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo:${data.message}`);
-                    log.error("Ocurrio un error durante el registro:", data);
+                    setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo: ${data.message}`);
+                    log.error("Ocurrio un error durante el registro: ", data);
                 } else {
                     const data: RegistroResponse = await result.json() as RegistroResponse;
                     console.log('verificacion de foto')
@@ -302,7 +303,7 @@ export default function FormRegister() {
                         {
                             botonesDeFlujo.mostrarBotonAnterior &&
                             <Grid item xs={'auto'}>
-                                <Button disabled={!botonesDeFlujo.habilitarBotonAnterior} variant="contained"
+                                <Button disabled={!botonesDeFlujo.habilitarBotonAnterior} variant="outlined"
                                         onClick={onStepBackward}
                                         startIcon={<KeyboardArrowLeft/>}>
                                     Anterior

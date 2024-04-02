@@ -159,8 +159,8 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                     position: 'relative',
                 }}>
                     <Box className='faceReconContainer' sx={{
-                        position: "absolute",
-                        top: "10px",
+                        position: "relative",
+                        top: "0",
                         zIndex: '10'
                     }}>
                         <Alert severity="info">
@@ -194,8 +194,8 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                         </Typography>
                         <Button
                             onClick={onFotoCapture}
-                            className={styles.capturePhotoButton}
-                            variant='outlined'
+                            className={`${styles.capturePhotoButton} boton-captura-recognition`}
+                            variant='contained'
                                 endIcon={<AddAPhoto/>}>
                             {props.etiqueta_boton}
                         </Button>

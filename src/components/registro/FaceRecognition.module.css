@@ -4,7 +4,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 650px;
+    width: 550px;
     height: 450px;
     max-width: 100%;
     /* border: 2px solid red; */
@@ -22,7 +22,7 @@
     max-width: 180px;
     min-height: 48px;
     position: absolute !important;
-    bottom: 20px;
+    bottom: -40px;
     z-index: 10;
 }
 
