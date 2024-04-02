@@ -19,11 +19,12 @@ import {DatePicker, DateValidationError, MobileDatePicker, PickerChangeHandlerCo
 import {FC, useEffect, useState} from "react";
 import {Save, Storage, Sort} from '@mui/icons-material';
 import dayjs, {Dayjs} from "dayjs";
-
-import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
+import es from 'dayjs/locale/es'; // Importa el locale español
 
+dayjs.locale(es); // Configura dayjs globalmente al español
+import log from "loglevel";
 export interface IdentificacionProps {
     habilitarBotonSiguiente: (arg0: boolean) => void;
     actualizarIdentificacion: (arg0: DatosDeIdentificacion) => void;

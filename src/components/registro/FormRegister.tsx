@@ -119,7 +119,7 @@ export default function FormRegister() {
 
         if (identidad.current != null) {
             identidad.current.tipo_identificacion = 1;
-            let numero_identificacion = '';
+            let numero_identificacion = identidad.current.cedula_identidad ? identidad.current.cedula_identidad : '';
 
             if(identidad.current?.es_extranjero){
                 numero_identificacion = identidad.current.numeroDeIdentificacion ? identidad.current.numeroDeIdentificacion : '';

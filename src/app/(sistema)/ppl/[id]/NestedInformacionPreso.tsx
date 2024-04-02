@@ -164,6 +164,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                         <Grid item sm={10}>
                             <CustomTabPanel value={value} index={0}>
 
+
                                 {datosPersona ?
                                     <FormularioDatosPersonales
                                         tipo_de_documento={datosPersona.tipo_de_documento?.id}
