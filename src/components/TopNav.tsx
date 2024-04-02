@@ -196,7 +196,7 @@ export default function TopNav() {
                         borderBottom: '1px solid #E2E8F0'
                     }} >
                 <Toolbar>
-                    <Search>
+                    {/*<Search>
                         <SearchIconWrapper>
                             <SearchIcon/>
                         </SearchIconWrapper>
@@ -204,7 +204,7 @@ export default function TopNav() {
                             placeholder="Buscar…"
                             inputProps={{'aria-label': 'search'}}
                         />
-                    </Search>
+                    </Search>*/}
                     <Box sx={{flexGrow: 1}}/>
                     <Box sx={{display: {xs: 'none', md: 'flex'}}}>
                         {/*<IconButton size="large" aria-label="show 4 new mails" color="inherit">

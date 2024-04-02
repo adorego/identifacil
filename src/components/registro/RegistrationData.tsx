@@ -1,5 +1,5 @@
 import {Box, Button, Stack, Typography} from "@mui/material";
-import Link from "next/link";
+import {useRouter} from "next/navigation";
 
 interface RegistrationProps {
     mensaje: string;
@@ -8,6 +8,7 @@ interface RegistrationProps {
 
 
 export default function RegistrationData(props: RegistrationProps) {
+    const router = useRouter();
     return (
         <Box sx={{backgroundColor: "#000"}}>
             <Box sx={{
@@ -23,11 +24,11 @@ export default function RegistrationData(props: RegistrationProps) {
                     <Button onClick={props.cerrarDialogo} variant="contained" sx={{textTransform: 'uppercase', px: 5}}>
                         Aceptar
                     </Button>
-                    <Link href='/inicio/registro/ppl'>
-                        <Button variant="text">
-                            Volver al inicio
-                        </Button>
-                    </Link>
+                    <Button variant="text" onClick={() => router.push('/inicio/registro')}>
+                        Volver al inicio
+                    </Button>
+
+
                 </Stack>
 
             </Box>

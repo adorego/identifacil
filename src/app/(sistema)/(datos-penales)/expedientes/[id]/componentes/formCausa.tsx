@@ -420,8 +420,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
     const postData = async () => {
-        const post_mehtod = isEditMode != 'crear'
-        await SubmitExpediente(
+        /*await SubmitExpediente(
             {
                 isEditMode: post_mehtod,
                 openSnackbar,
@@ -430,8 +429,57 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 setLoading,
                 router,
                 selecciones
+            }*/
+        const form_method = isEditMode ? 'PUT' : 'POST'
+        
+        const endpoint_api = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`
+        const stateForm: any = {
+            ...datosFormulario,
+            hechosPuniblesCausas: selecciones.map((item:any) => Object.values(item)),
+        }
+
+
+        // const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
+
+        if (stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == "") {
+            openSnackbar('Falta completar campor requeridos', 'error')
+        } else {
+
+            try {
+                setLoading(true);
+
+
+                const url = form_method == 'PUT'
+                    ? `${endpoint_api}/${params.id}` // PUT
+                    : `${endpoint_api}`; // POST
+
+                // console.log(stateForm)
+                console.log(form_method)
+                console.log(url)
+
+                const response = await fetch(url, {
+                    method: form_method,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(stateForm),
+                });
+
+                setLoading(false);
+
+                if (response.ok) {
+                    const message = form_method == 'PUT'
+                        ? `expediente actualizada correctamente.`
+                        : `expediente creada correctamente.`;
+
+                    openSnackbar(message, 'success');
+                    // router.push(`/expediente`);
+                } else {
+                    throw new Error('Error en la petición');
+                }
+            } catch (error) {
+                setLoading(false);
+                console.error('Error:', error);
             }
-        )
+        }
 
 
     }
