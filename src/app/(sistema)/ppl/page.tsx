@@ -14,11 +14,12 @@ const ENDPOINT: string = `/gestion_ppl/ppls`
 
 const header = [
     {id: 'id', label: 'ID'},
-    {id: 'nombre', label: 'Nombre'},
-    {id: 'apellido', label: 'Apellido'},
+    {id: 'nombre_apellido', label: 'Apellido, Nombre'},
+    {id: 'apodo', label: 'Apodo'},
+    {id: 'numero_de_identificacion', label: 'Documento'},
     {id: 'genero', label: 'Genero', type: 'genero', dataType:[{id: 1, name: 'Femenino'},{id: 2, name:'Masculino'}]},
     {id: 'fechaDeNacimiento', label: 'Fecha nacimiento', type: 'date'},
-    {id: 'estado_perfil', label: 'Estado Perfil'},
+    /*{id: 'estado_perfil', label: 'Estado Perfil'},*/
 ]
 
 /*async function getDatos(endpoint:string=""){
@@ -34,6 +35,7 @@ const header = [
 export default function Page() {
 
     const [listaPersonas, setListaPersonas] = useState([])
+    const [dataFiltrado, setDataFiltrado] = useState(null);
     const [loading, setLoading] = useState(true)
 
     async function fetchData() {
@@ -54,12 +56,20 @@ export default function Page() {
         console.log('get ppl')
         fetchData()
             .then(fetchedData => {
-                setListaPersonas(fetchedData);
+                setListaPersonas(fetchedData.map((item:any)=>({
+                    ...item,
+                    nombre_apellido: `${item.apellido}, ${item.nombre}`,
+                })));
             }).finally(() => {
             setLoading(false)
         })
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+    {console.log(listaPersonas)}
 
+
+    const onHandleFiltro = (value: any) => {
+        setDataFiltrado(value)
+    }
 
     if (!listaPersonas) {
         return (
@@ -94,11 +104,16 @@ export default function Page() {
             <Grid container mt={3}>
                 <Grid item sm={12}>
                     <Paper elevation={1}>
-                        {/*<Box p={3}>
-                            <FiltrosTables/>
-                        </Box>*/}
+                        <Box p={3}>
+                            <FiltrosTables
+                                dateSearchField='fechaDeNacimiento'
+                                searchField='numero_de_identificacion'
+                                dataSinFiltro={listaPersonas} handleFiltro={onHandleFiltro}/>
+                        </Box>
                         <CustomTable
-                            headers={header} data={listaPersonas} showId={false}
+                            headers={header}
+                            data={dataFiltrado ? dataFiltrado : listaPersonas}
+                            showId={false}
                             options={{
                                 deleteOption: false,
                                 rowsPerPageCustom: 10,

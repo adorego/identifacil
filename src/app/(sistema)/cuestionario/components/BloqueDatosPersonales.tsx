@@ -136,6 +136,26 @@ export interface BloqueDatosPersonalesProps {
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, handleAccordion}) => {
     console.log(datosDeIdentificacion)
+    let numero_doc_procesado : string | null | undefined = '';
+
+    switch (datosDeIdentificacion.tipo_identificacion) {
+        case 1:{
+            numero_doc_procesado = datosDeIdentificacion.cedula_identidad
+            break;
+        }
+        case 2:{
+            numero_doc_procesado = datosDeIdentificacion.numeroDeIdentificacion
+            break;
+        }case 3:{
+            numero_doc_procesado = datosDeIdentificacion.prontuario
+            break;
+        }
+        default:{
+            numero_doc_procesado = datosDeIdentificacion.cedula_identidad
+            break;
+        }
+
+    }
 
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
@@ -145,13 +165,13 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         tipoDeDocumento: datosDeIdentificacion.tipo_identificacion ? datosDeIdentificacion.tipo_identificacion : 1,
         fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
-        numeroDeIdentificacion: datosDeIdentificacion.es_extranjero ? datosDeIdentificacion.numeroDeIdentificacion : datosDeIdentificacion.cedula_identidad,
+        numeroDeIdentificacion: numero_doc_procesado,
         nombre: datosDeIdentificacion.nombres,
         nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
         apellido_modificado: true,
         codigo_genero: datosDeIdentificacion.codigo_genero ? datosDeIdentificacion.codigo_genero : 0,
-        nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 0,
+        nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 2,
         foto: datosDeIdentificacion.foto ? datosDeIdentificacion.foto : ''
 
     });

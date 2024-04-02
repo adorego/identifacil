@@ -16,8 +16,10 @@ import CloseIcon from '@mui/icons-material/Close';
 interface FiltrosTablesProps {
     dataSinFiltro?: {} | any; // Asegúrate de tener el tipo correcto aquí
     handleFiltro?: (dataFiltrada: any[]) => void; // Asegúrate de tener el tipo correcto aquí
+    searchField?: string;
+    dateSearchField?: string;
 }
-export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTablesProps) {
+export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField, dateSearchField }: FiltrosTablesProps) {
     // Variables para selector de rango de fecha
     const [valueDateStart, setValueDateStart] = React.useState<Dayjs | null>(null);
     const [valueDateEnd, setValueDateEnd] = React.useState<Dayjs | null>(null);
@@ -51,20 +53,28 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro }: FiltrosTa
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
-        let datosFiltrados = dataSinFiltro.filter((item: { numeroDeExpediente: string; destinoTraslado: string; }) => {
-            const filtroBusqueda = busqueda ? item.numeroDeExpediente.toLowerCase().includes(busqueda.toLowerCase()) : true;
-            const filtroDestino = destino ? item.destinoTraslado === destino : true;
 
-            return filtroBusqueda && filtroDestino;
-        });
+        let datosFiltrados = dataSinFiltro;
 
-        if (valueDateStart && valueDateEnd) {
-            datosFiltrados = filterByDateRange(datosFiltrados, valueDateStart, valueDateEnd, 'fecha_del_hecho');
-        } else {
-            // Si no hay fechas definidas, no se aplica el filtro de fecha
-            console.log('Sin filtro de fecha aplicado');
+        if(searchField){
+            //@ts-ignore
+            datosFiltrados = dataSinFiltro.filter((item: { [searchField]: string; destinoTraslado: string; }) => {
+                //@ts-ignore
+                const filtroBusqueda = busqueda ? item[searchField].toLowerCase().includes(busqueda.toLowerCase()) : true;
+                const filtroDestino = destino ? item.destinoTraslado === destino : true;
+
+                return filtroBusqueda && filtroDestino;
+            });
         }
-        console.log(datosFiltrados)
+        if(dateSearchField){
+            if (valueDateStart && valueDateEnd) {
+                datosFiltrados = filterByDateRange(datosFiltrados, valueDateStart, valueDateEnd, dateSearchField);
+            } else {
+                // Si no hay fechas definidas, no se aplica el filtro de fecha
+                console.log('Sin filtro de fecha aplicado');
+            }
+        }
+        // console.log(datosFiltrados)
         if (handleFiltro) {
             handleFiltro(datosFiltrados);
         }
