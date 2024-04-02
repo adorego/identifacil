@@ -13,6 +13,7 @@ import Webcam from "react-webcam";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 import {CameraAlt} from "@mui/icons-material";
+import {LoadingButton} from "@mui/lab";
 
 
 const videoConstraints = {
@@ -33,6 +34,10 @@ const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT
 
 export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona: number | null; datosIniciales: TipoGaleria }) {
     const [loading, setLoading] = useState(true);
+
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const isEditMode = datosIniciales.length > 0 //params.id !== 'crear';
@@ -69,6 +74,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
     }, [stateGaleria]);
 
     const webcamRef = React.useRef(null);
+
     const capture = React.useCallback(
         () => {
             // @ts-ignore
@@ -122,6 +128,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
     }
 
     const postData = async () => {
+        setConsultaLoading(true)
         const formData = new FormData();
         const contentType = 'image/jpeg'; // You should set the correct MIME type
 
@@ -187,15 +194,18 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
             setLoading(false);
             if (response.ok) {
                 // @ts-ignore
+                setConsultaLoading(false)
                 const message = isEditMode ?
                     'Fotos actualizada correctamente.'
                     : 'Fotos agregadas correctamente.';
                 openSnackbar(message, 'success');
                 // router.push(`/ppl`);
             } else {
+                setConsultaLoading(false)
                 throw new Error('Error en la petición');
             }
         } catch (error) {
+            setConsultaLoading(false)
             setLoading(false);
             console.error('Error:', error);
         }
@@ -257,13 +267,28 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
             <Grid container spacing={2} mt={1}>
 
                 <Grid item sm={6} md={3}>
-                    <Button
+                    <LoadingButton
+                        sx={{
+                            minHeight: "100%",
+                            px: "48px",
+                            height: '48px'
+                        }}
+                        onClick={handleSubmit}
+                        loading={consultaLoading}
+                        disabled={!saveButtonState}
+                        loadingPosition='end'
+                        variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                    </LoadingButton>
+                    {/*<Button
                         variant='contained'
                         onClick={handleSubmit}
                         disabled={!saveButtonState}
                     >
                         Guardar
-                    </Button>
+                    </Button>*/}
                 </Grid>
             </Grid>
 

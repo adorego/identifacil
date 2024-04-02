@@ -16,6 +16,7 @@ import {datosSeguridadInicial, datosSeguridadType} from "@/components/utils/syst
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {LoadingButton} from "@mui/lab";
 
 interface BloqueSeguridadProps {
     datosIniciales?: datosSeguridadType;
@@ -25,9 +26,12 @@ interface BloqueSeguridadProps {
 
 const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona, handleAccordion}) => {
 
-    console.log(id_persona)
     const estadoIncial = datosIniciales ? datosIniciales : datosSeguridadInicial
     const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(estadoIncial);
+
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
     const {openSnackbar} = useGlobalContext();
 
     useEffect(() => {
@@ -76,16 +80,16 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        setConsultaLoading(true)
+
         const methodForm = datosIniciales?.id  ? 'PUT' : 'POST';
-        console.log(estadoBloqueSeguridadFormulario)
+
         if (id_persona) {
             const url = datosIniciales?.id ?
                 `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${datosIniciales.id}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
 
 
-
-            //console.log(JSON.stringify(estadoBloqueSeguridadFormulario))
 
             const respuesta = await api_request(url, {
                 method: methodForm,
@@ -96,18 +100,26 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
 
             })
             if (respuesta.success) {
+                setEstadoBloqueSeguridadFormulario(prev=>({
+                    ...prev,
+                    id: respuesta.datos.id,
+                }))
+                setConsultaLoading(false)
                 if(handleAccordion){
                     handleAccordion('')
                 }
+
                 openSnackbar("Datos guardados correctamente", "success")
             } else {
                 if (respuesta.error) {
+                    setConsultaLoading(false)
                     openSnackbar(`Error al guardar los datos`, `error`);
                     log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
                 }
             }
 
         } else {
+            setConsultaLoading(false)
             openSnackbar("Falta el identifiicador de la persona", "error");
         }
     }
@@ -361,9 +373,21 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                     }
                 </Grid>
                 <Grid item sm={12}>
-                    <Button onClick={onFormSubmit} variant='contained'>
-                        Guardar
-                    </Button>
+                    <LoadingButton
+                        sx={{
+                            minHeight: "100%",
+                            px: "48px",
+                            height: '48px'
+                        }}
+                        onClick={onFormSubmit}
+                        loading={consultaLoading}
+                        loadingPosition='end'
+                        variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                    </LoadingButton>
+
                 </Grid>
             </Grid>
         </Box>

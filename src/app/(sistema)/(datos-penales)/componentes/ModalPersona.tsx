@@ -125,9 +125,12 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
     /**Si es que hay un dato para mostrar carga el formulario con datos precargados de PPL
      * */
     useEffect(() => {
-        //console.log(editPersona)
+        console.log(editPersona)
         if (editPersona) {
-            setDatosFormulario(editPersona); // Asume que editPersona tiene la forma correcta
+            setDatosFormulario((prev:any)=>({
+                ...prev,
+                editPersona
+            })); // Asume que editPersona tiene la forma correcta
         }
     }, [editPersona, onOpen]);
 

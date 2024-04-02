@@ -17,7 +17,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ChangeEvent, FC, useEffect, useState} from "react";
+import React, {ChangeEvent, FC, useEffect, useState} from "react";
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
 import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
@@ -25,6 +25,7 @@ import {RequestResponse, api_request} from "@/lib/api-request";
 import dayjs, {Dayjs} from "dayjs";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {LoadingButton} from "@mui/lab";
 
 interface datosPersonales {
     id_persona: number | null;
@@ -158,6 +159,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         ...datosPersonalesInicial
     });
 
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
     useEffect(() => {
         if (datosDeIdentificacion) {
             setDatosPersonalesState(prevState => {
@@ -252,6 +256,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             getEstadosCiviles();
         }, []
     )
+
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
         setDatosPersonalesState(
@@ -312,8 +317,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             }
         )
     }
+
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        setConsultaLoading(true)
+
 
         const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
         const url = datosDeIdentificacion.id_datos_personales ?
@@ -334,9 +342,15 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             }
         })
         if (respuesta.success) {
+            setDatosPersonalesState(prev=>({
+                ...prev,
+                id: respuesta.datos.id,
+            }))
+            setConsultaLoading(false)
             openSnackbar("Datos guardados correctamente", "success")
         } else {
             if (respuesta.error) {
+                setConsultaLoading(false)
                 openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                 log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
             }
@@ -759,12 +773,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 </Grid>
                 <Grid item sm={12}>
                     <Stack direction="row" spacing={2}>
-                        <Button variant='contained' onClick={onDatosPersonalesSubmit}>
-                            Guardar
-                        </Button>
-                        {/* <Button variant='outlined'>
-              Cancelar
-            </Button> */}
+                        <LoadingButton
+                            sx={{
+                                minHeight: "100%",
+                                px: "48px",
+                                height: '48px'
+                            }}
+                            onClick={onDatosPersonalesSubmit}
+                            loading={consultaLoading}
+                            loadingPosition='end'
+                            variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                        </LoadingButton>
+
                     </Stack>
                 </Grid>
             </Grid>

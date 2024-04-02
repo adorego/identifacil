@@ -201,7 +201,7 @@ export const datosSeguridadInicial: datosSeguridadType = {
 export type datosEducacionType = {
     id: number | null;
     id_persona: number|null;
-    nivelAcademico: string;
+    nivelAcademico: "ninguna" | "primaria" | "secundaria" | "terciaria" ;
     nivelAcademico_modificado: boolean;
     institucionEducativa: string;
     institucionEducativa_modificado: boolean;
@@ -216,7 +216,7 @@ export type datosEducacionType = {
 export const datosEducacionInicial : datosEducacionType = {
     id: null,
     id_persona: null,
-    nivelAcademico: "",
+    nivelAcademico: "primaria",
     nivelAcademico_modificado: false,
     institucionEducativa: "",
     institucionEducativa_modificado: false,

@@ -29,7 +29,8 @@ import FormExpedientesEmebed from "@/app/(sistema)/ppl/[id]/components/formExped
 import {Close} from "@mui/icons-material";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {useRouter} from "next/navigation";
-import es from 'dayjs/locale/es'; // Importa el locale español
+import es from 'dayjs/locale/es';
+import {LoadingButton} from "@mui/lab"; // Importa el locale español
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -52,6 +53,7 @@ type DocsOrdenanType = Array<{
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
 const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_persona,numero_documento=null, handleAccordion}) => {
+    /** Formulario con datos capturados **/
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
     const [stateErrors, setStateErrors] = useState<Object>({})
     const [validateFormValueState, setValidateFormValueState] = useState<boolean>(false)
@@ -59,6 +61,11 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
     /**Contiene los datos para poblar el select de Expediente**/
     const [datosFormulario, setDatosFormulario] = useState<any>({})
     const [showExpdientesForm, setShowExpdientesForm] = useState(false)
+
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
+
     const {openSnackbar} = useGlobalContext();
     const isEditMode = !!datosIniciales?.id;
     const router: AppRouterInstance = useRouter();
@@ -253,11 +260,11 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-
+        setConsultaLoading(true)
         const validarFormulario = validateForm(estadoFormularioJudicial, setStateErrors, stateErrors)
 
 
-        console.log('Validar el form ' + validarFormulario)
+        // console.log('Validar el form ' + validarFormulario)
 
 
         if (id_persona != null && validarFormulario) {
@@ -302,7 +309,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
 
 
-            console.log('check 3')
+
 
             /** Solicitud para actualizacion del formulario judicial se verifica que el nuevo expediente seleccionaddo sea diferente al inicial */
             if(estadoFormularioJudicial.expediente_id !== expedienteInicial){
@@ -320,12 +327,15 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                     await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res=>{
                         console.log('respuestas de peticion datos judiciales')
                         if(res.success){
+                            setConsultaLoading(false)
                             openSnackbar('Datos judiciales actualizado correctamente')
                             // router.push(`/ppl`)
                             // router.push(`/ppl/${id_persona}`)
                         }
                     })
-                ]).then();
+                ]).then(()=>{
+                    setConsultaLoading(false)
+                });
 
             }
             else {
@@ -333,6 +343,11 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                     await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res=>{
                         console.log('respuestas de peticion datos judiciales')
                         if(res.success){
+                            setConsultaLoading(false)
+                            setEstadoFormularioJudicial(prev=>({
+                                ...prev,
+                                id: res.datos.id,
+                            }))
                             openSnackbar('Datos judiciales actualizado correctamente')
                             // router.push(`/ppl`)
                             // router.push(`/ppl/${id_persona}`)
@@ -684,9 +699,21 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
                 </Grid>
                 <Grid item sm={12}>
-                    <Button onClick={onFormSubmit} variant='contained'>
-                        Guardar
-                    </Button>
+                    <LoadingButton
+                        sx={{
+                            minHeight: "100%",
+                            px: "48px",
+                            height: '48px'
+                        }}
+                        onClick={onFormSubmit}
+                        loading={consultaLoading}
+                        loadingPosition='end'
+                        variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                    </LoadingButton>
+
                 </Grid>
             </Grid>
 

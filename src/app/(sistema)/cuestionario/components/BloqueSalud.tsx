@@ -10,6 +10,8 @@ import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {api_request} from "@/lib/api-request"
 import Checkbox from "@mui/material/Checkbox";
+import {Sort} from "@mui/icons-material";
+import {LoadingButton} from "@mui/lab";
 
 
 
@@ -59,7 +61,6 @@ const datosSaludSelectInicial: datosSaludSelect = {
     ]
 }
 
-
 type SaludFisicaType = {
     Ninguna: boolean;
     Fisica: boolean;
@@ -69,6 +70,7 @@ type SaludFisicaType = {
     Auditiva: boolean;
     otros: boolean;
 }
+
 const SaludFisicaInicial = {
     Ninguna: false,
     Fisica: false,
@@ -80,14 +82,25 @@ const SaludFisicaInicial = {
 }
 
 const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero=2, handleAccordion}) => {
+    /** Estado de datos capturados del form */
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
+
+    /** Datos para poblar elementos del form*/
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
+
+    /** Datos para poblar elementos del form*/
     const [stateSaludFisica, setStateSaludFisica] = useState<SaludFisicaType>(SaludFisicaInicial)
 
-    const options = ['Option 1', 'Option 2'];
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
 
+    /// TODO verificar si estado sigue vigente
+    const options = ['Option 1', 'Option 2'];
     const [valueAutocomplete, setValueAutocomplete] = React.useState<string | null>(options[0]);
+
+    // TODO Verifica si estado sigue vigente
     const [inputValue, setInputValue] = React.useState('');
+    const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<Array<{ id: number; nombre: string }>>([]);
 
     const {openSnackbar} = useGlobalContext();
 
@@ -110,15 +123,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     }, [datosAlmacenados])
 
     const onTiempoDeGestacionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // console.log(event.currentTarget.value);
-        /*const meses = parseInt(event.target.value);
-        if (meses > 9) {
-            openSnackbar("Los meses de gestación deben ser menores a 9", "error");
-            // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload: 0});
 
-        } else {
-            // datosSaludDispatch({type: SALUD_ACTIONS.MODIFICAR_TIEMPO_GESTACION, payload: event.currentTarget.value});
-        }*/
         setDatosSalud(prev => ({
             ...prev,
             tiempo_gestacion: parseInt(event.target.value),
@@ -158,7 +163,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         }))
     }
 
-    // Ejemplo de manejador de evento para un campo
     const handleChange = (event: { target: { name: string, value: number | string } }, tipoDato: string) => {
 
         if (tipoDato == 'saludMental') {
@@ -214,7 +218,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         });
     };
 
-    // Para campos booleanos o específicos, puedes adaptar el manejador así
     const handleBooleanChange = (event: React.ChangeEvent<HTMLInputElement>, tipoSalud: string) => {
 
         if (tipoSalud == 'saludMental') {
@@ -269,7 +272,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         }));
     };
 
-
     const handleSaludFisica = (e: any) =>{
         console.log(e.target.name)
 
@@ -282,14 +284,11 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     const onDatosSaludSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
 
+        setConsultaLoading(true)
+
         const url = datosSalud.id ?
             `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`
             : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`
-
-
-        // console.log(JSON.stringify(datosSalud))
-        // console.log(datosSalud)
-
 
         const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSalud);
         datosDelFormulario.id_persona = id_persona;
@@ -312,11 +311,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
             }
         })
         if (respuesta.success) {
+            setConsultaLoading(false)
             openSnackbar("Datos guardados correctamente", "success")
             if(handleAccordion){
                 handleAccordion('')
             }
         } else {
+            setConsultaLoading(false)
             openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`, `error`);
             // log.error("Error al guardar los datos", respuesta.datos);
 
@@ -341,7 +342,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
 
     }*/
-    const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<Array<{ id: number; nombre: string }>>([]);
+
 
     return (
         <>
@@ -928,9 +929,23 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                         </FormControl>
                     </Grid>
                     <Grid item sm={12} mt={4}>
-                        <Button onClick={onDatosSaludSubmit} variant='contained'>
+                        <LoadingButton
+                            sx={{
+                                minHeight: "100%",
+                                px: "48px",
+                                height: '48px'
+                            }}
+                            onClick={onDatosSaludSubmit}
+                            loading={consultaLoading}
+                            loadingPosition='end'
+                            variant="contained">
+                            <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                        </LoadingButton>
+                        {/*<Button onClick={onDatosSaludSubmit} variant='contained'>
                             Guardar cambios
-                        </Button>
+                        </Button>*/}
                     </Grid>
                 </Grid>
 

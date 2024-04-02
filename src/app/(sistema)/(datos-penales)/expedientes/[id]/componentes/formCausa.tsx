@@ -67,14 +67,25 @@ type HechoPunibleConCausa = {
 export default function FormCausa({params}: { params: { id: number | string } }) {
 
     //@ts-ignore
+
+    /** 1. Datos Captados del Formulario */
     const [datosFormulario, setDatosFormularios] = useState<CausaType>(causaInitialData);
+
+    /** 2, Datos de los elementos del formulario */
     const [stateCamposForm, setStateCamposForm] = useState<formDatosType>({
         hechos_punibles: [], circunscripciones: [], ciudad: [], causas: []
     })
 
+    /** 3. Lista de hechos punibles */
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
+
+    /** 4, Lista de hechos punibles seleccionados en el form */
     const [selecciones, setSelecciones] = useState<HechoPunibleConCausa[]>([]);
+
+    /** 5. Estado para manejar estado del modal */
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    /** 6. persona para editar */
     const [editPersona, setEditPersona] = useState(null);
 
 
@@ -224,7 +235,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     if (data) {
                         let ppl_ajustado = []
                         if (data.hechosPuniblesCausas.length > 0) {
-                            setSelecciones(data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})))
+                            setSelecciones(data.hechosPuniblesCausas.map((item: any) => ({
+                                hechoPunibleId: item.hecho_punible?.id,
+                                causaId: item.causa_judicial?.id
+                            })))
                         }
                         console.log(data.ppls_en_expediente)
                         if (data.ppls_en_expediente.length > 0) {
@@ -258,7 +272,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         setDatosFormularios({
                             ...data,
                             //hechos_punibles: data.hechos_punibles.map((item: { id: any; }) => (item.id)),
-                            hechosPuniblesCausas: data.hechosPuniblesCausas.length > 0 ? data.hechosPuniblesCausas.map((item: any) => ({hechoPunibleId: item.hecho_punible?.id, causaId: item.causa_judicial?.id})) : null,
+                            hechosPuniblesCausas: data.hechosPuniblesCausas.length > 0 ? data.hechosPuniblesCausas.map((item: any) => ({
+                                hechoPunibleId: item.hecho_punible?.id,
+                                causaId: item.causa_judicial?.id
+                            })) : null,
                             /*despacho_judicial: data.despacho_judicial ? data.despacho_judicial.id : null,*/
                             circunscripcion: data.circunscripcion ? data.circunscripcion.id : null,
                             ciudad: data.ciudad ? data.ciudad.id : null,
@@ -365,7 +382,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 ppls_en_expediente: [...prev.ppls_en_expediente, persona]
             }))
         } else {
-            if ((!datosFormulario.ppls_en_expediente.some((item: { id_persona: any; }) => item.id_persona == persona.id_persona) && datosFormulario.ppls_en_expediente[0] !== null)) {
+            if ((!datosFormulario.ppls_en_expediente.some((item: {
+                id_persona: any;
+            }) => item.id_persona == persona.id_persona) && datosFormulario.ppls_en_expediente[0] !== null)) {
                 setDatosFormularios((prev: { ppls_en_expediente: any; }): CausaType | any => ({
                     ...prev,
                     ppls_en_expediente: [...prev.ppls_en_expediente, persona]
@@ -384,7 +403,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
         console.log(persona)
         setDatosFormularios((prev: any) => ({
             ...prev,
-            ppls_en_expediente: datosFormulario.ppls_en_expediente.filter((item: { id_persona: number | null; }) => item.id_persona !== persona)
+            ppls_en_expediente: datosFormulario.ppls_en_expediente.filter((item: {
+                id_persona: number | null;
+            }) => item.id_persona !== persona)
         }))
     }
 
@@ -398,25 +419,26 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     const handleEdit = (id_persona: number | null = null) => {
 
-        const personaParaEditar = datosFormulario.ppls_en_expediente.find((item: { id_persona: number | null; }) => item.id_persona == id_persona);
+        const personaParaEditar = datosFormulario.ppls_en_expediente.find((item: {
+            id_persona: number | null;
+        }) => item.id_persona == id_persona);
         // @ts-ignore
         setEditPersona(personaParaEditar);
         setIsModalOpen(true); // Esto abrirá el modal
 
     }
 
-    const testClick = (e:any) =>{
+    const testClick = (e: any) => {
         e.preventDefault()
         console.log('test')
     }
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault()
         console.log('hola0')
         postData()
 
     }
-
 
 
     const postData = async () => {
@@ -431,14 +453,25 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 selecciones
             }*/
         const form_method = isEditMode ? 'PUT' : 'POST'
-        
+
         const endpoint_api = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`
         const stateForm: any = {
             ...datosFormulario,
-            hechosPuniblesCausas: selecciones.map((item:any) => Object.values(item)),
+            hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
+            ppls_en_expediente: datosFormulario.ppls_en_expediente.map(item => {
+                // console.log(item.hechosPuniblesCausas)
+                console.log(item.hechosPuniblesCausas.map((item:any)=>[item.causa_judicial.id,item.hecho_punible.id]))
+                return (
+                    {
+                        ...item,
+                        hechosPuniblesCausas: item.hechosPuniblesCausas.map((item:any)=>[item.causa_judicial.id,item.hecho_punible.id])
+                    }
+                )
+            })
         }
 
-
+        console.log(datosFormulario)
+        console.log(stateForm)
         // const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
 
         if (stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == "") {

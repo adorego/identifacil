@@ -17,7 +17,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ChangeEvent, FC, useEffect, useState} from "react";
+import React, {ChangeEvent, FC, useEffect, useState} from "react";
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
 import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
@@ -28,6 +28,7 @@ import {DatosDeIdentificacion} from "@/components/registro/identificacionForm";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {FormValidator} from "@/app/middleware/formValidator";
+import {LoadingButton} from "@mui/lab";
 
 interface datosPersonales {
     id_persona: number | null;
@@ -128,7 +129,7 @@ const datosPersonalesInicial: datosPersonales = {
 
 export interface BloqueDatosPersonalesProps {
     datosDeIdentificacion: DatosDeIdentificacion;
-    handleAccordion?: (s: string)=>void;
+    handleAccordion?: (s: string) => void;
 
 }
 
@@ -154,6 +155,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         foto: datosDeIdentificacion.foto ? datosDeIdentificacion.foto : ''
 
     });
+
+
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
     const [datosObligatorios, setDatosObligatorios] = useState<Object>({})
     const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
@@ -209,7 +215,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             getEstadosCiviles();
             getNacionalidades();
 
-            setDatosObligatorios(prev=>({
+            setDatosObligatorios(prev => ({
                 ...prev,
                 estadoCivil: {
                     requerido: true,
@@ -265,15 +271,16 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
         setDatosPersonalesState(
             (prev) => ({
-                        ...prev,
-                        fechaDeNacimiento: value,
-                        fechaDeNacimiento_modificado: true
+                ...prev,
+                fechaDeNacimiento: value,
+                fechaDeNacimiento_modificado: true
             })
         )
     }
 
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        setConsultaLoading(true)
 
         console.log('test')
         if (datosDeIdentificacion.id_persona && FormValidator(datosObligatorios, datosPersonalesState)) {
@@ -289,12 +296,19 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             })
 
             if (respuesta.success) {
+                setConsultaLoading(false)
+                setDatosPersonalesState(prev => ({
+                    ...prev,
+                    id: respuesta.datos.id,
+                }))
                 openSnackbar("Datos guardados correctamente", "success")
                 if (handleAccordion) {
                     handleAccordion('')
                 }
             } else {
                 if (respuesta.error) {
+                    setConsultaLoading(false)
+
                     openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                     log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
                     if (handleAccordion) {
@@ -304,6 +318,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             }
 
         } else {
+            setConsultaLoading(false)
             openSnackbar("Falta el número de identificación", "error");
         }
     }
@@ -741,9 +756,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 </Grid>*/}
                 <Grid item sm={12}>
                     <Stack direction="row" spacing={2}>
-                        <Button variant='contained' onClick={onDatosPersonalesSubmit}>
-                            Guardar
-                        </Button>
+                        <LoadingButton
+                            sx={{
+                                minHeight: "100%",
+                                px: "48px",
+                                height: '48px'
+                            }}
+                            onClick={onDatosPersonalesSubmit}
+                            loading={consultaLoading}
+                            loadingPosition='end'
+                            variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                        </LoadingButton>
+
                         {/* <Button variant='outlined'>
               Cancelar
             </Button> */}

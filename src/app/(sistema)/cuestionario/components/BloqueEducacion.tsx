@@ -17,6 +17,7 @@ import React from "react";
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
+import {LoadingButton} from "@mui/lab";
 
 export interface BloqueEducacionProps {
     id_persona: number | null;
@@ -25,7 +26,12 @@ export interface BloqueEducacionProps {
 }
 
 const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales, handleAccordion}) => {
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
+
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
+
     const {openSnackbar} = useGlobalContext();
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -45,6 +51,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
     }
 
     useEffect(() => {
+        console.log('entro en useeffct educacion')
         if (datosEducacionIniciales) {
             setEstadoFormularioDeEducacion(prevState => {
                 return {
@@ -75,7 +82,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
     const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         const methodForm = estadoFormularioDeEducacion.id ? 'PUT' : 'POST';
-
+        setConsultaLoading(true)
 
         if (id_persona) {
             try {
@@ -98,17 +105,25 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                 });
 
                 if (respuesta.success) {
+                    setEstadoFormularioDeEducacion(prev=>({
+                        ...prev,
+                        id: respuesta.datos.id,
+                    }))
                     openSnackbar("Datos guardados correctamente", "success")
+                    setConsultaLoading(false)
+
                     if(handleAccordion){
                         handleAccordion('')
                     }
                 } else {
                     if (respuesta.error) {
+                        setConsultaLoading(false)
                         openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                         log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
                     }
                 }
             } catch (error) {
+                setConsultaLoading(false)
                 openSnackbar(`Error al guardar los datos:${error}`, "error");
             }
 
@@ -228,9 +243,20 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                     </FormControl>
                 </Grid>
                 <Grid item sm={12} mt={4}>
-                    <Button variant='contained' onClick={onGuardarClick}>
-                        Guardar
-                    </Button>
+                    <LoadingButton
+                        sx={{
+                            minHeight: "100%",
+                            px: "48px",
+                            height: '48px'
+                        }}
+                        onClick={onGuardarClick}
+                        loading={consultaLoading}
+                        loadingPosition='end'
+                        variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                    </LoadingButton>
                 </Grid>
 
             </Grid>
