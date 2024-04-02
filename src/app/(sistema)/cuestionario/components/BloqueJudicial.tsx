@@ -319,6 +319,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                     await postData(url_patch_expediente, JSON.stringify({ppls:[estadoFormularioJudicial.id_persona]}), 'PATCH').then(res=>{
                         console.log('respuestas de peticion patch')
                         if(res.success){
+                            setConsultaLoading(false)
                             openSnackbar('PPL asignado a expediente correctamente')
                             //router.push(`/ppl}`)
                             // router.push(`/ppl/${id_persona}`)
@@ -331,9 +332,12 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                             openSnackbar('Datos judiciales actualizado correctamente')
                             // router.push(`/ppl`)
                             // router.push(`/ppl/${id_persona}`)
+                            if(handleAccordion){
+                                handleAccordion('')
+                            }
                         }
                     })
-                ]).then(()=>{
+                ]).finally(()=>{
                     setConsultaLoading(false)
                 });
 
@@ -359,11 +363,17 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                     })
                 } catch (err){
                     console.log('err')
+                } finally {
+                    setConsultaLoading(false)
+                    if(handleAccordion){
+                        handleAccordion('')
+                    }
                 }
             }
 
 
         } else {
+            setConsultaLoading(false)
             openSnackbar("Error al guardar el formulario.", "error");
 
         }

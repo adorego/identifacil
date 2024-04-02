@@ -32,7 +32,7 @@ const galeriaInitial = [
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
-export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona: number | null; datosIniciales: TipoGaleria }) {
+export default function BloqueGaleria({id_persona, datosIniciales, handleAccordion}: { id_persona: number | null; datosIniciales: TipoGaleria; handleAccordion?:(s: string)=>void }){
     const [loading, setLoading] = useState(true);
 
     /** Estado para manejo de spinner de boton de solicitud de guardado */
@@ -200,6 +200,9 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
                     : 'Fotos agregadas correctamente.';
                 openSnackbar(message, 'success');
                 // router.push(`/ppl`);
+                if(handleAccordion){
+                    handleAccordion('')
+                }
             } else {
                 setConsultaLoading(false)
                 throw new Error('Error en la petición');

@@ -29,6 +29,7 @@ import {useGlobalContext} from "@/app/Context/store";
 import {useModal} from "@/components/modal/UseModal";
 import {useRouter} from "next/navigation";
 import AddIcon from "@mui/icons-material/Add";
+import {LoadingButton} from "@mui/lab";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -48,6 +49,9 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     const estadoInicial = datosFamiliaresIniciales ? datosFamiliaresIniciales : datosFamiliaresInicial;
     const [estadoFormularioDatosFamiliares, setEstadoFormularioDatosFamiliares] = useState<datosFamiliaresType>(estadoInicial);
     const [stateCirculoFamiliar, setStateCirculoFamiliar] = useState<circuloFamiliarStateType[]>([])
+
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [consultaLoading, setConsultaLoading] = useState(false)
 
     /**
     * Custom hook para manejar el modal
@@ -143,6 +147,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     }
     const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
+        setConsultaLoading(true)
+
         const circuloFamiliar = stateCirculoFamiliar.map(item => ({
             ...item,
             vinculo: item.vinculo.id,
@@ -179,25 +185,32 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 body: JSON.stringify(datosFormulario),
             });
 
-            setLoading(false);
 
             if (response.ok) {
+                setLoading(false);
+                setConsultaLoading(false)
+
                 const message = editMod
                     ? `Datos Familiares actualizada correctamente.`
                     : `Datos Familiares creada correctamente.`;
 
                 openSnackbar(message, 'success');
+
                 if(handleAccordion){
                     handleAccordion('')
                 }
+
                 if(redirect){
                     router.push(`/ppl`);
                 }
                 return response
             } else {
+                setConsultaLoading(false)
+                setLoading(false);
                 throw new Error('Error en la petición');
             }
         } catch (error) {
+            setConsultaLoading(false)
             setLoading(false);
             console.error('Error:', error);
         }
@@ -362,9 +375,21 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             </Grid>
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
-                    <Button variant='contained' onClick={handleSubmit}>
-                        Guardar
-                    </Button>
+                    <LoadingButton
+                        sx={{
+                            minHeight: "100%",
+                            px: "48px",
+                            height: '48px'
+                        }}
+                        onClick={handleSubmit}
+                        loading={consultaLoading}
+                        loadingPosition='end'
+                        variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                    </LoadingButton>
+
                 </Grid>
             </Grid>
 

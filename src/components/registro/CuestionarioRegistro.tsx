@@ -164,7 +164,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     <Typography  sx={{fontWeight: 'bold'}}>Fotografias</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <BloqueGaleria id_persona={id_persona} datosIniciales={[]}/>
+                    <BloqueGaleria handleAccordion={setExpanded}  id_persona={id_persona} datosIniciales={[]}/>
                 </AccordionDetails>
             </Accordion>
 

@@ -782,6 +782,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             onClick={onDatosPersonalesSubmit}
                             loading={consultaLoading}
                             loadingPosition='end'
+
                             variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}
