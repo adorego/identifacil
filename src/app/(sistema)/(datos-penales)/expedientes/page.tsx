@@ -11,12 +11,12 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 
 const header = [
-    { id: 'id', label: 'id' },
-    { id: 'numeroDeExpediente', label: 'Nro. expediente' },
-    { id: 'caratula_expediente', label: 'Caratula' },
-    { id: 'fecha_del_hecho', label: 'Fecha del hecho', type: 'date' },
-    { id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento', type: 'date' },
-    { id: 'condenado', label: 'Condenado', type: 'boolean' },
+    {id: 'id', label: 'id'},
+    {id: 'numeroDeExpediente', label: 'Nro. expediente'},
+    {id: 'caratula_expediente', label: 'Caratula'},
+    {id: 'fecha_del_hecho', label: 'Fecha del hecho', type: 'date'},
+    {id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento', type: 'date'},
+    {id: 'condenado', label: 'Condenado', type: 'boolean'},
 ]
 
 
@@ -28,10 +28,11 @@ async function getCausas(){
     return await res.json()
 }*/
 
-export default function Page(){
+export default function Page() {
 
     const [data, setData] = useState(null);
     const [dataFiltrado, setDataFiltrado] = useState(null);
+
     async function fetchData() {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`);
@@ -61,7 +62,7 @@ export default function Page(){
                 setData(fetchedData);
             });
     }, []);*/
-    const onHandleFiltro = (value: any) =>{
+    const onHandleFiltro = (value: any) => {
         setDataFiltrado(value)
     }
 
@@ -79,7 +80,7 @@ export default function Page(){
         );
     }
 
-    return(
+    return (
         <>
 
             <Box mb={3}>
@@ -88,14 +89,17 @@ export default function Page(){
             <Paper>
                 <Box>
                     <Box p={3}>
-                        <FiltrosTables dataSinFiltro={data} handleFiltro={onHandleFiltro}/>
+                        <FiltrosTables
+                            dateSearchField='fecha_del_hecho'
+                            searchField='numeroDeExpediente'
+                            dataSinFiltro={data} handleFiltro={onHandleFiltro}/>
                     </Box>
                     <CustomTable
                         headers={header}
-                        data={dataFiltrado? dataFiltrado : data}
+                        data={dataFiltrado ? dataFiltrado : data}
                         showId={true}
                         options={{
-                            rowsPerPageCustom:10,
+                            rowsPerPageCustom: 10,
                             deleteOption: false,
                             pagination: true,
                             targetURL: '/expedientes'

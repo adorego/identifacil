@@ -127,8 +127,10 @@ export default function FormRegister() {
                 identidad.current.tipo_identificacion = 2;
                 identidad.current.tiene_cedula = false;
             }
+
+            /** Si no tiene cedula y no es extranjero */
             if(!identidad.current?.tiene_cedula && !identidad.current?.es_extranjero) {
-                numero_identificacion = identidad.current.cedula_identidad ? identidad.current.cedula_identidad : "";
+                numero_identificacion = identidad.current.prontuario ? identidad.current.prontuario: "";
                 identidad.current.tipo_identificacion = 3;
             }
 
