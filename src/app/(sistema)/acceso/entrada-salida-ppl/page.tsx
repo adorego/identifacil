@@ -98,6 +98,7 @@ export default function EntradaSalidaPPL() {
             if(data.identificado){
                 setPPLIdentificado(true);
                 setIdentificationData({
+                    
                 identificado:data.identificado,
                 numeroDeIdentificacion: data.numeroDeIdentificacion,
                 nombres: data.nombres,

@@ -44,6 +44,7 @@ export default function Identificacion() {
             console.log("Respuesta:", data);
             setProgresoReconocmiento(EstadosProgreso[3]);
             setIdentificationData({
+                identificado:data.identificado,
                 numeroDeIdentificacion: data.numeroDeIdentificacion,
                 nombres: data.nombres,
                 apellidos: data.apellidos,

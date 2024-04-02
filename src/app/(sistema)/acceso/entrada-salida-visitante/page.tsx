@@ -90,6 +90,7 @@ export default function EntradaSalidaVisitante() {
             setProgresoReconocmiento(EstadosProgreso[0]);
             setVisitanteIdentificado(true);
             setIdentificationData({
+                identificado:data.identificado,
                 numeroDeIdentificacion: data.numeroDeIdentificacion,
                 nombres: data.nombres,
                 apellidos: data.apellidos,
