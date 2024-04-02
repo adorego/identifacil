@@ -215,13 +215,12 @@ function CustomTable({
                                         if (header.id === 'id' && !showId) return null;
 
                                         return (
-                                            <TableCell
-                                                sx={(header.id == 'id' ? rowStyle : {})}
-                                                key={header.id}>
+                                            <TableCell sx={(header.id == 'id' ? rowStyle : {})} key={header.id}>
 
                                                 {header.type === 'date' ? formatDate(row[header.id]) : null }
                                                 {(header.type === 'boolean' && header.id == 'condenado') ? (row[header.id]? 'Condenado' : 'Procesado') : null }
-                                                {(header.type !== 'date' && header.type !== 'boolean') ? row[header.id] : null}
+                                                {(header.type !== 'date' && header.type !== 'boolean' && header.type !== 'genero') ? row[header.id] : null}
+                                                {(header.type === 'genero') ? (row[header.id] == 1 ? 'Femenino' : 'Masculino') : null }
 
                                             </TableCell>
                                         );

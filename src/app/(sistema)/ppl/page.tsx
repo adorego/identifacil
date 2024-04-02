@@ -16,7 +16,7 @@ const header = [
     {id: 'id', label: 'ID'},
     {id: 'nombre', label: 'Nombre'},
     {id: 'apellido', label: 'Apellido'},
-    {id: 'genero', label: 'Genero', type: 'number', dataType:[{id: 1, name: 'Femenino'},{id: 2, name:'Masculino'}]},
+    {id: 'genero', label: 'Genero', type: 'genero', dataType:[{id: 1, name: 'Femenino'},{id: 2, name:'Masculino'}]},
     {id: 'fechaDeNacimiento', label: 'Fecha nacimiento', type: 'date'},
     {id: 'estado_perfil', label: 'Estado Perfil'},
 ]
