@@ -191,7 +191,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
                     'Fotos actualizada correctamente.'
                     : 'Fotos agregadas correctamente.';
                 openSnackbar(message, 'success');
-                router.push(`/ppl`);
+                // router.push(`/ppl`);
             } else {
                 throw new Error('Error en la petición');
             }
@@ -205,7 +205,7 @@ export default function BloqueGaleria({id_persona, datosIniciales}: { id_persona
         <>
 
             <Typography variant='h6'>
-                Registro Fotografrico
+                Galeria de fotos
             </Typography>
             <Grid container spacing={2} mt={1}>
 
