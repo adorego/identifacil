@@ -1,11 +1,13 @@
 "use client"
 
 import {createTheme, ThemeOptions, ThemeProvider } from "@mui/material/styles";
+import { esES } from '@mui/material/locale'
+import {esES as dateEs}  from '@mui/x-date-pickers/locales/';
+
 import {NextAppDirEmotionCacheProvider} from "./EmotionCache"
 import CssBaseline from "@mui/material/CssBaseline";
 import React from "react";
-import { lime, purple } from '@mui/material/colors';
-import { Roboto } from "next/font/google";
+
 import { Public_Sans } from "next/font/google";
 
 const publicSans = Public_Sans({
@@ -57,7 +59,7 @@ const themeOptions: ThemeOptions = {
     },
 }
 
-const theme = createTheme(themeOptions);
+const theme = createTheme(themeOptions, esES, dateEs);
 
 export default function ThemeRegistry({children}:{children: React.ReactNode})
 {

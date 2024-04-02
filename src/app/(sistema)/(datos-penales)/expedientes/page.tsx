@@ -31,6 +31,7 @@ async function getCausas(){
 export default function Page(){
 
     const [data, setData] = useState(null);
+    const [dataFiltrado, setDataFiltrado] = useState(null);
     async function fetchData() {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`);
@@ -60,6 +61,9 @@ export default function Page(){
                 setData(fetchedData);
             });
     }, []);*/
+    const onHandleFiltro = (value: any) =>{
+        setDataFiltrado(value)
+    }
 
     if (!data) {
         return (
@@ -84,11 +88,11 @@ export default function Page(){
             <Paper>
                 <Box>
                     <Box p={3}>
-                        <FiltrosTables />
+                        <FiltrosTables dataSinFiltro={data} handleFiltro={onHandleFiltro}/>
                     </Box>
                     <CustomTable
                         headers={header}
-                        data={data}
+                        data={dataFiltrado? dataFiltrado : data}
                         showId={true}
                         options={{
                             rowsPerPageCustom:10,

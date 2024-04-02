@@ -18,7 +18,7 @@ import React, {FC, useEffect, useState} from "react";
 import {api_request} from "@/lib/api-request";
 import {datosIncialesJudiciales, datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 import AddIcon from '@mui/icons-material/Add';
-import {MobileDatePicker} from "@mui/x-date-pickers";
+import {LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {MuiFileInput} from "mui-file-input";
@@ -29,7 +29,9 @@ import FormExpedientesEmebed from "@/app/(sistema)/ppl/[id]/components/formExped
 import {Close} from "@mui/icons-material";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {useRouter} from "next/navigation";
+import es from 'dayjs/locale/es'; // Importa el locale español
 
+dayjs.locale(es); // Configura dayjs globalmente al español
 
 interface BloqueJudicialProps {
     datosIniciales?: datosIncialesJudiciales | null;
@@ -468,7 +470,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                                                     }));
                                                     setEstadoFormularioJudicial(prev => ({
                                                         ...prev,
-                                                        expediente_id: newValue.id
+                                                        expediente_id: newValue?.id
                                                     }))
                                                 }}
                                                 id="controllable-states-demo"

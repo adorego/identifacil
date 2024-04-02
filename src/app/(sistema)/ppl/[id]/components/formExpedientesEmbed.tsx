@@ -101,7 +101,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
 
     const [formState, setFormState] = useState<FormStateType>(formStateInitial);
     const [selecciones, setSelecciones] = useState<HechoPunibleConCausa[]>([]);
-    const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
+    const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]);
     const [loading, setLoading] = useState(true)
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();

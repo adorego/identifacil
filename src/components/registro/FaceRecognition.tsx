@@ -155,25 +155,25 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
     }
     if(!loading){
 
-        return (
-            <Grid container>
-                <Grid item xs={12}>
-                    <Box sx={{
-                        // border:"2px solid blue",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        position: 'relative',
+    return (
+        <Grid container>
+            <Grid item xs={12}>
+                <Box sx={{
+                    // border:"2px solid blue",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    position: 'relative',
+                }}>
+                    <Box className='faceReconContainer' sx={{
+                        position: "relative",
+                        top: "0",
+                        zIndex: '10'
                     }}>
-                        <Box className='faceReconContainer' sx={{
-                            position: "absolute",
-                            top: "10px",
-                            zIndex: '10'
-                        }}>
-                            <Alert severity="info">
-                                Por favor situe a la persona frente a la camara y presione el botón Capturar para el registro
-                            </Alert>
-                        </Box>
+                        <Alert severity="info">
+                            Por favor situe a la persona frente a la camara y presione el botón Capturar para el registro
+                        </Alert>
+                    </Box>
 
                         <div className={styles.video_container}>
                             <video className={styles.video}
