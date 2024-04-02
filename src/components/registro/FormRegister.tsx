@@ -126,11 +126,14 @@ export default function FormRegister() {
 
                 identidad.current.tipo_identificacion = 2;
                 identidad.current.tiene_cedula = false;
-            }else {
+            }
+            if(!identidad.current?.tiene_cedula && !identidad.current?.es_extranjero) {
                 numero_identificacion = identidad.current.cedula_identidad ? identidad.current.cedula_identidad : "";
                 identidad.current.tipo_identificacion = 3;
             }
 
+            console.log(identidad.current)
+            console.log(identidad.current?.tipo_identificacion)
             console.log(identidad.current)
 
             const formData = new FormData();
