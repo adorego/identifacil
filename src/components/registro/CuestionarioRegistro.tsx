@@ -113,6 +113,7 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                         {/* Bloque de formulario */}
                         {datosDeIdentidad.id_persona &&
                             <BloqueFamiliar
+                                handleAccordion={setExpanded}
                                 id_persona={datosDeIdentidad.id_persona}/>
                         }
                     </AccordionDetails>
@@ -128,8 +129,10 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionSummary>
                     <AccordionDetails>
                         {/* Bloque de formulario */}
-                        {datosDeIdentidad.id_persona && <BloqueSeguridad
-                            id_persona={datosDeIdentidad.id_persona}/>}
+                        {datosDeIdentidad.id_persona &&
+                            <BloqueSeguridad
+                                handleAccordion={setExpanded}
+                                id_persona={datosDeIdentidad.id_persona}/>}
                     </AccordionDetails>
 
                 </Accordion>
@@ -143,8 +146,10 @@ const CuestionarioRegistro: FC<CuestionarioRegistroProps> = ({datosDeIdentidad, 
                     </AccordionSummary>
                     <AccordionDetails>
                         {/* Bloque de formulario */}
-                        {datosDeIdentidad.id_persona && <BloqueJudicial
-                            id_persona={datosDeIdentidad.id_persona}/>}
+                        {datosDeIdentidad.id_persona &&
+                            <BloqueJudicial
+                                handleAccordion={setExpanded}
+                                id_persona={datosDeIdentidad.id_persona}/>}
                     </AccordionDetails>
 
                 </Accordion>

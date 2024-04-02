@@ -185,10 +185,10 @@ function CustomTable({
                 <Table>
                     <TableHead>
                         <TableRow>
-                            {headers.map((header) => {
+                            {headers.map((header:Header, index:number) => {
                                 if (header.id === 'id' && !showId) return null;
                                 return (
-                                    <TableCell key={header.id}>
+                                    <TableCell key={index}>
                                         <TableSortLabel
                                             active={orderBy === header.id}
                                             direction={orderBy === header.id ? order : 'asc'}
@@ -209,8 +209,8 @@ function CustomTable({
                     </TableHead>
                     <TableBody>
                         {
-                            slicedData.map((row) => (
-                                <TableRow key={row.id as number}>
+                            slicedData.map((row:Data, index:number) => (
+                                <TableRow key={index}>
                                     {headers.map((header) => {
                                         if (header.id === 'id' && !showId) return null;
 

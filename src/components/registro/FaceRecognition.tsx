@@ -131,9 +131,38 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                             }
                     )
 
+<<<<<<< HEAD
 
 
             
+=======
+                }
+            )
+        }, []
+    )
+
+    useEffect(() => {
+
+            Promise.all(
+                [
+                    // faceapi.loadSsdMobilenetv1Model('/models'),
+                    faceapi.loadTinyFaceDetectorModel('/models'),
+                    faceapi.loadFaceLandmarkModel('/models'),
+                    faceapi.loadFaceLandmarkTinyModel('/models'),
+                    // faceapi.loadFaceDetectionModel('/models'),
+                    faceapi.loadFaceRecognitionModel('/models')
+                ]
+            ).then(
+                () => {
+                    //conectar_con_camaraIP();
+                    // conectar_con_webcam();
+
+
+                })
+                .catch((error) => {
+                    console.log(error);
+                })
+>>>>>>> 99cb7253eab269052869b4e87ffb5712fbb52d2e
         }, []
     )
 
@@ -208,7 +237,44 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                             </Button>
                         </div>
                     </Box>
+<<<<<<< HEAD
                 </Grid>
+=======
+
+                    <div className={styles.video_container}>
+                        <video className={styles.video}
+                               width={600}
+                               height={600}
+                               ref={videoElementRef}
+                               id="videoElement" autoPlay>
+
+                        </video>
+
+                        <FaceDetectionOverlay
+                            className={styles.relayCanvas}
+                            iniciar_deteccion={iniciarDeteccion}
+                            videoElement={videoElementRef.current}
+                            capturar_foto={capturarFoto}
+                            progreso={props.progreso}
+                            reset_capturar_foto={reset_capturar_foto}
+                            numero_de_capturas={props.numero_de_capturas}
+                            agregar_reconocimiento={props.agregar_reconocimiento}/>
+                        {/* {capturarFoto ? 
+                        <LinearProgressionWithLabel indicador={progress.indicador} estado={progress.estado} />
+                        : null } */}
+                        <Typography variant="body1" className={styles.notificacion}>
+                            {props.notificacion}
+                        </Typography>
+                        <Button
+                            onClick={onFotoCapture}
+                            className={styles.capturePhotoButton}
+                            variant='outlined'
+                                endIcon={<AddAPhoto/>}>
+                            {props.etiqueta_boton}
+                        </Button>
+                    </div>
+                </Box>
+>>>>>>> 99cb7253eab269052869b4e87ffb5712fbb52d2e
             </Grid>
         )
     }

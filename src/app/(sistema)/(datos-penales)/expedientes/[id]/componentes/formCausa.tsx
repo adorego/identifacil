@@ -697,7 +697,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     <Grid item sm={3}>
                         <TextField
                             fullWidth
-                            label="Bario"
+                            label="Barrio"
                             variant="outlined"
                             value={datosFormulario.lugar_del_hecho}
                             name="lugar_del_hecho"

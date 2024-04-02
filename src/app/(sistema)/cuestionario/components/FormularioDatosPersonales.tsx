@@ -2,7 +2,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid,
     InputLabel, ListSubheader,
@@ -46,7 +46,7 @@ interface datosPersonales {
     sexo: string;
     codigo_genero?: number;
     sexo_modificado: boolean;
-    tipoDeDocumento: string;
+    tipoDeDocumento: number | null;
     tipoDeDocumento_modificado: boolean;
     direccion: string;
     direccion_modificado: boolean;
@@ -66,10 +66,20 @@ interface datosPersonales {
     perteneceAComunidadLGTBI_modificado: boolean;
     grupoLGTBI: string;
     grupoLGTBI_modificado: boolean;
+    es_extranjero: boolean;
+    mantiene_contacto_con_consulado_o_embajada: boolean;
+    nombre_de_contacto_en_consulado_o_embajada: string;
+    numero_de_contacto_en_consulado_o_embajada: string;
+    pais_de_embajada: number;
 
 }
 
 const datosPersonalesInicial: datosPersonales = {
+    nombre_de_contacto_en_consulado_o_embajada: '',
+    numero_de_contacto_en_consulado_o_embajada: '',
+    mantiene_contacto_con_consulado_o_embajada: false,
+    pais_de_embajada: 0,
+    es_extranjero: false,
     id_persona: null,
     numero_de_identificacion: "",
     nombre: '',
@@ -81,7 +91,6 @@ const datosPersonalesInicial: datosPersonales = {
     lugarDeNacimiento: '',
     sexo: '',
     codigo_genero: 0,
-    tipoDeDocumento: '',
     direccion: '',
     barrioCompania: '',
     numeroDeContacto: '',
@@ -97,6 +106,7 @@ const datosPersonalesInicial: datosPersonales = {
     nacionalidad_modificado: false,
     lugarDeNacimiento_modificado: false,
     sexo_modificado: false,
+    tipoDeDocumento: 0,
     tipoDeDocumento_modificado: false,
     direccion_modificado: false,
     barrioCompania_modificado: false,
@@ -109,6 +119,8 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
+
+
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -134,10 +146,11 @@ export interface BloqueDatosPersonalesProps {
         perteneceAComunidadLGTBI: boolean;
 
     };
+    tipo_de_documento?: number | null;
 
 }
 
-const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion}) => {
+const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, tipo_de_documento = null}) => {
 
     // console.log(datosDeIdentificacion)
 
@@ -154,6 +167,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     fechaDeNacimiento: dayjs(datosDeIdentificacion.fechaDeNacimiento, "YYYY-MM-DD"),
                     fechaDeNacimiento_modificado: true,
                     numero_de_identificacion: datosDeIdentificacion.numero_de_identificacion,
+                    tipoDeDocumento: tipo_de_documento ? tipo_de_documento : 0,
                     nombre: datosDeIdentificacion.nombres,
                     nombre_modificado: true,
                     apellido: datosDeIdentificacion.apellidos,
@@ -171,6 +185,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     pueblosIndigenas: datosDeIdentificacion.pueblosIndigenas,
                     nombreEtnia: datosDeIdentificacion.nombreEtnia,
                     perteneceAComunidadLGTBI: datosDeIdentificacion.perteneceAComunidadLGTBI,
+                    es_extranjero: tipo_de_documento == 2
                 }
             })
         }
@@ -423,12 +438,22 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item sm={4}>
-                    <TextField
-                        fullWidth
-                        label='Tipo de documento'
-                        name='tipoDeDocumento'
-                        value={datosPersonalesState.tipoDeDocumento}
-                    />
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel id='tipo-doc-label'>Tipo de documento</InputLabel>
+                        <Select
+                            labelId='tipo-doc-label'
+                            value={datosPersonalesState.tipoDeDocumento ? datosPersonalesState.tipoDeDocumento : 0}
+                            label='Tipo de documento'
+                            onChange={onDatoSelectChange}
+                            name="tipoDeDocumento"
+                        >
+                            <MenuItem value={1}>Cedula de identidad policial</MenuItem>
+                            <MenuItem value={2}>Pasaporte</MenuItem>
+                            <MenuItem value={3}>Prontuario policial</MenuItem>
+
+                        </Select>
+                    </FormControl>
+
                 </Grid>
                 <Grid item sm={4}>
                     <TextField
@@ -538,6 +563,83 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         />
                     </FormControl>
                 </Grid>
+
+                {/* Seccion extranjeros*/}
+                {datosPersonalesState.es_extranjero ?
+                    (<Grid item sm={12}>
+                        <Grid container spacing={2} my={2}>
+                            <Grid item sm={12}>
+                                <Typography variant='h6'>
+                                    Datos de Extranjeros
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={3}>
+                                <FormControl fullWidth variant="outlined">
+                                    <FormLabel>Mantiene contacto con la embajada:</FormLabel>
+                                    <RadioGroup
+                                        value={datosPersonalesState.mantiene_contacto_con_consulado_o_embajada}
+                                        onChange={onOptionSelectChange}
+                                        row
+                                        aria-labelledby="mantiene_contacto_con_consulado_o_embajada"
+                                        name="mantiene_contacto_con_consulado_o_embajada">
+                                        <FormControlLabel
+                                            value={true}
+                                            control={<Radio/>}
+                                            label="Si"/>
+                                        <FormControlLabel
+                                            value={false}
+                                            control={<Radio/>}
+                                            label="No"/>
+                                    </RadioGroup>
+                                </FormControl>
+                            </Grid>
+                            {datosPersonalesState.mantiene_contacto_con_consulado_o_embajada ?
+                                (
+                                    <>
+                                        <Grid item xs={3}>
+                                            <TextField
+                                                fullWidth
+                                                name='nombre_de_contacto_en_consulado_o_embajada'
+                                                label='Nombre de contacto'
+                                                onChange={onDatoChange}
+                                                value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <TextField
+                                                fullWidth
+                                                name='numero_de_contacto_en_consulado_o_embajada'
+                                                label='Número de contacto de contacto'
+                                                onChange={onDatoChange}
+                                                value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={3}>
+                                            <FormControl fullWidth variant="outlined">
+                                                <InputLabel>Pais de embajada</InputLabel>
+                                                <Select
+                                                    value={datosPersonalesState.pais_de_embajada}
+                                                    onChange={onDatoSelectChange}
+                                                    label="Pais de embajada"
+                                                    name="pais_de_embajada"
+                                                >
+                                                    <MenuItem value={1}>Brasil</MenuItem>
+                                                    <MenuItem value={2}>Argentina</MenuItem>
+                                                    <MenuItem value={3}>Chile</MenuItem>
+                                                    <MenuItem value={3}>Bolivia</MenuItem>
+                                                </Select>
+                                                <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
+                                            </FormControl>
+                                        </Grid>
+                                    </>
+                                )
+                                : null}
+                        </Grid>
+                    </Grid>)
+
+                    : null}
+
+                {/* Seccion pueblos indigenas */}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Pueblo indigenas
@@ -564,16 +666,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item sm={6}>
-{/*                    <TextField
-                        fullWidth
-                        label="Nombre de la etnia"
-                        name="nombreEtnia"
-                        value={datosPersonalesState.nombreEtnia}
-                        onChange={onDatoChange}
-                        disabled={!datosPersonalesState.pueblosIndigenas}
 
-
-                    />*/}
                     {
                         datosPersonalesState.pueblosIndigenas ?
                             <FormControl className='pueblosSelector' fullWidth variant="outlined">
@@ -625,6 +718,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     }
 
                 </Grid>
+
+                {/* Seccion Comunidad LGBTI */}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Comunidad LGBTI

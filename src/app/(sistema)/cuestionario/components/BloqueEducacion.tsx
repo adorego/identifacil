@@ -133,7 +133,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                 Formulario de Educacion
             </Typography>
             <Grid container spacing={2}>
-                <Grid item sm={6}>
+                <Grid item sm={12}>
                     <FormControl>
                         <FormLabel id="datoEducacion">Nivel Academico</FormLabel>
                         <RadioGroup
@@ -173,7 +173,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                         />
                     </FormControl>
                 </Grid>
-                <Grid item sm={6}>
+                <Grid item sm={12} mt={3}>
                     <FormControl>
                         <FormLabel id="datoOficio">Cuenta con algún oficio</FormLabel>
                         <RadioGroup
@@ -194,22 +194,28 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                         </RadioGroup>
                     </FormControl>
                 </Grid>
-                <Grid item sm={6}>
-                    { estadoFormularioDeEducacion.tieneOficio ?
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
-                        <OutlinedInput
-                            name="nombreOficio"
-                            value={estadoFormularioDeEducacion?.nombreOficio}
-                            label="Oficio"
-                            onChange={onDatoChange}
-                            disabled={!estadoFormularioDeEducacion.tieneOficio}
-                        />
+            </Grid>
+            { estadoFormularioDeEducacion.tieneOficio ?
+                <Grid container spacing={2}>
+                    <Grid item sm={6}>
 
-                    </FormControl>
-                        : null }
+                        <FormControl fullWidth={true}>
+                            <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
+                            <OutlinedInput
+                                name="nombreOficio"
+                                value={estadoFormularioDeEducacion?.nombreOficio}
+                                label="Oficio"
+                                onChange={onDatoChange}
+                                disabled={!estadoFormularioDeEducacion.tieneOficio}
+                            />
 
+                        </FormControl>
+
+
+                    </Grid>
                 </Grid>
+            : null }
+            <Grid container spacing={2} mt={3}>
                 <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="datoUltimaEducativa">Ultimo lugar de trabajo</InputLabel>

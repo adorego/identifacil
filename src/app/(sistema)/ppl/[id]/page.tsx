@@ -113,7 +113,7 @@ const initialData = {
     datosJudiciales: datosJudicialesInicial
 }
 
-const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/cedula/`;
+const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/id/`;
 export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState('1');
     const [data, setData] = React.useState<dataType>(initialData);

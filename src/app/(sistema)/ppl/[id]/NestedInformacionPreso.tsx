@@ -63,6 +63,9 @@ type datosPersonaType = {
     numero_de_identificacion: any;
     id_persona: number;
     nombre: string;
+    tipo_de_documento?: {
+        id: number | null;
+    };
     apellido: string;
     genero: number;
     apodo: string;
@@ -128,7 +131,9 @@ const datosPersonaInitial: datosPersonaType = {
     registro_de_fotos: [],
 }
 
-export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: { datosPersona: datosPersonaType }) {
+export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: {
+    datosPersona: datosPersonaType
+}) {
 
     const [value, setValue] = React.useState(0);
 
@@ -160,28 +165,30 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                             <CustomTabPanel value={value} index={0}>
 
                                 {datosPersona ?
-                                    <FormularioDatosPersonales datosDeIdentificacion={{
-                                        id_persona: datosPersona.id_persona,
-                                        id_datos_personales: datosPersona.datosPersonales?.id,
-                                        nombres: datosPersona.nombre,
-                                        apellidos: datosPersona.apellido,
-                                        apodo: datosPersona.apodo,
-                                        codigo_genero: datosPersona.genero,
-                                        fechaDeNacimiento: datosPersona.fechaDeNacimiento,
-                                        nacionalidad: datosPersona?.datosPersonales?.nacionalidad?.id,
-                                        estadoCivil: datosPersona?.datosPersonales?.estadoCivil?.id,
-                                        lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
-                                        direccion: datosPersona?.datosPersonales?.direccion,
-                                        barrioCompania: datosPersona?.datosPersonales?.barrioCompania,
-                                        numeroDeContacto: datosPersona?.datosPersonales?.numeroDeContacto,
-                                        contactoDeEmergencia1: datosPersona?.datosPersonales?.contactoDeEmergencia1,
-                                        contactoDeEmergencia2: datosPersona?.datosPersonales?.contactoDeEmergencia2,
-                                        pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
-                                        nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
-                                        perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
-                                        numero_de_identificacion: datosPersona.numero_de_identificacion
+                                    <FormularioDatosPersonales
+                                        tipo_de_documento={datosPersona.tipo_de_documento?.id}
+                                        datosDeIdentificacion={{
+                                            id_persona: datosPersona.id_persona,
+                                            id_datos_personales: datosPersona.datosPersonales?.id,
+                                            nombres: datosPersona.nombre,
+                                            apellidos: datosPersona.apellido,
+                                            apodo: datosPersona.apodo,
+                                            codigo_genero: datosPersona.genero,
+                                            fechaDeNacimiento: datosPersona.fechaDeNacimiento,
+                                            nacionalidad: datosPersona?.datosPersonales?.nacionalidad?.id,
+                                            estadoCivil: datosPersona?.datosPersonales?.estadoCivil?.id,
+                                            lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
+                                            direccion: datosPersona?.datosPersonales?.direccion,
+                                            barrioCompania: datosPersona?.datosPersonales?.barrioCompania,
+                                            numeroDeContacto: datosPersona?.datosPersonales?.numeroDeContacto,
+                                            contactoDeEmergencia1: datosPersona?.datosPersonales?.contactoDeEmergencia1,
+                                            contactoDeEmergencia2: datosPersona?.datosPersonales?.contactoDeEmergencia2,
+                                            pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
+                                            nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
+                                            perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
+                                            numero_de_identificacion: datosPersona.numero_de_identificacion
 
-                                    }}/> : ''
+                                        }}/> : ''
                                 }
 
                             </CustomTabPanel>
@@ -189,9 +196,9 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                             <CustomTabPanel value={value} index={1}>
 
                                 <BloqueSalud
-                                     id_persona={datosPersona.id_persona}
-                                     datosAlmacenados={datosPersona.datosDeSalud}
-                                  codigo_genero={datosPersona.genero}
+                                    id_persona={datosPersona.id_persona}
+                                    datosAlmacenados={datosPersona.datosDeSalud}
+                                    codigo_genero={datosPersona.genero}
                                 />
                             </CustomTabPanel>
 
@@ -217,9 +224,10 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                 <BloqueJudicial id_persona={datosPersona.id_persona}
                                                 datosIniciales={datosPersona.datosJudiciales}/>
                             </CustomTabPanel>
-{}
+                            {}
                             <CustomTabPanel value={value} index={6}>
-                                <BloqueGaleria datosIniciales={datosPersona.registro_de_fotos} id_persona={datosPersona.id_persona}/>
+                                <BloqueGaleria datosIniciales={datosPersona.registro_de_fotos}
+                                               id_persona={datosPersona.id_persona}/>
                             </CustomTabPanel>
                         </Grid>
                     </Grid>
