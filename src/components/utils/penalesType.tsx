@@ -19,15 +19,15 @@ export interface PPLsEnExpedienteDTO {
         anhos:number;
         meses:number;
     };
-    fecha_de_aprehension:Date;
+    fecha_de_aprehension:Dayjs | null;
     tiene_anhos_extra_por_medida_de_seguridad:boolean;
     anhos_extra_por_medida_de_seguridad:{
         anhos:number;
         meses:number;
     }
     sentencia_definitiva:string;
-    fecha_sentencia_definitiva:Date;
-    fecha_de_compurgamiento_inicial:Date;
+    fecha_sentencia_definitiva:Dayjs | null;
+    fecha_de_compurgamiento_inicial:Dayjs | null;
     fecha_de_compurgamiento_recalculada:Array<DisminucionDePena>
 }
 export type CausaType = {
