@@ -16,7 +16,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ChangeEvent, useState} from "react"
+import {ChangeEvent, useContext, useState} from "react"
 import {IdentificationResponse, initialResponse} from "../../../../model/respuesta-identificacion";
 import {ThumbDown, ThumbUp} from "@mui/icons-material";
 
@@ -26,6 +26,9 @@ import {IReconocimiento} from "@/components/registro/FaceDetectionOverlay";
 import style from "./page.module.css";
 import {useGlobalContext} from "@/app/Context/store";
 import { error } from "console";
+import { api_request } from "@/lib/api-request";
+import { log } from "loglevel";
+import { exit } from "process";
 
 const EstadosProgreso: Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos', 'Datos disponibles'];
 
@@ -69,6 +72,7 @@ export default function EntradaSalidaPPL() {
     const [salidaPPL, setSalidaPPL] = useState<SalidaPPL>(salidaPPLInicial)
     const [mensaje, setMensaje] = useState("");
     const {openSnackbar} = useGlobalContext();
+    const {selectedEstablecimiento} = useGlobalContext();
 
     const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
@@ -98,13 +102,14 @@ export default function EntradaSalidaPPL() {
             if(data.identificado){
                 setPPLIdentificado(true);
                 setIdentificationData({
-                    
+                id_persona:data.id_persona,    
                 identificado:data.identificado,
                 numeroDeIdentificacion: data.numeroDeIdentificacion,
                 nombres: data.nombres,
                 apellidos: data.apellidos,
                 esPPL: data.esPPL })
             }else{
+                setPPLIdentificado(false);
                 openSnackbar(`PPL No identificado`,"error");
             }
             
@@ -131,14 +136,41 @@ export default function EntradaSalidaPPL() {
         setEntradaSalida(value === "true" ? true : false);
     }
 
-    const solicitarIngresoPPL = () => {
-        setTimeout(
-            () => {
-                setAutorizarIngreso(autorizarIngreso === "autorizado" ? "noAutorizado" : "autorizado")
-                openSnackbar('Solicitud aprobada')
-            }, 2000
-        )
-        setAutorizarIngreso("consultando");
+    const solicitarIngresoPPL = async () => {
+       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/ppls`
+       
+       if(!identificationData.id_persona){
+            openSnackbar(`PPL No identificado`,"error");
+       }else if(!selectedEstablecimiento || selectedEstablecimiento==0){
+
+            openSnackbar(`No tiene seleccionado ningún establecimiento`,"error");
+
+       }else{
+            try{
+                const fecha_hora = new Date();
+                const respuestaRegistroDeEntrada = await api_request(url,{
+                    method:'POST',
+                    headers:{"Content-type":"application/json"},
+                    body:JSON.stringify({
+                        id_persona:identificationData.id_persona,
+                        fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        hora_ingreso:`${fecha_hora.getHours()}/${fecha_hora.getMinutes()}/${fecha_hora.getSeconds()}`,
+                        establecimiento:selectedEstablecimiento
+                    })
+                });
+                console.log("Respuesta:",respuestaRegistroDeEntrada)
+                if(respuestaRegistroDeEntrada.datos.success){
+                    openSnackbar(`Registro de ingreso autorizado`,"success");
+                }else{
+                    openSnackbar(`Registro de ingreso no autorizado`,"error");
+                }
+                
+            }catch(error){
+                log(`Ocurrió un error en el envío de datos al servidor:${error}`);
+                openSnackbar(`Ocurrió un error en el envío de datos al servidor:${error}`,"error");
+
+            }
+        }
     }
     return (
         <Box sx={{padding: '20px'}}>
@@ -208,16 +240,7 @@ export default function EntradaSalidaPPL() {
                                     </FormControl>
 
                                 </Grid>
-                                {/*<Grid item sm={12}>
-                                    <FormControl fullWidth={true}>
-                                        <TextField
-                                            label={"Esta Registrado"}
-                                            value={identificationData.esPPL === false ? "Si" : "No"}
-                                            disabled={true}>
-
-                                        </TextField>
-                                    </FormControl>
-                                </Grid>*/}
+                               
                             </Grid>
                             {
                                 pplIdentificado &&
@@ -269,44 +292,11 @@ export default function EntradaSalidaPPL() {
                                                     <Grid item sm={12}>
                                                         <FormControl fullWidth={true} sx={{}}>
                                                             <Button variant="contained" onClick={solicitarIngresoPPL}>
-                                                                Solicitar Autorización
+                                                                Autorizar
                                                             </Button>
                                                         </FormControl>
                                                     </Grid>
-                                                    {/*{autorizarIngreso === "autorizado" &&
-                                                        <Grid item sm={12} alignItems={"center"}>
-                                                            <Box sx={{textAlign: "center"}}>
-                                                                <Button startIcon={<ThumbUp/>} sx={{
-                                                                    borderRadius: "50%",
-                                                                    backgroundColor: "#008000",
-                                                                    width: "200px",
-                                                                    height: "200px",
-                                                                }}
-                                                                        variant="contained">
-                                                                    Aprobado
-                                                                </Button>
-                                                            </Box>
-                                                        </Grid>
-
-
-                                                    }
-                                                    {autorizarIngreso === "noAutorizado" &&
-                                                        <Grid item sm={12} alignItems={"center"}>
-                                                            <Box sx={{textAlign: "center"}}>
-                                                                <Button startIcon={<ThumbDown/>} sx={{
-                                                                    borderRadius: "50%",
-                                                                    backgroundColor: "#FF0000",
-                                                                    width: "200px",
-                                                                    height: "200px",
-                                                                }}
-                                                                        variant="contained">
-                                                                    No Aprobado
-                                                                </Button>
-                                                            </Box>
-                                                        </Grid>
-
-
-                                                    }*/}
+                                                    
                                                     {autorizarIngreso === "consultando" &&
                                                         <Grid item sm={12} alignItems={"center"}>
                                                             <Box sx={{display: "flex", justifyContent: "center"}}>

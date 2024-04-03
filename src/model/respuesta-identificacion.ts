@@ -1,5 +1,6 @@
 
 export interface IdentificationResponse{
+  id_persona?:number;
   identificado:boolean;
   numeroDeIdentificacion:string;
   nombres:string;
