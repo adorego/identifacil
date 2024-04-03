@@ -38,13 +38,14 @@ const themeOptions: ThemeOptions = {
                 // Name of the slot
                 root: {
                     height: '38px',
+
                 },
                 outlined: {
                     // Aquí puedes personalizar el estilo del botón outlined
                     background: '#FFF',
                 },
                 contained: {
-                    backgroundColor: '#00A76F',
+                    /*backgroundColor: '#00A76F',*/
                     textTransform: 'capitalize'
                 }
             },

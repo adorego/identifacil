@@ -18,6 +18,11 @@ import {SelectChangeEvent} from "@mui/material/Select";
 import {DatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
+import {Add} from "@mui/icons-material";
+import {
+    initialPeronaEnExpedienteStateForm,
+    PersonaEnExpedienteType
+} from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/expedientesType";
 
 const initialState = {apellido: "", id_persona: null, nombre: ""}
 
@@ -27,6 +32,7 @@ type HechoPunible = {
     codigo: string;
     causas: Causa[];
 };
+
 type Causa = {
     id: number;
     codigo: string;
@@ -38,45 +44,27 @@ type HechoPunibleConCausa = {
     causaId: number;
 };
 
-const initialStateForm = {
-    id_persona: 0,
-    nombre: "",
-    apellido: "",
-    apodo: "",
-    condenado: false,
-    defensor: 0,
-    condena:{
-        anhos: 0,
-        meses: 0,
-    },
-    fecha_de_aprehension: null,
-    tiene_anhos_extra_por_medida_de_seguridad: false,
-    anhos_extra_por_medida_de_seguridad:{
-        anhos: 0,
-        meses:0,
-    },
-    sentencia_definitiva: '',
-    fecha_sentencia_definitiva: null,
-    fecha_de_compurgamiento_inicial: null,
-    fecha_de_compurgamiento_recalculada: []
-}
+
+
 const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
 
-const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:string; apellido:string;},)=>(void), editPersona: {} | null, onOpen: boolean, onClose: ()=>void}>= ({onHandlerPersona, editPersona=null, onOpen, onClose})=>{
+const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:string; apellido:string;},)=>(void), editPersona: {} | null, onOpen: boolean, onClose: ()=>void}>= (
+    {onHandlerPersona, editPersona=null, onOpen, onClose})=>{
+
     const { open, handleOpen, handleClose } = useModal();
 
     // State de PPLS para poblar el selector
     const [personasLista, setPersonasLista] = useState<Array<any>>([])
 
     // State de
-    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<Array<{ id_persona: number; nombre: string; apellido: string; }>>([])
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{ id_persona: number; nombre: string; apellido: string; } | null>(null)
 
     // State para guardar defensores
     const [defensoresLista, setDefensoresLista] = useState<Array<any>>([])
 
     // State para datos de forumlarios
-    const [datosFormulario, setDatosFormulario] = useState<any>(initialStateForm)
+    const [datosFormulario, setDatosFormulario] = useState<PersonaEnExpedienteType>(initialPeronaEnExpedienteStateForm)
 
     // State para guardar los hechos punibles seleccionados
     const [seleccionesEnPPL, setSeleccionesEnPPL] = useState<HechoPunibleConCausa[]>([]);
@@ -92,8 +80,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
         })
 
 
-
-        // Se obtiene datos de
+        // Se obtiene datos de defensores
         fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/defensores`).then(res=>{
             setDefensoresLista(prev=>([...res.defensores]))
         })
@@ -115,15 +102,12 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                 });
             });
 
-            // console.log(causasArray)
-
-
             setHechosPunibles(prev => ([...res.hechosPunibles]))
         })
+
     }, []);
 
-    /**Si es que hay un dato para mostrar carga el formulario con datos precargados de PPL
-     * */
+    /**Si es que hay un dato para mostrar carga el formulario con datos precargados de PPL* */
     useEffect(() => {
         console.log(editPersona)
         if (editPersona) {
@@ -134,8 +118,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
         }
     }, [editPersona, onOpen]);
 
-    /** Para controlar si es que debe abrir o cerrar el modal desde fuera del modal
-     * */
+    /** Para controlar si es que debe abrir o cerrar el modal desde fuera del modal* */
     useEffect(() => {
         if(onOpen){
 
@@ -198,15 +181,16 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
         setSeleccionesEnPPL(nuevasSelecciones);
     };
 
-    const handleSubmit = (e: any) =>{
+    const handleSubmit = (e: { preventDefault: () => void; }) =>{
         e.preventDefault();
-        // console.log(personasSeleccionadas)
+        console.log(personasSeleccionadas)
+        console.log(datosFormulario)
 
+        const aux : boolean = true
 
-        // @ts-ignore
-        if(personasSeleccionadas.id_persona !== 0){
+        if(personasSeleccionadas && aux){
 
-            onHandlerPersona({
+            const personaProcesada = {
                 ...datosFormulario,
                 hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
                 // @ts-ignore
@@ -217,9 +201,11 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                 apellido: personasSeleccionadas.apellido,
                 // @ts-ignore
                 apodo: personasSeleccionadas.apodo,
-            })
+            }
+            console.log(personaProcesada)
+            onHandlerPersona(personaProcesada)
             setSeleccionesEnPPL([])
-            setDatosFormulario(initialStateForm)
+            setDatosFormulario(initialPeronaEnExpedienteStateForm)
             handleClose()
         }else{
             openSnackbar("Debe seleccionar un PPL", "error")
@@ -269,7 +255,8 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                 handleClose()
                 onClose()
                 setSeleccionesEnPPL([])
-                setDatosFormulario(initialStateForm)
+                setPersonasSeleccionadas(null)
+                setDatosFormulario(initialPeronaEnExpedienteStateForm)
 
             }} title='Agregar PPL' >
                 <Box>
@@ -278,7 +265,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             <FormControl fullWidth>
                                 <Autocomplete
                                     fullWidth={true}
-                                    value={personasSeleccionadas[0]}
+                                    value={personasSeleccionadas ? personasSeleccionadas : null}
                                     onChange={(event, newValue:any) => {
                                         // @ts-ignore
                                         setPersonasSeleccionadas((prev: any)=>({
@@ -288,7 +275,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                     id="controllable-states-demo"
                                     options={personasLista}
                                     getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` }
-                                    renderInput={(params) => <TextField {...params} label="PPL AUTOCOMPLETE" />}
+                                    renderInput={(params) => <TextField {...params} label="Lista de PPLs" />}
                                 />
                             </FormControl>
                         </Grid>
@@ -410,8 +397,8 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                         : null}
                     <Grid container spacing={2} mt={1}>
                         <Grid item sm={12}>
-                            <Typography variant='overline'>
-                                Duracion total de la condena
+                            <Typography variant='inherit'>
+                                Hechos punibles y causas
                             </Typography>
                         </Grid>
                     </Grid>
@@ -450,9 +437,11 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </Grid>
                         </Grid>
                     ))}
-                    <Grid container spacing={2} sx={{mt:"10px"}}>
+                    <Grid container spacing={2} >
                         <Grid item>
-                            <Button variant='contained' onClick={handleAgregar}>Agregar Hecho Punible</Button>
+                            <Button variant='text' startIcon={<Add />} onClick={handleAgregar}>
+                                Agregar Hecho Punible
+                            </Button>
                         </Grid>
                     </Grid>
                     <Grid container spacing={2} mt={1}>

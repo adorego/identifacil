@@ -30,6 +30,7 @@ import ValidacionesExpedientes
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import SubmitExpediente from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/submitExpediente";
 import {router} from "next/client";
+import {Add} from "@mui/icons-material";
 
 type camposFormType = {
     id: number;
@@ -248,20 +249,20 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 apellido: item.ppl?.persona?.apellido,
                                 condenado: item.condenado,
                                 hechosPuniblesCausas: item.hechosPuniblesCausas,
-                                defensor: item.defensor?.id,
+                                defensor: item.defensor?.id ? item.defensor?.id : 0,
                                 sentencia_definitiva: item.sentencia_definitiva,
                                 fecha_sentencia_definitiva: item?.fecha_sentencia_definitiva,
                                 condena: {
-                                    anhos: item?.condena?.tiempo_de_condena.anhos,
-                                    meses: item?.condena?.tiempo_de_condena.meses
+                                    anhos: item.condena?.tiempo_de_condena.anhos ? item.condena.tiempo_de_condena.anhos  : 0,
+                                    meses: item?.condena?.tiempo_de_condena.meses ? item.condena.tiempo_de_condena.meses : 0
                                 },
                                 fecha_de_aprehension: item.fecha_de_aprehension,
-                                tiene_anhos_extra_por_medida_de_seguridad: item.condena?.tiene_anhos_extra_por_medida_de_seguridad,
+                                tiene_anhos_extra_por_medida_de_seguridad: item.condena?.tiene_anhos_extra_por_medida_de_seguridad ? item.condena?.tiene_anhos_extra_por_medida_de_seguridad : false,
                                 anhos_extra_por_medida_de_seguridad: {
-                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad.anhos,
-                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad.meses
+                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad.anhos ? item.condena.anhos_extra_por_medida_de_seguridad.anhos : 0,
+                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad.meses ? item.condena.anhos_extra_por_medida_de_seguridad.meses: 0
                                 },
-                                fecha_de_compurgamiento_inicial: item.condena?.fecha_de_compurgamiento_inicial,
+                                fecha_de_compurgamiento_inicial: item.condena?.fecha_de_compurgamiento_inicial ? item.condena?.fecha_de_compurgamiento_inicial : null,
 
 
                             }))
@@ -352,19 +353,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
     };
 
 
-    //TODO: Corregir any de parametro
-    const handleDefensor = (event: any) => {
-        console.log(event.target.name)
-        // @ts-ignore
-        setDatosFormularios((prev: any) => ({
-            ...prev,
-            defensor: {
-                ...prev.defensor,
-                [event.target.name]: event.target.value,
-            }
-        }))
-    }
-
     const handleDespachoJudicial = (event: { target: { name: any; value: any; }; }) => {
         setDatosFormularios((prev: any) => ({
             ...prev,
@@ -394,8 +382,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     }
 
-    /** Manejador para borrar PPLs de lista de personas
-     *si el ID del ppl que se recibe se encuentra dentro del array de objetos del estado se borra
+    /**
+     * Manejador para borrar PPLs de lista de personas
+     * si el ID del ppl que se recibe se encuentra dentro del array de objetos del estado se borra
      *
      * @param persona
      */
@@ -458,7 +447,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
         const stateForm: any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
-            ppls_en_expediente: datosFormulario.ppls_en_expediente.map(item => {
+            /*ppls_en_expediente: datosFormulario.ppls_en_expediente.map(item => {
                 // console.log(item.hechosPuniblesCausas)
                 console.log(item.hechosPuniblesCausas.map((item:any)=>[item.causa_judicial.id,item.hecho_punible.id]))
                 return (
@@ -467,7 +456,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         hechosPuniblesCausas: item.hechosPuniblesCausas.map((item:any)=>[item.causa_judicial.id,item.hecho_punible.id])
                     }
                 )
-            })
+            })*/
         }
 
         console.log(datosFormulario)
@@ -626,6 +615,15 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     </Grid>
 
                 </Grid>
+                <Grid container spacing={2} mt={1}>
+                    <Grid item sm={12}>
+                        <Typography variant='h6'>Hechos Punibles</Typography>
+                        <Typography variant='caption' color='error' ml={2}>
+                            * Campo requerido
+                        </Typography>
+                    </Grid>
+
+                </Grid>
 
                 {selecciones.map((seleccion, index) => (
                     <Grid container spacing={2} mt={1} key={index}>
@@ -664,11 +662,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 ))}
                 <Grid container spacing={2} mt={1}>
                     <Grid item>
-                        <Button variant='contained' onClick={handleAgregar}>Agregar Hecho Punible</Button>
-                        <div></div>
-                        <Typography variant='caption' color='error' ml={2}>
-                            * Campo requerido
-                        </Typography>
+                        <Button startIcon={<Add />} variant='text' onClick={handleAgregar}>Agregar Hecho Punible</Button>
+
                     </Grid>
                 </Grid>
 

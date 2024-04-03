@@ -17,6 +17,7 @@ import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
+import NoDataBox from "@/components/loadingScreens/noDataBox";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -32,13 +33,13 @@ const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 const trasladosDummy = reclsusosData();
 
 export default function Ppl() {
-    const { openSnackbar } = useGlobalContext();
+    const {openSnackbar} = useGlobalContext();
     const [data, setData] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
 
-    const handleOpenModal = (row: { id:number, descripcion: string }) => {
+    const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
         setModalOpen(true);
         setSelectedData({
@@ -49,7 +50,7 @@ export default function Ppl() {
     const handleCloseModal = () => {
         setModalOpen(false);
     };
-    const handleDelete = async (id:number) => {
+    const handleDelete = async (id: number) => {
         const result = await deleteRecord(`/traslados/${id}`);
 
         if (result.success) {
@@ -59,7 +60,7 @@ export default function Ppl() {
         }
     };
 
-    const handleDeleteRecord = (id:number)=>{
+    const handleDeleteRecord = (id: number) => {
         // @ts-ignore
         //Actualiza el store local con el ID que se obtuvo dentro de CustomTable
         const datosActualizados = data.filter((item: { id: number; }) => item.id !== id);
@@ -69,7 +70,6 @@ export default function Ppl() {
         handleDelete(id);
 
     }
-
 
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
@@ -84,7 +84,7 @@ export default function Ppl() {
                 // TODO: veritifcar porque hace problema typescript aca
 
                 //@ts-ignore
-                setData(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
+                setData(Object.keys(fetchedData).map(key => fetchedData[key]).map(item => ({
                     ...item,
                     destinoTraslado: item.destinoTraslado.nombre,
                     origenTraslado: item.origenTraslado.nombre
@@ -92,10 +92,11 @@ export default function Ppl() {
             });
     }, []);
 
-    const handleFitros = (value : any) => {
+    const handleFitros = (value: any) => {
         // console.log(value)
         setFilterData(value)
     }
+
 
     if (!data) {
         return (
@@ -114,35 +115,47 @@ export default function Ppl() {
     return (
         <Box>
             <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'/>
-            <Paper elevation={1} sx={{
-                mt: '32px'
-            }}>
-                {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
-                {/*Elemento de tabla de traslados filtros */}
-                {/*<Box px={3} py={3}>
-                    <FiltrosTables dataSinFiltro={data} handleFiltro={handleFitros}/>
-                </Box>*/}
 
-                {/* Elemento Tabla de Traslado*/}
-                <Box>
-                    <CustomTable
-                        data={filterData ? filterData : data}
-                        /*data={data}*/
-                        headers={header2}
-                        showId={true}
-                        deleteRecord={handleOpenModal}
-                        options={{
+                {Object.keys(data).length > 0  ?
+                    (
+                        <Paper elevation={1} sx={{
+                            mt: '32px'
+                        }}>
+                            {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
+                            {/*Elemento de tabla de traslados filtros */}
+                            {/*<Box px={3} py={3}>
+                                <FiltrosTables dataSinFiltro={data} handleFiltro={handleFitros}/>
+                            </Box>*/}
 
-                            targetURL: '/movimientos/traslados',
-                            rowsPerPageCustom: 5,
-                            pagination: true,
-                            deleteOption: true,
+                            {/* Elemento Tabla de Traslado*/}
+                            <Box>
+                                <CustomTable
+                                    data={filterData ? filterData : data}
+                                    /*data={data}*/
+                                    headers={header2}
+                                    showId={true}
+                                    deleteRecord={handleOpenModal}
+                                    options={{
 
-                        }}
-                    />
-                </Box>
+                                        targetURL: '/movimientos/traslados',
+                                        rowsPerPageCustom: 5,
+                                        pagination: true,
+                                        deleteOption: true,
 
-            </Paper>
+                                    }}
+                                />
+                            </Box>
+                        </Paper>
+                    )
+                    :
+                    (
+                        <>
+                            <NoDataBox />
+                        </>
+                    )
+                }
+
+
             <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
         </Box>
     )

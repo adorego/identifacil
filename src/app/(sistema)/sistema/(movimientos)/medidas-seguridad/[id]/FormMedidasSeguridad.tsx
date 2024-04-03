@@ -5,7 +5,7 @@ import {Box, Button, CircularProgress, Grid, Stack, TextField} from "@mui/materi
 import {useEffect, useState} from "react";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
-import {FormSkeleton} from "@/components/skeletons/FormSkeleton";
+import {FormSkeleton} from "@/components/loadingScreens/FormSkeleton";
 import log from "loglevel";
 
 interface MyState {
