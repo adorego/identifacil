@@ -23,15 +23,13 @@ const ConfirmacionRegistro: FC<ConfirmacionRegistroProps> = ({mensaje}: Confirma
             paddingY: '20px',
             paddingX: '30px',
             borderRadius: '16px',
-
-
         }}>
             <Image src="/icono-exito.png" width={120} height={120} alt="Icono de exito"/>
             <Typography variant="h5">
                 {mensaje}
             </Typography>
             <Stack spacing={2} direction={"row"} mt={5} justifyContent={"center"}>
-                <Button variant={"contained"} onClick={() => router.push('/inicio/registro/ppl')}>
+                <Button variant={"contained"} onClick={() => router.push('/inicio/registro/')}>
                     Registrar otro PPL
                 </Button>
                 <Button variant={"outlined"} onClick={() => router.push('/inicio')}>

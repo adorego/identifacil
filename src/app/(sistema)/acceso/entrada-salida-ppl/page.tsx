@@ -92,21 +92,30 @@ export default function EntradaSalidaPPL() {
         });
 
 
+
         if (!response.ok) {
             const data = await response.json();
             console.log('Ocurrio un error:', data);
         } else {
+            console.log('checkpoint 2')
             const data: IdentificationResponse = await response.json();
+            console.log(data)
             console.log("Datos devueltos:", data);
             setProgresoReconocimiento(EstadosProgreso[0]);
+            // @ts-ignore
             if(data.identificado){
-                setPPLIdentificado(true);
+                setPPLIdentificado(data.identificado);
+            if(data.identificado){
+                openSnackbar(`Persona Reconocida: ${data.nombres}, apellido:${data.apellidos}. ${data.esPPL ? 'Esta persona es PPL.' : ''}.`);
+            }else{
+                openSnackbar(`Persona no se encuentra registrada.`, 'warning');
+            }
                 setIdentificationData({
                 id_persona:data.id_persona,    
                 identificado:data.identificado,
-                numeroDeIdentificacion: data.numeroDeIdentificacion,
-                nombres: data.nombres,
-                apellidos: data.apellidos,
+                numeroDeIdentificacion: data.numeroDeIdentificacion ? data.numeroDeIdentificacion : '',
+                nombres: data.nombres ? data.nombres : '',
+                apellidos: data.apellidos ? data.apellidos : '',
                 esPPL: data.esPPL })
             }else{
                 setPPLIdentificado(false);
@@ -131,6 +140,7 @@ export default function EntradaSalidaPPL() {
     const cerrar_dialogo = () => {
         setProgresoReconocimiento(EstadosProgreso[0]);
     }
+
     const onEntradaSalidaSelectChange = (event: ChangeEvent<HTMLInputElement>, value: string) => {
 
         setEntradaSalida(value === "true" ? true : false);
@@ -245,7 +255,7 @@ export default function EntradaSalidaPPL() {
                             {
                                 pplIdentificado &&
                                 (
-                                    <Grid container spacing={2} px={2}>
+                                    <Grid container spacing={2} px={2} mt={2}>
                                         <Grid item xs={12}>
                                             <FormControl fullWidth variant="outlined">
                                                 <Typography

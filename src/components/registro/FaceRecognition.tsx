@@ -53,12 +53,12 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
         try {
             // console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
             if (navigator && navigator.mediaDevices) {
-                console.log("Entro en mediaDevice")
+                // console.log("Entro en mediaDevice")
                 navigator.mediaDevices.getUserMedia({video: true})
                     .then(function (stream) {
-                        console.log("Video ref:",videoElementRef.current);
+                        // console.log("Video ref:",videoElementRef.current);
                         if (videoElementRef.current != null) {
-                            console.log("Video es distinto de null");
+                            // console.log("Video es distinto de null");
                             videoElementRef.current.srcObject = stream;
                             mediaStream = stream;
                             setIniciarDeteccion(true);
@@ -202,7 +202,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                                 disabled={!habilitarBotonCapturarFoto}
                                 onClick={onFotoCapture}
                                 className={styles.capturePhotoButton}
-                                variant='outlined'
+                                variant='contained'
                                     endIcon={<AddAPhoto/>}>
                                 {props.etiqueta_boton}
                             </Button>
