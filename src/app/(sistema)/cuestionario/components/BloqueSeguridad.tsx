@@ -17,6 +17,7 @@ import {api_request} from "@/lib/api-request";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
 
 interface BloqueSeguridadProps {
     datosIniciales?: datosSeguridadType;
@@ -381,7 +382,8 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                         }}
                         onClick={onFormSubmit}
                         loading={consultaLoading}
-                        loadingPosition='end'
+                        loadingPosition='start'
+                        startIcon={<SaveIcon />}
                         variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

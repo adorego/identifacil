@@ -255,11 +255,13 @@ export default function FormRegister() {
                     backgroundColor: '#FFF',
                     paddingY: '20px',
                     paddingX: '30px',
+                    mt: '10px',
                     borderRadius: '16px',
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
                     {/* Paso de identificacion policial */}
-                    {activeStep === 0 &&
+                    {
+                        activeStep === 0 &&
                         <IdentificacionForm
                             habilitarBotonSiguiente={habilitarBotonSiguiente}
                             actualizarIdentificacion={setIdentificacion}/>
@@ -287,18 +289,6 @@ export default function FormRegister() {
 
                     {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente"/>}
 
-                    {/* Para pruebas*/}
-                    {/* {activeStep === 0 && <CuestionarioRegistro id_persona={13} datosDeIdentidad={
-                      {
-                        cedula_identidad:"1130650",
-                        nombres:"ANDRES",
-                        apellidos:"DO REGO BARROS",
-                        fecha_nacimiento:"21-07-1975",
-                        codigo_genero:2,
-                        id_persona:13,
-                        es_extranjero:false,
-                        tiene_cedula:true
-                      }} />} */}
 
 
                     <Grid container pt={3} spacing={5}>
@@ -312,13 +302,15 @@ export default function FormRegister() {
                                 </Button>
                             </Grid>
                         }
-                        {botonesDeFlujo.mostrarBotonSiguiente &&
+                        { botonesDeFlujo.mostrarBotonSiguiente && activeStep !== 3 ?
                             <Grid item>
                                 <Button disabled={!botonesDeFlujo.habilitarBotonSiguiente} variant="contained"
                                         onClick={onStepForward} endIcon={<KeyboardArrowRight/>}>
                                     Siguiente
                                 </Button>
-                            </Grid>}
+                            </Grid>
+                            : null
+                        }
                     </Grid>
 
 

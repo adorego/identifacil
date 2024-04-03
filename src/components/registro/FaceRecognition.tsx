@@ -45,20 +45,20 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
     const [habilitarBotonCapturarFoto,setHabilitarBotonCapturarFoto] = useState<boolean>(false);
 
 
-    console.log("Loading es:",loading);
+    // console.log("Loading es:",loading);
 
     const conectar_con_webcam = (): MediaStream | null => {
         let mediaStream = null;
-        console.log("Se va a conectar la webcam");
+        // console.log("Se va a conectar la webcam");
         try {
             // console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
             if (navigator && navigator.mediaDevices) {
-                console.log("Entro en mediaDevice")
+                // console.log("Entro en mediaDevice")
                 navigator.mediaDevices.getUserMedia({video: true})
                     .then(function (stream) {
-                        console.log("Video ref:",videoElementRef.current);
+                        // console.log("Video ref:",videoElementRef.current);
                         if (videoElementRef.current != null) {
-                            console.log("Video es distinto de null");
+                            // console.log("Video es distinto de null");
                             videoElementRef.current.srcObject = stream;
                             mediaStream = stream;
                             setIniciarDeteccion(true);
@@ -202,7 +202,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                                 disabled={!habilitarBotonCapturarFoto}
                                 onClick={onFotoCapture}
                                 className={styles.capturePhotoButton}
-                                variant='outlined'
+                                variant='contained'
                                     endIcon={<AddAPhoto/>}>
                                 {props.etiqueta_boton}
                             </Button>

@@ -18,6 +18,7 @@ import React, {FC, useEffect, useState} from "react";
 import {api_request} from "@/lib/api-request";
 import {datosIncialesJudiciales, datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 import AddIcon from '@mui/icons-material/Add';
+import SaveIcon from '@mui/icons-material/Save';
 import {LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
@@ -717,7 +718,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                         }}
                         onClick={onFormSubmit}
                         loading={consultaLoading}
-                        loadingPosition='end'
+                        loadingPosition='start'
+                        startIcon={<SaveIcon />}
                         variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

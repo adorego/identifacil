@@ -12,6 +12,7 @@ import {api_request} from "@/lib/api-request"
 import Checkbox from "@mui/material/Checkbox";
 import {Sort} from "@mui/icons-material";
 import {LoadingButton} from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
 
 
 
@@ -937,7 +938,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             }}
                             onClick={onDatosSaludSubmit}
                             loading={consultaLoading}
-                            loadingPosition='end'
+                            loadingPosition='start'
+                            startIcon={<SaveIcon />}
                             variant="contained">
                             <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

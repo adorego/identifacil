@@ -18,6 +18,7 @@ import {
     Typography
 } from "@mui/material";
 import React, {ChangeEvent, FC, useEffect, useState} from "react";
+import SaveIcon from '@mui/icons-material/Save';
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
 import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
@@ -781,7 +782,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             }}
                             onClick={onDatosPersonalesSubmit}
                             loading={consultaLoading}
-                            loadingPosition='end'
+                            startIcon={<SaveIcon />}
+                            loadingPosition='start'
 
                             variant="contained">
                         <span>

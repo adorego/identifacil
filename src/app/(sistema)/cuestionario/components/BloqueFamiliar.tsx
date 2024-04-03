@@ -30,6 +30,7 @@ import {useModal} from "@/components/modal/UseModal";
 import {useRouter} from "next/navigation";
 import AddIcon from "@mui/icons-material/Add";
 import {LoadingButton} from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -383,7 +384,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                         }}
                         onClick={handleSubmit}
                         loading={consultaLoading}
-                        loadingPosition='end'
+                        loadingPosition='start'
+                        startIcon={<SaveIcon />}
                         variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

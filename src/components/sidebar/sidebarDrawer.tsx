@@ -177,7 +177,7 @@ export default function SidebarDrawer()
                     </List>
                 </Collapse>
 
-                {/*<ListItemButton onClick={() => handleClick('visitantes')} className={openMenus.visitantes ? 'active-button' : ''} >
+                <ListItemButton onClick={() => handleClick('visitantes')} className={openMenus.visitantes ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Hail/>
                     </ListItemIcon>
@@ -203,7 +203,7 @@ export default function SidebarDrawer()
                         />
                         
                     </List>
-                </Collapse>*/}
+                </Collapse>
 
                 {/* Menu de PPL */}
                 <SidebarItem

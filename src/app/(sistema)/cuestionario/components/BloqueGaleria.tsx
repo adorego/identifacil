@@ -14,6 +14,7 @@ import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 import {CameraAlt} from "@mui/icons-material";
 import {LoadingButton} from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
 
 
 const videoConstraints = {
@@ -279,7 +280,8 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
                         onClick={handleSubmit}
                         loading={consultaLoading}
                         disabled={!saveButtonState}
-                        loadingPosition='end'
+                        loadingPosition='start'
+                        startIcon={<SaveIcon />}
                         variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

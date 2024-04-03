@@ -19,9 +19,13 @@ export default function Identificacion() {
     const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
         console.log('url:', url);
+
+
         const dataToSend = {
             descriptorFacial: reconocimiento.descriptor
         }
+
+        console.log(dataToSend);
         // console.log("Data to send:", dataToSend);
         setProgresoReconocmiento(EstadosProgreso[2]);
         const response = await fetch(url, {
