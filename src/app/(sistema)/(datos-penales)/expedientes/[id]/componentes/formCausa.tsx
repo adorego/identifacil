@@ -241,34 +241,35 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 causaId: item.causa_judicial?.id
                             })))
                         }
-                        console.log(data.ppls_en_expediente)
+                        // console.log(data.ppls_en_expediente[0].hechosPuniblesCausas.map((item: { hecho_punible: { id: any; }; causa_judicial: { id: any; }; })=>([item.hecho_punible.id, item.causa_judicial.id])))
+
                         if (data.ppls_en_expediente.length > 0) {
                             ppl_ajustado = data.ppls_en_expediente.map((item: any) => ({
                                 id_persona: item.ppl?.persona?.id,
                                 nombre: item.ppl?.persona?.nombre,
                                 apellido: item.ppl?.persona?.apellido,
                                 condenado: item.condenado,
-                                hechosPuniblesCausas: item.hechosPuniblesCausas,
+                                hechosPuniblesCausas: item.hechosPuniblesCausas.length>0?   item.hechosPuniblesCausas.map((item: { hecho_punible: { id: any; }; causa_judicial: { id: any; }; })=>([item.hecho_punible.id, item.causa_judicial.id])) : [],
                                 defensor: item.defensor?.id ? item.defensor?.id : 0,
                                 sentencia_definitiva: item.sentencia_definitiva,
                                 fecha_sentencia_definitiva: item?.fecha_sentencia_definitiva,
                                 condena: {
-                                    anhos: item.condena?.tiempo_de_condena.anhos ? item.condena.tiempo_de_condena.anhos  : 0,
-                                    meses: item?.condena?.tiempo_de_condena.meses ? item.condena.tiempo_de_condena.meses : 0
+                                    anhos: item.condena?.tiempo_de_condena?.anhos ? item.condena?.tiempo_de_condena?.anhos  : 0,
+                                    meses: item?.condena?.tiempo_de_condena?.meses ? item.condena?.tiempo_de_condena?.meses : 0
                                 },
                                 fecha_de_aprehension: item.fecha_de_aprehension,
                                 tiene_anhos_extra_por_medida_de_seguridad: item.condena?.tiene_anhos_extra_por_medida_de_seguridad ? item.condena?.tiene_anhos_extra_por_medida_de_seguridad : false,
                                 anhos_extra_por_medida_de_seguridad: {
-                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad.anhos ? item.condena.anhos_extra_por_medida_de_seguridad.anhos : 0,
-                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad.meses ? item.condena.anhos_extra_por_medida_de_seguridad.meses: 0
+                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad.meses ? item.condena?.anhos_extra_por_medida_de_seguridad.meses: 0,
+                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad.anhos ? item.condena?.anhos_extra_por_medida_de_seguridad.anhos : 0
                                 },
                                 fecha_de_compurgamiento_inicial: item.condena?.fecha_de_compurgamiento_inicial ? item.condena?.fecha_de_compurgamiento_inicial : null,
 
 
                             }))
                         }
-                        console.log(data)
-                        console.log(ppl_ajustado)
+                        // console.log(data)
+                        //console.log(ppl_ajustado)
 
                         setDatosFormularios({
                             ...data,
@@ -431,16 +432,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
     const postData = async () => {
-        /*await SubmitExpediente(
-            {
-                isEditMode: post_mehtod,
-                openSnackbar,
-                datosFormulario,
-                params,
-                setLoading,
-                router,
-                selecciones
-            }*/
+
         const form_method = isEditMode ? 'PUT' : 'POST'
 
         const endpoint_api = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`
@@ -596,7 +588,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                 </Grid>
 
-                {/* Hechos punibles */}
+
 
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
@@ -615,6 +607,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     </Grid>
 
                 </Grid>
+
+                {/* Hechos punibles */}
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
                         <Typography variant='h6'>Hechos Punibles</Typography>
@@ -635,7 +629,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                     value={seleccion.hechoPunibleId}
                                     onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
                                 >
-                                    {hechosPunibles.map((hp) => (
+                                    fullWidth {hechosPunibles.map((hp) => (
                                         <MenuItem key={hp.id} value={hp.id}>{hp.nombre}</MenuItem>
                                     ))}
                                 </Select>
@@ -649,9 +643,16 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                     value={seleccion.causaId}
                                     onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
                                 >
-                                    {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => (
-                                        <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
-                                    ))}
+                                    {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => {
+                                        /*console.log(hechosPunibles)
+                                        console.log(seleccion)
+                                        console.log(seleccion.hechoPunibleId)*/
+
+                                        // TODO: Calcular aca si ya existe en el estado de daos seleccionados
+                                        return(
+                                            <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
+                                        )
+                                    })}
                                 </Select>
                             </FormControl>
                         </Grid>

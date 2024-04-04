@@ -64,7 +64,7 @@ export default function Page() {
             setLoading(false)
         })
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
-    {console.log(listaPersonas)}
+
 
 
     const onHandleFiltro = (value: any) => {

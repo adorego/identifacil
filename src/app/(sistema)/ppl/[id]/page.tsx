@@ -23,6 +23,8 @@ import {
     datosJudicialesType,
     datosSeguridadInicial, datosSeguridadType
 } from "@/components/utils/systemTypes";
+import TabSalidaTransitoia from "@/app/(sistema)/ppl/[id]/components/tabSalidasTransitorias";
+import TabSalidaTransitoria from "@/app/(sistema)/ppl/[id]/components/tabSalidasTransitorias";
 
 interface familiar {
     nombre: string;
@@ -239,6 +241,7 @@ export default function Page({ params }: { params: { id: number } }) {
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
                             <Tab label="Informaciones" value="1" />
                             <Tab label="Datos penales" value="2" />
+                            <Tab label="Salidas Transitorias" value="3" />
                             {/*<Tab label="Perfil" value="1" />*/}
                         </TabList>
                     </Box>
@@ -298,8 +301,10 @@ export default function Page({ params }: { params: { id: number } }) {
                             <NestedInformacionPreso datosPersona={data} />
                         </TabPanel>
                         <TabPanel value="2" sx={{p:'0'}}>
-
                             <TabDatosPersonales idPersona={data.id_persona}/>
+                        </TabPanel>
+                        <TabPanel value="3" sx={{p:'0'}}>
+                            <TabSalidaTransitoria id_persona={data.id_persona} />
                         </TabPanel>
                     </Box>
                 </TabContext>
