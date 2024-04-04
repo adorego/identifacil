@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import {fetchData} from "@/components/utils/utils";
 import {SelectChangeEvent} from "@mui/material/Select";
-import {DatePicker} from "@mui/x-date-pickers";
+import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {Add} from "@mui/icons-material";
@@ -24,7 +24,6 @@ import {
     PersonaEnExpedienteType
 } from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/expedientesType";
 
-const initialState = {apellido: "", id_persona: null, nombre: ""}
 
 type HechoPunible = {
     id: number;
@@ -45,19 +44,18 @@ type HechoPunibleConCausa = {
 };
 
 
-
 const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
 
-const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:string; apellido:string;},)=>(void), editPersona: {} | null, onOpen: boolean, onClose: ()=>void}>= (
-    {onHandlerPersona, editPersona=null, onOpen, onClose})=>{
+const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nombre: string; apellido: string; },) => (void), editPersona: {} | null, onOpen: boolean, onClose: () => void }> = (
+    {onHandlerPersona, editPersona = null, onOpen, onClose}) => {
 
-    const { open, handleOpen, handleClose } = useModal();
+    const {open, handleOpen, handleClose} = useModal();
 
-    // State de PPLS para poblar el selector
+    /** State de PPLS para poblar el selector*/
     const [personasLista, setPersonasLista] = useState<Array<any>>([])
 
-    // State de
+    /** State de PPLS Seleccionados */
     const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{ id_persona: number; nombre: string; apellido: string; } | null>(null)
 
     // State para guardar defensores
@@ -75,14 +73,14 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
     useEffect(() => {
         // Se obtiene datos de lista de PPLs
-        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res=>{
-            setPersonasLista(prev=>([...res]))
+        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res => {
+            setPersonasLista(prev => ([...res]))
         })
 
 
         // Se obtiene datos de defensores
-        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/defensores`).then(res=>{
-            setDefensoresLista(prev=>([...res.defensores]))
+        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/defensores`).then(res => {
+            setDefensoresLista(prev => ([...res.defensores]))
         })
 
         // Hechos punibles
@@ -111,7 +109,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
     useEffect(() => {
         console.log(editPersona)
         if (editPersona) {
-            setDatosFormulario((prev:any)=>({
+            setDatosFormulario((prev: any) => ({
                 ...prev,
                 editPersona
             })); // Asume que editPersona tiene la forma correcta
@@ -120,34 +118,34 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
     /** Para controlar si es que debe abrir o cerrar el modal desde fuera del modal* */
     useEffect(() => {
-        if(onOpen){
+        if (onOpen) {
 
-        handleOpen()
+            handleOpen()
         }
     }, [onOpen]);
 
-    const handleSelectChange = (event: SelectChangeEvent<number>) =>{
+    const handleSelectChange = (event: SelectChangeEvent<number>) => {
         /*const persona = personasLista.filter((item : {id_persona:number; nombre:string; apellido: string;})=> item.id_persona == event.target.value)
         setPersonasVinculadas(persona[0]);*/
 
-        setDatosFormulario((prev: any) =>({
+        setDatosFormulario((prev: any) => ({
             ...prev,
             [event.target.name]: event.target.value
         }))
     };
 
-    const handleEditPersona = ()=>{
+    const handleEditPersona = () => {
         handleOpen()
         console.log(editPersona)
         // setDatosFormulario(editPersona)
     }
 
-    const handleChange = (event: any) =>{
-        const persona = personasLista.filter((item : {id_persona:number; nombre:string; apellido: string;})=> item.id_persona == event.target.value)
+    const handleChange = (event: any) => {
+        const persona = personasLista.filter((item: { id_persona: number; nombre: string; apellido: string; }) => item.id_persona == event.target.value)
         // setPersonasVinculadas(persona[0]);
         // console.log(persona[0].id_persona)
-        if(event.target.name == 'id_persona'){
-            setDatosFormulario((prev: any) =>({
+        if (event.target.name == 'id_persona') {
+            setDatosFormulario((prev: any) => ({
                 ...prev,
                 id_persona: persona[0].id_persona,
                 nombre: persona[0].nombre,
@@ -156,7 +154,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
             }))
         }
 
-        setDatosFormulario((prev: any) =>({
+        setDatosFormulario((prev: any) => ({
             ...prev,
             [event.target.name]: event.target.value,
         }))
@@ -164,7 +162,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
 
     const handleBooleanChange = (event: any) => {
         event.preventDefault();
-        setDatosFormulario((prevState : any) => ({
+        setDatosFormulario((prevState: any) => ({
             ...prevState,
             [event.target.name]: event.target.value == 'true',
         }))
@@ -181,14 +179,14 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
         setSeleccionesEnPPL(nuevasSelecciones);
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) =>{
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         console.log(personasSeleccionadas)
         console.log(datosFormulario)
 
-        const aux : boolean = true
+        const aux: boolean = true
 
-        if(personasSeleccionadas && aux){
+        if (personasSeleccionadas && aux) {
 
             const personaProcesada = {
                 ...datosFormulario,
@@ -207,9 +205,9 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
             setSeleccionesEnPPL([])
             setDatosFormulario(initialPeronaEnExpedienteStateForm)
             handleClose()
-        }else{
+        } else {
             openSnackbar("Debe seleccionar un PPL", "error")
-            setTimeout(()=>{
+            setTimeout(() => {
                 closeSnackbar()
             }, 5000)
         }
@@ -242,23 +240,23 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
         setSeleccionesEnPPL(nuevasSelecciones);
     };
 
-    return(
+    return (
         <>
-           <Stack spacing={2} direction='row' justifyContent='space-between'>
+            <Stack spacing={2} direction='row' justifyContent='space-between'>
                 <Typography variant='h6'>PPLs vinculados</Typography>
                 <Button onClick={handleOpen} variant={'contained'}>
                     Agregar PPL
                 </Button>
-           </Stack>
+            </Stack>
 
-            <ModalComponent open={open} onClose={()=> {
+            <ModalComponent open={open} onClose={() => {
                 handleClose()
                 onClose()
                 setSeleccionesEnPPL([])
                 setPersonasSeleccionadas(null)
                 setDatosFormulario(initialPeronaEnExpedienteStateForm)
 
-            }} title='Agregar PPL' >
+            }} title='Agregar PPL'>
                 <Box>
                     <Grid container spacing={2} mt={2}>
                         <Grid item sm={12}>
@@ -266,16 +264,16 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                 <Autocomplete
                                     fullWidth={true}
                                     value={personasSeleccionadas ? personasSeleccionadas : null}
-                                    onChange={(event, newValue:any) => {
+                                    onChange={(event, newValue: any) => {
                                         // @ts-ignore
-                                        setPersonasSeleccionadas((prev: any)=>({
+                                        setPersonasSeleccionadas((prev: any) => ({
                                             ...newValue
                                         }));
                                     }}
                                     id="controllable-states-demo"
                                     options={personasLista}
-                                    getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` }
-                                    renderInput={(params) => <TextField {...params} label="Lista de PPLs" />}
+                                    getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}`}
+                                    renderInput={(params) => <TextField {...params} label="Lista de PPLs"/>}
                                 />
                             </FormControl>
                         </Grid>
@@ -320,51 +318,51 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                         </Grid>
                     </Grid>
                     {datosFormulario.condenado ?
-                    <Grid container spacing={2} mt={1}>
-                        <Grid item sm={12}>
-                            <Typography variant='overline'>
-                                Duracion total de la condena
-                            </Typography>
-                        </Grid>
-                        <Grid item sm={6}>
+                        <Grid container spacing={2} mt={1}>
+                            <Grid item sm={12}>
+                                <Typography variant='overline'>
+                                    Duracion total de la condena
+                                </Typography>
+                            </Grid>
+                            <Grid item sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="anhos"
+                                    variant="outlined"
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        setDatosFormulario((prevState: any) => ({
+                                            ...prevState,
+                                            condena: {
+                                                ...prevState.condena,
+                                                anhos: event.target.value ? parseInt(event.target.value) : 0,
+                                            },
+                                        }))
+                                    }}
+                                    value={datosFormulario?.condena?.anhos}
+                                    name="anhos"
+                                />
+                                <FormHelperText>* Requerido</FormHelperText>
+                            </Grid><Grid item sm={6}>
                             <TextField
                                 fullWidth
-                                label="anhos"
+                                label="meses"
                                 variant="outlined"
-                                onChange={(event : React.ChangeEvent<HTMLInputElement>) => {
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                     setDatosFormulario((prevState: any) => ({
                                         ...prevState,
                                         condena: {
                                             ...prevState.condena,
-                                            anhos: event.target.value ? parseInt(event.target.value) : 0,
+                                            meses: event.target.value ? parseInt(event.target.value) : 0,
                                         },
                                     }))
                                 }}
-                                value={datosFormulario?.condena?.anhos}
-                                name="anhos"
+                                value={datosFormulario?.condena?.meses}
+                                name="meses"
                             />
                             <FormHelperText>* Requerido</FormHelperText>
-                        </Grid><Grid item sm={6}>
-                        <TextField
-                            fullWidth
-                            label="meses"
-                            variant="outlined"
-                            onChange={(event : React.ChangeEvent<HTMLInputElement>) => {
-                                setDatosFormulario((prevState: any) => ({
-                                    ...prevState,
-                                    condena: {
-                                        ...prevState.condena,
-                                        meses: event.target.value ? parseInt(event.target.value) : 0,
-                                    },
-                                }))
-                            }}
-                            value={datosFormulario?.condena?.meses}
-                            name="meses"
-                        />
-                        <FormHelperText>* Requerido</FormHelperText>
-                    </Grid>
-                    </Grid>
-                    : null }
+                        </Grid>
+                        </Grid>
+                        : null}
                     {datosFormulario.condenado ?
                         <Grid container spacing={2} mt={1}>
                             <Grid item sm={6}>
@@ -379,7 +377,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </Grid>
                             <Grid item sm={6}>
                                 <FormControl fullWidth>
-                                    <DatePicker
+                                    <MobileDatePicker
                                         format="DD/MM/YYYY"
                                         name='fecha_sentencia_definitiva'
                                         onChange={(newValue: Dayjs | null) => {
@@ -388,7 +386,7 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                                 fecha_sentencia_definitiva: newValue,
                                             }))
                                         }}
-                                        value={datosFormulario.fecha_sentencia_definitiva? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
+                                        value={datosFormulario.fecha_sentencia_definitiva ? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
                                         label="Fecha de emision sentencia"
                                     />
                                 </FormControl>
@@ -437,9 +435,9 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                             </Grid>
                         </Grid>
                     ))}
-                    <Grid container spacing={2} >
+                    <Grid container spacing={2}>
                         <Grid item>
-                            <Button variant='text' startIcon={<Add />} onClick={handleAgregar}>
+                            <Button variant='text' startIcon={<Add/>} onClick={handleAgregar}>
                                 Agregar Hecho Punible
                             </Button>
                         </Grid>
@@ -452,15 +450,17 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
                                     name="defensor"
-                                    value={datosFormulario?.defensor ? datosFormulario.defensor: 0}
+                                    value={datosFormulario?.defensor ? datosFormulario.defensor : 0}
                                     label="Defensor"
                                     onChange={handleChange}
                                 >
 
                                     <MenuItem value={0}>Seleccionar defensor</MenuItem>
-                                    {defensoresLista.map((item : {
-                                        id: number; nombre:string; apellido: string; tipo: string},index)=>(
-                                        <MenuItem key={index} value={item.id}> {item.apellido}, {item.nombre} - <span style={{textTransform: 'uppercase'}}>{item.tipo}</span></MenuItem>
+                                    {defensoresLista.map((item: {
+                                        id: number; nombre: string; apellido: string; tipo: string
+                                    }, index) => (
+                                        <MenuItem key={index} value={item.id}> {item.apellido}, {item.nombre} - <span
+                                            style={{textTransform: 'uppercase'}}>{item.tipo}</span></MenuItem>
                                     ))}
 
                                 </Select>
@@ -481,52 +481,57 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                             fecha_de_aprehension: newValue,
                                         }))
                                     }}
-                                    value={datosFormulario.fecha_de_aprehension? dayjs(datosFormulario.fecha_de_aprehension) : null}
+                                    value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : null}
                                     label="Fecha de aprension y detencion"
                                 />
                             </FormControl>
                         </Grid>
                     </Grid>
-                    <Grid container spacing={2} mt={1} alignItems={'end'}>
-                        <Grid item sm={12}>
-                            <FormControl>
-                                <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medid de
-                                    seguridad?</FormLabel>
-                                <RadioGroup
-                                    row
-                                    aria-labelledby="anhosDeExtraSeguridad"
-                                    name="tiene_anhos_extra_por_medida_de_seguridad"
-                                    onChange={handleBooleanChange}
-                                    value={datosFormulario.tiene_anhos_extra_por_medida_de_seguridad}
-                                >
-                                    <FormControlLabel value={false} control={<Radio/>} label="No"/>
-                                    <FormControlLabel value={true} control={<Radio/>} label="Si"/>
+                    {datosFormulario.condenado ?
+                        (
+                            <Grid container spacing={2} mt={1} alignItems={'end'}>
+                                <Grid item sm={12}>
+                                    <FormControl>
+                                        <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medid
+                                            de
+                                            seguridad?</FormLabel>
+                                        <RadioGroup
+                                            row
+                                            aria-labelledby="anhosDeExtraSeguridad"
+                                            name="tiene_anhos_extra_por_medida_de_seguridad"
+                                            onChange={handleBooleanChange}
+                                            value={datosFormulario.tiene_anhos_extra_por_medida_de_seguridad}
+                                        >
+                                            <FormControlLabel value={false} control={<Radio/>} label="No"/>
+                                            <FormControlLabel value={true} control={<Radio/>} label="Si"/>
 
 
-                                </RadioGroup>
-                            </FormControl>
-                        </Grid>
-                    </Grid>
+                                        </RadioGroup>
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        )
+                        : null}
                     {datosFormulario.tiene_anhos_extra_por_medida_de_seguridad ?
-                    <Grid container spacing={2} mt={1} alignItems={'end'}>
-                        <Grid item sm={6}>
-                            <TextField
-                                fullWidth
-                                label="Años"
-                                variant="outlined"
-                                onChange={(event) => {
-                                    setDatosFormulario((prevState: any) => ({
-                                        ...prevState,
-                                        anhos_extra_por_medida_de_seguridad: {
-                                            ...prevState.anhos_extra_por_medida_de_seguridad,
-                                            anhos: event.target.value ? parseInt(event.target.value) : 0
-                                        },
-                                    }))
-                                }}
-                                value={datosFormulario?.anhos_extra_por_medida_de_seguridad?.anhos}
-                                name="anhos_extra_por_medida_de_seguridad.anhos"
-                            />
-                        </Grid><Grid item sm={6}>
+                        <Grid container spacing={2} mt={1} alignItems={'end'}>
+                            <Grid item sm={6}>
+                                <TextField
+                                    fullWidth
+                                    label="Años"
+                                    variant="outlined"
+                                    onChange={(event) => {
+                                        setDatosFormulario((prevState: any) => ({
+                                            ...prevState,
+                                            anhos_extra_por_medida_de_seguridad: {
+                                                ...prevState.anhos_extra_por_medida_de_seguridad,
+                                                anhos: event.target.value ? parseInt(event.target.value) : 0
+                                            },
+                                        }))
+                                    }}
+                                    value={datosFormulario?.anhos_extra_por_medida_de_seguridad?.anhos}
+                                    name="anhos_extra_por_medida_de_seguridad.anhos"
+                                />
+                            </Grid><Grid item sm={6}>
                             <TextField
                                 fullWidth
                                 label="Meses"
@@ -544,27 +549,30 @@ const ModalPersona:FC<{onHandlerPersona:({}:{id_persona:number|null; nombre:stri
                                 name="anhos_extra_por_medida_de_seguridad.meses"
                             />
                         </Grid>
-                    </Grid>
-                    : null}
-                    <Grid container spacing={2} mt={1} alignItems={'end'}>
-                        <Grid item sm={8}>
-                            <FormControl fullWidth>
-                                <DatePicker
-                                    format="DD/MM/YYYY"
-                                    name='fecha_de_compurgamiento_inicial'
-                                    onChange={(newValue: Dayjs | null) => {
-                                        setDatosFormulario((prevState: any) => ({
-                                            ...prevState,
-                                            fecha_de_compurgamiento_inicial: newValue,
-                                        }))
-                                    }}
-                                    value={datosFormulario.fecha_de_compurgamiento_inicial? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : null}
-
-                                    label="Fecha de compurgamiento inicial"
-                                />
-                            </FormControl>
                         </Grid>
-                    </Grid>
+                        : null}
+                    {datosFormulario.condenado ?
+                        (
+                            <Grid container spacing={2} mt={1} alignItems={'end'}>
+                                <Grid item sm={8}>
+                                    <FormControl fullWidth>
+                                        <MobileDatePicker
+                                            format="DD/MM/YYYY"
+                                            name='fecha_de_compurgamiento_inicial'
+                                            onChange={(newValue: Dayjs | null) => {
+                                                setDatosFormulario((prevState: any) => ({
+                                                    ...prevState,
+                                                    fecha_de_compurgamiento_inicial: newValue,
+                                                }))
+                                            }}
+                                            value={datosFormulario.fecha_de_compurgamiento_inicial ? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : null}
+                                            label="Fecha de compurgamiento inicial"
+                                        />
+                                    </FormControl>
+                                </Grid>
+                            </Grid>
+                        )
+                        : null}
                     <Grid container spacing={2} mt={1}>
                         <Grid item sm={12}>
                             <Button variant={'contained'} onClick={handleSubmit}>

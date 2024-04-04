@@ -14,7 +14,7 @@ export default function NoDataBox() {
                 justifyContent='center'
                 alignItems='center'
                 display='flex'
-                minHeight='calc(100vh - 350px)'
+                minHeight='calc(100vh - 450px)'
                 >
                 <Box textAlign='center'>
                     <img src={noDataImg.src} alt="no-data-image"/>
