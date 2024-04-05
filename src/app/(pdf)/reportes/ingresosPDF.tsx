@@ -11,6 +11,7 @@ import Logo from '@/common/images/logo-sippy.png'
 import ministerioLogo from '@/common/images/ministerio-justicia-logo.png'
 import {useEffect, useState} from "react";
 import TableHeaderPDF from "@/app/(pdf)/reportes/table/TableHeaderPDF";
+import dayjs from "dayjs";
 
 const styles =  StyleSheet.create({
     page:{
@@ -97,7 +98,7 @@ export default function IngresosPDF({data}){
                             Establecimiento:
                         </Text>
                         <Text style={{fontWeight: 'bold', fontSize: '11px'}}>
-                            {state.establecimiento}
+                            Minga Guazu
                         </Text>
                     </View>
 
@@ -106,7 +107,7 @@ export default function IngresosPDF({data}){
                             Fecha:
                         </Text>
                         <Text style={{fontWeight: 'bold', fontSize: '11px'}}>
-                            {state.fecha}
+                            {dayjs().format('DD/MM/YYYY')}
                         </Text>
                     </View>
 
@@ -114,12 +115,10 @@ export default function IngresosPDF({data}){
 
 
 
-                { state.datos ? <TableHeaderPDF datos={state.datos}/>
+                { state ? <TableHeaderPDF datos={state}/>
                     : '' }
 
-                {/*<View style={{textAlign: 'center'}}>
-                    <Text render={({pageNumber, totalPages})=> `${pageNumber}/${totalPages}`} />
-                </View>*/}
+
             </Page>
         </Document>
     )

@@ -85,18 +85,19 @@ const styles =  StyleSheet.create({
 
 // @ts-ignore
 export default function TableHeaderPDF({datos}){
+    console.log(datos)
 
     return(
         <>
             <View style={{margin:'auto', marginTop: '40px', width: '80%'}}>
                 {/* Cantidad general */}
-                <View style={styles.tableSection}>
+                {/*<View style={styles.tableSection}>
                     <View style={[styles.tableBox, styles.tableBoxHeader, {width: '80%'}]}><Text>Capacidad total:</Text></View>
                     <View style={[styles.tableBox, {textAlign: 'right', width: '20%'}]}><Text>{datos.capacidad}</Text></View>
-                </View>
+                </View>*/}
                 <View style={[styles.tableSection, {marginTop: '30px'}]}>
                     <View style={[styles.tableBox, styles.tableBoxHeader, {width: '80%'}]}><Text>Poblacion total:</Text></View>
-                    <View style={[styles.tableBox, {textAlign: 'right', width: '20%'}]}><Text>{datos.condenados + datos.procesados}</Text></View>
+                    <View style={[styles.tableBox, {textAlign: 'right', width: '20%'}]}><Text>{datos.poblacion}</Text></View>
                 </View>
 
                 {/* Situacion Penal*/}
@@ -132,47 +133,39 @@ export default function TableHeaderPDF({datos}){
                 ))}*/}
                 <View style={styles.rowData}>
                     <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
-                        Salidas Especiales:
+                        Padecen problemas mentales:
                     </Text>
                     <Text style={styles.qtyData}>
-                        {datos.salidasEspciales}
+                        {datos.salud_mental}
                     </Text>
                 </View>
 
 
                 <View style={styles.rowData}>
                     <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
-                        Fugas:
+                        Con dificultades idiomaticas:
                     </Text>
                     <Text style={styles.qtyData}>
-                        {datos.fugas}
+                        {datos.limitaciones_idiomaticas}
+                    </Text>
+                </View>
+
+
+                <View style={styles.rowData}>
+                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
+                        Pertenece a la comunidad LGBTI:
+                    </Text>
+                    <Text style={styles.qtyData}>
+                        {datos.comunidad}
                     </Text>
                 </View>
 
                 <View style={styles.rowData}>
                     <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
-                        Fallecidos:
+                        Con VIH:
                     </Text>
                     <Text style={styles.qtyData}>
-                        {datos.fallecidos}
-                    </Text>
-                </View>
-
-                <View style={styles.rowData}>
-                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
-                        Internados:
-                    </Text>
-                    <Text style={styles.qtyData}>
-                        {datos.internados}
-                    </Text>
-                </View>
-
-                <View style={styles.rowData}>
-                    <Text style={[styles.descriptionData, {textTransform: 'capitalize'}]}>
-                        Reposo:
-                    </Text>
-                    <Text style={styles.qtyData}>
-                        {datos.comparecencia}
+                        {datos.vih}
                     </Text>
                 </View>
             </View>

@@ -67,11 +67,14 @@ const rowStyle = {
 
 }
 const formatDate = (dateString: string | null | number) => {
-    if (dateString) {
+    console.log(dateString)
+    if (dateString && dateString !== 'N/D') {
         const date = new Date(dateString);
         const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
         // @ts-ignore
         return date.toLocaleDateString(undefined, options);
+    }else{
+        return('N/D')
     }
 };
 

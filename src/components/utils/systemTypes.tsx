@@ -323,6 +323,7 @@ export type datosIncialesJudiciales = {
         };
         expedienteJudicial:{
             id:number;
+            condenado: boolean;
         }
         documentos_que_ordenan_prision?: Array<{
             id:number;
@@ -351,6 +352,12 @@ export type datosJudicialesType = {
     resolucion_numeroDeDocumento:string;
     resolucion_fechaDeDocumento:Dayjs | null;
     resolucion_documento: File | null;
+    ingresos_a_prision?: Array<{
+        fecha_ingreso:Dayjs|string|null;
+        expedienteJudicial:{
+            condenado: boolean;
+        }
+    }>;
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {

@@ -30,7 +30,7 @@ export const rangoEtarioData = ()=>{
     return({
         header:[
             { id: 'id', label: 'ID' },
-            { id: 'ciudad', label: 'Ciudad' },
+            { id: 'nacionalidad', label: 'Ciudad' },
             { id: 'cantidad', label: 'Cantidad' },
         ],
         data:        [
@@ -69,7 +69,7 @@ export const lugarNacimientoExtended = ()=>{
     return({
         header:[
             { id: 'id', label: 'ID' },
-            { id: 'ciudad', label: 'Ciudad' },
+            { id: 'nacionalidad', label: 'Ciudad' },
             { id: 'cantidad', label: 'Cantidad' },
         ],
         data:        [
