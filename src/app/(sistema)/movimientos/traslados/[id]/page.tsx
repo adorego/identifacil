@@ -498,7 +498,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                 label="Persona que autorizó traslado"
                                                 name="autorizo"
                                             >
-                                                 Replace these menu items with your options
+
                                                 <MenuItem value={0}>
                                                     Seleccionar autorizador
                                                 </MenuItem>

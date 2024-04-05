@@ -1,7 +1,18 @@
 'use client'
 
 import * as React from 'react';
-import {Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField,} from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    FormControl,
+    Grid,
+    InputLabel,
+    MenuItem,
+    Paper,
+    Select,
+    TextField,
+} from "@mui/material";
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -9,6 +20,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import CustomTable from "@/components/CustomTable";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {salidasTransitoriasType} from "@/components/utils/penalesType";
+import {useState} from "react";
 
 const initialState = {
     numeroDocumento: '',
@@ -22,8 +34,20 @@ const initialState = {
     tiempoPermiso: '',
 }
 
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
+const URL_ENDPOINT_CUSTODIO = `${API_URL}/movimientos/custodios`;
+
 export default function Page(){
     const [formData, setFormData] = React.useState<salidasTransitoriasType>(initialState);
+
+    /** Estado para lista de custodios */
+    const [custodio, setCustodio] = useState<[]>([]);
+
+    /** Estado para pagina de carga */
+    const [loading, setLoading] = useState(false)
+
+
+
 
     const handleChange = (event: { target: { name: string; value: any; }; }) => {
         const { name, value } = event.target;
@@ -59,6 +83,17 @@ export default function Page(){
         {id: 10,  momentoSalida: '01/01/2023 09:00', observacionSalida: 'N/D',  momentoEntrada: '01/01/2023 09:00', observacionEntrada: 'N/D', url: '/movimientos/extradiciones'},
         {id: 11,  momentoSalida: '01/01/2023 09:00', observacionSalida: 'N/D',  momentoEntrada: '01/01/2023 09:00', observacionEntrada: 'N/D', url: '/movimientos/extradiciones'},
     ];
+
+    if(loading){
+        return(
+            <>
+                <Box>
+                    <CircularProgress />
+                </Box>
+            </>
+        )
+    }
+
     return(
         <Box>
             <Box mb={3}>

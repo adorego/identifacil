@@ -30,23 +30,24 @@ export const dataSalidasEspeciales = ()=>{
     return({
         header:[
             { id: 'id', label: 'ID' },
+            { id: 'nombre_apellido', label: 'Apellido, Nombre' },
             { id: 'tipoSalida', label: 'Tipo de salida' },
             { id: 'momentoSalida', label: 'Fecha y hora de salida' },
             { id: 'momentoEntrada', label: 'Fecha Traslado' },
             { id: 'destino', label: 'Destino' },
         ],
         data:[
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
-            {id: i++, tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 amIntima', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', tipoSalida: 'Salida Familiar', momentoSalida: '01/01/2023 09:00 am', momentoEntrada: '01/01/2023 09:00 am', destino: 'Tacumbu', url: '/movimientos/salidaTransitoria'},
         ]
     })
 }
@@ -77,4 +78,33 @@ export const dataTraslados = ()=>{
         ]
     })
 }
+
+
+export const dataMovimientoInterno = ()=>{
+    i = 0;
+    return({
+        header:[
+            { id: 'id', label: 'ID' },
+            { id: 'nombre_apellido', label: 'Apellido, Nombre' },
+            { id: 'destino', label: 'Destino' },
+            { id: 'motivo_cambio', label: 'Motivo cambio' },
+            { id: 'fecha_cambio', label: 'Fecha cambio' },
+            { id: 'autorizacion', label: 'Autorizado por' },
+        ],
+        data:[
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+            {id: i++, nombre_apellido: 'Gonzalez Ramirez, Juan Jose', destino: 'Celda 4', motivo_cambio: 'Conflicto interno', fecha_cambio: '01/01/2023', autorizacion: 'Juan Perez', url: '/movimientos/salidaTransitoria'},
+        ]
+    })
+}
+
 

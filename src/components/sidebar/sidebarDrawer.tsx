@@ -201,6 +201,13 @@ export default function SidebarDrawer()
                             path="/acceso/entrada-salida-visitante"
                             isActive={pathname === '/acceso/entrada-salida-visitante'}
                         />
+
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Lista de visitas"
+                            path="/acceso/lista-visitas"
+                            isActive={pathname === '/acceso/lista-visitas'}
+                        />
                         
                     </List>
                 </Collapse>
@@ -274,7 +281,7 @@ export default function SidebarDrawer()
                             path="/movimientos/traslados"
                             isActive={pathname === '/movimientos/traslados'}
                         />
-                        {/*<SidebarItem
+                        <SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Salidas especiales"
                             path="/movimientos/salidasEspeciales"
@@ -287,6 +294,12 @@ export default function SidebarDrawer()
                             isActive={pathname === '/movimientos/salidasTransitorias'}
                         />
                         <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Movimiento interno"
+                            path="/movimientos/movimiento-interno"
+                            isActive={pathname === '/movimientos/movimiento-interno'}
+                        />
+                        {/*<SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Bajas"
                             path="/movimientos/bajas"
