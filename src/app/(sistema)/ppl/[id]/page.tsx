@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import {Grid, Stack, Box} from "@mui/material";
+import {Grid, Stack, Box, CircularProgress} from "@mui/material";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -10,7 +10,7 @@ import TabPanel from '@mui/lab/TabPanel';
 import NestedInformacionPreso from "./NestedInformacionPreso";
 import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 import Image from "next/image";
 import avatar from "@/common/blank-profile-picture-973460_960_720.webp"
@@ -26,20 +26,7 @@ import {
 import TabSalidaTransitoia from "@/app/(sistema)/ppl/[id]/components/tabSalidasTransitorias";
 import TabSalidaTransitoria from "@/app/(sistema)/ppl/[id]/components/tabSalidasTransitorias";
 
-interface familiar {
-    nombre: string;
-    apellido: string;
-    vinculo: string;
-    lugar: string;
 
-}
-
-interface datosConcubino {
-    numeroDeIdentificacion: string;
-    nombres: string;
-    apellidos: string;
-
-}
 
 type dataType = {
     id_persona: number;
@@ -119,6 +106,8 @@ const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_
 export default function Page({ params }: { params: { id: number } }) {
     const [value, setValue] = React.useState('1');
     const [data, setData] = React.useState<dataType>(initialData);
+    const [stateDataProfile, setStateDataProfile] = useState<any>({})
+
     const [loading, setLoading] = React.useState(true);
     const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
@@ -129,6 +118,27 @@ export default function Page({ params }: { params: { id: number } }) {
         setLoading(true)
         fetchData(`${ENDPOINT}${params.id}`)
             .then(fetchedData => {
+                setStateDataProfile((prev:any)=>{
+                    console.log(fetchedData)
+                    let condenadoValue = '';
+                    if(
+                        fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).expedienteJudicial.condenado !== null
+                        && fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).expedienteJudicial.condenado !== undefined){
+                        if(fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).expedienteJudicial.condenado){
+                            condenadoValue = 'Condenado'
+                        }else{
+                            condenadoValue = 'Procesado'
+                        }
+                    }else{
+                        condenadoValue = 'N/D'
+                    }
+
+                    return({
+
+                        condenado: condenadoValue,
+                        fecha_ingreso: fetchedData.datosJudiciales?.ingresos_a_prision.length > 0 ? fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).fecha_ingreso : 'N/D'
+                    })
+                })
                 setData(fetchedData);
             }).finally(()=> {
 
@@ -167,7 +177,21 @@ export default function Page({ params }: { params: { id: number } }) {
                                             borderRadius: '10px',
                                         }}
                                     />*/}
-                                    <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile'/>
+                                    {
+                                        !loading ?
+                                        <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile' alt={`foto-perfil-${data.nombre + '-' + data.apellido}`}/>
+                                        :
+                                            (
+                                                <Box sx={{
+                                                    display: 'flex',
+                                                    justifyContent: 'center',
+                                                    alignItems: 'center'
+                                                }}>
+                                                    <CircularProgress />
+                                                </Box>
+                                            )
+                                    }
+
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
 
@@ -179,25 +203,23 @@ export default function Page({ params }: { params: { id: number } }) {
                                                     Nombre y apellido
                                                 </Typography>
                                                 <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
-                                                    {data.nombre} {data.apellido} ({data.apodo})
+                                                    {data.nombre} {data.apellido} {`(${data.apodo})`}
                                                 </Typography>
                                             </Grid>
                                             <Grid item pt={0}>
                                                 <Typography variant="overline" display="block" mb={0}>
                                                     Estado Procesal
                                                 </Typography>
-                                                <Typography variant="body1" display="block"
-                                                            sx={{fontWeight: '600',}}>
-                                                    Condenado
+                                                <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
+                                                    {stateDataProfile.condenado}
                                                 </Typography>
                                             </Grid>
                                             <Grid item pt={0}>
                                                 <Typography variant="overline" display="block" mb={0}>
                                                     Fecha de ingreso
                                                 </Typography>
-                                                <Typography variant="body1" display="block"
-                                                            sx={{fontWeight: '600',}}>
-                                                    01/01/2023
+                                                <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
+                                                    {stateDataProfile.fecha_ingreso}
                                                 </Typography>
                                             </Grid>
                                             <Grid item pt={0}>

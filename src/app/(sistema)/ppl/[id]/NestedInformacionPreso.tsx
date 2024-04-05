@@ -92,7 +92,7 @@ type datosPersonaType = {
     datosFamiliares: datosFamiliaresType;
     datosEducacion: datosEducacionType;
     datosDeSalud: datosDeSalud2Type;
-    datosJudiciales: datosJudicialesType;
+    datosJudiciales: datosJudicialesType | any;
     registro_de_fotos: Array<{ nombre: string; foto: string; }>
 }
 
@@ -225,7 +225,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                 <BloqueJudicial id_persona={datosPersona.id_persona}
                                                 datosIniciales={datosPersona.datosJudiciales}/>
                             </CustomTabPanel>
-                            {}
+
                             <CustomTabPanel value={value} index={6}>
                                 <BloqueGaleria datosIniciales={datosPersona.registro_de_fotos}
                                                id_persona={datosPersona.id_persona}/>

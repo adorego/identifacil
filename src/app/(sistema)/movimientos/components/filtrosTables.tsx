@@ -1,7 +1,17 @@
 'use client'
 
 import * as React from 'react';
-import {Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Stack, TextField} from "@mui/material";
+import {
+    Button,
+    FormControl,
+    Grid,
+    IconButton,
+    InputAdornment,
+    InputLabel,
+    MenuItem,
+    Stack,
+    TextField
+} from "@mui/material";
 import Select, {SelectChangeEvent} from "@mui/material/Select";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
@@ -11,6 +21,7 @@ import {ChangeEvent} from "react";
 import {filterByDateRange} from "@/components/utils/utils";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CloseIcon from '@mui/icons-material/Close';
+import {Search} from "@mui/icons-material";
 
 
 interface FiltrosTablesProps {
@@ -83,16 +94,21 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField
     return(
         <>
             <Grid container spacing={2}>
-                <Grid item xs={3}>
+                <Grid item xs={6}>
                     <TextField
+                        fullWidth
                         id="busqueda"
                         name="busqueda"
                         value={busqueda}
                         onChange={handleChange}
-                        label="Buscar por numero de documetno"
-                        type='text'
+                        label="Buscar por numero de documento..."
                         variant="outlined"
-                        fullWidth/>
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end">
+                                <Search />
+                            </InputAdornment>,
+                        }}
+                    />
                 </Grid>
                 {/*<Grid item xs={3}>
                     <FormControl fullWidth>

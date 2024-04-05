@@ -13,11 +13,12 @@ import {fetchData} from "@/components/utils/utils";
 const ENDPOINT: string = `/gestion_ppl/ppls`
 
 const header = [
-    {id: 'id', label: 'ID'},
+    {id: 'id_persona', label: 'ID'},
     {id: 'nombre_apellido', label: 'Apellido, Nombre'},
     {id: 'apodo', label: 'Apodo'},
     {id: 'numero_de_identificacion', label: 'Documento'},
     {id: 'genero', label: 'Genero', type: 'genero', dataType:[{id: 1, name: 'Femenino'},{id: 2, name:'Masculino'}]},
+    {id: 'fecha_de_ingreso', label: 'Fecha ingreso', type: 'date'},
     {id: 'fechaDeNacimiento', label: 'Fecha nacimiento', type: 'date'},
     /*{id: 'estado_perfil', label: 'Estado Perfil'},*/
 ]
@@ -53,19 +54,21 @@ export default function Page() {
     }
 
     useEffect(() => {
-        console.log('get ppl')
+
         fetchData()
             .then(fetchedData => {
+                console.log(fetchedData)
+
                 setListaPersonas(fetchedData.map((item:any)=>({
                     ...item,
-                    nombre_apellido: `${item.apellido}, ${item.nombre}`,
+                    nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
+                    fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso ? item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso : 'N/D',
+                    apodo: item.apodo ? item.apodo : 'N/D'
                 })));
             }).finally(() => {
             setLoading(false)
         })
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
-
-
 
     const onHandleFiltro = (value: any) => {
         setDataFiltrado(value)
@@ -80,18 +83,15 @@ export default function Page() {
                 justifyContent: 'center',
                 height: '75vh',
             }}>
-                {
-                    loading ?
+                { loading ?
                         <CircularProgress/>
-                        : (
-                            <>
+                        : (<>
                                 <Box>
                                     <Alert color='info'>
                                         No hay datos para mostrar en este momento
                                     </Alert>
                                 </Box>
-                            </>
-                        )
+                        </>)
                 }
             </Box>
         );
@@ -113,7 +113,7 @@ export default function Page() {
                         <CustomTable
                             headers={header}
                             data={dataFiltrado ? dataFiltrado : listaPersonas}
-                            showId={false}
+                            showId={true}
                             options={{
                                 deleteOption: false,
                                 rowsPerPageCustom: 10,
