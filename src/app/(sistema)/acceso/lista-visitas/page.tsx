@@ -43,7 +43,8 @@ export default function Ppl() {
     const [filterData, setFilterData] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
-
+    const [loading, setLoading] = useState(true)
+    
     const {openSnackbar} = useGlobalContext();
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
@@ -97,6 +98,7 @@ export default function Ppl() {
                 console.log(dataProcesado)
                 // TODO: veritifcar porque hace problema typescript aca
                 setData(dataProcesado);
+                setLoading(false)
             });
         fetchData(`${API_URL}/entrada_salida/visitantes/ingresos`)
             .then(fetchedData => {
@@ -116,6 +118,7 @@ export default function Ppl() {
 
                 //@ts-ignore
                 setData((prev:any)=>([...prev, ...dataProcesado]));
+                setLoading(false)
             });
     }, []);
 
@@ -126,7 +129,7 @@ export default function Ppl() {
 
 
     // @ts-ignore
-    if (!data.length > 0) {
+    if (loading) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -142,27 +145,39 @@ export default function Ppl() {
 
     return (
         <>
-            <Box >
-                <TituloComponent titulo='Lista de visitas' url='/' />
+            { data.length > 0 ?
+                (
+                    <Box >
+                        <TituloComponent titulo='Lista de visitas' url='/' />
 
-                <Box mt={3}>
-                    <CustomTable
-                        showId={false}
-                        headers={header2}
-                        data={data}
-                        deleteRecord={handleOpenModal}
-                        options={{
-                            rowsPerPageCustom: 5,
-                            pagination: true,
+                        <Box mt={3}>
+                            <CustomTable
+                                showId={false}
+                                headers={header2}
+                                data={data}
+                                deleteRecord={handleOpenModal}
+                                options={{
+                                    rowsPerPageCustom: 5,
+                                    pagination: true,
 
-                        }}
-                    />
-                </Box>
+                                }}
+                            />
+                        </Box>
 
 
 
-                <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
-            </Box>
+                        <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
+                    </Box>
+                )
+                : (
+                <>
+                    <TituloComponent titulo='Lista de visitas' url='/' />
+                    <Box sx={{}}>
+                        <NoDataBox />
+                    </Box>
+                </>
+                ) }
+
         </>
     )
 }
