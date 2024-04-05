@@ -14,24 +14,24 @@ import {
 } from "@mui/material";
 import {ChangeEvent, useState} from "react"
 import {IdentificationResponse, initialResponse} from "../../../../model/respuesta-identificacion";
-import {ThumbDown, ThumbUp} from "@mui/icons-material";
-
-import {Dayjs} from "dayjs";
 import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWithLayout";
 import {IReconocimiento} from "@/components/registro/FaceDetectionOverlay";
 import log from "loglevel";
 import style from "./page.module.css";
 import {useGlobalContext} from "@/app/Context/store";
+import { api_request } from "@/lib/api-request";
 
 const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo'];
 
 interface pplAVisitar {
+    id_persona:number|null;
     cedula: string;
     nombre: string;
     apellido: string;
 }
 
 const datosInicialesPplAVisitar = {
+    id_persona:null,
     cedula: "",
     nombre: "",
     apellido: ""
@@ -44,11 +44,31 @@ interface RespuestaAConsultaPPL {
     apellido: string;
 }
 
+
+
+const datosInicialesDeVisitante:IdentificationResponse= {
+    identificado:false,
+    numeroDeIdentificacion:"",
+    nombres:"",
+    apellidos:"",
+    esPPL:false
+}
+
 interface SolicitudEntradaVisitante {
+    visitante:number|null;//id_persona del visitante
+    ppl_a_visitar:number|null;//id_persona del ppl a visitar
+    establecimiento:number|null;
+    fecha_ingreso:string|null;
+    hora_ingreso:string|null;
     observacion: string;
 }
 
 const solicitudEntradaVisitanteInicial: SolicitudEntradaVisitante = {
+    visitante:null,
+    ppl_a_visitar:null,
+    establecimiento:null,
+    fecha_ingreso:null,
+    hora_ingreso:null,
     observacion: ""
 }
 export default function EntradaSalidaVisitante() {
@@ -63,6 +83,7 @@ export default function EntradaSalidaVisitante() {
     const [entradaVisitante, setEntradaVisitante] = useState<SolicitudEntradaVisitante>(solicitudEntradaVisitanteInicial);
     const [mensaje, setMensaje] = useState("");
     const {openSnackbar} = useGlobalContext();
+    const {selectedEstablecimiento} = useGlobalContext();
 
     const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
@@ -89,12 +110,23 @@ export default function EntradaSalidaVisitante() {
             const data: IdentificationResponse = await response.json();
             setProgresoReconocmiento(EstadosProgreso[0]);
             setVisitanteIdentificado(true);
-            setIdentificationData({
-                numeroDeIdentificacion: data.numeroDeIdentificacion,
-                nombres: data.nombres,
-                apellidos: data.apellidos,
-                esPPL: data.esPPL
-            })
+            if(data.esPPL){
+                openSnackbar(`La persona es un PPL`,'error');
+            }else if(!data.id_persona){
+
+                openSnackbar(`La persona no está registrada`,'error');
+            }else{
+                console.log("Datos recibidos:",data);
+                setIdentificationData({
+                    identificado:data.identificado,
+                    id_persona:data.id_persona,
+                    numeroDeIdentificacion: data.numeroDeIdentificacion,
+                    nombres: data.nombres,
+                    apellidos: data.apellidos,
+                    esPPL: data.esPPL
+                })
+            }
+            
             // openSnackbar(`Persona Reconocida, nombre:${data.nombres}, apellido:${data.apellidos}, esPPL:${esPPL}`);
         }
     }
@@ -152,16 +184,14 @@ export default function EntradaSalidaVisitante() {
 
 
                 if (!response.ok) {
-                    console.log(' error')
                     throw new Error('Error en la petición');
-                    log.error('Ocurrio un error:', data);
+                    
                 }
                 if (data.id_persona) {
-                    console.log('dataaaa')
-
                     setPPLIdentificado(true)
                     setpplAVisitar(prev => ({
                         ...prev,
+                        id_persona:data.id_persona,
                         nombre: data.nombre,
                         apellido: data.apellido,
                     }))
@@ -182,14 +212,77 @@ export default function EntradaSalidaVisitante() {
         setEntradaSalida(value === "true" ? true : false);
     }
 
-    const solicitarIngresoPPL = () => {
-        setTimeout(
-            () => {
-                setAutorizarIngreso(autorizarIngreso === "autorizado" ? "noAutorizado" : "autorizado")
-                openSnackbar('Ingreso autorizado' )
-            }, 2000
-        )
-        setAutorizarIngreso("consultando");
+    const entradaSalidaVisitante = async () => {
+        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/visitantes/`
+        
+        
+        if(entrada_salida){//Registro de Entrada
+            //Validación de datos
+            if(!pplAVisitar.id_persona){
+                openSnackbar(`Debe identificarse un PPL a visitar`,"error");
+            }
+            if(!identificationData.id_persona){
+                openSnackbar(`Debe identificarse la persona visitante`,"error");
+            }
+            if(!selectedEstablecimiento && selectedEstablecimiento===0){
+                openSnackbar(`Debe seleccionar un establecimiento`,"error");
+            }
+            else{
+                const url_entrada = url + "entrada";
+                const fecha_hora = new Date();
+                const datos_a_enviar ={
+                    visitante:identificationData.id_persona,
+                    ppl_a_visitar:pplAVisitar.id_persona,
+                    fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                    hora_ingreso:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
+                    establecimiento:selectedEstablecimiento,
+                    observacion:entradaVisitante.observacion
+                }
+                console.log("Datos a enviar:",datos_a_enviar);
+                const respuestaIngresoVisitante = await api_request(url_entrada,{
+                    method:'POST',
+                    headers:{"Content-type":"application/json"},
+                    body:JSON.stringify(datos_a_enviar)
+                })
+                if(!respuestaIngresoVisitante.success){
+                    openSnackbar(`Ocurrió un error:${respuestaIngresoVisitante.error}`,'error')
+                }else{
+                    openSnackbar(`Registro de visitante exitoso`,'success')
+                }
+                
+            }
+        }else{//Registro de Salida
+             //Validación de datos
+             if(!pplAVisitar.id_persona){
+                openSnackbar(`Debe identificarse un PPL a visitar`,"error");
+            }
+            if(!identificationData.id_persona){
+                openSnackbar(`Debe identificarse la persona visitante`,"error");
+            }
+            else{
+                const url_entrada = url + "salida";
+                const fecha_hora = new Date();
+                const respuestaIngresoVisitante = await api_request(url_entrada,{
+                    method:'POST',
+                    headers:{"Content-type":"application/json"},
+                    body:JSON.stringify({
+                        visitante:identificationData.id_persona,
+                        ppl_que_visito:pplAVisitar.id_persona,
+                        fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        hora_salida:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
+                        establecimiento:selectedEstablecimiento,
+                        observacion:entradaVisitante.observacion
+                    })
+                })
+                if(!respuestaIngresoVisitante.success){
+                    openSnackbar(`Ocurrió un error:${respuestaIngresoVisitante.error}`,'error')
+                }else{
+                    openSnackbar(`Registro de salida de visitante exitoso`,'success')
+                }
+            }
+        }
+        setIdentificationData(datosInicialesDeVisitante);
+        setpplAVisitar(datosInicialesPplAVisitar);
     }
 
     return (
@@ -216,6 +309,7 @@ export default function EntradaSalidaVisitante() {
                                     showSpinner={showSpinner}
                                     progresoRegistro={progresoReconocimiento}
                                     mensaje={mensaje}
+                                    capturas={1}
                                     cerrar_dialogo={cerrar_dialogo}
                                     agregar_reconocimiento={agregar_reconocimiento}
                                     actualizar_progreso={actualizar_progreso}/>
@@ -371,7 +465,7 @@ export default function EntradaSalidaVisitante() {
                                                         </Grid>
                                                         <Grid item sm={12}>
                                                             <FormControl fullWidth={true} sx={{}}>
-                                                                <Button variant="contained" onClick={solicitarIngresoPPL}>
+                                                                <Button variant="contained" onClick={entradaSalidaVisitante}>
                                                                     Solicitar Autorización
                                                                 </Button>
                                                             </FormControl>
