@@ -21,11 +21,12 @@ import NoDataBox from "@/components/loadingScreens/noDataBox";
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'nombre_apellido', label: 'Apellido, Nombre'},
-    {id: 'tipo_medida', label: 'Tipo'},
-    {id: 'motivo', label: 'Motivo'},
-    {id: 'fecha_inicio', label: 'Fecha inicio'},
-    {id: 'fecha_fin', label: 'Fecha fin'},
+    {id: 'visitante', label: 'Apellido, Nombre'},
+    {id: 'tipo', label: 'tipo'},
+    {id: 'fecha_salida', label: 'Fecha', type: 'date'},
+    {id: 'hora_salida', label: 'Hora'},
+    {id: 'observacion', label: 'Observacion'},
+    {id: 'ppl_que_visito', label: 'PPL visitado'},
 ]
 
 const dataMedidas = [
@@ -38,11 +39,12 @@ const dataMedidas = [
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Ppl() {
-    const {openSnackbar} = useGlobalContext();
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<any>([]);
     const [filterData, setFilterData] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
+
+    const {openSnackbar} = useGlobalContext();
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
@@ -79,22 +81,41 @@ export default function Ppl() {
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
+        fetchData(`${API_URL}/entrada_salida/visitantes/salidas`)
+            .then(fetchedData => {
+                // console.log(fetchedData)
+                const dataProcesado = fetchedData.map((item:any)=>({
+                    id: item.id,
+                    visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,
+                    fecha_salida: item.fecha_salida,
+                    hora_salida: item.hora_salida,
+                    observacion: item.observacion,
+                    ppl_que_visito: `${item.ppl_que_visito.persona.apellido} ${item.ppl_que_visito.persona.nombre}`,
+                    tipo: 'Salida'
+                }))
+
+                console.log(dataProcesado)
+                // TODO: veritifcar porque hace problema typescript aca
+                setData(dataProcesado);
+            });
         fetchData(`${API_URL}/entrada_salida/visitantes/ingresos`)
             .then(fetchedData => {
-                /*console.log(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
-                    ...item,
-                    destinoTraslado: item.destinoTraslado.nombre,
-                    origenTraslado: item.origenTraslado.nombre
-                })))*/
+                // console.log(fetchedData)
+                const dataProcesado = fetchedData.map((item:any)=>({
+                    id: item.id,
+                    visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,
+                    fecha_salida: item.fecha_ingreso,
+                    hora_salida: item.hora_ingreso,
+                    observacion: item.observacion,
+                    ppl_que_visito: `${item.ppl_a_visitar.persona.apellido} ${item.ppl_a_visitar.persona.nombre}`,
+                    tipo: 'Entrada'
+                }))
+
+                console.log(dataProcesado)
                 // TODO: veritifcar porque hace problema typescript aca
 
-                console.log(fetchedData)
                 //@ts-ignore
-                /*setData(Object.keys(fetchedData).map(key => fetchedData[key]).map(item => ({
-                    ...item,
-                    destinoTraslado: item.destinoTraslado.nombre,
-                    origenTraslado: item.origenTraslado.nombre
-                })));*/
+                setData((prev:any)=>([...prev, ...dataProcesado]));
             });
     }, []);
 
@@ -104,7 +125,8 @@ export default function Ppl() {
     }
 
 
-    if (!data && false) {
+    // @ts-ignore
+    if (!data.length > 0) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -121,20 +143,17 @@ export default function Ppl() {
     return (
         <>
             <Box >
-                <TituloComponent titulo='Medidas de fuerza' url='/' newEntry='/ppl/medidas-de-fuerza/crear'/>
+                <TituloComponent titulo='Lista de visitas' url='/' newEntry='/ppl/medidas-de-fuerza/crear'/>
 
                 <Box mt={3}>
                     <CustomTable
-                        showId={true}
+                        showId={false}
                         headers={header2}
-                        data={dataMedidas}
+                        data={data}
                         deleteRecord={handleOpenModal}
                         options={{
-
-                            targetURL: '/movimientos/traslados',
                             rowsPerPageCustom: 5,
                             pagination: true,
-                            deleteOption: true,
 
                         }}
                     />
