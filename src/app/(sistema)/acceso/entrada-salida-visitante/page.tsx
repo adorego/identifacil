@@ -231,7 +231,7 @@ export default function EntradaSalidaVisitante() {
                     visitante:identificationData.id_persona,
                     ppl_a_visitar:pplAVisitar.id_persona,
                     fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
-                    hora_ingreso:`${fecha_hora.getHours()}/${fecha_hora.getMinutes()}/${fecha_hora.getSeconds()}`,
+                    hora_ingreso:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                     establecimiento:selectedEstablecimiento,
                     observacion:entradaVisitante.observacion
                 }
@@ -266,7 +266,7 @@ export default function EntradaSalidaVisitante() {
                         visitante:identificationData.id_persona,
                         ppl_que_visito:pplAVisitar.id_persona,
                         fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
-                        hora_salida:`${fecha_hora.getHours()}/${fecha_hora.getMinutes()}/${fecha_hora.getSeconds()}`,
+                        hora_salida:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                         establecimiento:selectedEstablecimiento,
                         observacion:entradaVisitante.observacion
                     })
