@@ -112,6 +112,9 @@ export default function EntradaSalidaVisitante() {
             setVisitanteIdentificado(true);
             if(data.esPPL){
                 openSnackbar(`La persona es un PPL`,'error');
+            }else if(!data.id_persona){
+
+                openSnackbar(`La persona no está registrada`,'error');
             }else{
                 console.log("Datos recibidos:",data);
                 setIdentificationData({
