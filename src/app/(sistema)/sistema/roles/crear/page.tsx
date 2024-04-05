@@ -47,32 +47,35 @@ export default function Crear(){
                     <Typography variant='h6'>
                         Datos de la rol
                     </Typography>
-                    <p>
-                        User ID: {userId}
-                    </p>
-                    <p>
-                        First Name:
-                    </p>
-                    <ol>
-                        {data.map((e,i)=><li key={i}>{e.firstName}</li>)}
-                    </ol>
+
                     <Grid container spacing={2} mt={2}>
                         <Grid item sm={6}>
                             <TextField
                                 fullWidth
                                 onChange={handleChange}
-                                name="establecimiento"
-                                id="establecimiento"
-                                label="Establecimiento penitenciario"
+                                name="Nombre del rol"
+                                id="descripcion"
+                                label="Nombre del rol"
                                 variant="outlined" />
                         </Grid>
                         <Grid item sm={6}>
                             <TextField
                                 fullWidth
                                 onChange={handleChange}
-                                name="numeroIp"
-                                id="numeroIp"
-                                label="Ip de la rol"
+                                name="slug"
+                                id="slug"
+                                label="Codigo"
+                                variant="outlined" />
+                        </Grid>
+                        <Grid item sm={12}>
+                            <TextField
+                                fullWidth
+                                multiline
+                                rows={4}
+                                onChange={handleChange}
+                                name="Descripcion del rol"
+                                id="descripcion"
+                                label="Nombre del rol"
                                 variant="outlined" />
                         </Grid>
                     </Grid>

@@ -77,8 +77,6 @@ export default function Page(){
                 const resultados = {};
 
                 fetchedData.forEach((persona:any)=>{
-                    // console.log(persona.datosPersonales? true : false)
-                    // console.log(persona.id_persona + ' ' + persona.id_persona.nacionalidad ? 'si' : 'no')
 
                     if(persona.datosPersonales !== null){
 
@@ -93,10 +91,7 @@ export default function Page(){
                                 // @ts-ignore
                             resultados[nacionalidad] = 1;
                             }
-
                     }
-
-
                 })
 
                 // @ts-ignore

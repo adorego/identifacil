@@ -6,6 +6,8 @@ import {PeopleAlt, VerifiedUser, SyncAlt, WorkHistory} from "@mui/icons-material
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import CardReport from "@/components/blocks/cardReport";
 import PenitenciariaFilter from "@/app/(sistema)/informes/components/penitenciariaFilter";
+import {useEffect} from "react";
+import {fetchData} from "@/components/utils/utils";
 const styles = {
     databox: {
         textAlign: 'center',
@@ -32,7 +34,9 @@ const styles = {
     }
 }
 
+
 export default function Page() {
+
 
     // @ts-ignore
     return (
@@ -50,7 +54,7 @@ export default function Page() {
 
                                 }}>
                                     <Box>
-                                        <PenitenciariaFilter />
+                                        {/*<PenitenciariaFilter />*/}
                                     </Box>
                                     <Typography variant='h5' mt={3}>
                                         Parte diario
@@ -121,18 +125,18 @@ export default function Page() {
                                 Reportes
                             </Typography>
                         </Grid>
-                        <Grid item sm={3}>
+                        <Grid item sm={4}>
                             <CardReport nombre='Reporte de ingreso' link='/informes/ingresos' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
                         </Grid>
-                        <Grid item sm={3}>
+                        <Grid item sm={4}>
                             <CardReport nombre='Reporte de traslados' link='/informes/traslados' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
                         </Grid>
-                        <Grid item sm={3}>
+                        <Grid item sm={4}>
                             <CardReport nombre='Reporte de visitas' link='/informes/visitas' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
                         </Grid>
-                        <Grid item sm={3}>
+                        {/*<Grid item sm={3}>
                             <CardReport nombre='Reporte de Bajas' link='/informes/ingresos' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
-                        </Grid>
+                        </Grid>*/}
                     </Grid>
 
                 </Grid>

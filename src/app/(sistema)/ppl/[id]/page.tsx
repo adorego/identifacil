@@ -263,7 +263,7 @@ export default function Page({ params }: { params: { id: number } }) {
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
                             <Tab label="Informaciones" value="1" />
                             <Tab label="Datos penales" value="2" />
-                            <Tab label="Salidas Transitorias" value="3" />
+                            {/*<Tab label="Salidas Transitorias" value="3" />*/}
                             {/*<Tab label="Perfil" value="1" />*/}
                         </TabList>
                     </Box>

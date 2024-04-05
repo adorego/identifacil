@@ -281,7 +281,7 @@ export default function SidebarDrawer()
                             path="/movimientos/traslados"
                             isActive={pathname === '/movimientos/traslados'}
                         />
-                        <SidebarItem
+                        {/*<SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Salidas especiales"
                             path="/movimientos/salidasEspeciales"
@@ -298,7 +298,7 @@ export default function SidebarDrawer()
                             label="Movimiento interno"
                             path="/movimientos/movimiento-interno"
                             isActive={pathname === '/movimientos/movimiento-interno'}
-                        />
+                        />*/}
                         {/*<SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Bajas"

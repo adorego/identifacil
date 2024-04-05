@@ -5,13 +5,42 @@ import {destinosTrasladosData, motivosTrasladosData, rangoTiempoData, reclsusosD
 
 import CustomTable from "../../../../components/CustomTable";
 import PenitenciariaFilter from "../components/penitenciariaFilter";
+import {useEffect, useState} from "react";
+import {fetchData} from "@/components/utils/utils";
 
 const trasladosDummy = reclsusosData();
 const motivosTrasladosDummy = motivosTrasladosData();
 const rangoTiempoDymmy = rangoTiempoData();
 const destinosDymmy = destinosTrasladosData();
 
+
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
+
 export default  function Page(){
+
+    const [data, setData] = useState(null);
+
+    useEffect(() => {
+        fetchData(`${API_URL}/movimientos`)
+            .then(fetchedData => {
+                console.log(fetchedData)
+                console.log(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
+
+                    id: item.id,
+                    destinoTraslado: item.destinoTraslado.nombre,
+                    origenTraslado: item.origenTraslado.nombre
+                })))
+                // TODO: veritifcar porque hace problema typescript aca
+
+                //@ts-ignore
+                setData(Object.keys(fetchedData).map(key => fetchedData[key]).map(item => ({
+                    ...item,
+                    destinoTraslado: item.destinoTraslado.nombre,
+                    origenTraslado: item.origenTraslado.nombre
+                })));
+            });
+    }, []);
 
     // TODO: Hacer las paginas de detalle de las tablas
     return(
@@ -27,7 +56,7 @@ export default  function Page(){
                     </Link>
                     <Typography color="text.primary">Ingresos</Typography>
                 </Breadcrumbs>*/}
-                <PenitenciariaFilter/>
+                {/*<PenitenciariaFilter/>*/}
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>
                         <CustomTable
@@ -38,7 +67,7 @@ export default  function Page(){
                                     rowsPerPageCustom: 5,
                                     title: 'Internos con mas traslados',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/lugar-nacimiento',
+                                    /*expandedList: '/informes/traslados/lugar-nacimiento',*/
                                     deleteOption:false,
                                 }
                             }
@@ -54,7 +83,7 @@ export default  function Page(){
                                     rowsPerPageCustom: 5,
                                     title: 'Por motivo de traslados',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/lugar-nacimiento',
+                                    /*expandedList: '/informes/traslados/lugar-nacimiento',*/
                                     deleteOption:false,
                                 }
                             }

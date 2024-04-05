@@ -17,7 +17,7 @@ export default  function Page(){
             <Box>
                 <h2>Informe de visitas</h2>
 
-                <PenitenciariaFilter/>
+                {/*<PenitenciariaFilter/>*/}
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>
                         <CustomTable
