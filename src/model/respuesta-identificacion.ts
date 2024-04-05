@@ -1,6 +1,6 @@
 
 export interface IdentificationResponse{
-  id_persona?:number;
+  id_persona?:number|null;
   identificado:boolean;
   numeroDeIdentificacion:string;
   nombres:string;

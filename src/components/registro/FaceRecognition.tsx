@@ -43,7 +43,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
     const {openSnackbar} = useGlobalContext();
     const [loading,setLoading] = useState<boolean>(true);
     const [habilitarBotonCapturarFoto,setHabilitarBotonCapturarFoto] = useState<boolean>(false);
-
+    const [modelosCargados,setModelosCargados] = useState<boolean>(false);
 
     
 
@@ -79,23 +79,30 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
 
     }
 
-    // useEffect(
-    //     () => {
-    //         let stream: MediaStream | null = conectar_con_webcam();
-    //         return (
-    //             () => {
-    //                 let tracks = stream?.getTracks();
-    //                 tracks?.forEach(
-    //                     (track) => {
-    //                         if (track.kind === 'video') {
-    //                             track.stop();
-    //                         }
-    //                     })
+    useEffect(
+        () => {
+            let stream: MediaStream | null = null;
+            if(modelosCargados){
+                stream = conectar_con_webcam();
+                setLoading(false);
+                return (
+                    () => {
+                        let tracks = stream?.getTracks();
+                        tracks?.forEach(
+                            (track) => {
+                                if (track.kind === 'video') {
+                                    track.stop();
+                                }
+                            })
+    
+                    }
+                )
 
-    //             }
-    //         )
-    //     }, []
-    // )
+            }
+            
+            
+        }, [modelosCargados]
+    )
 
     
 
@@ -103,7 +110,8 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
         () => {
 
             const cargar_modelos = async () =>{
-                return await Promise.all(
+
+                const resultado =  await Promise.all(
                     [
                         // faceapi.loadSsdMobilenetv1Model('/models'),
                         faceapi.loadTinyFaceDetectorModel('/models'),
@@ -113,23 +121,12 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                         faceapi.loadFaceRecognitionModel('/models')
                     ]
                 )
+                setModelosCargados(true);
             }
 
             cargar_modelos();
-            setLoading(false);
-            let stream = conectar_con_webcam();
-            return (
-                        () => {
-                            let tracks = stream?.getTracks();
-                            tracks?.forEach(
-                                (track) => {
-                                    if (track.kind === 'video') {
-                                            track.stop();
-                                    }
-                                })
             
-                            }
-                    )
+            
 
 
 

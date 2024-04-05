@@ -13,6 +13,7 @@ export interface FaceRecognitionProps {
     agregar_reconocimiento: (reconocimiento: IReconocimiento) => void;
     actualizar_progreso: (progreso: number) => void;
     etiquetaLabel: string;
+    capturas?:number;
 
 }
 
@@ -46,7 +47,7 @@ export default function FaceRecognitionWithLayout(props: FaceRecognitionProps) {
             <FaceRecognition
                 agregar_reconocimiento={props.agregar_reconocimiento}
                 notificacion=""
-                numero_de_capturas={3}
+                numero_de_capturas={props.capturas ? props.capturas : 3}
                 progreso={props.actualizar_progreso}
                 etiqueta_boton={props.etiquetaLabel}/>
         </Box>
