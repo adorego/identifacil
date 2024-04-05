@@ -147,7 +147,7 @@ export default function EntradaSalidaPPL() {
     }
 
     const solicitarIngresoPPL = async () => {
-       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/ppls`
+       const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/ppls/entrada`
        
        if(!identificationData.id_persona){
             openSnackbar(`PPL No identificado`,"error");
