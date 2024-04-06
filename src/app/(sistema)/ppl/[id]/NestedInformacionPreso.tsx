@@ -58,11 +58,11 @@ function a11yProps(index: number) {
     };
 }
 
-
 type datosPersonaType = {
     numero_de_identificacion: any;
     id_persona: number;
     nombre: string;
+    tiene_contacto_en_embajada: boolean;
     tipo_de_documento?: {
         id: number | null;
     };
@@ -93,6 +93,11 @@ type datosPersonaType = {
     datosEducacion: datosEducacionType;
     datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType | any;
+    contactoDeEmbajada:{
+        id: number,
+        nombre: string,
+        numero: string,
+    };
     registro_de_fotos: Array<{ nombre: string; foto: string; }>
 }
 
@@ -104,6 +109,7 @@ const datosPersonaInitial: datosPersonaType = {
     genero: 1,
     numero_de_identificacion: "",
     apodo: "",
+    tiene_contacto_en_embajada: false,
     fechaDeNacimiento: "",
     datosPersonales: {
         id: null,
@@ -128,6 +134,11 @@ const datosPersonaInitial: datosPersonaType = {
     datosEducacion: datosEducacionInicial,
     datosDeSalud: datosDeSalud2Initial,
     datosJudiciales: datosJudicialesInicial,
+    contactoDeEmbajada:{
+        id: 0,
+        nombre: '',
+        numero: '1231414',
+    },
     registro_de_fotos: [],
 }
 
@@ -135,6 +146,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
     datosPersona: datosPersonaType
 }) {
 
+    console.log(datosPersona)
     const [value, setValue] = React.useState(0);
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -187,7 +199,13 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                             pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
                                             nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
                                             perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
-                                            numero_de_identificacion: datosPersona.numero_de_identificacion
+                                            numero_de_identificacion: datosPersona.numero_de_identificacion,
+                                            tiene_contacto_en_embajada: datosPersona.tiene_contacto_en_embajada,
+                                            contactoDeEmbajada: {
+                                                id: datosPersona.contactoDeEmbajada?.id ? datosPersona.contactoDeEmbajada.id : 0,
+                                                nombre: datosPersona.contactoDeEmbajada?.nombre ? datosPersona.contactoDeEmbajada.nombre : '',
+                                                numero: datosPersona.contactoDeEmbajada?.numero ? datosPersona.contactoDeEmbajada.id : 0,
+                                            }
 
                                         }}/> : ''
                                 }

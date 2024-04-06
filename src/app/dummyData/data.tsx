@@ -101,7 +101,7 @@ export const reclsusosData = ()=>{
             { id: 'id', label: 'ID' },
             { id: 'nombre', label: 'Nombre y Apellido' },
             { id: 'alias', label: 'Alias' },
-            { id: 'cantidad', label: 'Catnidad' },
+            { id: 'cantidad', label: 'Cantidad' },
         ],
         rowsCustom:        [
             { id: 1, nombre: 'Juan jose Perez', alias: 'N/D',  cantidad: 35 },

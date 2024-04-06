@@ -69,17 +69,17 @@ interface datosPersonales {
     grupoLGTBI: string;
     grupoLGTBI_modificado: boolean;
     es_extranjero: boolean;
-    mantiene_contacto_con_consulado_o_embajada: boolean;
-    nombre_de_contacto_en_consulado_o_embajada: string;
-    numero_de_contacto_en_consulado_o_embajada: string;
+    tiene_contacto_en_embajada: boolean;
+    contactoDeEmbajada_nombre: string;
+    contactoDeEmbajada_numero: string;
     pais_de_embajada: number;
 
 }
 
 const datosPersonalesInicial: datosPersonales = {
-    nombre_de_contacto_en_consulado_o_embajada: '',
-    numero_de_contacto_en_consulado_o_embajada: '',
-    mantiene_contacto_con_consulado_o_embajada: false,
+    contactoDeEmbajada_nombre: '',
+    contactoDeEmbajada_numero: '',
+    tiene_contacto_en_embajada: false,
     pais_de_embajada: 0,
     es_extranjero: false,
     id_persona: null,
@@ -121,8 +121,6 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
-
-
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -146,6 +144,15 @@ export interface BloqueDatosPersonalesProps {
         pueblosIndigenas: boolean;
         nombreEtnia: string;
         perteneceAComunidadLGTBI: boolean;
+        tiene_contacto_en_embajada: boolean;
+        contactoDeEmbajada_id?: number;
+        contactoDeEmbajada_nombre?: string;
+        contactoDeEmbajada_numero?: string;
+        contactoDeEmbajada:{
+            id: number,
+            nombre: string,
+            numero: string,
+        };
 
     };
     tipo_de_documento?: number | null;
@@ -154,7 +161,7 @@ export interface BloqueDatosPersonalesProps {
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, tipo_de_documento = null}) => {
 
-    // console.log(datosDeIdentificacion)
+    console.log(datosDeIdentificacion)
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial
@@ -165,7 +172,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
     useEffect(() => {
         if (datosDeIdentificacion) {
-            setDatosPersonalesState(prevState => {
+            setDatosPersonalesState((prevState:any) => {
                 return {
                     ...prevState,
                     id_persona: datosDeIdentificacion.id_persona,
@@ -190,7 +197,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     pueblosIndigenas: datosDeIdentificacion.pueblosIndigenas,
                     nombreEtnia: datosDeIdentificacion.nombreEtnia,
                     perteneceAComunidadLGTBI: datosDeIdentificacion.perteneceAComunidadLGTBI,
-                    es_extranjero: tipo_de_documento == 2
+                    es_extranjero: tipo_de_documento == 2,
+                    tiene_contacto_en_embajada: datosDeIdentificacion.tiene_contacto_en_embajada,
+                    contactoDeEmbajada_nombre: datosDeIdentificacion.contactoDeEmbajada.nombre,
+                    contactoDeEmbajada_id: datosDeIdentificacion.contactoDeEmbajada.id,
+                    contactoDeEmbajada_numero: datosDeIdentificacion.contactoDeEmbajada.numero,
                 }
             })
         }
@@ -201,8 +212,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     const {openSnackbar} = useGlobalContext();
 
 
-    useEffect(
-        () => {
+    useEffect(() => {
 
             const getNacionalidades = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/nacionalidades`;
@@ -232,8 +242,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         }, []
     )
 
-    useEffect(
-        () => {
+    useEffect(() => {
             const getEstadosCiviles = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
                 try {
@@ -329,6 +338,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
             : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
         const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
+
+        console.log(datosDelFormulario)
 
         console.log(JSON.stringify({
             ...datosDelFormulario,
@@ -592,11 +603,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                 <FormControl fullWidth variant="outlined">
                                     <FormLabel>Mantiene contacto con la embajada:</FormLabel>
                                     <RadioGroup
-                                        value={datosPersonalesState.mantiene_contacto_con_consulado_o_embajada}
+                                        value={datosPersonalesState.tiene_contacto_en_embajada}
                                         onChange={onOptionSelectChange}
                                         row
                                         aria-labelledby="mantiene_contacto_con_consulado_o_embajada"
-                                        name="mantiene_contacto_con_consulado_o_embajada">
+                                        name="tiene_contacto_en_embajada">
                                         <FormControlLabel
                                             value={true}
                                             control={<Radio/>}
@@ -608,25 +619,25 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     </RadioGroup>
                                 </FormControl>
                             </Grid>
-                            {datosPersonalesState.mantiene_contacto_con_consulado_o_embajada ?
+                            {datosPersonalesState.tiene_contacto_en_embajada ?
                                 (
                                     <>
                                         <Grid item xs={3}>
                                             <TextField
                                                 fullWidth
-                                                name='nombre_de_contacto_en_consulado_o_embajada'
+                                                name='contactoDeEmbajada_nombre'
                                                 label='Nombre de contacto'
                                                 onChange={onDatoChange}
-                                                value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
+                                                value={datosPersonalesState.contactoDeEmbajada_nombre}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
                                             <TextField
                                                 fullWidth
-                                                name='numero_de_contacto_en_consulado_o_embajada'
+                                                name='contactoDeEmbajada_numero'
                                                 label='Número de contacto de contacto'
                                                 onChange={onDatoChange}
-                                                value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
+                                                value={datosPersonalesState.contactoDeEmbajada_numero}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
