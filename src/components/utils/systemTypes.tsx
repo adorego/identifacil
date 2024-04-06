@@ -15,13 +15,13 @@ export type datosDeSalud2Type =  {
     frecuencia_cardiaca_modificado: boolean | null;
     frecuencia_respiratoria: string | null;
     frecuencia_respiratoria_modificado: boolean | null;
-    temperatura: string | null;
+    temperatura: string;
     temperatura_modificado: boolean | null;
-    peso: string | null;
+    peso: string;
     peso_modificado: boolean | null;
-    talla: string | null;
+    talla: string;
     talla_modificado: boolean | null;
-    imc: string | null;
+    imc: string;
     imc_modificado: boolean | null;
     vdrl: boolean | null;
     vdrl_modificado: boolean | null;
@@ -55,13 +55,13 @@ export const datosDeSalud2Initial: datosDeSalud2Type =  {
     frecuencia_cardiaca_modificado: false,
     frecuencia_respiratoria: null,
     frecuencia_respiratoria_modificado: false,
-    temperatura: null,
+    temperatura: '0',
     temperatura_modificado: false,
-    peso: null,
+    peso: '0',
     peso_modificado: false,
-    talla: null,
+    talla: '0',
     talla_modificado: false,
-    imc: null,
+    imc: '0',
     imc_modificado: false,
     vdrl: false,
     vdrl_modificado: false,

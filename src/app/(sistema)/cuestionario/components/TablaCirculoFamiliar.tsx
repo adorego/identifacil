@@ -17,12 +17,13 @@ interface tablaCirculoTypes {
             nombre: string | null,
         };
     }[];
-    handleDelete: ()=>void;
+    handleDelete: (a:any , b:any)=>void;
+    handleEdit: (a:any , b:any)=>void;
 }
 
 
 
-export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleDelete}) => {
+export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleDelete, handleEdit}) => {
 
 
     return (
@@ -54,10 +55,10 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleD
                                     <TableCell align="right">{row.establecimiento.nombre}</TableCell>
                                     <TableCell align="right">{row.esFuncionario ? "Funcionario" : "PPL"}</TableCell>
                                     <TableCell align="right">
-                                        <IconButton aria-label="edit">
+                                        <IconButton aria-label="edit" onClick={(event)=>handleEdit(event, row.id)}>
                                             <Visibility/>
                                         </IconButton>
-                                        <IconButton aria-label="delete" onClick={handleDelete}>
+                                        <IconButton aria-label="delete" onClick={(event)=>handleDelete(event, row.id)}>
                                             <Delete/>
                                         </IconButton>
                                     </TableCell>

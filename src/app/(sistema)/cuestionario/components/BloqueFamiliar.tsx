@@ -51,6 +51,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     const [estadoFormularioDatosFamiliares, setEstadoFormularioDatosFamiliares] = useState<datosFamiliaresType>(estadoInicial);
     const [stateCirculoFamiliar, setStateCirculoFamiliar] = useState<circuloFamiliarStateType[]>([])
 
+    const [familiarParaModal, setFamiliarParaModal] = useState<circuloFamiliarStateType | null>(null)
+
     /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
@@ -95,8 +97,24 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
         }
     }, [datosFamiliaresIniciales]);
 
+    useEffect(() => {
+        if(!open){
+            setFamiliarParaModal(null)
+        }
+    }, [open]);
+
     const handleChangeCirculo = (nuevoMiembro:circuloFamiliarStateType)=>{
-        setStateCirculoFamiliar(prev=> [...prev, nuevoMiembro])
+        if(nuevoMiembro.id){
+            // console.log('tiene id' + nuevoMiembro)
+            setStateCirculoFamiliar(prev=> [
+                ...prev.filter((item:any)=>item.id !== nuevoMiembro.id),
+                nuevoMiembro
+            ])
+        }else{
+            setStateCirculoFamiliar(prev=> [...prev, nuevoMiembro])
+
+        }
+        setFamiliarParaModal(null)
     }
 
     const onSelectChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -114,8 +132,22 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
         )
     }
 
-    const handleDeleteFamiliar = () =>{
-        console.log('DELETE!!!!')
+    const handleEditModal = (event: { preventDefault: () => void; }, id: number) =>{
+        event.preventDefault()
+        // TODO Verificar por que esto
+        // @ts-ignore
+        setFamiliarParaModal(stateCirculoFamiliar.find((item:any)=> item.id == id))
+        handleOpen()
+    }
+
+    const handleDeleteFamiliar = (event: { preventDefault: () => void; }, id: number) =>{
+        console.log(id)
+        setStateCirculoFamiliar((prev:any)=>{
+            console.log(prev)
+            return([
+                ...prev.filter((item:any)=>item.id !== id)
+            ])
+        })
     }
 
     const handleConcubino =(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -292,18 +324,21 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                         <Box mt={2}>
 
                             { stateCirculoFamiliar.length > 0
-                                ? <TablaCirculoFamiliar rows={stateCirculoFamiliar} handleDelete={handleDeleteFamiliar} />
+                                ? <TablaCirculoFamiliar rows={stateCirculoFamiliar} handleDelete={handleDeleteFamiliar} handleEdit={handleEditModal}/>
                                 : null
                             }
 
                         </Box>
                     </Box>
-                    <ModalComponent
-                        open={open}
-                        onClose={handleClose}
-                        title='Agregar miembro del circulo familiar'>
-                        <FormularioCirculoFamiliar  onClose={handleClose} onHandleChangeCirculo={handleChangeCirculo}/>
-                    </ModalComponent>
+                    {open && (
+                        <ModalComponent
+                            open={true}
+                            onClose={handleClose}
+                            title='Agregar miembro del circulo familiar'>
+                            <FormularioCirculoFamiliar open={open} onClose={handleClose} onHandleChangeCirculo={handleChangeCirculo}
+                                                       savedState={familiarParaModal}/>
+                        </ModalComponent>
+                    )}
                 </Grid>
             </Grid>
             : null}

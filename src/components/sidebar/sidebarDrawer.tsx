@@ -8,7 +8,7 @@ import {
     ExpandMore,
     Fingerprint,
     Hail,
-    Mood,
+    Mood, Person,
     Settings
 } from "@mui/icons-material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -21,10 +21,11 @@ import {useState} from "react";
 import SidebarItem from "@/components/sidebar/sidebarItem";
 import SelectorEstablecimiento from "@/components/sidebar/SelectorEstablecimiento";
 import {useGlobalContext} from "@/app/Context/store";
+import UserNotification from "@/components/notiification/UserNotification";
 
 const drawerWidth = 279;
 
-type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales' | 'visitantes';
+type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales' | 'visitantes' | 'gestionPPl' | 'gestionUsuarios';
 
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -85,6 +86,8 @@ export default function SidebarDrawer()
         datosMovimientos: false,
         movimientos: false,
         datosPenales: false,
+        gestionPPl: false,
+        gestionUsuarios: false,
     });
 
     const pathname = usePathname()
@@ -220,7 +223,33 @@ export default function SidebarDrawer()
                     isActive={pathname === '/ppl'}
                 />
 
-                {/* Menu de Movimientos */}
+
+                {/* ------------------------- Menu gestion ppl ------------------------- */}
+                <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
+                    <ListItemIcon>
+                        <Person />
+                    </ListItemIcon>
+                    <ListItemText primary={'Gestion PPL'} hidden={false}/>
+                    {openMenus.gestionPPl ? <ExpandLess/> : <ExpandMore/>}
+                </ListItemButton>
+                <Collapse in={openMenus.gestionPPl} timeout="auto" unmountOnExit>
+                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Mediadas de fuerza"
+                            path="/gestion-ppl/medidas-de-fuerza"
+                            isActive={pathname === '/gestion-ppl/medidas-de-fuerza'}
+                        />
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Faltas y sanciones"
+                            path="/gestion-ppl/faltas"
+                            isActive={pathname === '/gestion-ppl/faltas'}
+                        />
+
+                    </List>
+                </Collapse>
+
                 {/*<SidebarItem
                             icon={<AirportShuttle />}
                             label="Movimientos"
@@ -281,7 +310,7 @@ export default function SidebarDrawer()
                             path="/movimientos/traslados"
                             isActive={pathname === '/movimientos/traslados'}
                         />
-                        {/*<SidebarItem
+                        <SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Salidas especiales"
                             path="/movimientos/salidasEspeciales"
@@ -298,13 +327,13 @@ export default function SidebarDrawer()
                             label="Movimiento interno"
                             path="/movimientos/movimiento-interno"
                             isActive={pathname === '/movimientos/movimiento-interno'}
-                        />*/}
-                        {/*<SidebarItem
+                        />
+                        <SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Bajas"
                             path="/movimientos/bajas"
                             isActive={pathname === '/movimientos/bajas'}
-                        />*/}
+                        />
 
                     </List>
                 </Collapse>
@@ -398,7 +427,7 @@ export default function SidebarDrawer()
                             isActive={pathname === '/sistema/motivos-traslados'}
                         />
 
-                        {/*<SidebarItem
+                        <SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Personal"
                             path="/sistema/personal"
@@ -410,13 +439,31 @@ export default function SidebarDrawer()
                             label="Vehiculo"
                             path="/sistema/vehiculo"
                             isActive={pathname === '/sistema/vehiculo'}
-                        />*/}
+                        />
 
 
                     </List>
                 </Collapse>
 
-                {/* ------------------------- Fin de movimientos ------------------------- */}
+                <ListItemButton onClick={() => handleClick('gestionUsuarios')} className={openMenus.gestionUsuarios ? 'active-button' : ''} >
+                    <ListItemIcon>
+                        <Settings/>
+                    </ListItemIcon>
+                    <ListItemText primary={'Gestion de usuario'} hidden={false}/>
+                    {openMenus.gestionUsuarios ? <ExpandLess/> : <ExpandMore/>}
+                </ListItemButton>
+
+                <Collapse in={openMenus.gestionUsuarios} timeout="auto" unmountOnExit>
+                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Roles"
+                            path="/sistema/roles"
+                            isActive={pathname === '/sistema/roles'}
+                        />
+
+                    </List>
+                </Collapse>
 
                 {/* <ListItemButton disabled>
                     <ListItemIcon>

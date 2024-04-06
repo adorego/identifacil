@@ -1,11 +1,11 @@
-import React, {FC, useState, useEffect, SyntheticEvent} from "react";
+import React, {FC, useState, useEffect, SyntheticEvent, ChangeEvent} from "react";
 import {
-    Autocomplete,  Box, Button, Chip, CircularProgress, FormControl, FormControlLabel,
-    FormLabel, Grid, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup,
+    Autocomplete, Box, Button, Chip, CircularProgress, FormControl, FormControlLabel,
+    FormLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup,
     Select, SelectChangeEvent, Stack, TextField, Typography
 } from "@mui/material";
 import {datosDeSalud2Initial, datosDeSalud2Type} from "@/components/utils/systemTypes";
-import {DatePicker} from "@mui/x-date-pickers";
+import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {api_request} from "@/lib/api-request"
@@ -15,13 +15,13 @@ import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 
 
-
 const nineMonthsFromNow = dayjs().add(9, 'month');
+
 interface BloqueSaludProps {
     id_persona: number | null;
     datosAlmacenados?: datosDeSalud2Type;
     codigo_genero: number;
-    handleAccordion?: (s:string)=>void;
+    handleAccordion?: (s: string) => void;
 }
 
 interface datosSaludSelect {
@@ -38,7 +38,7 @@ interface datosSaludSelect {
 
 const datosSaludSelectInicial: datosSaludSelect = {
     grupo_sanguineo: [{id: 1, nombre: "A"}, {id: 2, nombre: "A+"}, {id: 3, nombre: "A-"}],
-    vacunas_recibidas:[
+    vacunas_recibidas: [
         {
             id: 1,
             nombre: "Vacuna contra el COVID 19-3era Dosis"
@@ -82,7 +82,7 @@ const SaludFisicaInicial = {
     otros: false
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero=2, handleAccordion}) => {
+const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero = 2, handleAccordion}) => {
     /** Estado de datos capturados del form */
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
 
@@ -106,7 +106,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     const {openSnackbar} = useGlobalContext();
 
 
-
     useEffect(() => {
         if (datosAlmacenados) {
             setDatosSalud((prev) => {
@@ -116,7 +115,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 }
             })
 
-            if(datosAlmacenados.saludFisica.discapacidad_fisica !== 'ninguna'){
+            if (datosAlmacenados.saludFisica.discapacidad_fisica !== 'ninguna') {
                 setStateSaludFisica(JSON.parse(datosAlmacenados.saludFisica.discapacidad_fisica))
             }
 
@@ -209,6 +208,27 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     };
 
+    const handleNumber = (event: ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
+        console.log(newValue)
+
+        // Permite solo números en el input
+
+        if (newValue.match(/^\d*\.?\d*$/)) {
+        //if (newValue.match(/^\d*,?\d*$/)) {
+            console.log('si' + newValue)
+            setDatosSalud((prev) => ({
+                ...prev,
+                [event.target.name]: newValue,
+                [`${event.target.name}_modificado`]: true
+            }));
+        }else{
+            console.log('no' + newValue)
+        }
+
+
+    };
+
     const handleSelectChange = (event: SelectChangeEvent<number | string>) => {
         setDatosSalud(prev => {
             return {
@@ -273,10 +293,10 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         }));
     };
 
-    const handleSaludFisica = (e: any) =>{
+    const handleSaludFisica = (e: any) => {
         console.log(e.target.name)
 
-        setStateSaludFisica(prev=>({
+        setStateSaludFisica(prev => ({
             ...prev,
             [e.target.name]: e.target.checked
         }))
@@ -314,7 +334,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         if (respuesta.success) {
             setConsultaLoading(false)
             openSnackbar("Datos guardados correctamente", "success")
-            if(handleAccordion){
+            if (handleAccordion) {
                 handleAccordion('')
             }
         } else {
@@ -327,22 +347,22 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     }
 
-/*    if (!datosSalud.id) {
-        return (
-            <>
-                <Box sx={{
-                    width: '100%',
-                    height: '450px',
-                    textAlign: 'center',
-                }}>
-                    <CircularProgress/>
-                </Box>
-            </>
-        )
-    } else {
+    /*    if (!datosSalud.id) {
+            return (
+                <>
+                    <Box sx={{
+                        width: '100%',
+                        height: '450px',
+                        textAlign: 'center',
+                    }}>
+                        <CircularProgress/>
+                    </Box>
+                </>
+            )
+        } else {
 
 
-    }*/
+        }*/
 
 
     return (
@@ -350,9 +370,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
             <Box
                 component="form"
-                sx={{
-                    '& .MuiTextField-root': {m: 1, width: '25ch'},
-                }}
                 noValidate
                 autoComplete="off"
                 mx={2}>
@@ -387,7 +404,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 <Grid container spacing={2} my={0}>
                     <Grid item sm={6}>
                         <FormControl fullWidth>
-                            <InputLabel shrink>Grupo Sanguineo</InputLabel>
+                            <InputLabel>Grupo Sanguineo</InputLabel>
                             <Select
 
                                 label="Grupo Sanguineo"
@@ -397,6 +414,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 value={datosSalud.grupo_sanguineo ? datosSalud.grupo_sanguineo?.id : ""}
                                 onChange={onGruposSanguineoChange}
                             >
+                                <MenuItem value={0}>Seleccionar grupo sanguineo</MenuItem>
                                 {datosSaludSelectState.grupo_sanguineo.map((option, index) => (
                                     <MenuItem key={option.id} value={option.id}>{option.nombre}</MenuItem>
                                 ))}
@@ -414,7 +432,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 value={datosSalud.vacunas_recibidas}
 
                                 onChange={(event, newValue) => {
-                                    setDatosSalud(prev=>({
+                                    setDatosSalud(prev => ({
                                         ...prev,
                                         vacunas_recibidas: newValue,
                                         vacunas_recibidas_modificado: true,
@@ -424,12 +442,12 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 getOptionLabel={(option) => option.nombre}
                                 renderTags={(value, getTagProps) =>
 
-                                    value.map((option:{id:number, nombre:string}, index) => (
+                                    value.map((option: { id: number, nombre: string }, index) => (
                                         <Chip
                                             //@ts-ignore
                                             key={option.id}
                                             label={option.nombre}
-                                            {...getTagProps({ index })} />
+                                            {...getTagProps({index})} />
                                     ))
                                 }
                                 renderInput={(params) => (
@@ -448,97 +466,114 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     </Grid>
 
                 </Grid>
-                <Grid container spacing={2} my={2}>
+                <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>
                         <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
                                    id="demo-row-radio-buttons-group-label">Control de signos vitales</FormLabel>
                     </Grid>
-                    <Grid item sm={12} md={12}>
-                        <Stack spacing={2} direction={'row'}>
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="pa">PA</InputLabel>
-                                <OutlinedInput
-                                    name="presion_arterial"
-                                    value={datosSalud.presion_arterial}
-                                    label="PA"
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                />
-                            </FormControl>
+                </Grid>
+                <Grid container spacing={2} mt={2}>
+                    <Grid item sm={2}>
+                        <FormControl>
 
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="fc">FC</InputLabel>
-                                <OutlinedInput
-                                    name="frecuencia_cardiaca"
-                                    value={datosSalud.frecuencia_cardiaca}
-                                    label="FC"
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                />
-                            </FormControl>
+                            <TextField
+                                name="presion_arterial"
+                                value={datosSalud.presion_arterial}
+                                label="PA"
+                                onChange={(event) => {
+                                    handleChange(event, 'saludGeneral')
+                                }}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item sm={2}>
+                        <FormControl>
 
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="FR">FR</InputLabel>
-                                <OutlinedInput
-                                    name="frecuencia_respiratoria"
-                                    value={datosSalud.frecuencia_respiratoria}
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                    label="FR"
-                                />
-                            </FormControl>
+                            <TextField
+                                fullWidth
+                                name="frecuencia_cardiaca"
+                                value={datosSalud.frecuencia_cardiaca}
+                                label="FC"
+                                onChange={(event) => {
+                                    handleChange(event, 'saludGeneral')
+                                }}
+                            />
+                        </FormControl>
 
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="t">Temperatura</InputLabel>
-                                <OutlinedInput
-                                    name="temperatura"
-                                    label='Temperatura'
-                                    value={datosSalud.temperatura}
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                />
-                            </FormControl>
+                    </Grid>
+                    <Grid item sm={2}>
 
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="peso">Peso</InputLabel>
-                                <OutlinedInput
-                                    name="peso"
-                                    value={datosSalud.peso}
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                    label="Peso"
-                                />
-                            </FormControl>
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="talla">Talla</InputLabel>
-                                <OutlinedInput
-                                    name="talla"
-                                    value={datosSalud.talla}
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                    label="Talla"
-                                />
-                            </FormControl>
+                        <FormControl>
 
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="imc">IMC</InputLabel>
-                                <OutlinedInput
-                                    name="imc"
-                                    value={datosSalud.imc}
-                                    onChange={(event) => {
-                                        handleChange(event, 'saludGeneral')
-                                    }}
-                                    label="IMC"
-                                />
-                            </FormControl>
+                            <TextField
+                                fullWidth
+                                name="frecuencia_respiratoria"
+                                value={datosSalud.frecuencia_respiratoria}
+                                onChange={(event) => {
+                                    handleChange(event, 'saludGeneral')
+                                }}
+                                label="FR"
+                            />
+                        </FormControl>
 
-                        </Stack>
+                    </Grid>
+                    <Grid item sm={2}>
+
+                        <FormControl>
+
+                            <TextField
+                                fullWidth
+                                name="temperatura"
+                                label='Temperatura'
+                                value={datosSalud.temperatura}
+                                onChange={handleNumber}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">°C</InputAdornment>,
+                                }}
+                            />
+                        </FormControl>
+
+                    </Grid>
+                    <Grid item sm={2}>
+                        <FormControl>
+
+                            <TextField
+                                fullWidth
+                                name="peso"
+                                value={datosSalud.peso}
+                                onChange={handleNumber}
+                                label="Peso"
+                                type='text'
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">kg</InputAdornment>,
+                                }}
+                            />
+                        </FormControl>
+
+                    </Grid>
+                    <Grid item sm={2}>
+                        <FormControl>
+
+                            <TextField
+                                name="talla"
+                                value={datosSalud.talla ? datosSalud.talla : '0'}
+                                onChange={handleNumber}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">cm</InputAdornment>,
+                                }}
+                                label="Talla"
+                            />
+                        </FormControl>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2} mt={2}>
+                    <Grid item sm={2}>
+                        <TextField
+                            name="imc"
+                            value={datosSalud.imc ? datosSalud.imc : '0'}
+                            onChange={handleNumber}
+                            label="IMC"
+                        />
                     </Grid>
                     <Grid item sm={12} md={6}>
                         <Stack spacing={2} direction={'row'}>
@@ -592,71 +627,70 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             </FormControl>
                         </Stack>
                     </Grid>
-
                 </Grid>
 
                 {/* MATERNIDAD */}
                 {codigo_genero == 1 ?
-                <Grid container spacing={2}>
-                    <Grid item sm={12}>
-                        <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
-                                   id="demo-row-radio-buttons-group-label">Maternidad</FormLabel>
-                    </Grid>
+                    <Grid container spacing={2} mt={2}>
+                        <Grid item sm={12}>
+                            <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
+                                       id="demo-row-radio-buttons-group-label">Maternidad</FormLabel>
+                        </Grid>
 
-                    <Grid item sm={4}>
-                        <FormControl>
-                            <FormLabel id="gestioacion">¿Se encuentra en Periodo de gestación?</FormLabel>
-                            <RadioGroup
-                                value={datosSalud.gestacion}
-                                onChange={(event) => {
-                                    handleBooleanChange(event, 'saludGeneral')
-                                }}
-                                row
-                                aria-labelledby="gestacion"
-                                name="gestacion">
-                                <FormControlLabel
-                                    value={true}
-                                    control={<Radio/>}
-                                    label="Si"/>
-                                <FormControlLabel
-                                    value={false}
-                                    control={<Radio/>}
-                                    label="No"/>
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    <Grid item sm={4} sx={{marginTop: 1}}>
-                        {datosSalud.gestacion ?
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="gestacionTiempotiempoGestacion">¿Meses de
-                                    gestación?</InputLabel>
-                                <OutlinedInput
-
-                                    disabled={!datosSalud.gestacion}
-                                    name="tiempo_gestacion"
-                                    value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
-                                    onChange={onTiempoDeGestacionChange}
-                                    label="¿De cuanto tiempo se encuentra?"/>
+                        <Grid item sm={4}>
+                            <FormControl>
+                                <FormLabel id="gestioacion">¿Se encuentra en Periodo de gestación?</FormLabel>
+                                <RadioGroup
+                                    value={datosSalud.gestacion}
+                                    onChange={(event) => {
+                                        handleBooleanChange(event, 'saludGeneral')
+                                    }}
+                                    row
+                                    aria-labelledby="gestacion"
+                                    name="gestacion">
+                                    <FormControlLabel
+                                        value={true}
+                                        control={<Radio/>}
+                                        label="Si"/>
+                                    <FormControlLabel
+                                        value={false}
+                                        control={<Radio/>}
+                                        label="No"/>
+                                </RadioGroup>
                             </FormControl>
-                            : null}
-                    </Grid>
-                    <Grid item sm={4} sx={{marginTop: 0}}>
-                        {datosSalud.gestacion ?
-                            <FormControl fullWidth>
-                                <DatePicker
-                                    disablePast
-                                    maxDate={nineMonthsFromNow}
-                                    format="DD/MM/YYYY"
-                                    name='fecha_parto'
-                                    value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : ''}
-                                    onChange={onFechaPartoChange}
-                                    label={"Fecha de parto"} />
+                        </Grid>
+                        <Grid item sm={4} sx={{marginTop: 1}}>
+                            {datosSalud.gestacion ?
+                                (
+                                    <FormControl >
+                                        <TextField
+                                            fullWidth
+                                            disabled={!datosSalud.gestacion}
+                                            name="tiempo_gestacion"
+                                            value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
+                                            onChange={onTiempoDeGestacionChange}
+                                            label="¿De cuanto tiempo se encuentra?"/>
+                                    </FormControl>
+                                )
+                                : null}
+                        </Grid>
+                        <Grid item sm={4} sx={{marginTop: 0}}>
+                            {datosSalud.gestacion ?
+                                <FormControl fullWidth>
+                                    <MobileDatePicker
+                                        disablePast
+                                        maxDate={nineMonthsFromNow}
+                                        format="DD/MM/YYYY"
+                                        name='fecha_parto'
+                                        value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : dayjs()}
+                                        onChange={onFechaPartoChange}
+                                        label={"Fecha de parto"}/>
 
-                            </FormControl>
-                            : null}
+                                </FormControl>
+                                : null}
+                        </Grid>
                     </Grid>
-                </Grid>
-                : null }
+                    : null}
 
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>
@@ -773,7 +807,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 onChange={onMedicacionActualChange}
                                 id="medicamentos-id"
                                 options={[]}
-                                value={datosSalud.saludMental.medicacion_actual? datosSalud.saludMental.medicacion_actual : []}
+                                value={datosSalud.saludMental.medicacion_actual ? datosSalud.saludMental.medicacion_actual : []}
                                 renderInput={(params) => (
                                     <TextField
                                         ref={params.InputProps.ref}
@@ -839,31 +873,38 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 >
                                     <FormControlLabel
                                         value="ninguna"
-                                        control={<Checkbox checked={stateSaludFisica.Ninguna} onChange={handleSaludFisica} name='Ninguna'/>}
+                                        control={<Checkbox checked={stateSaludFisica.Ninguna}
+                                                           onChange={handleSaludFisica} name='Ninguna'/>}
                                         label="Ninguna"/>
                                     <FormControlLabel
                                         value="fisica"
-                                        control={<Checkbox checked={stateSaludFisica.Fisica} onChange={handleSaludFisica} name='Fisica'/>}
+                                        control={<Checkbox checked={stateSaludFisica.Fisica}
+                                                           onChange={handleSaludFisica} name='Fisica'/>}
                                         label="Fisica"/>
                                     <FormControlLabel
                                         value="motora"
-                                        control={<Checkbox checked={stateSaludFisica.Motora} onChange={handleSaludFisica} name='Motora'/>}
+                                        control={<Checkbox checked={stateSaludFisica.Motora}
+                                                           onChange={handleSaludFisica} name='Motora'/>}
                                         label="Motora"/>
                                     <FormControlLabel
                                         value="intelectual"
-                                        control={<Checkbox checked={stateSaludFisica.Intelectual} onChange={handleSaludFisica} name='Intelectual'/>}
+                                        control={<Checkbox checked={stateSaludFisica.Intelectual}
+                                                           onChange={handleSaludFisica} name='Intelectual'/>}
                                         label="Intelectual"/>
                                     <FormControlLabel
                                         value="visual"
-                                        control={<Checkbox checked={stateSaludFisica.Visual} onChange={handleSaludFisica} name='Visual'/>}
+                                        control={<Checkbox checked={stateSaludFisica.Visual}
+                                                           onChange={handleSaludFisica} name='Visual'/>}
                                         label="Visual"/>
                                     <FormControlLabel
                                         value="auditiva"
-                                        control={<Checkbox checked={stateSaludFisica.Auditiva} onChange={handleSaludFisica} name='Auditiva'/>}
+                                        control={<Checkbox checked={stateSaludFisica.Auditiva}
+                                                           onChange={handleSaludFisica} name='Auditiva'/>}
                                         label="Auditiva"/>
                                     <FormControlLabel
                                         value="otros"
-                                        control={<Checkbox checked={stateSaludFisica.otros} onChange={handleSaludFisica} name='otros'/>}
+                                        control={<Checkbox checked={stateSaludFisica.otros} onChange={handleSaludFisica}
+                                                           name='otros'/>}
                                         label="otros"/>
                                 </RadioGroup>
                             </FormControl>
@@ -873,7 +914,9 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                         label={'Otros'}
                                         name='explicacion_de_discapacidad'
                                         value={datosSalud.saludFisica?.explicacion_de_discapacidad}
-                                        onChange={(event)=>{handleChange(event, 'saludFisica')}}
+                                        onChange={(event) => {
+                                            handleChange(event, 'saludFisica')
+                                        }}
                                         variant="outlined" sx={{marginLeft: '0 !important'}}/>
                                     : null}
                         </Stack>
@@ -939,7 +982,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             onClick={onDatosSaludSubmit}
                             loading={consultaLoading}
                             loadingPosition='start'
-                            startIcon={<SaveIcon />}
+                            startIcon={<SaveIcon/>}
                             variant="contained">
                             <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

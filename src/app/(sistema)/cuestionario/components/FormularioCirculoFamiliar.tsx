@@ -10,27 +10,45 @@ import {fetchData} from "@/components/utils/utils";
 interface FormularioCirculoFamiliarProps {
     onClose: () => void;
     onHandleChangeCirculo: (nuevoMiembro: circuloFamiliarStateType) => void;
+    savedState?: any;
+    open: boolean
 }
 
+const familiarInitialState = {
+    id: 0,
+    nombre: "",
+    esFuncionario: false,
+    apellido: "",
+    vinculo: {
+        id: 0,
+        nombre: null,
+    },
+    establecimiento: {
+        id: 0,
+        nombre: null,
+    },
+    edad: null,
+    lugar_donde_esta_hijo: null
+}
+
+export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps> = ({ onClose, onHandleChangeCirculo,savedState=null }) => {
+    const [state, setState] = React.useState<circuloFamiliarStateType>(familiarInitialState)
+
+    useEffect(() => {
+        setState(familiarInitialState)
+    }, [open]);
 
 
-export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps> = ({ onClose, onHandleChangeCirculo }) => {
-    const [state, setState] = React.useState<circuloFamiliarStateType>({
-        id: null,
-        nombre: "",
-        esFuncionario: false,
-        apellido: "",
-        vinculo: {
-            id: null,
-            nombre: null,
-        },
-        establecimiento: {
-            id: null,
-            nombre: null,
-        },
-        edad: null,
-        lugar_donde_esta_hijo: null
-    })
+    useEffect(() => {
+        if(savedState){
+            setState(savedState)
+        }else{
+            setState(familiarInitialState)
+        }
+
+    }, [savedState]);
+
+
     const [stateVinculos, setStateVinculos] = React.useState<{id:number, nombre:string}[]>([])
     const [stateEstablecimientos, setStateEstablecimiento] = React.useState<{id:number, nombre:string}[]>([])
 
@@ -92,15 +110,17 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
         });
     };
 
+    const onHandleCloseForm = ()=>{
+        setState(familiarInitialState)
+        onClose();
+    }
+
     const handleSubmit = (event: { preventDefault: () => void; })=>{
-        /*console.log({
-            ...state,
-            vinculo: state.vinculo.id,
-            establecimiento: state.establecimiento.id
-        })*/
         event.preventDefault();
+        console.log(state)
+        setState(familiarInitialState)
         onHandleChangeCirculo(state)
-        onClose(); // Cierra el modal después de la acción*/
+        onHandleCloseForm(); // Cierra el modal después de la acción*/
     }
 
     useEffect(() => {
@@ -171,7 +191,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             <Select
                                 labelId="establecimiento-label"
                                 id="establecimiento"
-                                value={state.establecimiento.id}
+                                value={state.establecimiento?.id ? state.establecimiento.id : 0}
                                 label="Establecimiento"
                                 name='establecimiento'
                                 onChange={handlerEstablecimientos}
@@ -207,7 +227,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     </Grid>
 
                     {/* Si es hijo*/}
-                    { state.vinculo.id == 2?
+                    { state.vinculo?.id == 2 ?
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}
@@ -220,7 +240,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     :null}
 
                     {/* Si es conyugue */}
-                    {state.vinculo.id == 3?
+                    {state.vinculo?.id == 3?
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}
@@ -232,7 +252,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     :null}
 
                     {/* Si es hijo*/}
-                    {state.vinculo.id == 2?
+                    {state.vinculo?.id == 2?
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}
