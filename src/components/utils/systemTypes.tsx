@@ -379,6 +379,7 @@ export const datosJudicialesInicial:datosJudicialesType = {
 
 export type circuloFamiliarStateType = {
     id: number | null;
+    indexArray?: number;
     nombre: string | null;
     apellido: string | null;
     esFuncionario: boolean | null;

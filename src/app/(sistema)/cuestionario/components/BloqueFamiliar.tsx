@@ -103,15 +103,26 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
         }
     }, [open]);
 
-    const handleChangeCirculo = (nuevoMiembro:circuloFamiliarStateType)=>{
-        if(nuevoMiembro.id){
-            // console.log('tiene id' + nuevoMiembro)
+    const handleChangeCirculo = (miembroCriculo:circuloFamiliarStateType, editMode:boolean)=>{
+        console.log(miembroCriculo)
+        if(!editMode){
+            // console.log('tiene id' + miembroCriculo)
             setStateCirculoFamiliar(prev=> [
-                ...prev.filter((item:any)=>item.id !== nuevoMiembro.id),
-                nuevoMiembro
+                ...prev,
+                miembroCriculo
             ])
         }else{
-            setStateCirculoFamiliar(prev=> [...prev, nuevoMiembro])
+            setStateCirculoFamiliar(prev=> {
+                let newArray = prev
+
+                // @ts-ignore
+                newArray[miembroCriculo.indexArray] = miembroCriculo
+
+                return(
+                    newArray
+                )
+            })
+
 
         }
         setFamiliarParaModal(null)
@@ -132,20 +143,32 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
         )
     }
 
-    const handleEditModal = (event: { preventDefault: () => void; }, id: number) =>{
+    /** Aqui se busca una Persona existente en el estado de circulo familiar con el index obtenido de la tabla  */
+    const handleEditModal = (event: { preventDefault: () => void; }, valor: number) =>{
         event.preventDefault()
+        console.log('Index del array ' + valor)
+
         // TODO Verificar por que esto
-        // @ts-ignore
-        setFamiliarParaModal(stateCirculoFamiliar.find((item:any)=> item.id == id))
+
+        const arrayParaEditar = {
+            ...stateCirculoFamiliar.find((item: any, index: number) => index == valor),
+            indexArray: valor,
+        }
+
+        console.log(arrayParaEditar)
+
+        //@ts-ignore
+        setFamiliarParaModal(arrayParaEditar)
+
         handleOpen()
     }
 
-    const handleDeleteFamiliar = (event: { preventDefault: () => void; }, id: number) =>{
-        console.log(id)
+    const handleDeleteFamiliar = (event: { preventDefault: () => void; }, valor: number) =>{
+        console.log(valor)
         setStateCirculoFamiliar((prev:any)=>{
             console.log(prev)
             return([
-                ...prev.filter((item:any)=>item.id !== id)
+                ...prev.filter((item:any, index:number)=>index !== valor)
             ])
         })
     }
@@ -304,7 +327,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </FormControl>
                 </Grid>
             </Grid>
-            {estadoFormularioDatosFamiliares.tieneCirculoFamiliar?
+            {estadoFormularioDatosFamiliares.tieneCirculoFamiliar &&
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <Box sx={{
@@ -323,9 +346,13 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                         </Stack>
                         <Box mt={2}>
 
-                            { stateCirculoFamiliar.length > 0
-                                ? <TablaCirculoFamiliar rows={stateCirculoFamiliar} handleDelete={handleDeleteFamiliar} handleEdit={handleEditModal}/>
-                                : null
+                            { stateCirculoFamiliar.length > 0 &&
+                                <TablaCirculoFamiliar
+                                    rows={stateCirculoFamiliar}
+                                    handleDelete={handleDeleteFamiliar}
+                                    handleEdit={handleEditModal}
+                                />
+
                             }
 
                         </Box>
@@ -341,7 +368,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     )}
                 </Grid>
             </Grid>
-            : null}
+            }
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <Box sx={{
