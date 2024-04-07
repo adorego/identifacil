@@ -24,7 +24,7 @@ export default function RegistrationData(props: RegistrationProps) {
                     <Button onClick={props.cerrarDialogo} variant="contained" sx={{textTransform: 'uppercase', px: 5}}>
                         Aceptar
                     </Button>
-                    <Button variant="text" onClick={() => router.push('/inicio/registro')}>
+                    <Button variant="text" onClick={() => router.push('/inicio')}>
                         Volver al inicio
                     </Button>
 

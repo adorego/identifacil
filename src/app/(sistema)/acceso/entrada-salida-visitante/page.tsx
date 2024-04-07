@@ -83,6 +83,7 @@ export default function EntradaSalidaVisitante() {
     const [entradaVisitante, setEntradaVisitante] = useState<SolicitudEntradaVisitante>(solicitudEntradaVisitanteInicial);
     const [mensaje, setMensaje] = useState("");
     const {openSnackbar} = useGlobalContext();
+    const [bloquearIngreso,setBloquearIngreso] = useState(false);
     const {selectedEstablecimiento} = useGlobalContext();
 
 
@@ -91,9 +92,9 @@ export default function EntradaSalidaVisitante() {
     }
 
     const enviar_reconocimientos = async (reconocimiento: IReconocimiento):Promise<boolean> => {
-        console.log("Entró en agregar reconocimiento");
+        
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
-        console.log('url:', url);
+        
         const dataToSend = {
             descriptorFacial: reconocimiento.descriptor
         }
@@ -110,7 +111,7 @@ export default function EntradaSalidaVisitante() {
 
         if (!response.ok) {
             const data = await response.json();
-            log.error('Ocurrio un error:', data);
+            
             openSnackbar("Error en la consulta de datos", "error");
             return false;
         } else {
@@ -119,11 +120,12 @@ export default function EntradaSalidaVisitante() {
             setVisitanteIdentificado(true);
             if(data.esPPL){
                 openSnackbar(`La persona es un PPL`,'error');
+                setBloquearIngreso(true);
             }else if(!data.id_persona){
 
                 openSnackbar(`La persona no está registrada`,'error');
             }else{
-                console.log("Datos recibidos:",data);
+                
                 setIdentificationData({
                     identificado:data.identificado,
                     id_persona:data.id_persona,
@@ -325,7 +327,7 @@ export default function EntradaSalidaVisitante() {
                                     actualizar_progreso={actualizar_progreso}/>
                             </Box>
                         </Grid>
-                        <Grid item sm={6} sx={{borderLeft: '1px solid rgb(189, 189, 189, .16)', margin: '20px 0'}}>
+                        {!bloquearIngreso && <Grid item sm={6} sx={{borderLeft: '1px solid rgb(189, 189, 189, .16)', margin: '20px 0'}}>
                             <Box>
                                 <Grid container spacing={2}>
                                     <Grid item sm={12}>
@@ -493,7 +495,7 @@ export default function EntradaSalidaVisitante() {
 
                             </Box>
                         </Grid>
-
+                      }
                     </Grid>
 
                 </Box>
