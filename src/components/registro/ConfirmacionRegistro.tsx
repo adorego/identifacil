@@ -33,7 +33,7 @@ const ConfirmacionRegistro: FC<ConfirmacionRegistroProps> = ({mensaje}: Confirma
                     Registrar otro PPL
                 </Button>
                 <Button variant={"outlined"} onClick={() => router.push('/inicio')}>
-                    Volver al inicio
+                        Volver al inicio
                 </Button>
             </Stack>
         </Box>

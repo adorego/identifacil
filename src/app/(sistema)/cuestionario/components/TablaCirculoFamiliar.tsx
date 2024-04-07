@@ -31,15 +31,15 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleD
             <Table sx={{minWidth: 650}} aria-label="simple table">
 
                 <TableHead>
-                    { rows ?
-                    <TableRow>
-                        <TableCell>Nombre y apellido</TableCell>
-                        <TableCell align="right">Consanguineidad</TableCell>
-                        <TableCell align="right">Lugar</TableCell>
-                        <TableCell align="right">Vinculo sistema</TableCell>
-                        <TableCell align="right">Acciones</TableCell>
-                    </TableRow>
-                        : null }
+                    { rows &&
+                        <TableRow>
+                            <TableCell>Nombre y apellido</TableCell>
+                            <TableCell align="right">Consanguineidad</TableCell>
+                            <TableCell align="right">Lugar</TableCell>
+                            <TableCell align="right">Vinculo sistema</TableCell>
+                            <TableCell align="right">Acciones</TableCell>
+                        </TableRow>
+                    }
                 </TableHead>
                 <TableBody>
                     { rows ?
@@ -55,10 +55,10 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleD
                                     <TableCell align="right">{row.establecimiento.nombre}</TableCell>
                                     <TableCell align="right">{row.esFuncionario ? "Funcionario" : "PPL"}</TableCell>
                                     <TableCell align="right">
-                                        <IconButton aria-label="edit" onClick={(event)=>handleEdit(event, row.id)}>
+                                        <IconButton aria-label="edit" onClick={(event)=>handleEdit(event, index)}>
                                             <Visibility/>
                                         </IconButton>
-                                        <IconButton aria-label="delete" onClick={(event)=>handleDelete(event, row.id)}>
+                                        <IconButton aria-label="delete" onClick={(event)=>handleDelete(event, index)}>
                                             <Delete/>
                                         </IconButton>
                                     </TableCell>
