@@ -63,6 +63,12 @@ type dataType = {
     datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
     registro_de_fotos: Array<{nombre:string; foto:string}>;
+    tiene_contacto_en_embajada: boolean;
+    contactoDeEmbajada:{
+        id: number,
+        nombre: string,
+        numero: string,
+    }
 }
 
 const initialData = {
@@ -99,7 +105,13 @@ const initialData = {
     datosFamiliares: datosFamiliaresInicial,
     datosEducacion: datosEducacionInicial,
     datosDeSalud: datosDeSalud2Initial,
-    datosJudiciales: datosJudicialesInicial
+    datosJudiciales: datosJudicialesInicial,
+    tiene_contacto_en_embajada: false,
+    contactoDeEmbajada:{
+        id: 0,
+        nombre: '',
+        numero: '',
+    }
 }
 
 const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/id/`;
@@ -168,15 +180,6 @@ export default function Page({ params }: { params: { id: number } }) {
                         <Grid p={3} item sm={12}>
                             <Stack direction='row'>
                                 <Box className='imageContainer' sx={{marginRight: '40px'}}>
-                                    {/*<img
-                                        src='https://source.unsplash.com/collection/1118917/480x480'
-                                        alt=''
-                                        loading="lazy"
-                                        style={{
-                                            width: '100%',
-                                            borderRadius: '10px',
-                                        }}
-                                    />*/}
                                     {
                                         !loading ?
                                         <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile' alt={`foto-perfil-${data.nombre + '-' + data.apellido}`}/>
