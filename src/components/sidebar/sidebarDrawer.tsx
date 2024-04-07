@@ -165,7 +165,7 @@ export default function SidebarDrawer()
                         <SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Registro PPL"
-                            path="/inicio/registro"
+                            path="/inicio/registro/ppl"
                             isActive={pathname === '/inicio/registro/ppl'}
                         />
                         

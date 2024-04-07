@@ -83,10 +83,10 @@ export default function EntradaSalidaVisitante() {
     const [entradaVisitante, setEntradaVisitante] = useState<SolicitudEntradaVisitante>(solicitudEntradaVisitanteInicial);
     const [mensaje, setMensaje] = useState("");
     const {openSnackbar} = useGlobalContext();
-    const [bloquearIngreso,setBloquearIngreso] = useState(false);
     const {selectedEstablecimiento} = useGlobalContext();
 
 
+    const habilitar_envio_de_datos = visitanteIdentificado && pplIdentificado;
     const llamado_de_prueba = (reconocimiento:IReconocimiento)=>{
         console.log("Llamado de prueba:",reconocimiento);
     }
@@ -117,13 +117,14 @@ export default function EntradaSalidaVisitante() {
         } else {
             const data: IdentificationResponse = await response.json();
             setProgresoReconocmiento(EstadosProgreso[0]);
-            setVisitanteIdentificado(true);
+            
             if(data.esPPL){
                 openSnackbar(`La persona es un PPL`,'error');
-                setBloquearIngreso(true);
+                
             }else if(!data.id_persona){
 
                 openSnackbar(`La persona no está registrada`,'error');
+                
             }else{
                 
                 setIdentificationData({
@@ -133,7 +134,8 @@ export default function EntradaSalidaVisitante() {
                     nombres: data.nombres,
                     apellidos: data.apellidos,
                     esPPL: data.esPPL
-                })
+                });
+                setVisitanteIdentificado(true);
             }
             return true;
             
@@ -235,7 +237,8 @@ export default function EntradaSalidaVisitante() {
                 openSnackbar(`Debe identificarse la persona visitante`,"error");
             }
             if(!selectedEstablecimiento && selectedEstablecimiento===0){
-                openSnackbar(`Debe seleccionar un establecimiento`,"error");
+                openSnackbar(`Debe seleccionar un establecimiento,vuelva a intentar`,"error");
+                
             }
             else{
                 const url_entrada = url + "entrada";
@@ -293,6 +296,8 @@ export default function EntradaSalidaVisitante() {
         }
         setIdentificationData(datosInicialesDeVisitante);
         setpplAVisitar(datosInicialesPplAVisitar);
+        setVisitanteIdentificado(false);
+        setPPLIdentificado(false);
     }
     
    
@@ -327,7 +332,7 @@ export default function EntradaSalidaVisitante() {
                                     actualizar_progreso={actualizar_progreso}/>
                             </Box>
                         </Grid>
-                        {!bloquearIngreso && <Grid item sm={6} sx={{borderLeft: '1px solid rgb(189, 189, 189, .16)', margin: '20px 0'}}>
+                        <Grid item sm={6} sx={{borderLeft: '1px solid rgb(189, 189, 189, .16)', margin: '20px 0'}}>
                             <Box>
                                 <Grid container spacing={2}>
                                     <Grid item sm={12}>
@@ -467,7 +472,7 @@ export default function EntradaSalidaVisitante() {
                                                         </Grid>
                                                         <Grid item sm={12}>
                                                             <FormControl fullWidth={true} sx={{}}>
-                                                                <Button variant="contained" onClick={entradaSalidaVisitante}>
+                                                                <Button variant="contained" disabled={!habilitar_envio_de_datos} onClick={entradaSalidaVisitante}>
                                                                     Solicitar Autorización
                                                                 </Button>
                                                             </FormControl>
@@ -495,7 +500,7 @@ export default function EntradaSalidaVisitante() {
 
                             </Box>
                         </Grid>
-                      }
+                      
                     </Grid>
 
                 </Box>
