@@ -187,19 +187,24 @@ export default function EntradaSalidaVisitante() {
                     }
 
                 });
-
+                console.log("Respuesta a la consulta:",response);
                 if (!response.ok) {
-                    throw new Error('Error en la petición');
-                }
-                const data: RespuestaAConsultaPPL = await response.json();
-                console.log(data)
-
-
-                if (!response.ok) {
+                    setPPLIdentificado(false);
+                    setEntradaVisitante(solicitudEntradaVisitanteInicial);
                     throw new Error('Error en la petición');
                     
                 }
-                if (data.id_persona) {
+                
+                const data: RespuestaAConsultaPPL = await response.json();
+                console.log("Data:",data)
+
+
+                if (Object.keys(data).length === 0) {
+                    openSnackbar(`No se encuentra a la PPL`,'error');
+                    setPPLIdentificado(false);
+                    setpplAVisitar(datosInicialesPplAVisitar);
+                }
+                if (data && data.id_persona) {
                     setPPLIdentificado(true)
                     setpplAVisitar(prev => ({
                         ...prev,

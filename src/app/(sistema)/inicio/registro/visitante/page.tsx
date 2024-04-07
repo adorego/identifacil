@@ -3,7 +3,7 @@
 import {Box, Button, FormControl, Grid, Step, StepLabel, Stepper, Typography} from "@mui/material";
 import IdentificationForm, {DatosDeIdentificacion} from "@/components/registro/identificacionForm";
 import {KeyboardArrowLeft, KeyboardArrowRight} from "@mui/icons-material";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import ConfirmacionRegistro from "@/components/registro/ConfirmacionRegistro";
 import {EstadosProgreso} from "@/components/registro/FormRegister";
@@ -20,10 +20,24 @@ enum ListaDeTiposDeRegistro{
     identidad,
     prontuario
 }
+interface botonesDeFlujo {
+    mostrarBotonAnterior: boolean;
+    habilitarBotonAnterior: boolean;
+    mostrarBotonSiguiente: boolean;
+    habilitarBotonSiguiente: boolean;
+}
+
+const botonesDeFlujoEstadoInicial: botonesDeFlujo = {
+    mostrarBotonAnterior: false,
+    habilitarBotonAnterior: false,
+    mostrarBotonSiguiente: true,
+    habilitarBotonSiguiente: false,
+}
 
 const steps = ["Identificación", "Reconocimiento", "Confirmacion"];
 export default function RegistroVisitante() {
     const [activeStep, setActiveStep] = useState(0);
+    const [botonesDeFlujo, setBotonesDeFlujo] = useState<botonesDeFlujo>(botonesDeFlujoEstadoInicial);
     const identidad = useRef<DatosDeIdentificacion | null>(null);
     const [habilitarBotonSiguiente, setHabilitarBotonSiguiente] = useState(false);
     const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
@@ -33,6 +47,38 @@ export default function RegistroVisitante() {
     const reconocimientos = useRef<Array<IReconocimiento>>([]);
     const contadorReconocimiento = useRef<number>(0);
     const {openSnackbar} = useGlobalContext();
+
+    useEffect(
+        () => {
+            switch (activeStep) {
+                case(0):
+                    setBotonesDeFlujo({
+                        mostrarBotonAnterior: false,
+                        habilitarBotonAnterior: false,
+                        mostrarBotonSiguiente: true,
+                        habilitarBotonSiguiente: false,
+                    })
+                    break;
+                case(1):
+                    setBotonesDeFlujo({
+                        mostrarBotonAnterior: true,
+                        habilitarBotonAnterior: true,
+                        mostrarBotonSiguiente: false,
+                        habilitarBotonSiguiente: false,
+                    })
+                    break;
+                case(2):
+                    setBotonesDeFlujo({
+                        mostrarBotonAnterior: false,
+                        habilitarBotonAnterior: false,
+                        mostrarBotonSiguiente: false,
+                        habilitarBotonSiguiente: false,
+                    })
+                    break;
+
+            }
+        }, [activeStep]
+    )
 
     const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
        
@@ -103,7 +149,7 @@ export default function RegistroVisitante() {
     }
 
     const onStepForward = () => {
-        if (activeStep === 3) {
+        if (activeStep === 2) {
             setActiveStep(0);
         } else {
             setActiveStep(activeStep + 1);
@@ -112,7 +158,7 @@ export default function RegistroVisitante() {
 
     const onStepBackward = () => {
         if (activeStep === 0) {
-            setActiveStep(3);
+            setActiveStep(2);
         } else {
             setActiveStep(activeStep - 1);
         }
@@ -170,16 +216,27 @@ export default function RegistroVisitante() {
                         mensaje="Visitante Registrado exitosamente"/>}
 
 
-                    {activeStep === 0 ?
+                  
                         <Grid container spacing={5} mt={1}>
-                            <Grid item xs='auto'>
+                            {botonesDeFlujo.mostrarBotonAnterior &&
+                                <Grid item xs={'auto'}>
+                                    <Button disabled={!botonesDeFlujo.habilitarBotonAnterior} variant="outlined"
+                                            onClick={onStepBackward}
+                                            startIcon={<KeyboardArrowLeft/>}>
+                                        Anterior
+                                    </Button>
+                                </Grid>
+                           }
+                           {botonesDeFlujo.mostrarBotonSiguiente &&
+                           <Grid item xs='auto'>
                                 <Button disabled={!habilitarBotonSiguiente} variant="contained" onClick={onStepForward}
                                         endIcon={<KeyboardArrowRight/>}>
                                     Siguiente
                                 </Button>
                             </Grid>
-                        </Grid> : null
-                    }
+                          }
+                        </Grid>
+                    
 
                 </Box>
             </FormControl>
