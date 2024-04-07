@@ -158,10 +158,11 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
             <Paper elevation={1}>
                 <Box p={2}>
                     <Grid container>
-                        <Grid item sm={2} sx={{
+                        <Grid  item sm={2} sx={{
                             borderRight: '1px solid lightgray',
                         }}>
                             <Tabs
+                                className='vertical-tab'
                                 value={value} onChange={handleChange} aria-label="basic tabs example"
                                 orientation='vertical'>
                                 <Tab label="Perfil" {...a11yProps(0)} />

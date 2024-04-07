@@ -151,7 +151,7 @@ export interface BloqueDatosPersonalesProps {
         contactoDeEmbajada:{
             id: number,
             nombre: string,
-            numero: string,
+            numero: number,
         };
 
     };

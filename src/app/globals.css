@@ -121,8 +121,13 @@ header.MuiPaper-root {
 
 }
 
+.vertical-tab .MuiButtonBase-root {
+    align-items: start;
+}
 
-
+.vertical-tab .Mui-selected {
+    background: rgb(54 167 111 / 5%);
+}
 .MuiCollapse-vertical .MuiList-root {
 
     margin-left: 0;
