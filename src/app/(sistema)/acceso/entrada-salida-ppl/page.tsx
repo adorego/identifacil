@@ -30,6 +30,8 @@ import { api_request } from "@/lib/api-request";
 import { log } from "loglevel";
 import { exit } from "process";
 
+const NUMERO_DE_CAPTURAS:number=3;
+
 const EstadosProgreso: Array<string> = ['No iniciado', 'Obteniendo los datos del rostro', 'Consultando a la Base de Datos', 'Datos disponibles'];
 
 export interface SalidaPPL {
@@ -201,6 +203,7 @@ export default function EntradaSalidaPPL() {
                                 </Typography>
 
                                 <FaceRecognitionWithLayout
+                                    capturas={NUMERO_DE_CAPTURAS}
                                     etiquetaLabel="Capturar"
                                     showSpinner={showSpinner}
                                     progresoRegistro={progresoReconocimiento}

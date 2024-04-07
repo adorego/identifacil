@@ -91,7 +91,7 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
                     </RadioGroup>
                 </Grid>
                 <Grid item sm={6}>
-                    {!alternativaFormulario.conCedulaParaguaya ?
+                    {(!alternativaFormulario.conCedulaParaguaya && props.identificar_ppl) ?
                     (
                         <>
 
