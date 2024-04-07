@@ -8,11 +8,17 @@ import {useRouter} from "next/navigation";
 
 export interface ConfirmacionRegistroProps {
     mensaje: string;
+    etiqueta_boton_izquierdo:string;
+    registro_ppl:boolean;
 }
 
-const ConfirmacionRegistro: FC<ConfirmacionRegistroProps> = ({mensaje}: ConfirmacionRegistroProps) => {
-    const router = useRouter();
+const RUTA_INICIO:string = "/inicio"
+const RUTA_REGISTRO_PPL:string = "/inicio/registro/ppl"
+const RUTA_REGISTRO_VISITANTE:string = "/inicio/registro/visitante"
 
+const ConfirmacionRegistro: FC<ConfirmacionRegistroProps> = ({mensaje,etiqueta_boton_izquierdo,registro_ppl}: ConfirmacionRegistroProps) => {
+    const router = useRouter();
+    const ruta_boton_izquierdo = registro_ppl ? RUTA_REGISTRO_PPL : RUTA_REGISTRO_VISITANTE
     return (
         <Box sx={{
             height: "300px",
@@ -29,10 +35,10 @@ const ConfirmacionRegistro: FC<ConfirmacionRegistroProps> = ({mensaje}: Confirma
                 {mensaje}
             </Typography>
             <Stack spacing={2} direction={"row"} mt={5} justifyContent={"center"}>
-                <Button variant={"contained"} onClick={() => router.push('/inicio/registro/')}>
-                    Registrar otro PPL
+                <Button variant={"contained"} onClick={() => router.push(ruta_boton_izquierdo)}>
+                    {etiqueta_boton_izquierdo}
                 </Button>
-                <Button variant={"outlined"} onClick={() => router.push('/inicio')}>
+                <Button variant={"outlined"} onClick={() => router.push(RUTA_INICIO)}>
                     Volver al inicio
                 </Button>
             </Stack>

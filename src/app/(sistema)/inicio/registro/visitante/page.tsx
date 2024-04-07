@@ -13,6 +13,14 @@ import log from "loglevel";
 import style from "./page.module.css"
 import {useGlobalContext} from "@/app/Context/store";
 
+const NUMERO_DE_RECONOCIMIENTOS:number=3;
+enum ListaDeTiposDeRegistro{
+    ninguno,
+    cedula,
+    identidad,
+    prontuario
+}
+
 const steps = ["Identificación", "Reconocimiento", "Confirmacion"];
 export default function RegistroVisitante() {
     const [activeStep, setActiveStep] = useState(0);
@@ -20,29 +28,31 @@ export default function RegistroVisitante() {
     const [habilitarBotonSiguiente, setHabilitarBotonSiguiente] = useState(false);
     const [progresoRegistro, setProgresoRegistro] = useState(EstadosProgreso[0]);
     const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
+    const [tipo_de_registro,setTipoDeRegistro] = useState<ListaDeTiposDeRegistro>(ListaDeTiposDeRegistro.ninguno);
     const [mensaje, setMensaje] = useState("");
     const reconocimientos = useRef<Array<IReconocimiento>>([]);
     const contadorReconocimiento = useRef<number>(0);
     const {openSnackbar} = useGlobalContext();
 
     const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
-        console.log("Datos de identificacion:", identificacion);
+       
         identidad.current = identificacion;
     }
     const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
+       
         reconocimientos.current.push(reconocimiento);
         contadorReconocimiento.current++;
-        if (contadorReconocimiento.current === 3) {
+       
+        if (contadorReconocimiento.current == NUMERO_DE_RECONOCIMIENTOS) {
             await generar_request_enviar();
         }
     }
 
     const generar_request_enviar = async () => {
-
-        if (identidad.current != null && identidad.current.cedula_identidad) {
+       
+        if (identidad.current) {
             const formData = new FormData();
             formData.append('tipo_identificacion', '1');
-            formData.append('numero_identificacion', identidad.current.cedula_identidad);
             formData.append('nombres', identidad.current.nombres);
             formData.append('apellidos', identidad.current.apellidos);
             formData.append('genero', String(identidad.current.codigo_genero));
@@ -54,6 +64,13 @@ export default function RegistroVisitante() {
             formData.append('foto3', reconocimientos.current[2].foto);
             formData.append('descriptorFacial3', reconocimientos.current[2].descriptor.toString());
             formData.append('esPPL', 'false');
+            if(identidad.current.cedula_identidad){
+                formData.append("numero_identificacion",identidad.current.cedula_identidad) ;
+            }else if(identidad.current.numeroDeIdentificacion){
+                formData.append("numero_identificacion",identidad.current.numeroDeIdentificacion);
+            }else if(identidad.current.prontuario){
+                formData.append("prontuario",identidad.current.prontuario);
+            }
 
             contadorReconocimiento.current = 0;
             //Sin Kubernetes
@@ -80,6 +97,7 @@ export default function RegistroVisitante() {
             } catch (error) {
                 setProgresoRegistro(EstadosProgreso[3]);
                 setMensaje(`Ocurrió un error al realizar el registro:${error}`);
+                setActiveStep(0);
             }
         }
     }
@@ -131,10 +149,13 @@ export default function RegistroVisitante() {
                     boxShadow: '0px 12px 24px -4px rgba(145, 158, 171, 0.12), 0px 0px 2px 0px rgba(145, 158, 171, 0.20)',
                 }}>
                     {activeStep === 0 && <IdentificationForm
+                        identificar_ppl={false}
                         habilitarBotonSiguiente={setHabilitarBotonSiguiente}
                         actualizarIdentificacion={setIdentificacion}
                     />}
-                    {activeStep === 1 && <FaceRecognitionWithLayout
+                    {activeStep === 1 && 
+                    <FaceRecognitionWithLayout
+                        capturas={NUMERO_DE_RECONOCIMIENTOS}
                         etiquetaLabel="Capturar"
                         showSpinner={showSpinner}
                         progresoRegistro={progresoRegistro}
@@ -143,7 +164,10 @@ export default function RegistroVisitante() {
                         agregar_reconocimiento={agregar_reconocimiento}
                         actualizar_progreso={actualizar_progreso}/>
                     }
-                    {activeStep === 2 && <ConfirmacionRegistro mensaje="Visitante Registrado exitosamente"/>}
+                    {activeStep === 2 && <ConfirmacionRegistro 
+                        registro_ppl={false}
+                        etiqueta_boton_izquierdo="Registrar otro Visitante"
+                        mensaje="Visitante Registrado exitosamente"/>}
 
 
                     {activeStep === 0 ?

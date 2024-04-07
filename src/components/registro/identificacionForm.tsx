@@ -25,18 +25,20 @@ import es from 'dayjs/locale/es'; // Importa el locale español
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 import log from "loglevel";
+import ConfirmacionRegistro from "./ConfirmacionRegistro";
 export interface IdentificacionProps {
     habilitarBotonSiguiente: (arg0: boolean) => void;
     actualizarIdentificacion: (arg0: DatosDeIdentificacion) => void;
+    identificar_ppl:boolean;
 }
 
 interface alternativasDelFormulario {
-    paraguayo: boolean;
+    conCedulaParaguaya: boolean;
     conDocumentoDeIdentidad: boolean;
 }
 
 const alternativasFormularioInicial: alternativasDelFormulario = {
-    paraguayo: true,
+    conCedulaParaguaya: true,
     conDocumentoDeIdentidad: true,
 }
 
@@ -55,7 +57,7 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
             (previus: alternativasDelFormulario) => {
                 return {
                     ...previus,
-                    paraguayo: event.target.value === "true" ? true : false,
+                    conCedulaParaguaya: event.target.value === "true" ? true : false,
                 }
             }
         )
@@ -83,13 +85,13 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
                 <Grid item sm={6}>
                     <FormLabel id="nacionalidad">¿Tiene Cédula Paraguaya?</FormLabel>
                     <RadioGroup row defaultValue="SI" onChange={onNacionalidadChangeHandler}
-                                value={alternativaFormulario.paraguayo} name="nacionalidad-opciones">
+                                value={alternativaFormulario.conCedulaParaguaya} name="nacionalidad-opciones">
                         <FormControlLabel value={true} control={<Radio/>} label="SI"/>
                         <FormControlLabel value={false} control={<Radio/>} label="NO"/>
                     </RadioGroup>
                 </Grid>
                 <Grid item sm={6}>
-                    {!alternativaFormulario.paraguayo ?
+                    {!alternativaFormulario.conCedulaParaguaya ?
                     (
                         <>
 
@@ -104,16 +106,19 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
                     : null}
                 </Grid>
             </Grid>
-            {alternativaFormulario.conDocumentoDeIdentidad && alternativaFormulario.paraguayo &&
+            {alternativaFormulario.conDocumentoDeIdentidad && alternativaFormulario.conCedulaParaguaya &&
                 <FormularioConCedulaParaguaya
+                    identificar_ppl={props.identificar_ppl}
                     habilitarBotonSiguiente={props.habilitarBotonSiguiente}
                     actualizarIdentificacion={props.actualizarIdentificacion}/>}
-            {!alternativaFormulario.paraguayo && alternativaFormulario.conDocumentoDeIdentidad &&
+            {!alternativaFormulario.conCedulaParaguaya && alternativaFormulario.conDocumentoDeIdentidad &&
                 <FormularioParaExtranjero
+                    identificar_ppl={props.identificar_ppl}
                     habilitarBotonSiguiente={props.habilitarBotonSiguiente}
                     actualizarIdentificacion={props.actualizarIdentificacion}/>}
             {!alternativaFormulario.conDocumentoDeIdentidad &&
                 <FormularioParaPPLSinDocumento
+                    identificar_ppl={props.identificar_ppl}
                     habilitarBotonSiguiente={props.habilitarBotonSiguiente}
                     actualizarIdentificacion={props.actualizarIdentificacion}/>}
         </Box>
@@ -124,9 +129,9 @@ export default IdentificacionForm;
 
 export interface DatosDeIdentificacion {
     id_persona: number | null;
-    cedula_identidad?: string | null;
-    numeroDeIdentificacion?: string;
-    prontuario?: string;
+    cedula_identidad: string | null;
+    numeroDeIdentificacion: string|null;
+    prontuario: string|null;
     tipo_identificacion?: number;
     es_extranjero: boolean;
     tiene_cedula: boolean;
@@ -139,8 +144,9 @@ export interface DatosDeIdentificacion {
 
 const datosInicialesDelFormularioDeIdentificacion: DatosDeIdentificacion = {
     id_persona: null,
-    cedula_identidad: "",
-    prontuario: "",
+    cedula_identidad: null,
+    numeroDeIdentificacion:null,
+    prontuario: null,
     es_extranjero: false,
     tiene_cedula: true,
     nombres: "",
@@ -165,7 +171,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     const [cedula, setCedula] = useState<string>("");
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] = useState<DatosDeIdentificacion>(datosInicialesDelFormularioDeIdentificacion)
     const [consultaLoading, setConsultaLoading] = useState(false)
-    const [stateEsPPL, setStateEsPPL] = useState<Boolean>(false)
+    const [stateEsPPL, setStateEsPPL] = useState<boolean>(false)
     const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
     const {openSnackbar} = useGlobalContext();
@@ -251,6 +257,8 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     // se verifica que los datos de la persona a ingresar sea mayor a 18 años
                     const datosDeidentificacionAGenerar = {
                         ...data.datosDeCedula,
+                        numeroDeIdentificacion:null,
+                        prontuario:null,
                         tiene_cedula: true,
                         es_extranjero: false,
                         id_persona: null,
@@ -259,12 +267,10 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                        console.log('es menor')
                         openSnackbar('Persona no puede ingresar. Debe ser mayor de edad', 'error')
                         setConsultaLoading(false)
 
                     } else {
-                        console.log('es es mayor')
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
                         if(!stateEsPPL){
@@ -278,6 +284,9 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                 }
             } else {
                 log.error("Error al consultar el documento:", await response.json())
+                props.habilitarBotonSiguiente(false);
+                setFormularioDeDatosDeIdentificacion(datosInicialesDelFormularioDeIdentificacion);
+                
             }
 
 
@@ -377,7 +386,9 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
 
 interface DatosDeIdentificacionExtranjero {
     id_persona: number | null;
-    numeroDeIdentificacion: string;
+    cedula_identidad: string | null;
+    numeroDeIdentificacion: string|null;
+    prontuario: string|null;
     nombres: string;
     apellidos: string;
     fecha_nacimiento: Dayjs | null;
@@ -387,6 +398,8 @@ interface DatosDeIdentificacionExtranjero {
 const datosInicialesDeFormularioDeExtranjero = {
     id_persona: null,
     numeroDeIdentificacion: "",
+    cedula_identidad:null,
+    prontuario:null,
     nombres: "",
     apellidos: "",
     fecha_nacimiento: null,
@@ -407,13 +420,15 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
         if (formularioDeDatosDeIdentificacion.fecha_nacimiento
             && formularioDeDatosDeIdentificacion.nombres.length > 2
             && formularioDeDatosDeIdentificacion.apellidos.length > 2
-            && formularioDeDatosDeIdentificacion.numeroDeIdentificacion.length > 1
+            && formularioDeDatosDeIdentificacion !=null
             && formularioDeDatosDeIdentificacion.codigo_genero) {
 
             props.actualizarIdentificacion({
                 ...formularioDeDatosDeIdentificacion,
                 fecha_nacimiento: formularioDeDatosDeIdentificacion.fecha_nacimiento.toISOString(),
                 numeroDeIdentificacion: formularioDeDatosDeIdentificacion.numeroDeIdentificacion,
+                prontuario:null,
+                cedula_identidad:null,
                 tiene_cedula: true,
                 es_extranjero: true,
                 id_persona: null,
@@ -604,6 +619,8 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
             props.actualizarIdentificacion({
                 ...formularioDeDatosDeIdentificacion,
                 fecha_nacimiento: formularioDeDatosDeIdentificacion.fecha_nacimiento.toISOString(),
+                cedula_identidad:null,
+                numeroDeIdentificacion:null,
                 tiene_cedula: false,
                 es_extranjero: false,
                 id_persona: null,
@@ -647,101 +664,112 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
             }
         )
     }
-    return (
-        <>
-            {console.log(formularioDeDatosDeIdentificacion)}
-            <Grid container spacing={2} mt={3}>
-                <Grid item xs={6}>
-                    <TextField autoComplete="off"
-                               id="prontuario"
-                               value={formularioDeDatosDeIdentificacion.prontuario}
-                               name="prontuario"
-                               onChange={onTextChangeHandler}
-                               fullWidth
-                               label={"Ingrese número de prontuario"}
-                               variant="outlined"
-                               required/>
+    if(!props.identificar_ppl){
+        return(
+            <ConfirmacionRegistro 
+            registro_ppl={false}
+            mensaje="No puede ingresar un visitante sin identificación" 
+            etiqueta_boton_izquierdo="Registrar otro Visitante" />
+        )
+    }else{
+        return (
+            <>
+                {console.log(formularioDeDatosDeIdentificacion)}
+                <Grid container spacing={2} mt={3}>
+                    <Grid item xs={6}>
+                        <TextField autoComplete="off"
+                                   id="prontuario"
+                                   value={formularioDeDatosDeIdentificacion.prontuario}
+                                   name="prontuario"
+                                   onChange={onTextChangeHandler}
+                                   fullWidth
+                                   label={"Ingrese número de prontuario"}
+                                   variant="outlined"
+                                   required/>
+                    </Grid>
+    
+                    <Grid item xs={6}>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <TextField
+                            id="nombres"
+                            name="nombres"
+                            value={formularioDeDatosDeIdentificacion.nombres}
+                            fullWidth
+                            onChange={onTextChangeHandler}
+                            label="Nombres"
+                            variant="outlined"
+                            required/>
+                    </Grid>
+    
+                    <Grid item xs={6}>
+                        <TextField
+                            id="apellido"
+                            name="apellidos"
+                            value={formularioDeDatosDeIdentificacion.apellidos}
+                            fullWidth
+                            onChange={onTextChangeHandler}
+                            label="Apellidos"
+                            variant="outlined"
+                            required/>
+                    </Grid>
+                    <Grid item xs={6}>
+                        <FormControl fullWidth={true}>
+                            <MobileDatePicker
+                                value={formularioDeDatosDeIdentificacion.fecha_nacimiento ? dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento) : null}
+                                format="DD/MM/YYYY"
+                                maxDate={dayjs().subtract(18, 'year')}
+                                onChange={(newValue) => {
+                                    const esMenor = (dayjs().diff(dayjs(newValue), 'year') < 18)
+                                    if (esMenor){
+                                        openSnackbar('No se puede registrar un menor.', 'error')
+                                        onChangeFechaDeNacimiento(null)
+                                    } else {
+                                        onChangeFechaDeNacimiento(newValue)
+                                    }
+    
+    
+                                }}
+                                label={"Fecha de nacimiento"}
+                            />
+                        </FormControl>
+    
+                    </Grid>
+                    <Grid item xs={4}>
+                        <FormControl fullWidth>
+                            <InputLabel htmlFor="id_selector_genero">
+                                Genero
+                            </InputLabel>
+                            <Select
+                                id="id_selector_genero"
+                                label="Genero"
+                                onChange={onGeneroChangeHandler}
+                                value={formularioDeDatosDeIdentificacion.codigo_genero}>
+                                <MenuItem value={1}>Femenino</MenuItem>
+                                <MenuItem value={2}>Masculino</MenuItem>
+                            </Select>
+    
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={2}>
+                        <Button
+                            fullWidth
+                            sx={{minHeight: "100%"}}
+                            onClick={onGuardarHandler}
+                            variant="contained"
+                            endIcon={<Save/>}>
+                            Guardar
+                        </Button>
+                    </Grid>
+    
+    
                 </Grid>
+            </>
+        )
 
-                <Grid item xs={6}>
-                </Grid>
-                <Grid item xs={6}>
-                    <TextField
-                        id="nombres"
-                        name="nombres"
-                        value={formularioDeDatosDeIdentificacion.nombres}
-                        fullWidth
-                        onChange={onTextChangeHandler}
-                        label="Nombres"
-                        variant="outlined"
-                        required/>
-                </Grid>
-
-                <Grid item xs={6}>
-                    <TextField
-                        id="apellido"
-                        name="apellidos"
-                        value={formularioDeDatosDeIdentificacion.apellidos}
-                        fullWidth
-                        onChange={onTextChangeHandler}
-                        label="Apellidos"
-                        variant="outlined"
-                        required/>
-                </Grid>
-                <Grid item xs={6}>
-                    <FormControl fullWidth={true}>
-                        <MobileDatePicker
-                            value={formularioDeDatosDeIdentificacion.fecha_nacimiento ? dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento) : null}
-                            format="DD/MM/YYYY"
-                            maxDate={dayjs().subtract(18, 'year')}
-                            onChange={(newValue) => {
-                                const esMenor = (dayjs().diff(dayjs(newValue), 'year') < 18)
-                                if (esMenor){
-                                    openSnackbar('No se puede registrar un menor.', 'error')
-                                    onChangeFechaDeNacimiento(null)
-                                } else {
-                                    onChangeFechaDeNacimiento(newValue)
-                                }
-
-
-                            }}
-                            label={"Fecha de nacimiento"}
-                        />
-                    </FormControl>
-
-                </Grid>
-                <Grid item xs={4}>
-                    <FormControl fullWidth>
-                        <InputLabel htmlFor="id_selector_genero">
-                            Genero
-                        </InputLabel>
-                        <Select
-                            id="id_selector_genero"
-                            label="Genero"
-                            onChange={onGeneroChangeHandler}
-                            value={formularioDeDatosDeIdentificacion.codigo_genero}>
-                            <MenuItem value={1}>Femenino</MenuItem>
-                            <MenuItem value={2}>Masculino</MenuItem>
-                        </Select>
-
-                    </FormControl>
-                </Grid>
-                <Grid item xs={2}>
-                    <Button
-                        fullWidth
-                        sx={{minHeight: "100%"}}
-                        onClick={onGuardarHandler}
-                        variant="contained"
-                        endIcon={<Save/>}>
-                        Guardar
-                    </Button>
-                </Grid>
-
-
-            </Grid>
-        </>
-
-    )
+    }
+    
+    
 
 
 }

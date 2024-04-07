@@ -19,7 +19,7 @@ interface ErrorInt {
 }
 
 export interface FaceRecognitionProps {
-    agregar_reconocimiento: ({}: IReconocimiento) => void;
+    agregar_reconocimiento: (valor_reconocimiento:IReconocimiento) => void;
     notificacion: string;
     numero_de_capturas: number;
     etiqueta_boton: string;
@@ -46,19 +46,13 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
     const [modelosCargados,setModelosCargados] = useState<boolean>(false);
 
     
-
     const conectar_con_webcam = (): MediaStream | null => {
         let mediaStream = null;
-        //console.log("Se va a conectar la webcam");
         try {
-            // console.log("Navegador:", navigator, "mediaDevices:", navigator.mediaDevices);
-            if (navigator && navigator.mediaDevices) {
-                // console.log("Entro en mediaDevice")
+           if (navigator && navigator.mediaDevices) {
                 navigator.mediaDevices.getUserMedia({video: true})
                     .then(function (stream) {
-                        // console.log("Video ref:",videoElementRef.current);
                         if (videoElementRef.current != null) {
-                            // console.log("Video es distinto de null");
                             videoElementRef.current.srcObject = stream;
                             mediaStream = stream;
                             setIniciarDeteccion(true);
@@ -134,6 +128,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
         }, []
     )
 
+    
     const habilitarBotonDeCapturaDeFoto = (valor:boolean)=>{
         setHabilitarBotonCapturarFoto(valor);
     }
@@ -188,7 +183,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                                 reset_capturar_foto={reset_capturar_foto}
                                 numero_de_capturas={props.numero_de_capturas}
                                 habilitarBotonDeCapturaDeFoto={habilitarBotonDeCapturaDeFoto}
-                                agregar_reconocimiento={props.agregar_reconocimiento}/>
+                                enviar_reconocimiento={props.agregar_reconocimiento}/>
                             {/* {capturarFoto ? 
                             <LinearProgressionWithLabel indicador={progress.indicador} estado={progress.estado} />
                             : null } */}

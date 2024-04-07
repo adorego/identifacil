@@ -52,6 +52,8 @@ const botonesDeFlujoEstadoInicial: botonesDeFlujo = {
     habilitarBotonSiguiente: false,
 }
 
+const NUMERO_DE_CAPTURAS_DE_FOTO:number=3;
+
 export default function FormRegister() {
     const [activeStep, setActiveStep] = useState(0);
     const [botonesDeFlujo, setBotonesDeFlujo] = useState<botonesDeFlujo>(botonesDeFlujoEstadoInicial);
@@ -263,6 +265,7 @@ export default function FormRegister() {
                     {
                         activeStep === 0 &&
                         <IdentificacionForm
+                            identificar_ppl={true}
                             habilitarBotonSiguiente={habilitarBotonSiguiente}
                             actualizarIdentificacion={setIdentificacion}/>
                     }
@@ -270,6 +273,7 @@ export default function FormRegister() {
                     {/* Paso de Reconocimiento y registro facial */}
                     {activeStep === 1 &&
                         <FaceRecognitionWithLayout
+                            capturas={NUMERO_DE_CAPTURAS_DE_FOTO}
                             etiquetaLabel="Capturar"
                             showSpinner={showSpinner}
                             progresoRegistro={progresoRegistro}
@@ -287,7 +291,10 @@ export default function FormRegister() {
                         />
                     }
 
-                    {activeStep === 3 && <ConfirmacionRegistro mensaje="PPL Registrado exitosamente"/>}
+                    {activeStep === 3 && <ConfirmacionRegistro 
+                                        registro_ppl={true}
+                                        etiqueta_boton_izquierdo="Registrar otro PPL"
+                                        mensaje="PPL Registrado exitosamente"/>}
 
 
 

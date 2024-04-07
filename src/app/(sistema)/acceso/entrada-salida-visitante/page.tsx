@@ -85,9 +85,15 @@ export default function EntradaSalidaVisitante() {
     const {openSnackbar} = useGlobalContext();
     const {selectedEstablecimiento} = useGlobalContext();
 
-    const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
+
+    const llamado_de_prueba = (reconocimiento:IReconocimiento)=>{
+        console.log("Llamado de prueba:",reconocimiento);
+    }
+
+    const enviar_reconocimientos = async (reconocimiento: IReconocimiento):Promise<boolean> => {
+        console.log("Entró en agregar reconocimiento");
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
-        // console.log('url:', url);
+        console.log('url:', url);
         const dataToSend = {
             descriptorFacial: reconocimiento.descriptor
         }
@@ -106,6 +112,7 @@ export default function EntradaSalidaVisitante() {
             const data = await response.json();
             log.error('Ocurrio un error:', data);
             openSnackbar("Error en la consulta de datos", "error");
+            return false;
         } else {
             const data: IdentificationResponse = await response.json();
             setProgresoReconocmiento(EstadosProgreso[0]);
@@ -126,6 +133,7 @@ export default function EntradaSalidaVisitante() {
                     esPPL: data.esPPL
                 })
             }
+            return true;
             
             // openSnackbar(`Persona Reconocida, nombre:${data.nombres}, apellido:${data.apellidos}, esPPL:${esPPL}`);
         }
@@ -284,7 +292,8 @@ export default function EntradaSalidaVisitante() {
         setIdentificationData(datosInicialesDeVisitante);
         setpplAVisitar(datosInicialesPplAVisitar);
     }
-
+    
+   
     return (
         <>
 
@@ -304,6 +313,7 @@ export default function EntradaSalidaVisitante() {
                                     sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "10px", textAlign: "center"}}>
                                     Identificación del Visitante
                                 </Typography>
+                                
                                 <FaceRecognitionWithLayout
                                     etiquetaLabel="Capturar"
                                     showSpinner={showSpinner}
@@ -311,7 +321,7 @@ export default function EntradaSalidaVisitante() {
                                     mensaje={mensaje}
                                     capturas={1}
                                     cerrar_dialogo={cerrar_dialogo}
-                                    agregar_reconocimiento={agregar_reconocimiento}
+                                    agregar_reconocimiento={enviar_reconocimientos}
                                     actualizar_progreso={actualizar_progreso}/>
                             </Box>
                         </Grid>
@@ -356,17 +366,7 @@ export default function EntradaSalidaVisitante() {
                                         </FormControl>
 
                                     </Grid>
-                                    {/*<Grid item sm={12}>
-                                        <FormControl fullWidth={true}>
-                                            <TextField
-                                                label={"Esta Registrado"}
-                                                value={identificationData.esPPL === false ? "Si" : "No"}
-                                                disabled={true}>
-
-                                            </TextField>
-                                        </FormControl>
-
-                                    </Grid>*/}
+                                   
                                 </Grid>
                                 {visitanteIdentificado &&
                                     (
@@ -470,40 +470,7 @@ export default function EntradaSalidaVisitante() {
                                                                 </Button>
                                                             </FormControl>
                                                         </Grid>
-                                                        {/*{autorizarIngreso === "autorizado" &&
-                                                            <Grid item sm={12} alignItems={"center"}>
-                                                                <Box sx={{textAlign: "center"}}>
-                                                                    <Button startIcon={<ThumbUp/>} sx={{
-                                                                        borderRadius: "50%",
-                                                                        backgroundColor: "#008000",
-                                                                        width: "200px",
-                                                                        height: "200px",
-                                                                    }}
-                                                                            variant="contained">
-                                                                        Aprobado
-                                                                    </Button>
-                                                                </Box>
-                                                            </Grid>
-
-
-                                                        }
-                                                        {autorizarIngreso === "noAutorizado" &&
-                                                            <Grid item sm={12} alignItems={"center"}>
-                                                                <Box sx={{textAlign: "center"}}>
-                                                                    <Button startIcon={<ThumbDown/>} sx={{
-                                                                        borderRadius: "50%",
-                                                                        backgroundColor: "#FF0000",
-                                                                        width: "200px",
-                                                                        height: "200px",
-                                                                    }}
-                                                                            variant="contained">
-                                                                        No Aprobado
-                                                                    </Button>
-                                                                </Box>
-                                                            </Grid>
-
-
-                                                        }*/}
+                                                        
                                                         {autorizarIngreso === "consultando" &&
                                                             <Grid item sm={12} alignItems={"center"}>
                                                                 <Box sx={{display: "flex", justifyContent: "center"}}>
@@ -522,157 +489,7 @@ export default function EntradaSalidaVisitante() {
 
                                     )
                                 }
-                                {/*{pplIdentificado &&
-                                    <Grid container>
-                                    <Grid container spacing={2}>
-                                        <Grid item sm={12}>
-                                            <Typography
-                                                sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "10px"}}>
-                                                Datos del PPL a quien visita
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item sm={6}>
-                                            <FormControl fullWidth={true}>
-                                                <TextField
-                                                    label={"Cédula"}
-                                                    value={pplAVisitar.cedula}
-                                                    onChange={onCedulaChangeManejador}
-                                                    disabled={false}>
-
-                                                </TextField>
-
-
-                                            </FormControl>
-
-                                        </Grid>
-                                        <Grid item sm={6}>
-                                            <FormControl fullWidth={true} sx={{}}>
-                                                <Button variant="contained" onClick={onConsultarManejador}>
-                                                    Consultar
-                                                </Button>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item sm={12}>
-                                            <FormControl fullWidth={true}>
-                                                <TextField
-                                                    InputLabelProps={{shrink: true}}
-                                                    label={"Nombres"}
-                                                    value={pplAVisitar.nombre}
-                                                    disabled={true}>
-
-                                                </TextField>
-                                            </FormControl>
-
-                                        </Grid>
-                                        <Grid item sm={12}>
-                                            <FormControl fullWidth={true}>
-                                                <TextField
-                                                    InputLabelProps={{shrink: true}}
-                                                    label={"Apellidos"}
-                                                    value={pplAVisitar.apellido}
-                                                    disabled={true}>
-
-                                                </TextField>
-                                            </FormControl>
-
-                                        </Grid>
-                                    </Grid>
-                                    <Grid item xs={4}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <Typography
-                                                sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "10px"}}>
-                                                Entrada o Salida
-                                            </Typography>
-
-                                            <RadioGroup
-                                                value={entrada_salida}
-                                                onChange={onEntradaSalidaSelectChange}
-                                                row
-                                                aria-labelledby="entradaSalida"
-                                                name="entrada_salida">
-                                                <FormControlLabel
-                                                    value={true}
-                                                    control={<Radio/>}
-                                                    label="Entrada"/>
-                                                <FormControlLabel
-                                                    value={false}
-                                                    control={<Radio/>}
-                                                    label="Salida"/>
-                                            </RadioGroup>
-                                        </FormControl>
-                                    </Grid>
-                                    {entrada_salida != null &&
-                                        <Grid container spacing={2}>
-                                            <Grid item sm={12}>
-                                                <FormControl fullWidth={true}>
-                                                    <TextField
-                                                        multiline
-                                                        minRows={3}
-                                                        label={"Observación"}
-                                                        name="observacion"
-                                                        value={entradaVisitante.observacion}
-                                                        onChange={handleChange}
-                                                        disabled={false}>
-                                                    </TextField>
-                                                </FormControl>
-
-                                            </Grid>
-                                            <Grid item sm={12}>
-                                                <FormControl fullWidth={true} sx={{}}>
-                                                    <Button variant="contained" onClick={solicitarIngresoPPL}>
-                                                        Solicitar Autorización
-                                                    </Button>
-                                                </FormControl>
-                                            </Grid>
-                                            {autorizarIngreso === "autorizado" &&
-                                                <Grid item sm={12} alignItems={"center"}>
-                                                    <Box sx={{textAlign: "center"}}>
-                                                        <Button startIcon={<ThumbUp/>} sx={{
-                                                            borderRadius: "50%",
-                                                            backgroundColor: "#008000",
-                                                            width: "200px",
-                                                            height: "200px",
-                                                        }}
-                                                                variant="contained">
-                                                            Aprobado
-                                                        </Button>
-                                                    </Box>
-                                                </Grid>
-
-
-                                            }
-                                            {autorizarIngreso === "noAutorizado" &&
-                                                <Grid item sm={12} alignItems={"center"}>
-                                                    <Box sx={{textAlign: "center"}}>
-                                                        <Button startIcon={<ThumbDown/>} sx={{
-                                                            borderRadius: "50%",
-                                                            backgroundColor: "#FF0000",
-                                                            width: "200px",
-                                                            height: "200px",
-                                                        }}
-                                                                variant="contained">
-                                                            No Aprobado
-                                                        </Button>
-                                                    </Box>
-                                                </Grid>
-
-
-                                            }
-                                            {autorizarIngreso === "consultando" &&
-                                                <Grid item sm={12} alignItems={"center"}>
-                                                    <Box sx={{display: "flex", justifyContent: "center"}}>
-                                                        <CircularProgress size={200}/>
-                                                    </Box>
-                                                </Grid>
-
-
-                                            }
-                                        </Grid>
-
-                                    }
-                                </Grid>
-                                }*/}
-
+                                
 
                             </Box>
                         </Grid>

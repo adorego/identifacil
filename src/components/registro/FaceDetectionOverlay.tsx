@@ -2,6 +2,8 @@ import * as faceapi from "face-api.js";
 
 import {FC, useEffect, useRef, useState} from "react";
 
+const TIEMPO_ENTRE_FOTOS:number=100;
+
 export interface IReconocimiento {
     foto: File;
     descriptor: Float32Array | Float32Array[]
@@ -11,7 +13,7 @@ interface FaceDetectionOverlayProps {
     videoElement: HTMLVideoElement | null;
     className: string;
     iniciar_deteccion: boolean;
-    agregar_reconocimiento: ({}: IReconocimiento) => void;
+    enviar_reconocimiento: (reconocimiento: IReconocimiento) => void;
     capturar_foto: boolean;
     progreso: (progreso: number) => void;
     reset_capturar_foto: () => void;
@@ -31,7 +33,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
          videoElement,
          className,
          iniciar_deteccion,
-         agregar_reconocimiento,
+         enviar_reconocimiento,
          capturar_foto,
          reset_capturar_foto,
          progreso,
@@ -43,7 +45,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
         const currentDetectionRef = useRef<IDetection>();
 
 
-        // console.log('Capturar foto:', capturar_foto);
+        //console.log('Parametro de agregar_reconocimiento es:', agregar_reconocimiento);
         useEffect(
             () => {
                 if (videoElement) {
@@ -63,19 +65,17 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
             () => {
                 if (capturar_foto && currentDetectionRef.current) {
                     progreso(1);
-                    if (numero_de_capturas === 3) {
-                        capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto1");
-                        setTimeout(capturar_rostro_y_enviar, 100, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto2");
-                        setTimeout(capturar_rostro_y_enviar, 200, currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto3");
-                        reset_capturar_foto();
-                    } else {
-                        capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas, "foto1");
-                        reset_capturar_foto();
+                    capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas, `foto1`)
+                    for(let i=1;i<numero_de_capturas;i++){
+                        setTimeout(capturar_rostro_y_enviar, i*TIEMPO_ENTRE_FOTOS, currentDetectionRef.current.box, currentDetectionRef.current.canvas, `foto${i+1}`);
                     }
+                    reset_capturar_foto();
+                    
                 }
             }, [capturar_foto]
         )
 
+        
 
         const detectFaces = async () => {
             try {
@@ -125,12 +125,13 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
         }
 
         const capturar_rostro_y_enviar = async (box: faceapi.Box, canvas: HTMLCanvasElement, nombreArchivo: string) => {
-            console.log('Entro en capturar_rostro_y_enviar');
+            //console.log('Entro en capturar_rostro_y_enviar');
             if (videoElement) {
                 const detectionResult = await faceapi.detectSingleFace(videoElement, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceDescriptor();
                 const fotoCanvas = faceapi.createCanvas(videoElement);
                 const fotoContext = fotoCanvas.getContext('2d');
                 if (fotoCanvas && fotoContext && detectionResult) {
+                    
                     const _x = box.x;
                     const _y = box.y;
                     const _width = box.width;
@@ -138,12 +139,14 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
                     // fotoContext.drawImage(videoElement, _x+20, _y-120, _width, _height+20, 0, 0, _width+10, _height+20);
                     // fotoContext.drawImage(videoElement, _x+20, _y-120, _width, _height+20, 0, 0, canvas.width, canvas.height);
                     fotoContext.drawImage(videoElement, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+                    
                     fotoCanvas.toBlob(
                         async (foto) => {
                             if (foto) {
                                 const file = new File([foto], nombreArchivo);
                                 const descriptor = detectionResult.descriptor;
-                                agregar_reconocimiento({foto: file, descriptor: descriptor})
+                                const resultado =  enviar_reconocimiento({foto: file, descriptor: descriptor})
+                                
                             }
                         }
                     )
