@@ -74,6 +74,8 @@ interface datosPersonales {
     contactoDeEmbajada_numero: string;
     pais_embajada: number;
     telefono_contacto_en_embajada: string;
+    departamento: number;
+    ciudad: number;
     contacto_embajada:{
         id: number,
         nombre: string,
@@ -129,6 +131,8 @@ const datosPersonalesInicial: datosPersonales = {
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
     telefono_contacto_en_embajada: '',
+    departamento: 1,
+    ciudad: 1,
     contacto_embajada:{
         id: 0,
         nombre: '',
@@ -162,6 +166,8 @@ export interface BloqueDatosPersonalesProps {
         contactoDeEmbajada_id?: number;
         contactoDeEmbajada_nombre?: string;
         contactoDeEmbajada_numero?: string;
+        departamento: number;
+        ciudad: number;
         contacto_embajada:{
             id: number;
             nombre: string;
@@ -220,6 +226,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     contactoDeEmbajada_id: datosDeIdentificacion.contacto_embajada.id,
                     telefono_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.numero,
                     pais_embajada: datosDeIdentificacion.contacto_embajada.pais?.id ? datosDeIdentificacion.contacto_embajada.pais.id : 0,
+                    departamento: datosDeIdentificacion.departamento,
+                    ciudad: datosDeIdentificacion.ciudad,
                 }
             })
         }
@@ -561,17 +569,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         onChange={onDatoChange}
                     />
                 </Grid>
-                <Grid item xs={3}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Barrio/Compañia</InputLabel>
-                        <OutlinedInput
-                            name="barrioCompania"
-                            label="Barrio/Compañia"
-                            value={datosPersonalesState.barrioCompania}
-                            onChange={onDatoChange}
-                        />
-                    </FormControl>
-                </Grid>
+
 
                 <Grid item sm={4}>
                     <TextField
@@ -604,7 +602,51 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         />
                     </FormControl>
                 </Grid>
+                <Grid item sm={12}>
+                    <Typography variant='h6'>
+                        Datos de residencia
+                    </Typography>
+                </Grid>
+                <Grid item sm={4}>
 
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Departamento</InputLabel>
+                        <Select
+                            value={datosPersonalesState.departamento}
+                            onChange={onDatoSelectChange}
+                            label="Departamento"
+                            name="departamento"
+                        >
+                            <MenuItem value={1}>Asuncion</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={4}>
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Ciudad</InputLabel>
+                        <Select
+                            value={datosPersonalesState.ciudad}
+                            onChange={onDatoSelectChange}
+                            label="Ciudad"
+                            name="ciudad"
+                        >
+                            <MenuItem value={1}>Asuncion</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item xs={4}>
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Barrio/Compañia</InputLabel>
+                        <OutlinedInput
+                            name="barrioCompania"
+                            label="Barrio/Compañia"
+                            value={datosPersonalesState.barrioCompania}
+                            onChange={onDatoChange}
+                        />
+                    </FormControl>
+                </Grid>
                 {/* Seccion extranjeros*/}
                 {datosPersonalesState.es_extranjero ?
                     (<Grid item sm={12}>

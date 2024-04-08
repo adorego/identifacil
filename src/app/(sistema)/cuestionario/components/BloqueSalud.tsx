@@ -556,7 +556,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
                             <TextField
                                 name="talla"
-                                value={datosSalud.talla ? datosSalud.talla : '0'}
+                                value={datosSalud.talla}
                                 onChange={handleNumber}
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start">cm</InputAdornment>,
@@ -570,7 +570,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     <Grid item sm={2}>
                         <TextField
                             name="imc"
-                            value={datosSalud.imc ? datosSalud.imc : '0'}
+                            value={datosSalud.imc}
                             onChange={handleNumber}
                             label="IMC"
                         />
@@ -630,67 +630,75 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 </Grid>
 
                 {/* MATERNIDAD */}
-                {codigo_genero == 1 ?
-                    <Grid container spacing={2} mt={2}>
-                        <Grid item sm={12}>
-                            <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
-                                       id="demo-row-radio-buttons-group-label">Maternidad</FormLabel>
-                        </Grid>
+                {codigo_genero == 1 && (
+                    <>
+                        <Grid container spacing={2} mt={2}>
+                            <Grid item sm={12}>
+                                <FormLabel sx={{fontWeight: 'bold', textTransform: 'uppercase'}}
+                                           id="demo-row-radio-buttons-group-label">Maternidad</FormLabel>
+                            </Grid>
 
-                        <Grid item sm={4}>
-                            <FormControl>
-                                <FormLabel id="gestioacion">¿Se encuentra en Periodo de gestación?</FormLabel>
-                                <RadioGroup
-                                    value={datosSalud.gestacion}
-                                    onChange={(event) => {
-                                        handleBooleanChange(event, 'saludGeneral')
-                                    }}
-                                    row
-                                    aria-labelledby="gestacion"
-                                    name="gestacion">
-                                    <FormControlLabel
-                                        value={true}
-                                        control={<Radio/>}
-                                        label="Si"/>
-                                    <FormControlLabel
-                                        value={false}
-                                        control={<Radio/>}
-                                        label="No"/>
-                                </RadioGroup>
-                            </FormControl>
-                        </Grid>
-                        <Grid item sm={4} sx={{marginTop: 1}}>
-                            {datosSalud.gestacion ?
-                                (
-                                    <FormControl >
-                                        <TextField
-                                            fullWidth
-                                            disabled={!datosSalud.gestacion}
-                                            name="tiempo_gestacion"
-                                            value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
-                                            onChange={onTiempoDeGestacionChange}
-                                            label="¿De cuanto tiempo se encuentra?"/>
-                                    </FormControl>
-                                )
-                                : null}
-                        </Grid>
-                        <Grid item sm={4} sx={{marginTop: 0}}>
-                            {datosSalud.gestacion ?
-                                <FormControl fullWidth>
-                                    <MobileDatePicker
-                                        disablePast
-                                        maxDate={nineMonthsFromNow}
-                                        format="DD/MM/YYYY"
-                                        name='fecha_parto'
-                                        value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : dayjs()}
-                                        onChange={onFechaPartoChange}
-                                        label={"Fecha de parto"}/>
-
+                            <Grid item sm={4}>
+                                <FormControl>
+                                    <FormLabel id="gestioacion">¿Se encuentra en Periodo de gestación?</FormLabel>
+                                    <RadioGroup
+                                        value={datosSalud.gestacion}
+                                        onChange={(event) => {
+                                            handleBooleanChange(event, 'saludGeneral')
+                                        }}
+                                        row
+                                        aria-labelledby="gestacion"
+                                        name="gestacion">
+                                        <FormControlLabel
+                                            value={true}
+                                            control={<Radio/>}
+                                            label="Si"/>
+                                        <FormControlLabel
+                                            value={false}
+                                            control={<Radio/>}
+                                            label="No"/>
+                                    </RadioGroup>
                                 </FormControl>
-                                : null}
+                            </Grid>
                         </Grid>
-                    </Grid>
-                    : null}
+                        <Grid container spacing={2} >
+                            <Grid item sm={4} sx={{marginTop: 1}} alignItems='baseline'>
+                                {datosSalud.gestacion &&
+                                    (
+                                    <TextField
+                                        fullWidth
+                                        disabled={!datosSalud.gestacion}
+                                        name="tiempo_gestacion"
+                                        value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
+                                        onChange={onTiempoDeGestacionChange}
+                                        margin='none'
+                                        type='text'
+                                        InputProps={{
+                                            startAdornment: <InputAdornment position="start">semana</InputAdornment>,
+                                        }}
+                                        label="¿De cuantas semanas se encuentra?"/>
+                                    )
+                                }
+                            </Grid>
+                            <Grid item sm={4} sx={{marginTop: 0}}>
+                                {datosSalud.gestacion &&
+                                    <FormControl fullWidth>
+                                        <MobileDatePicker
+                                            disablePast
+                                            maxDate={nineMonthsFromNow}
+                                            format="DD/MM/YYYY"
+                                            name='fecha_parto'
+                                            value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : dayjs()}
+                                            onChange={onFechaPartoChange}
+                                            label={"Fecha de parto"}/>
+
+                                    </FormControl>
+                                }
+                            </Grid>
+                        </Grid>
+                    </>
+                    )
+               }
 
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>

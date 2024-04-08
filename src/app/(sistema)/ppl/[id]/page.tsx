@@ -64,6 +64,12 @@ type dataType = {
     datosJudiciales: datosJudicialesType;
     registro_de_fotos: Array<{nombre:string; foto:string}>;
     tiene_contacto_en_embajada: boolean;
+    departamento: {
+        id: number;
+    }
+    ciudad: {
+        id: number;
+    }
     contacto_embajada?:{
         id: number;
         nombre: string;
@@ -110,6 +116,12 @@ const initialData = {
     datosDeSalud: datosDeSalud2Initial,
     datosJudiciales: datosJudicialesInicial,
     tiene_contacto_en_embajada: false,
+    departamento: {
+        id: 0,
+    },
+    ciudad: {
+        id:0,
+    },
     contactoDeEmbajada:{
         id: 0,
         nombre: '',

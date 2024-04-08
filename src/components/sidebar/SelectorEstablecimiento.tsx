@@ -9,7 +9,7 @@ import {useGlobalContext} from "@/app/Context/store";
 
 const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
 
-    const { setSelectedEstablecimiento } = useGlobalContext();
+    const { setSelectedEstablecimiento,selectedEstablecimiento } = useGlobalContext();
     const [state, setState] = React.useState<
         {
             selectedID: number,
@@ -28,11 +28,12 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/establecimientos/`;
         fetchData(url)
             .then(fetchedData => {
-
+                setSelectedEstablecimiento(1)
                 setState(prevState => {
                     return {
                         ...prevState,
-                        establecimientos: fetchedData ? [...fetchedData.establecimientos] : []
+                        establecimientos: fetchedData ? [...fetchedData.establecimientos] : [],
+                        selectedID: 1,
 
                     }
                 });
