@@ -269,6 +269,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
                         openSnackbar('Persona no puede ingresar. Debe ser mayor de edad', 'error')
                         setConsultaLoading(false)
+                        props.habilitarBotonSiguiente(false);
 
                     } else {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
