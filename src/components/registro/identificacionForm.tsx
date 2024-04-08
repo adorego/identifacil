@@ -24,7 +24,7 @@ import {LoadingButton} from "@mui/lab";
 import es from 'dayjs/locale/es'; // Importa el locale español
 
 dayjs.locale(es); // Configura dayjs globalmente al español
-import log from "loglevel";
+import log, { getLogger } from "loglevel";
 import ConfirmacionRegistro from "./ConfirmacionRegistro";
 export interface IdentificacionProps {
     habilitarBotonSiguiente: (arg0: boolean) => void;
@@ -193,12 +193,14 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                             props.habilitarBotonSiguiente(false);
                             setStateEsPPL(true)
                         }else{
-                            console.log('holaaaaaa')
-                            props.habilitarBotonSiguiente(true);
-                            setStateEsPPL(false)
+                            
+                            if(!esMenor){
+                                props.habilitarBotonSiguiente(true);
+                            }
+                           setStateEsPPL(false)
                         }
                     }).catch(err=>{
-                        console.log(err)
+                        
                         setStateEsPPL(false)
                         if(!esMenor){
                             props.habilitarBotonSiguiente(true);
@@ -221,7 +223,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
             // @ts-ignore
             if(formularioDeDatosDeIdentificacion.cedula_identidad?.length > 0) {
                 consultarPPL(formularioDeDatosDeIdentificacion.cedula_identidad)
-                console.log('termino consulta de cedula es PPL?')
+               
             }
         }
 
@@ -267,6 +269,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                     if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
+                        console.log("Entro aca");
                         openSnackbar('Persona no puede ingresar. Debe ser mayor de edad', 'error')
                         setConsultaLoading(false)
                         props.habilitarBotonSiguiente(false);
