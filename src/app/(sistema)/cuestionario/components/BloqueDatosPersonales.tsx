@@ -35,42 +35,24 @@ interface datosPersonales {
     numeroDeIdentificacion: string | any;
     nombre: string;
     tiene_cedula: boolean;
-    nombre_modificado: boolean;
     codigo_genero: number;
     apellido: string;
-    apellido_modificado: boolean;
     apodo: string;
-    apodo_modificado: boolean;
     estadoCivil: string;
-    estadoCivil_modificado: boolean;
     fechaDeNacimiento: Dayjs | null;
-    fechaDeNacimiento_modificado: boolean;
     nacionalidad: number;
-    nacionalidad_modificado: boolean;
     lugarDeNacimiento: string;
-    lugarDeNacimiento_modificado: boolean;
     sexo: string;
-    sexo_modificado: boolean;
     tipoDeDocumento: string | number;
-    tipoDeDocumento_modificado: boolean;
     direccion: string;
-    direccion_modificado: boolean;
     barrioCompania: string;
-    barrioCompania_modificado: boolean;
     numeroDeContacto: string;
-    numeroDeContacto_modificado: boolean;
     contactoDeEmergencia1: string;
-    contactoDeEmergencia1_modificado: boolean;
     contactoDeEmergencia2: string;
-    contactoDeEmergencia2_modificado: boolean;
     pueblosIndigenas: boolean;
-    pueblosIndigenas_modificado: boolean;
     nombreEtnia: string;
-    nombreEtnia_modificado: boolean;
     perteneceAComunidadLGTBI: boolean;
-    perteneceAComunidadLGTBI_modificado: boolean;
     grupoLGTBI: string;
-    grupoLGTBI_modificado: boolean;
     tiene_contacto_en_embajada: boolean;
     nombre_contacto_en_embajada: string;
     telefono_contacto_en_embajada: string;
@@ -102,26 +84,8 @@ const datosPersonalesInicial: datosPersonales = {
     contactoDeEmergencia2: '',
     pueblosIndigenas: false,
     nombreEtnia: '',
-    nombre_modificado: false,
-    apellido_modificado: false,
-    apodo_modificado: false,
-    estadoCivil_modificado: false,
-    fechaDeNacimiento_modificado: false,
-    nacionalidad_modificado: false,
-    lugarDeNacimiento_modificado: false,
-    sexo_modificado: false,
-    tipoDeDocumento_modificado: false,
-    direccion_modificado: false,
-    barrioCompania_modificado: false,
-    numeroDeContacto_modificado: false,
-    contactoDeEmergencia1_modificado: false,
-    contactoDeEmergencia2_modificado: false,
-    pueblosIndigenas_modificado: false,
-    nombreEtnia_modificado: false,
     grupoLGTBI: '',
-    grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
-    perteneceAComunidadLGTBI_modificado: false,
     tiene_contacto_en_embajada: false,
     nombre_contacto_en_embajada: '',
     telefono_contacto_en_embajada: '',
@@ -167,7 +131,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento),
         tiene_cedula: datosDeIdentificacion.tiene_cedula,
         tipoDeDocumento: datosDeIdentificacion.tipo_identificacion ? datosDeIdentificacion.tipo_identificacion : 1,
-        fechaDeNacimiento_modificado: true,
         id_persona: datosDeIdentificacion.id_persona,
         numeroDeIdentificacion: numero_doc_procesado,
         nombre: datosDeIdentificacion.nombres,
@@ -607,7 +570,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         fullWidth
                         label="Numero de contacto"
                         name="numeroDeContacto"
-                        value={datosPersonalesState.numeroDeContacto}
+                        value={datosPersonalesState.numeroDeContacto ? datosPersonalesState.numeroDeContacto : ''}
                         onChange={onDatoChange}
                     />
                 </Grid>
@@ -617,7 +580,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Contacto de emergencia 1"
                             fullWidth
                             name="contactoDeEmergencia1"
-                            value={datosPersonalesState.contactoDeEmergencia1}
+                            value={datosPersonalesState.contactoDeEmergencia1 ? datosPersonalesState.contactoDeEmergencia1 : ''}
                             onChange={onDatoChange}
                         />
                     </FormControl>
@@ -628,7 +591,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Contacto de emergencia 2"
                             fullWidth
                             name="contactoDeEmergencia2"
-                            value={datosPersonalesState.contactoDeEmergencia2}
+                            value={datosPersonalesState.contactoDeEmergencia2 ? datosPersonalesState.contactoDeEmergencia2 : ''}
                             onChange={onDatoChange}
                         />
                     </FormControl>
