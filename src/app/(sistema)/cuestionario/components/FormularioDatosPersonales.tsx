@@ -32,42 +32,24 @@ interface datosPersonales {
     id_persona: number | null;
     numero_de_identificacion: string;
     nombre: string;
-    nombre_modificado: boolean;
     apellido: string;
-    apellido_modificado: boolean;
     apodo: string;
-    apodo_modificado: boolean;
     estadoCivil?: number | null;
-    estadoCivil_modificado: boolean;
     fechaDeNacimiento: Dayjs | null;
-    fechaDeNacimiento_modificado: boolean;
     nacionalidad: number | null;
-    nacionalidad_modificado: boolean;
     lugarDeNacimiento: string;
-    lugarDeNacimiento_modificado: boolean;
     sexo: string;
     codigo_genero?: number;
-    sexo_modificado: boolean;
     tipoDeDocumento: number | null;
-    tipoDeDocumento_modificado: boolean;
     direccion: string;
-    direccion_modificado: boolean;
     barrioCompania: string;
-    barrioCompania_modificado: boolean;
     numeroDeContacto: string;
-    numeroDeContacto_modificado: boolean;
     contactoDeEmergencia1: string;
-    contactoDeEmergencia1_modificado: boolean;
     contactoDeEmergencia2: string;
-    contactoDeEmergencia2_modificado: boolean;
     pueblosIndigenas: boolean;
-    pueblosIndigenas_modificado: boolean;
     nombreEtnia: string;
-    nombreEtnia_modificado: boolean;
     perteneceAComunidadLGTBI: boolean;
-    perteneceAComunidadLGTBI_modificado: boolean;
     grupoLGTBI: string;
-    grupoLGTBI_modificado: boolean;
     es_extranjero: boolean;
     tiene_contacto_en_embajada: boolean;
     nombre_contacto_en_embajada: string;
@@ -109,27 +91,9 @@ const datosPersonalesInicial: datosPersonales = {
     contactoDeEmergencia2: '',
     pueblosIndigenas: false,
     nombreEtnia: '',
-    nombre_modificado: false,
-    apellido_modificado: false,
-    apodo_modificado: false,
-    estadoCivil_modificado: false,
-    fechaDeNacimiento_modificado: false,
-    nacionalidad_modificado: false,
-    lugarDeNacimiento_modificado: false,
-    sexo_modificado: false,
     tipoDeDocumento: 0,
-    tipoDeDocumento_modificado: false,
-    direccion_modificado: false,
-    barrioCompania_modificado: false,
-    numeroDeContacto_modificado: false,
-    contactoDeEmergencia1_modificado: false,
-    contactoDeEmergencia2_modificado: false,
-    pueblosIndigenas_modificado: false,
-    nombreEtnia_modificado: false,
     grupoLGTBI: '',
-    grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
-    perteneceAComunidadLGTBI_modificado: false,
     telefono_contacto_en_embajada: '',
     departamento: 1,
     ciudad: 1,
@@ -194,19 +158,18 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     const [consultaLoading, setConsultaLoading] = useState(false)
 
     useEffect(() => {
+        console.log(datosDeIdentificacion)
         if (datosDeIdentificacion) {
+            console.log('datos iniciales')
             setDatosPersonalesState((prevState:any) => {
                 return {
                     ...prevState,
                     id_persona: datosDeIdentificacion.id_persona,
                     fechaDeNacimiento: dayjs(datosDeIdentificacion.fechaDeNacimiento, "YYYY-MM-DD"),
-                    fechaDeNacimiento_modificado: true,
                     numero_de_identificacion: datosDeIdentificacion.numero_de_identificacion,
                     tipoDeDocumento: tipo_de_documento ? tipo_de_documento : 0,
                     nombre: datosDeIdentificacion.nombres,
-                    nombre_modificado: true,
                     apellido: datosDeIdentificacion.apellidos,
-                    apellido_modificado: true,
                     nacionalidad: datosDeIdentificacion.nacionalidad ?? null,
                     codigo_genero: datosDeIdentificacion.codigo_genero,
                     apodo: datosDeIdentificacion.apodo,
@@ -230,6 +193,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     ciudad: datosDeIdentificacion.ciudad,
                 }
             })
+        }else{
+            console.log('datos 2')
         }
     }, [datosDeIdentificacion]);
 
@@ -576,7 +541,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         fullWidth
                         label="Numero de contacto"
                         name="numeroDeContacto"
-                        value={datosPersonalesState.numeroDeContacto}
+                        value={datosPersonalesState.numeroDeContacto ? datosPersonalesState.numeroDeContacto : ''}
                         onChange={onDatoChange}
                     />
                 </Grid>
@@ -586,7 +551,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Contacto de emergencia 1"
                             fullWidth
                             name="contactoDeEmergencia1"
-                            value={datosPersonalesState.contactoDeEmergencia1}
+                            value={datosPersonalesState.contactoDeEmergencia1 ? datosPersonalesState.contactoDeEmergencia1 : ''}
                             onChange={onDatoChange}
                         />
                     </FormControl>
@@ -597,7 +562,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Contacto de emergencia 2"
                             fullWidth
                             name="contactoDeEmergencia2"
-                            value={datosPersonalesState.contactoDeEmergencia2}
+                            value={datosPersonalesState.contactoDeEmergencia2 ? datosPersonalesState.contactoDeEmergencia2 : ''}
                             onChange={onDatoChange}
                         />
                     </FormControl>

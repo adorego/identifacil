@@ -187,7 +187,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                         <Grid item sm={10}>
                             <CustomTabPanel value={value} index={0}>
 
-
+                                {console.log(datosPersona)}
                                 {datosPersona ?
                                     <FormularioDatosPersonales
                                         tipo_de_documento={datosPersona.tipo_de_documento?.id}
@@ -202,11 +202,11 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                             nacionalidad: datosPersona?.datosPersonales?.nacionalidad?.id,
                                             estadoCivil: datosPersona?.datosPersonales?.estadoCivil?.id,
                                             lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
-                                            direccion: datosPersona?.datosPersonales?.direccion,
-                                            barrioCompania: datosPersona?.datosPersonales?.barrioCompania,
-                                            numeroDeContacto: datosPersona?.datosPersonales?.numeroDeContacto,
-                                            contactoDeEmergencia1: datosPersona?.datosPersonales?.contactoDeEmergencia1,
-                                            contactoDeEmergencia2: datosPersona?.datosPersonales?.contactoDeEmergencia2,
+                                            direccion: datosPersona?.datosPersonales?.direccion ? datosPersona?.datosPersonales?.direccion : '',
+                                            barrioCompania: datosPersona?.datosPersonales?.barrioCompania ? datosPersona?.datosPersonales?.barrioCompania : '',
+                                            numeroDeContacto: datosPersona?.datosPersonales?.numeroDeContacto ? datosPersona?.datosPersonales?.numeroDeContacto : '',
+                                            contactoDeEmergencia1: datosPersona?.datosPersonales?.contactoDeEmergencia1  ? datosPersona?.datosPersonales?.contactoDeEmergencia1 : '',
+                                            contactoDeEmergencia2: datosPersona?.datosPersonales?.contactoDeEmergencia2 ? datosPersona?.datosPersonales?.contactoDeEmergencia2 : '',
                                             pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
                                             nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
                                             perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
