@@ -90,7 +90,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const [editPersona, setEditPersona] = useState(null);
 
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+
     const {openSnackbar} = useGlobalContext();
     const router: AppRouterInstance = useRouter();
     const isEditMode = params && params.id;
@@ -98,38 +99,46 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     /** Obtener Hechos punibles y causas*/
     useEffect(() => {
+        setLoading(true)
         // Hechos punibles
-        fetchData(`${ENDPOINT_API}/datos_penales/hechos_punibles`).then((res) => {
+        console.log('Comenzo')
+        Promise.all([
+            fetchData(`${ENDPOINT_API}/datos_penales/hechos_punibles`).then((res) => {
 
-            const causasArray: Array<{ id: number; nombre: string; codigo: string; causa_id: number; }> = [];
-            // @ts-ignore
-            res.hechosPunibles.forEach(hechoPunible => {
+                const causasArray: Array<{ id: number; nombre: string; codigo: string; causa_id: number; }> = [];
                 // @ts-ignore
-                hechoPunible.causas.forEach(causa => {
-                    causasArray.push({
-                        id: causa.id,
-                        nombre: causa.nombre,
-                        codigo: causa.codigo,
-                        causa_id: hechoPunible.id
+                res.hechosPunibles.forEach(hechoPunible => {
+                    // @ts-ignore
+                    hechoPunible.causas.forEach(causa => {
+                        causasArray.push({
+                            id: causa.id,
+                            nombre: causa.nombre,
+                            codigo: causa.codigo,
+                            causa_id: hechoPunible.id
+                        });
                     });
                 });
-            });
 
-            // console.log(causasArray)
-
-
-            setHechosPunibles(prev => ([...res.hechosPunibles]))
+                setHechosPunibles(prev => ([...res.hechosPunibles]))
+            }),
+            // Circunscripciones
+            fetchData(`${ENDPOINT_API}/datos_penales/circunscripciones`).then((res) => {
+                setStateCamposForm(prev => ({...prev, circunscripciones: [...res.circunscripciones]}))
+            }),
+            // Ciudades
+            fetchData(`${ENDPOINT_API}/datos_penales/ciudades`).then((res) => {
+                setStateCamposForm(prev => ({...prev, ciudad: [...res.ciudades]}))
+            })
+        ]).then(()=>{
+            setLoading(false)
+        }).catch((err)=>{
+            console.log('Error obteniendo datos para formulario', err)
+        }).finally(()=>{
+            console.log('Finally')
+            setLoading(false)
         })
 
-        // Circunscripciones
-        fetchData(`${ENDPOINT_API}/datos_penales/circunscripciones`).then((res) => {
-            setStateCamposForm(prev => ({...prev, circunscripciones: [...res.circunscripciones]}))
-        })
 
-        // Ciudades
-        fetchData(`${ENDPOINT_API}/datos_penales/ciudades`).then((res) => {
-            setStateCamposForm(prev => ({...prev, ciudad: [...res.ciudades]}))
-        })
 
     }, []);
 
@@ -555,7 +564,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             </RadioGroup>
                         </FormControl>
                     </Grid>
-                    {datosFormulario.condenado ?
+                    {datosFormulario.condenado &&
 
                         <Grid item sm={4}>
                             <TextField
@@ -566,7 +575,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 name="sentencia_definitiva"
                                 onChange={handleChange}/>
                         </Grid>
-                        : null}
+                    }
                     {datosFormulario.condenado ?
                         <Grid item sm={4}>
                             <FormControl fullWidth>
@@ -796,6 +805,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                 <Grid container spacing={2} mt={1}>
 
+
                     <Grid item sm={12} mt={1}>
                         <ModalPersona
                             onHandlerPersona={handlerPersona}
@@ -803,6 +813,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             onClose={handleCloseModal}
                             onOpen={isModalOpen}/>
                     </Grid>
+
 
                     <Grid item sm={12}>
                         <TableContainer component={Paper}>

@@ -212,8 +212,8 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                             perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
                                             numero_de_identificacion: datosPersona.numero_de_identificacion,
                                             tiene_contacto_en_embajada: datosPersona.tiene_contacto_en_embajada,
-                                            departamento: datosPersona.departamento.id,
-                                            ciudad: datosPersona.ciudad.id,
+                                            departamento: datosPersona.departamento?.id ? datosPersona.departamento.id : 0,
+                                            ciudad: datosPersona.ciudad?.id ? datosPersona.ciudad?.id : 0,
                                             contacto_embajada: {
                                                 id: datosPersona.contacto_embajada?.id ? datosPersona.contacto_embajada.id : 0,
                                                 nombre: datosPersona.contacto_embajada?.nombre ? datosPersona.contacto_embajada.nombre : '',
