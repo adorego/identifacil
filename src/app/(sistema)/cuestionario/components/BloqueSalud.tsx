@@ -404,7 +404,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 <Grid container spacing={2} my={0}>
                     <Grid item sm={6}>
                         <FormControl fullWidth>
-                            <InputLabel>Grupo Sanguineo</InputLabel>
+                            <InputLabel shrink>Grupo Sanguineo</InputLabel>
                             <Select
 
                                 label="Grupo Sanguineo"

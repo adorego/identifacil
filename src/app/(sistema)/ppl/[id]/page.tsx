@@ -64,10 +64,13 @@ type dataType = {
     datosJudiciales: datosJudicialesType;
     registro_de_fotos: Array<{nombre:string; foto:string}>;
     tiene_contacto_en_embajada: boolean;
-    contactoDeEmbajada:{
-        id: number,
-        nombre: string,
-        numero: string,
+    contacto_embajada?:{
+        id: number;
+        nombre: string;
+        numero: string;
+        pais:{
+            id: number;
+        }
     }
 }
 
@@ -111,6 +114,9 @@ const initialData = {
         id: 0,
         nombre: '',
         numero: '',
+        pais:{
+            id: 0
+        }
     }
 }
 

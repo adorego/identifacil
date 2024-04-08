@@ -67,7 +67,7 @@ const rowStyle = {
 
 }
 const formatDate = (dateString: string | null | number) => {
-    console.log(dateString)
+    
     if (dateString && dateString !== 'N/D') {
         const date = new Date(dateString);
         const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
@@ -194,7 +194,7 @@ function CustomTable({
                                     <TableCell key={index}>
                                         <TableSortLabel
                                             active={orderBy === header.id}
-                                            direction={orderBy === header.id ? order : 'asc'}
+                                            direction={orderBy === header.id ? order : 'desc'}
                                             onClick={() => handleRequestSort(header.id)}
                                             IconComponent={ArrowDownwardIcon}
                                         >

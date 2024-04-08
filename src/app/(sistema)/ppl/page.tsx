@@ -57,14 +57,15 @@ export default function Page() {
 
         fetchData()
             .then(fetchedData => {
-                console.log(fetchedData)
-
-                setListaPersonas(fetchedData.map((item:any)=>({
-                    ...item,
-                    nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
-                    fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso ? item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso : 'N/D',
-                    apodo: item.apodo ? item.apodo : 'N/D'
-                })));
+                // console.log(fetchedData)
+                if(fetchedData.length > 0){
+                    setListaPersonas(fetchedData.map((item:any)=>({
+                        ...item,
+                        nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
+                        fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso ? item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso : 'N/D',
+                        apodo: item.apodo ? item.apodo : 'N/D'
+                    })));
+                }
             }).finally(() => {
             setLoading(false)
         })
