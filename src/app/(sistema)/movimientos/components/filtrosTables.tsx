@@ -29,8 +29,11 @@ interface FiltrosTablesProps {
     handleFiltro?: (dataFiltrada: any[]) => void; // Asegúrate de tener el tipo correcto aquí
     searchField?: string;
     dateSearchField?: string;
+    placeholderSearchBar?: string | null;
+    fecha_final?: string | null;
+    fecha_inicial?: string | null;
 }
-export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField, dateSearchField }: FiltrosTablesProps) {
+export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField, dateSearchField, placeholderSearchBar= null,fecha_inicial = null, fecha_final = null }: FiltrosTablesProps) {
     // Variables para selector de rango de fecha
     const [valueDateStart, setValueDateStart] = React.useState<Dayjs | null>(null);
     const [valueDateEnd, setValueDateEnd] = React.useState<Dayjs | null>(null);
@@ -101,7 +104,7 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField
                         name="busqueda"
                         value={busqueda}
                         onChange={handleChange}
-                        label="Buscar por numero de documento..."
+                        label={placeholderSearchBar ? placeholderSearchBar : "Buscar por numero de documento..."}
                         variant="outlined"
                         InputProps={{
                             endAdornment: <InputAdornment position="end">
@@ -131,7 +134,7 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField
                 <Grid item xs={2}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                            label="Fecha inicial"
+                            label={fecha_inicial ? fecha_inicial : "Fecha inicial"}
                             value={valueDateStart}
                             onChange={(newValueDateStart) => setValueDateStart(newValueDateStart)}
                             sx={{
@@ -143,7 +146,7 @@ export default function FiltrosTables({ dataSinFiltro, handleFiltro, searchField
                 <Grid item xs={2}>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker
-                            label="Fecha Final"
+                            label={fecha_final ? fecha_final : "Fecha Final"}
                             value={valueDateEnd}
                             onChange={(newValueDateEnd) => setValueDateEnd(newValueDateEnd)}
                             sx={{

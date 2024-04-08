@@ -29,8 +29,10 @@ import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {FormValidator} from "@/app/middleware/formValidator";
 import {LoadingButton} from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
 
 interface datosPersonales {
+    id?: number | null;
     id_persona: number | null;
     numeroDeIdentificacion: string | any;
     nombre: string;
@@ -64,6 +66,7 @@ interface datosPersonales {
 }
 
 const datosPersonalesInicial: datosPersonales = {
+    id: null,
     id_persona: null,
     numeroDeIdentificacion: null,
     nombre: '',
@@ -73,7 +76,7 @@ const datosPersonalesInicial: datosPersonales = {
     codigo_genero: 0,
     estadoCivil: '1',
     fechaDeNacimiento: null,
-    nacionalidad: 1,
+    nacionalidad: 0,
     lugarDeNacimiento: '',
     sexo: '',
     tipoDeDocumento: 1,
@@ -91,12 +94,12 @@ const datosPersonalesInicial: datosPersonales = {
     telefono_contacto_en_embajada: '',
     pais_embajada: 0,
     foto: '',
-    departamento: 1,
-    ciudad: 1,
+    departamento: 0,
+    ciudad: 0,
 }
 
 export interface BloqueDatosPersonalesProps {
-    datosDeIdentificacion: DatosDeIdentificacion;
+    datosDeIdentificacion: any;
     handleAccordion?: (s: string) => void;
 
 }
@@ -137,7 +140,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         apellido: datosDeIdentificacion.apellidos,
         codigo_genero: datosDeIdentificacion.codigo_genero ? datosDeIdentificacion.codigo_genero : 0,
         nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 2,
-        foto: datosDeIdentificacion.foto ? datosDeIdentificacion.foto : ''
+        foto: datosDeIdentificacion.foto ? datosDeIdentificacion.foto : '',
+        id: datosDeIdentificacion.id ?  datosDeIdentificacion.id : null,
 
     });
 
@@ -269,18 +273,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
         console.log('test')
         if (datosDeIdentificacion.id_persona && FormValidator(datosObligatorios, datosPersonalesState)) {
-            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
+            const url = datosPersonalesState.id
+                ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosPersonalesState.id}`
+                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
             const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
             datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
 
 
             const respuesta = await api_request(url, {
-                method: 'POST',
+                method: datosPersonalesState.id ? 'PUT' : 'POST',
                 body: JSON.stringify(datosDelFormulario),
                 headers: {'Content-Type': 'application/json'}
             })
 
             if (respuesta.success) {
+                console.log(respuesta.datos.id,)
                 setConsultaLoading(false)
                 setDatosPersonalesState(prev => ({
                     ...prev,
@@ -296,9 +303,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
                     openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
                     log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                    if (handleAccordion) {
-                        handleAccordion('')
-                    }
+
                 }
             }
 
@@ -432,6 +437,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     label="Nacionalidad"
                                     name="nacionalidad"
                                 >
+                                    <MenuItem value={0}>Seleccionar nacionalidad</MenuItem>
                                     {nacionalidades ? nacionalidades.map(
                                         (data, id) => {
                                             return (
@@ -505,8 +511,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             </Grid>
             <Grid container spacing={2} mb={2}>
 
-
-
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Datos de residencia
@@ -522,6 +526,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Departamento"
                             name="departamento"
                         >
+                            <MenuItem value={0}>Seleccionar departamento</MenuItem>
                             <MenuItem value={1}>Asuncion</MenuItem>
 
                         </Select>
@@ -536,6 +541,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Ciudad"
                             name="ciudad"
                         >
+                            <MenuItem value={0}>Seleccionar ciudad</MenuItem>
                             <MenuItem value={1}>Asuncion</MenuItem>
 
                         </Select>
@@ -598,7 +604,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
 
             {/* Bloque Extranjero*/}
-            {datosDeIdentificacion.es_extranjero ?
+            {datosDeIdentificacion.es_extranjero || datosPersonalesState.nacionalidad !== 1 ?
                 <Grid container spacing={2} mb={2}>
                     <Grid item sm={12}>
                         <Typography variant='h6'>
@@ -788,7 +794,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             }}
                             onClick={onDatosPersonalesSubmit}
                             loading={consultaLoading}
-                            loadingPosition='end'
+                            loadingPosition='start'
+                            startIcon={<SaveIcon />}
                             variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}

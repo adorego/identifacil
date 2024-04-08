@@ -36,7 +36,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
     const {openSnackbar} = useGlobalContext();
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        // console.log(event.target.name);
+
         setEstadoFormularioDeEducacion(
             (previus) => {
                 return (
@@ -52,7 +52,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
     }
 
     useEffect(() => {
-        console.log('entro en useeffct educacion')
+
         if (datosEducacionIniciales) {
             setEstadoFormularioDeEducacion(prevState => {
                 return {

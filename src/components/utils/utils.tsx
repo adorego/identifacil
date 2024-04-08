@@ -285,7 +285,7 @@ export const postFormExpedienteJudicial = async (
             console.log(response.status)
             switch (response.status) {
                 case 500:
-                    openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
+                    openSnackbar('Petición incorrecta, faltan campos.', 'warning');
                     break;
                 case 501:
                     openSnackbar('No autorizado, inicia sesión nuevamente.', 'error');

@@ -75,7 +75,7 @@ const IdentificacionForm: FC<IdentificacionProps> = (props: IdentificacionProps)
     }
 
     return (
-        <Box sx={{padding: "10px"}} component={'form'} autoComplete="off">
+        <Box width='100%' sx={{padding: "10px"}} component={'form'} autoComplete="off">
             <Grid container spacing={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6' textTransform='uppercase'>
