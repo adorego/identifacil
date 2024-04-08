@@ -225,7 +225,7 @@ export default function SidebarDrawer()
 
 
                 {/* ------------------------- Menu gestion ppl ------------------------- */}
-                {/*<ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
+                {/* <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Person />
                     </ListItemIcon>
