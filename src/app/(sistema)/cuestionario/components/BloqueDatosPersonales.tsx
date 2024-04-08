@@ -134,9 +134,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         id_persona: datosDeIdentificacion.id_persona,
         numeroDeIdentificacion: numero_doc_procesado,
         nombre: datosDeIdentificacion.nombres,
-        nombre_modificado: true,
         apellido: datosDeIdentificacion.apellidos,
-        apellido_modificado: true,
         codigo_genero: datosDeIdentificacion.codigo_genero ? datosDeIdentificacion.codigo_genero : 0,
         nacionalidad: datosDeIdentificacion.tiene_cedula ? 1 : 2,
         foto: datosDeIdentificacion.foto ? datosDeIdentificacion.foto : ''
