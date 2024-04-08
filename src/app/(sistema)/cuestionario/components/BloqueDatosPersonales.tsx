@@ -547,21 +547,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         Datos de residencia
                     </Typography>
                 </Grid>
-
-                <Grid item sm={3}>
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Ciudad</InputLabel>
-                        <Select
-                            value={datosPersonalesState.ciudad}
-                            onChange={onDatoSelectChange}
-                            label="Ciudad"
-                            name="ciudad"
-                        >
-                            <MenuItem value={1}>Asuncion</MenuItem>
-
-                        </Select>
-                    </FormControl>
-                </Grid>
                 <Grid item sm={3}>
 
                     <FormControl fullWidth variant="outlined">
@@ -577,6 +562,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </Select>
                     </FormControl>
                 </Grid>
+                <Grid item sm={3}>
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Ciudad</InputLabel>
+                        <Select
+                            value={datosPersonalesState.ciudad}
+                            onChange={onDatoSelectChange}
+                            label="Ciudad"
+                            name="ciudad"
+                        >
+                            <MenuItem value={1}>Asuncion</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </Grid>
+
                 <Grid item sm={3}>
                     <TextField
                         fullWidth
