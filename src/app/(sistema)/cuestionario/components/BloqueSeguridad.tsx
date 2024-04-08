@@ -83,11 +83,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
         event.preventDefault();
         setConsultaLoading(true)
 
-        const methodForm = datosIniciales?.id  ? 'PUT' : 'POST';
+        const methodForm = estadoBloqueSeguridadFormulario?.id  ? 'PUT' : 'POST';
 
         if (id_persona) {
-            const url = datosIniciales?.id ?
-                `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${datosIniciales.id}`
+            const url = estadoBloqueSeguridadFormulario?.id ?
+                `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${estadoBloqueSeguridadFormulario.id}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
 
 
@@ -95,9 +95,7 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
             const respuesta = await api_request(url, {
                 method: methodForm,
                 body: JSON.stringify({...estadoBloqueSeguridadFormulario, id_persona: id_persona}),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: {'Content-Type': 'application/json'}
 
             })
             if (respuesta.success) {

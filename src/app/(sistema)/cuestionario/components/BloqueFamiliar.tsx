@@ -31,6 +31,8 @@ import {useRouter} from "next/navigation";
 import AddIcon from "@mui/icons-material/Add";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
+import {api_request} from "@/lib/api-request";
+import log from "loglevel";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -228,25 +230,33 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
         try {
             setLoading(true);
 
-            const method = editMod ? 'PUT' : 'POST';
+
+            const method = estadoFormularioDatosFamiliares.id ? 'PUT' : 'POST';
+
             //console.log(JSON.stringify(stateForm))
-            const url = editMod
+            const url = estadoFormularioDatosFamiliares.id
                 ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares/${datosFormulario.id}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`
 
             // console.log(url)
-            const response = await fetch(url, {
+            const respuesta = await api_request(url, {
                 method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(datosFormulario),
             });
 
 
-            if (response.ok) {
+                console.log(respuesta)
+            if (respuesta.success) {
                 setLoading(false);
                 setConsultaLoading(false)
 
-                const message = editMod
+                setEstadoFormularioDatosFamiliares(prev=>({
+                    ...prev,
+                    id: respuesta.datos.id,
+                }))
+
+                const message = estadoFormularioDatosFamiliares.id
                     ? `Datos Familiares actualizada correctamente.`
                     : `Datos Familiares creada correctamente.`;
 
@@ -259,16 +269,21 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 if(redirect){
                     router.push(`/ppl`);
                 }
-                return response
+                return respuesta
             } else {
+                if (respuesta.error) {
+                    setConsultaLoading(false)
+                    setLoading(false);
+                    openSnackbar(`Error al guardar los datos`, `error`);
+                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                }
                 setConsultaLoading(false)
-                setLoading(false);
-                throw new Error('Error en la petición');
+                
             }
         } catch (error) {
             setConsultaLoading(false)
             setLoading(false);
-            console.error('Error:', error);
+            // console.error('Error:', error);
         }
     }
 

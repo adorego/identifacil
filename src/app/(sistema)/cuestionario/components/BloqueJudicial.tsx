@@ -269,7 +269,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
 
         if (id_persona != null && validarFormulario) {
-            console.log('valido!!!')
+
             const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${isEditMode ? ('/' + estadoFormularioJudicial.id) : ''}`;
             const url_patch_expediente = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${datosFormulario.expedientesSeleccionados.id}/ppls`;
             const formData = new FormData();
@@ -307,8 +307,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                 }
 
             })
-
-
 
 
 

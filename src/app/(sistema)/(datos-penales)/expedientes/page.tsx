@@ -54,14 +54,7 @@ export default function Page() {
             });
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
-    /*const data = null
-    useEffect(() => {
-        const apiUrl = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`;
-        fetchData(apiUrl)
-            .then(fetchedData => {
-                setData(fetchedData);
-            });
-    }, []);*/
+
     const onHandleFiltro = (value: any) => {
         setDataFiltrado(value)
     }
@@ -84,12 +77,15 @@ export default function Page() {
         <>
 
             <Box mb={3}>
-                <TituloComponent titulo='Expedientes' newEntry={'/expedientes/crear'}/>
+                <TituloComponent  titulo='Expedientes' newEntry={'/expedientes/crear'}/>
             </Box>
             <Paper>
                 <Box>
                     <Box p={3}>
                         <FiltrosTables
+                            placeholderSearchBar="Buscar por número de expediente..."
+                            fecha_inicial="Fecha inicial hecho"
+                            fecha_final="Fecha inicial hecho"
                             dateSearchField='fecha_del_hecho'
                             searchField='numeroDeExpediente'
                             dataSinFiltro={data} handleFiltro={onHandleFiltro}/>

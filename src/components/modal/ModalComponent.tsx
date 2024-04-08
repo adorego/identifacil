@@ -23,8 +23,7 @@ const style = {
     boxShadow: 24,
     p: 4,
     paddingBottom: '30px',
-    height: '650px',
-    overflowY: 'scroll'
+    height: 'auto',
 };
 
 export const ModalComponent: React.FC<ModalProps> = ({ open, onClose, children, title="" }) => (

@@ -198,6 +198,15 @@ header.MuiPaper-root {
     width: 100%;
     height: 100%;
     z-index: 1200;
+
+}
+.registerContainerIdentifier {
+    height: 550px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+
 }
 .innerWrapperDeNotificaciones {
     position: absolute;

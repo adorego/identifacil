@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, Grid, Stack} from "@mui/material";
+import {Box, Container, Grid, Stack} from "@mui/material";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import {Inter} from 'next/font/google';
@@ -36,10 +36,11 @@ const AlternateLayout = ({ children }) => {
                 </Box>
                 <Box width='100%' sx={{bgcolor: '#FFF', minHeight: '100vh', pb: '40px'}}>
                     <TopNav/>
-                    <Box mx={6} mt={4}>
-
-                        {children}
-                    </Box>
+                    <Container maxWidth='lg'>
+                        <Box>
+                            {children}
+                        </Box>
+                    </Container>
 
                 </Box>
             </Stack>

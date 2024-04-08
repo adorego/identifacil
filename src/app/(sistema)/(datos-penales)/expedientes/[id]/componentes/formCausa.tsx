@@ -94,9 +94,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     const {openSnackbar} = useGlobalContext();
     const router: AppRouterInstance = useRouter();
-    const isEditMode = params && params.id;
+    const isEditMode = params.id !== 'crear';
     const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
+    console.log(isEditMode)
     /** Obtener Hechos punibles y causas*/
     useEffect(() => {
         setLoading(true)
@@ -238,7 +239,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
      * Get data de datos guardados previamentes de expediente
      * */
     useEffect(() => {
-        if (isEditMode !== 'crear') {
+        if (isEditMode) {
             setLoading(true);
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${params.id}`) // Usa la función importada
                 .then((data) => {
@@ -287,7 +288,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 hechoPunibleId: item.hecho_punible?.id,
                                 causaId: item.causa_judicial?.id
                             })) : null,
-                            /*despacho_judicial: data.despacho_judicial ? data.despacho_judicial.id : null,*/
+                            despacho_judicial: data.despacho_judicial ? '' : null,
                             circunscripcion: data.circunscripcion ? data.circunscripcion.id : null,
                             ciudad: data.ciudad ? data.ciudad.id : null,
                             ppls_en_expediente: ppl_ajustado,
@@ -300,7 +301,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
         } else {
 
         }
-    }, [isEditMode, params.id]);
+    }, [isEditMode]);
 
     const handleChange = (event: any) => {
         event.preventDefault();
@@ -460,9 +461,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
             })*/
         }
 
-        console.log(datosFormulario)
-        console.log(stateForm)
-        // const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
+
+
 
         if (stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == "") {
             openSnackbar('Falta completar campor requeridos', 'error')
@@ -494,9 +494,27 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         : `expediente creada correctamente.`;
 
                     openSnackbar(message, 'success');
-                    // router.push(`/expediente`);
+
+                    router.push(`/expedientes`);
                 } else {
-                    throw new Error('Error en la petición');
+                    // Aquí manejas los códigos de estado específicos
+                    console.log(response.status)
+                    switch (response.status) {
+                        case 500:
+                            openSnackbar('Petición incorrecta, faltan campos.', 'warning');
+                            break;
+                        case 522:
+                            openSnackbar('Ya existe un documento con este número de expediente.', 'warning');
+                            break;
+                        case 524:
+                            openSnackbar('No se puede guardar dos causas iguales del mismo hecho punible.', 'warning');
+                            break;
+
+                        // Puedes añadir más códigos de estado según sea necesario
+                        default:
+                            openSnackbar('Error en el servidor, intenta más tarde.', 'error');
+                    }
+                    throw new Error(`Error en la petición: ${response.status}`);
                 }
             } catch (error) {
                 setLoading(false);

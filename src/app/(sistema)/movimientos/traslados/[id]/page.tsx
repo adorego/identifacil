@@ -33,8 +33,10 @@ import {SelectChangeEvent} from '@mui/material/Select';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from 'next/navigation';
-import {DatePicker} from "@mui/x-date-pickers";
+import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
+import es from 'dayjs/locale/es';
+dayjs.locale(es); // Configura dayjs globalmente al español
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -87,7 +89,7 @@ const URL_ENDPOINT_CHOFER = `${API_URL}/movimientos/choferes`;
 const URL_ENDPOINT_VEHICULOS = `${API_URL}/movimientos/vehiculos`;
 const URL_ENDPOINT_ESTABLECIMIENTOS = `${API_URL}/establecimientos`;
 
-// TODO: Cuando se envia el submit se debe bloquear el boton de guardado
+// TODO: Cuando se envia el submit se debe bloquear el   boton de guardado
 // TODO: Luego de enviar la peticion se debe mostrar una alerta de que se guardo correctamente
 // TODO: hacer un spinner que bloquee toda la pantalla cuando carga o guarda los datos
 // TODO: Origen de destino debe ser dinamico
@@ -444,7 +446,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                             : (<form noValidate autoComplete="off" onSubmit={handleSubmit}>
                                 <Grid container spacing={3}>
                                     {/* Nro. del documento */}
-                                    <Grid item xs={4}>
+                                    <Grid item xs={3}>
                                         <TextField
                                             fullWidth
                                             label="Nro. del documento"
@@ -455,25 +457,27 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     </Grid>
 
                                     {/* Fecha del documento */}
-                                    <Grid item xs={4}>
-                                        <DatePicker
-                                            label="Fecha del documento"
-                                            format="DD/MM/YYYY"
-                                            name='fechaDocumento'
-                                            value={trasladoForm.fechaDocumento ? dayjs(trasladoForm.fechaDocumento) : null}
-                                            onChange={(newValue: Dayjs | null) => {
-                                                setTrasladoForm(prevState => ({
-                                                    ...prevState,
-                                                    fechaDocumento: newValue,
-                                                }))
-                                            }}
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth>
+                                            <MobileDatePicker
+                                                label="Fecha del documento"
+                                                format="DD/MM/YYYY"
+                                                name='fechaDocumento'
+                                                value={trasladoForm.fechaDocumento ? dayjs(trasladoForm.fechaDocumento) : null}
+                                                onChange={(newValue: Dayjs | null) => {
+                                                    setTrasladoForm(prevState => ({
+                                                        ...prevState,
+                                                        fechaDocumento: newValue,
+                                                    }))
+                                                }}
 
-                                        />
+                                            />
+                                        </FormControl>
                                     </Grid>
 
                                     {/* Fecha del traslado */}
-                                    <Grid item xs={4}>
-                                        <DatePicker
+                                    <Grid item xs={3}>
+                                        <MobileDatePicker
                                             label="Fecha del traslado"
                                             format="DD/MM/YYYY"
                                             name='fechaTraslado'

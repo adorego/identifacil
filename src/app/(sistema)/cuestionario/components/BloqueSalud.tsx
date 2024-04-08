@@ -83,10 +83,10 @@ const SaludFisicaInicial = {
 }
 
 const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero = 2, handleAccordion}) => {
-    /** Estado de datos capturados del form */
+    /** Estado seleccionados del form del form */
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
 
-    /** Datos para poblar elementos del form*/
+    /** Datos capturados elementos del form*/
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
 
     /** Datos para poblar elementos del form*/
@@ -333,6 +333,10 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         })
         if (respuesta.success) {
             setConsultaLoading(false)
+            setDatosSalud(prev=>({
+                ...prev,
+                id: respuesta.datos.id,
+            }))
             openSnackbar("Datos guardados correctamente", "success")
             if (handleAccordion) {
                 handleAccordion('')
@@ -480,6 +484,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 name="presion_arterial"
                                 value={datosSalud.presion_arterial}
                                 label="PA"
+                                helperText='Ej: 120/80'
                                 onChange={(event) => {
                                     handleChange(event, 'saludGeneral')
                                 }}
