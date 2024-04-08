@@ -232,6 +232,7 @@ export default function EntradaSalidaVisitante() {
     const entradaSalidaVisitante = async () => {
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/visitantes/`
         
+        console.log("Establecimiento seleccionado:",selectedEstablecimiento);
         
         if(entrada_salida){//Registro de Entrada
             //Validación de datos
@@ -241,7 +242,7 @@ export default function EntradaSalidaVisitante() {
             if(!identificationData.id_persona){
                 openSnackbar(`Debe identificarse la persona visitante`,"error");
             }
-            if(!selectedEstablecimiento && selectedEstablecimiento===0){
+            if(!selectedEstablecimiento){
                 openSnackbar(`Debe seleccionar un establecimiento,vuelva a intentar`,"error");
                 
             }

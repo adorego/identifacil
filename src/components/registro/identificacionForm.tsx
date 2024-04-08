@@ -293,7 +293,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
 
         } catch (error) {
             log.error("Hubo un error durante la consulta de la CI:", error);
-            openSnackbar("Error al consultar los datos", "error");
+            openSnackbar("No existe la cedula de identidad", "error");
             setConsultaLoading(false)
             // setError({error:true, msg:'Hubo un error en la consulta de la cedula'})
         }
@@ -445,7 +445,7 @@ const FormularioParaExtranjero: FC<IdentificacionProps> = (props: Identificacion
                 props.habilitarBotonSiguiente(true);
             }
         } else {
-            openSnackbar("Los campos de estar completos", "error");
+            openSnackbar("Los campos deben estar completos", "error");
         }
 
     }
