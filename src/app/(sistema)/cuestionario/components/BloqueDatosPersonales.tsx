@@ -71,11 +71,13 @@ interface datosPersonales {
     perteneceAComunidadLGTBI_modificado: boolean;
     grupoLGTBI: string;
     grupoLGTBI_modificado: boolean;
-    mantiene_contacto_con_consulado_o_embajada: boolean;
-    nombre_de_contacto_en_consulado_o_embajada: string;
-    numero_de_contacto_en_consulado_o_embajada: string;
-    pais_de_embajada: number;
+    tiene_contacto_en_embajada: boolean;
+    nombre_contacto_en_embajada: string;
+    telefono_contacto_en_embajada: string;
+    pais_embajada: number;
     foto: string | null;
+    departamento: number;
+    ciudad: number;
 
 }
 
@@ -120,11 +122,13 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
-    mantiene_contacto_con_consulado_o_embajada: false,
-    nombre_de_contacto_en_consulado_o_embajada: '',
-    numero_de_contacto_en_consulado_o_embajada: '',
-    pais_de_embajada: 0,
+    tiene_contacto_en_embajada: false,
+    nombre_contacto_en_embajada: '',
+    telefono_contacto_en_embajada: '',
+    pais_embajada: 0,
     foto: '',
+    departamento: 1,
+    ciudad: 1,
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -526,7 +530,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             <Grid container spacing={2} my={2}>
 
 
-                <Grid item xs={6}>
+                <Grid item xs={4}>
                     <TextField
                         autoComplete="off"
                         fullWidth
@@ -538,7 +542,42 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </TextField>
 
                 </Grid>
-                <Grid item sm={6}>
+                <Grid item sm={12}>
+                    <Typography variant='h6'>
+                        Datos de residencia
+                    </Typography>
+                </Grid>
+
+                <Grid item sm={3}>
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Ciudad</InputLabel>
+                        <Select
+                            value={datosPersonalesState.ciudad}
+                            onChange={onDatoSelectChange}
+                            label="Ciudad"
+                            name="ciudad"
+                        >
+                            <MenuItem value={1}>Asuncion</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={3}>
+
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel>Departamento</InputLabel>
+                        <Select
+                            value={datosPersonalesState.departamento}
+                            onChange={onDatoSelectChange}
+                            label="Departamento"
+                            name="departamento"
+                        >
+                            <MenuItem value={1}>Asuncion</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={3}>
                     <TextField
                         fullWidth
                         label="Direccion"
@@ -605,11 +644,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         <FormControl fullWidth variant="outlined">
                             <FormLabel>Mantiene contacto con la embajada:</FormLabel>
                             <RadioGroup
-                                value={datosPersonalesState.mantiene_contacto_con_consulado_o_embajada}
+                                value={datosPersonalesState.tiene_contacto_en_embajada}
                                 onChange={onOptionSelectChange}
                                 row
-                                aria-labelledby="mantiene_contacto_con_consulado_o_embajada"
-                                name="mantiene_contacto_con_consulado_o_embajada">
+                                aria-labelledby="tiene_contacto_en_embajada"
+                                name="tiene_contacto_en_embajada">
                                 <FormControlLabel
                                     value={true}
                                     control={<Radio/>}
@@ -621,35 +660,35 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             </RadioGroup>
                         </FormControl>
                     </Grid>
-                    {datosPersonalesState.mantiene_contacto_con_consulado_o_embajada ?
+                    {datosPersonalesState.tiene_contacto_en_embajada ?
                         (
                             <>
                                 <Grid item xs={3}>
                                     <TextField
                                         fullWidth
-                                        name='nombre_de_contacto_en_consulado_o_embajada'
+                                        name='nombre_contacto_en_embajada'
                                         label='Nombre de contacto'
                                         onChange={onDatoChange}
-                                        value={datosPersonalesState.nombre_de_contacto_en_consulado_o_embajada}
+                                        value={datosPersonalesState.nombre_contacto_en_embajada}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
                                     <TextField
                                         fullWidth
-                                        name='numero_de_contacto_en_consulado_o_embajada'
+                                        name='telefono_contacto_en_embajada'
                                         label='Número de contacto de contacto'
                                         onChange={onDatoChange}
-                                        value={datosPersonalesState.numero_de_contacto_en_consulado_o_embajada}
+                                        value={datosPersonalesState.telefono_contacto_en_embajada}
                                     />
                                 </Grid>
                                 <Grid item xs={3}>
                                     <FormControl fullWidth variant="outlined">
                                         <InputLabel>Pais de embajada</InputLabel>
                                         <Select
-                                            value={datosPersonalesState.pais_de_embajada}
+                                            value={datosPersonalesState.pais_embajada}
                                             onChange={onDatoSelectChange}
                                             label="Pais de embajada"
-                                            name="pais_de_embajada"
+                                            name="pais_embajada"
                                         >
                                             <MenuItem value={1}>Brasil</MenuItem>
                                             <MenuItem value={2}>Argentina</MenuItem>

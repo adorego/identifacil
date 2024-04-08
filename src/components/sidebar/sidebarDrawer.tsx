@@ -225,7 +225,7 @@ export default function SidebarDrawer()
 
 
                 {/* ------------------------- Menu gestion ppl ------------------------- */}
-                <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
+                {/*<ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Person />
                     </ListItemIcon>
@@ -248,7 +248,7 @@ export default function SidebarDrawer()
                         />
 
                     </List>
-                </Collapse>
+                </Collapse>*/}
 
                 {/*<SidebarItem
                             icon={<AirportShuttle />}
@@ -310,7 +310,7 @@ export default function SidebarDrawer()
                             path="/movimientos/traslados"
                             isActive={pathname === '/movimientos/traslados'}
                         />
-                        <SidebarItem
+                        {/*<SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Salidas especiales"
                             path="/movimientos/salidasEspeciales"
@@ -333,7 +333,7 @@ export default function SidebarDrawer()
                             label="Bajas"
                             path="/movimientos/bajas"
                             isActive={pathname === '/movimientos/bajas'}
-                        />
+                        />*/}
 
                     </List>
                 </Collapse>

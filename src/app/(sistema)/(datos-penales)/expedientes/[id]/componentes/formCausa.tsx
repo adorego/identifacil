@@ -499,7 +499,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     }
 
 
-    if (datosFormulario.id == 0 && isEditMode !== 'crear') {
+    if (loading) {
         return (
             <Box sx={{
                 display: 'flex',

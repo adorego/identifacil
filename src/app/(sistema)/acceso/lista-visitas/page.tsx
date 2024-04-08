@@ -84,7 +84,7 @@ export default function Ppl() {
     useEffect(() => {
         fetchData(`${API_URL}/entrada_salida/visitantes/salidas`)
             .then(fetchedData => {
-                // console.log(fetchedData)
+                 console.log(fetchedData)
                 const dataProcesado = fetchedData.map((item:any)=>({
                     id: item.id,
                     visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,

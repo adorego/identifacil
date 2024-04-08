@@ -14,7 +14,7 @@ import {
 import {DatePicker} from "@mui/x-date-pickers";
 import AddIcon from "@mui/icons-material/Add";
 import React, {useEffect, useState} from "react";
-import {fetchData, postForm} from "@/components/utils/utils";
+import {fetchData, postForm, postFormExpedienteJudicial} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
 
@@ -102,7 +102,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
     const [formState, setFormState] = useState<FormStateType>(formStateInitial);
     const [selecciones, setSelecciones] = useState<HechoPunibleConCausa[]>([]);
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]);
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
 
@@ -113,34 +113,11 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
         }))
     }
 
-    /** Se obtiene datos para poblar lista de hechos punibles y causas
-     * */
+    /** Se obtiene datos para poblar lista de hechos punibles y causas **/
     useEffect(() => {
-        /*fetchData(`${ENDPOINT_API}/datos_penales/hechos_punibles`).then((res) => {
-
-            const causasArray: Array<{ id: number; nombre: string; codigo: string; causa_id: number; }> = [];
-            // @ts-ignore
-            res.hechosPunibles.forEach(hechoPunible => {
-                // @ts-ignore
-                hechoPunible.causas.forEach(causa => {
-                    causasArray.push({
-                        id: causa.id,
-                        nombre: causa.nombre,
-                        codigo: causa.codigo,
-                        causa_id: hechoPunible.id
-                    });
-                });
-            });
-
-
-
-
-            setHechosPunibles(prev => ([...res.hechosPunibles]))
-        })*/
 
         setFormState(prev=>({
-            ...prev,
-            id_persona: id_persona
+            ...prev
         }))
         fetch(`${ENDPOINT_API}/datos_penales/hechos_punibles`)
             .then(res=> res.json())
@@ -210,49 +187,54 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
 
     /** Funcion para enviar datos
      * */
-    const handleSubmit = () =>{
-    /*console.log(testData)
-        console.log({
-            ...formState,
-            hechosPuniblesCausas: selecciones.map(item => Object.values(item)),
-        })*/
+    const handleSubmit = async () =>{
 
-        // @ts-ignore
-        postForm(
-            false,
-            'datos_penales/expedientes',
-            'Expediente',
-            /*testData,*/
-            {
-                ...formState,
-                ppls_en_expediente: [
-                    {
-                        id_persona: formState.id_persona,
-                        condenado: false,
-                    }],
-                hechosPuniblesCausas: selecciones.map((item:any) => Object.values(item)),
-            },
-            setLoading,
-            openSnackbar,
-            router,
-            false
-            // @ts-ignore
-        ).then((res : Response)=> {
-            try{
-                if(res.ok){
-                    return res.json()
-                }else {
-                    throw new Error('Error en la petición');
-                }
-            } catch (error) {
-                setLoading(false);
-                console.error('Error:', error);
+        try {
+            setLoading(true);
+            const response = await postFormExpedienteJudicial(
+                false,
+                'datos_penales/expedientes',
+                'Expediente',
+                {
+                    ...formState,
+                    hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
+                },
+                setLoading,
+                openSnackbar,
+                router,
+                false
+            );
+
+            if (!response) {
+                throw new Error('No se recibió respuesta del servidor');
             }
-        })
-            .then(data=>{
-                console.log(data.id)
-                onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente)
-            })
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data) {
+                    onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente);
+                }
+            } else {
+
+                switch (response.status) {
+                    case 400:
+                        openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
+                        break;
+                    case 500:
+                        openSnackbar('Expediente judicial ya existe', 'warning');
+                        break;
+                    default:
+                        openSnackbar('Error en el servidor, intenta más tarde.', 'error');
+                }
+                throw new Error(`Error en la petición: ${response.status}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            // Esta es una captura general para cualquier otro error que no sea un error HTTP
+            // openSnackbar('Error en expediente judicial!', 'warning');
+        } finally {
+            setLoading(false);
+        }
     }
 
     if(id_persona == null){
@@ -347,8 +329,9 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                     </FormControl>
                 </Grid>
             </Grid>
-            {loading ?
-            (
+
+            {
+                !loading && (
                 <>
                     {selecciones.map((seleccion, index) => (
                     <Grid container spacing={2} mt={1} key={index}>
@@ -374,9 +357,11 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                                     value={seleccion.causaId}
                                     onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
                                 >
-                                    {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => (
+                                    {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => {
+
+                                        return(
                                         <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
-                                    ))}
+                                    )})}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -387,12 +372,13 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                 ))}
                     <Grid container spacing={2} mt={1}>
                         <Grid item>
-                            <Button variant='text' onClick={handleAgregar} startIcon={<AddIcon />} sx={{background: 'none'}}>Agregar Hecho Punible</Button>
+                            <Button variant='text' onClick={handleAgregar} startIcon={<AddIcon />} sx={{background: 'none'}}>
+                                Agregar Hecho Punible
+                            </Button>
                         </Grid>
                     </Grid>
                 </>
-            )
-            : null}
+            )}
             <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
                     <Button  variant='contained' onClick={handleSubmit}>

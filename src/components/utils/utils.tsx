@@ -241,3 +241,64 @@ export const formatDate = (dateString: string | null | number) => {
 }*/
 
 
+export const postFormExpedienteJudicial = async (
+    isEditMode: boolean,
+    endpoint: string,
+    entityName: string,
+    stateForm: any,
+    setLoading: (arg0: boolean) => void,
+    openSnackbar: (message: string, severity: "" | "success" | "info" | "warning" | "error") => void,
+    router: any,
+    redirect: boolean = false,
+    targetRedirect: string = '',
+) => {
+    try {
+        setLoading(true);
+
+        const method = isEditMode ? 'PUT' : 'POST';
+        //console.log(JSON.stringify(stateForm))
+        const url = isEditMode
+            ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}/${stateForm.id}`
+            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/${endpoint}`
+
+        // console.log(url)
+        const response = await fetch(url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(stateForm),
+        });
+
+        setLoading(false);
+
+        if (response.ok) {
+            const message = isEditMode
+                ? `${entityName} actualizada correctamente.`
+                : `${entityName} creada correctamente.`;
+
+            openSnackbar(message, 'success');
+            if(redirect){
+                router.push(`${targetRedirect}`);
+            }
+            return response
+        } else {
+            // Aquí manejas los códigos de estado específicos
+            console.log(response.status)
+            switch (response.status) {
+                case 500:
+                    openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
+                    break;
+                case 501:
+                    openSnackbar('No autorizado, inicia sesión nuevamente.', 'error');
+                    break;
+
+                // Puedes añadir más códigos de estado según sea necesario
+                default:
+                    openSnackbar('Error en el servidor, intenta más tarde.', 'error');
+            }
+            throw new Error(`Error en la petición: ${response.status}`);
+        }
+    } catch (error) {
+        setLoading(false);
+        console.error('Error:', error);
+    }
+};

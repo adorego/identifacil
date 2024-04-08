@@ -70,17 +70,24 @@ interface datosPersonales {
     grupoLGTBI_modificado: boolean;
     es_extranjero: boolean;
     tiene_contacto_en_embajada: boolean;
-    contactoDeEmbajada_nombre: string;
+    nombre_contacto_en_embajada: string;
     contactoDeEmbajada_numero: string;
-    pais_de_embajada: number;
+    pais_embajada: number;
+    telefono_contacto_en_embajada: string;
+    contacto_embajada:{
+        id: number,
+        nombre: string,
+        numero: string,
+        pais: number,
+    };
 
 }
 
 const datosPersonalesInicial: datosPersonales = {
-    contactoDeEmbajada_nombre: '',
+    nombre_contacto_en_embajada: '',
     contactoDeEmbajada_numero: '',
     tiene_contacto_en_embajada: false,
-    pais_de_embajada: 0,
+    pais_embajada: 0,
     es_extranjero: false,
     id_persona: null,
     numero_de_identificacion: "",
@@ -121,6 +128,13 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI_modificado: false,
     perteneceAComunidadLGTBI: false,
     perteneceAComunidadLGTBI_modificado: false,
+    telefono_contacto_en_embajada: '',
+    contacto_embajada:{
+        id: 0,
+        nombre: '',
+        numero: 'string',
+        pais: 0,
+    }
 }
 
 export interface BloqueDatosPersonalesProps {
@@ -148,10 +162,13 @@ export interface BloqueDatosPersonalesProps {
         contactoDeEmbajada_id?: number;
         contactoDeEmbajada_nombre?: string;
         contactoDeEmbajada_numero?: string;
-        contactoDeEmbajada:{
-            id: number,
-            nombre: string,
-            numero: number,
+        contacto_embajada:{
+            id: number;
+            nombre: string;
+            numero: string;
+            pais?: {
+                id: number;
+            };
         };
 
     };
@@ -161,7 +178,7 @@ export interface BloqueDatosPersonalesProps {
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, tipo_de_documento = null}) => {
 
-    console.log(datosDeIdentificacion)
+
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial
@@ -199,9 +216,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     perteneceAComunidadLGTBI: datosDeIdentificacion.perteneceAComunidadLGTBI,
                     es_extranjero: tipo_de_documento == 2,
                     tiene_contacto_en_embajada: datosDeIdentificacion.tiene_contacto_en_embajada,
-                    contactoDeEmbajada_nombre: datosDeIdentificacion.contactoDeEmbajada.nombre,
-                    contactoDeEmbajada_id: datosDeIdentificacion.contactoDeEmbajada.id,
-                    contactoDeEmbajada_numero: datosDeIdentificacion.contactoDeEmbajada.numero,
+                    nombre_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.nombre,
+                    contactoDeEmbajada_id: datosDeIdentificacion.contacto_embajada.id,
+                    telefono_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.numero,
+                    pais_embajada: datosDeIdentificacion.contacto_embajada.pais?.id ? datosDeIdentificacion.contacto_embajada.pais.id : 0,
                 }
             })
         }
@@ -341,10 +359,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
         console.log(datosDelFormulario)
 
-        console.log(JSON.stringify({
-            ...datosDelFormulario,
-            genero: datosDelFormulario.codigo_genero,
-        }))
+
 
         const respuesta = await api_request(url, {
             method: methodForm,
@@ -625,34 +640,41 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                         <Grid item xs={3}>
                                             <TextField
                                                 fullWidth
-                                                name='contactoDeEmbajada_nombre'
+                                                name='nombre_contacto_en_embajada'
                                                 label='Nombre de contacto'
                                                 onChange={onDatoChange}
-                                                value={datosPersonalesState.contactoDeEmbajada_nombre}
+                                                value={datosPersonalesState.nombre_contacto_en_embajada}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
                                             <TextField
                                                 fullWidth
-                                                name='contactoDeEmbajada_numero'
+                                                name='telefono_contacto_en_embajada'
                                                 label='Número de contacto de contacto'
                                                 onChange={onDatoChange}
-                                                value={datosPersonalesState.contactoDeEmbajada_numero}
+                                                value={datosPersonalesState.telefono_contacto_en_embajada}
                                             />
                                         </Grid>
                                         <Grid item xs={3}>
                                             <FormControl fullWidth variant="outlined">
-                                                <InputLabel>Pais de embajada</InputLabel>
+                                                <InputLabel id='pais-embajada-labe'>Pais de embajada</InputLabel>
                                                 <Select
-                                                    value={datosPersonalesState.pais_de_embajada}
+                                                    labelId='pais-embajada-label'
+                                                    value={datosPersonalesState.pais_embajada ? datosPersonalesState.pais_embajada : 0}
                                                     onChange={onDatoSelectChange}
                                                     label="Pais de embajada"
-                                                    name="pais_de_embajada"
+                                                    name="pais_embajada"
                                                 >
-                                                    <MenuItem value={1}>Brasil</MenuItem>
-                                                    <MenuItem value={2}>Argentina</MenuItem>
-                                                    <MenuItem value={3}>Chile</MenuItem>
-                                                    <MenuItem value={3}>Bolivia</MenuItem>
+                                                    <MenuItem value={0}>Seleccionar un país</MenuItem>
+                                                    {nacionalidades ? nacionalidades.map(
+                                                        (data, id) => {
+                                                            return (
+                                                                <MenuItem key={data.id} value={data.id}>{data.pais}</MenuItem>
+                                                            )
+                                                        }
+                                                    ) : null}
+
+
                                                 </Select>
                                                 <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
                                             </FormControl>

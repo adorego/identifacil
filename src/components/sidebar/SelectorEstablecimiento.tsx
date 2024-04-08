@@ -19,7 +19,7 @@ const SelectorEstablecimiento = ({open}:{open:boolean}) =>{
             }[]
         }>(
         {
-            selectedID: 0,
+            selectedID: 1,
             establecimientos:[]
         });
 

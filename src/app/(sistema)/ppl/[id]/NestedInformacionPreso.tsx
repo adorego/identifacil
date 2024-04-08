@@ -93,10 +93,13 @@ type datosPersonaType = {
     datosEducacion: datosEducacionType;
     datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType | any;
-    contactoDeEmbajada:{
-        id: number,
-        nombre: string,
-        numero: string,
+    contacto_embajada?:{
+        id: number;
+        nombre: string;
+        numero: string;
+        pais: {
+            id: number
+        },
     };
     registro_de_fotos: Array<{ nombre: string; foto: string; }>
 }
@@ -134,10 +137,13 @@ const datosPersonaInitial: datosPersonaType = {
     datosEducacion: datosEducacionInicial,
     datosDeSalud: datosDeSalud2Initial,
     datosJudiciales: datosJudicialesInicial,
-    contactoDeEmbajada:{
+    contacto_embajada:{
         id: 0,
         nombre: '',
         numero: '1231414',
+        pais: {
+            id:0
+        },
     },
     registro_de_fotos: [],
 }
@@ -202,10 +208,13 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                             perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
                                             numero_de_identificacion: datosPersona.numero_de_identificacion,
                                             tiene_contacto_en_embajada: datosPersona.tiene_contacto_en_embajada,
-                                            contactoDeEmbajada: {
-                                                id: datosPersona.contactoDeEmbajada?.id ? datosPersona.contactoDeEmbajada.id : 0,
-                                                nombre: datosPersona.contactoDeEmbajada?.nombre ? datosPersona.contactoDeEmbajada.nombre : '',
-                                                numero: datosPersona.contactoDeEmbajada?.numero ? datosPersona.contactoDeEmbajada.id : 0,
+                                            contacto_embajada: {
+                                                id: datosPersona.contacto_embajada?.id ? datosPersona.contacto_embajada.id : 0,
+                                                nombre: datosPersona.contacto_embajada?.nombre ? datosPersona.contacto_embajada.nombre : '',
+                                                numero: datosPersona.contacto_embajada?.numero ? datosPersona.contacto_embajada.numero : '',
+                                                pais: {
+                                                    id: datosPersona.contacto_embajada?.pais.id ? datosPersona.contacto_embajada.pais.id : 0,
+                                                }
                                             }
 
                                         }}/> : ''
