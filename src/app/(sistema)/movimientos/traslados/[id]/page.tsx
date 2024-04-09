@@ -1,6 +1,7 @@
 'use client'
 
 import {
+    Autocomplete,
     Box,
     Button,
     CardContent,
@@ -36,6 +37,7 @@ import {useRouter} from 'next/navigation';
 import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import es from 'dayjs/locale/es';
+
 dayjs.locale(es); // Configura dayjs globalmente al español
 
 const styleModal = {
@@ -106,9 +108,15 @@ export default function Page({params}: { params: { id: number | string } }) {
     const [modalPPL, setModalPPL] = React.useState<number>(0);
 
     const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
+
+    /** State de PPLS Seleccionados */
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{ id_persona: number; nombre: string; apellido: string; } | null>(null)
+
     const [trasladoForm, setTrasladoForm] = useState<TrasladoForm>(initialTrasladoForm);
 
     const [loading, setLoading] = useState(true);
+    const [modalSaveButtonStateDisabled, setModalSaveButtonStateDisabled] = useState(false);
+
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const isEditMode: boolean = params?.id !== 'crear';
@@ -173,7 +181,6 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     }, []);
 
-
     // Cargar datos para edición
     useEffect(() => {
         if (isEditMode) {
@@ -208,7 +215,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                             origenTraslado: data.origenTraslado.id,
                             destinoTraslado: data.destinoTraslado.id,
                             documentoAdjunto: data.documentoAdjunto,
-                            PPLs: data.ppls.map((item:any)=>({id_persona: item.persona.id, nombre: item.persona.nombre, apellido: item.persona.apellido, apodo: item.persona.datosPersonales?.apodo, numero_de_identificacion: item.persona.numero_identificacion})),
+                            PPLs: data.ppls.map((item: any) => ({id_persona: item.persona.id, nombre: item.persona.nombre, apellido: item.persona.apellido, apodo: item.persona.datosPersonales?.apodo, numero_de_identificacion: item.persona.numero_identificacion})),
                             lastUpdate: '',
                         }
 
@@ -226,7 +233,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                 handleLoading(false);
             });
 
-        }else{
+        } else {
             handleLoading(false);
         }
     }, [isEditMode, params.id]);
@@ -238,7 +245,7 @@ export default function Page({params}: { params: { id: number | string } }) {
     };
 
     // Manejador para actualizar selects
-    const handleSelectChange = (event: SelectChangeEvent<string|number|[number]>) => {
+    const handleSelectChange = (event: SelectChangeEvent<string | number | [number]>) => {
         const name = event.target.name as keyof typeof trasladoForm;
         // console.log('value: ' + event.target.value);
         setTrasladoForm({
@@ -255,47 +262,10 @@ export default function Page({params}: { params: { id: number | string } }) {
         }
     };
 
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-    const postTraslado = async () => {
-        try {
-            setLoading(true);
-
-            await delay(5000);
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/traslados`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(trasladoForm) // trasladoForm contiene los datos de tu formulario
-            });
-
-            setLoading(false);
-
-            if (response.ok) {
-                openSnackbar("Traslado creado correctamente.", "success");
-                router.push('/movimientos/traslados');
-            }
-            if (!response.ok) {
-                throw new Error('Error en la petición');
-            }
-
-            const data = await response.json();
-            console.log('Traslado creado:', data);
-        } catch (error) {
-            setLoading(false);
-
-            console.error('Error:', error);
-        }
-    };
-
-
     // Manejador de envio
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const form_method = isEditMode ? 'PUT' : 'POST'
-
 
 
         const form_procesado =
@@ -315,7 +285,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                 destinoTraslado: trasladoForm.destinoTraslado,
                 documentoAdjunto: trasladoForm.documentoAdjunto,
                 // @ts-ignore
-                ppls: Object.keys(trasladoForm.PPLs).map(key=>trasladoForm.PPLs[key].id_persona),
+                ppls: Object.keys(trasladoForm.PPLs).map(key => trasladoForm.PPLs[key].id_persona),
             }
 
         console.log(form_method)
@@ -381,7 +351,6 @@ export default function Page({params}: { params: { id: number | string } }) {
     const [open, setOpen] = React.useState(false);
 
 
-
     const handleOpen = () => {
         // Reseteamos los valores del formulario del modal antes de abrirlo
         // setModalPPL(initialPPL);
@@ -392,14 +361,18 @@ export default function Page({params}: { params: { id: number | string } }) {
         setOpen(false);
     };
 
-    const handleSelectModalChange = (event: SelectChangeEvent) => {
-        const value : number = parseInt(event.target.value);
+    const handleSelectModalChange = (value: number) => {
+        const pplEncontrado = trasladoForm.PPLs.find((item: any) => item.id_persona == value)
+        console.log(pplEncontrado)
         // @ts-ignore
-        if(!trasladoForm.PPLs.includes(value)) {
-
+        if (pplEncontrado?.id_persona !== value) {
+            console.log('false')
             setModalPPL(value)
-        }else{
+            setModalSaveButtonStateDisabled(true)
+        } else {
+            console.log('true')
             openSnackbar('PPL ya esta agregado', 'warning')
+            setModalSaveButtonStateDisabled(false)
         }
 
     };
@@ -410,13 +383,23 @@ export default function Page({params}: { params: { id: number | string } }) {
         setModalPPL(prev => ({...prev, [field]: value}));
     };
 */
+
+    const handleDeleteRecord = (value:any)=>{
+        console.log(value.id_persona)
+        setTrasladoForm((prev:any)=>({
+            ...prev,
+            PPLs: trasladoForm.PPLs.filter((item:any)=> item.id_persona !== value.id_persona)
+        }))
+    }
+
     const addPPLToState = () => {
         // @ts-ignore
 
-        setTrasladoForm(prev=>({
+        setTrasladoForm(prev => ({
             ...prev,
-            PPLs: [...prev.PPLs, statePPL.find(item=> item.id_persona == modalPPL)]
+            PPLs: [...prev.PPLs, statePPL.find(item => item.id_persona == modalPPL)]
         }))
+        setPersonasSeleccionadas(null)
         handleClose();
         setModalPPL(0); // Resetear el formulario del modal
     };
@@ -701,9 +684,6 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     </Grid>
 
 
-
-
-
                                     {/* Agregar PPL Button */}
                                     <Grid item xs={12}>
                                         <Grid container spacing={2} alignItems='center'>
@@ -718,7 +698,16 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         </Grid>
                                     </Grid>
                                     <Grid item xs={12}>
-                                        <CustomTable data={trasladoForm.PPLs} headers={headersPPL} showId={true}/>
+                                        <CustomTable
+                                            data={trasladoForm.PPLs}
+                                            headers={headersPPL}
+                                            showId={true}
+                                            deleteRecord={handleDeleteRecord}
+                                            options={{
+                                                pagination:true,
+                                                deleteOption:true,
+                                            }}
+                                        />
                                     </Grid>
 
 
@@ -745,9 +734,30 @@ export default function Page({params}: { params: { id: number | string } }) {
                 <Box
                     sx={styleModal}
                 >
-                    <Typography variant="h6" marginBottom={2}>Agregar PPL</Typography>
+                    <Typography variant="h6" marginBottom={2}>Agregar PPL - {modalSaveButtonStateDisabled ? 'true' : 'false'}</Typography>
                     <Grid container spacing={3}>
-                        <Grid item xs={12}>
+                        <Grid item sm={12}>
+                            <FormControl fullWidth>
+                                <Autocomplete
+                                    fullWidth={true}
+                                    value={personasSeleccionadas ? personasSeleccionadas : null}
+                                    onChange={(event, newValue: any) => {
+                                        // @ts-ignore
+                                        if(newValue) {
+                                            handleSelectModalChange(newValue.id_persona)
+                                        }
+                                        setPersonasSeleccionadas((prev: any) => ({
+                                            ...newValue
+                                        }));
+                                    }}
+                                    id="controllable-states-demo"
+                                    options={statePPL}
+                                    getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}`}
+                                    renderInput={(params) => <TextField {...params} label="Lista de PPLs"/>}
+                                />
+                            </FormControl>
+                        </Grid>
+                        {/*<Grid item xs={12}>
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel>PPL</InputLabel>
                                 <Select
@@ -755,7 +765,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     label="PPL"
                                     name="PPL"
                                 >
-                                    {/* Replace these menu items with your options */}
+                                     Replace these menu items with your options
                                     <MenuItem value={0}>
                                         Seleccionar PPL
                                     </MenuItem>
@@ -767,9 +777,12 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     ))}
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Grid>*/}
                         <Grid item xs={12}>
-                            <Button variant="contained" color="primary" onClick={addPPLToState}>
+                            <Button
+                                disabled={!modalSaveButtonStateDisabled}
+                                variant="contained" color="primary"
+                                onClick={addPPLToState}>
                                 Guardar
                             </Button>
                         </Grid>

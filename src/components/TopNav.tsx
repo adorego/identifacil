@@ -187,11 +187,12 @@ export default function TopNav() {
     );
 
     return (
-        <Box sx={{flexGrow: 1}} color='red'>
+        <Box sx={{flexGrow: 1}}>
 
             <AppBar position="static"
                     sx={{
-                        backgroundColor: '#FFF', color: '#000',
+                        backgroundColor: 'transparent',
+                        color: '#000',
                         boxShadow: 'none',
                         borderBottom: '1px solid #E2E8F0'
                     }} >

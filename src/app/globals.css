@@ -109,6 +109,7 @@ thead tr th.MuiTableCell-root {
 
 .sidebarSippy .MuiPaper-root {
     border-right: 1px dashed rgba(145, 158, 171, 0.2);
+    background-color: transparent;
 }
 
 .sidebarSippy .MuiButtonBase-root{
