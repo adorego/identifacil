@@ -21,7 +21,7 @@ export type datosDeSalud2Type =  {
     peso_modificado: boolean | null;
     talla: string;
     talla_modificado: boolean | null;
-    imc: string;
+    imc: string | null;
     imc_modificado: boolean | null;
     vdrl: boolean | null;
     vdrl_modificado: boolean | null;
@@ -61,7 +61,7 @@ export const datosDeSalud2Initial: datosDeSalud2Type =  {
     peso_modificado: false,
     talla: '0',
     talla_modificado: false,
-    imc: '0',
+    imc: null,
     imc_modificado: false,
     vdrl: false,
     vdrl_modificado: false,

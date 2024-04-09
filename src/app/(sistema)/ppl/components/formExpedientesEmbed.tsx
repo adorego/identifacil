@@ -189,51 +189,61 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
      * */
     const handleSubmit = async () =>{
 
-        try {
-            setLoading(true);
-            const response = await postFormExpedienteJudicial(
-                false,
-                'datos_penales/expedientes',
-                'Expediente',
-                {
-                    ...formState,
-                    hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
-                },
-                setLoading,
-                openSnackbar,
-                router,
-                false
-            );
+        const validacionForm = formState.numeroDeExpediente
 
-            if (!response) {
-                throw new Error('No se recibió respuesta del servidor');
+
+
+        /** Se controla campos vacios */
+        if (formState.numeroDeExpediente && formState.caratula_expediente && selecciones.length > 0){
+            try {
+                setLoading(true);
+                const response = await postFormExpedienteJudicial(
+                    false,
+                    'datos_penales/expedientes',
+                    'Expediente',
+                    {
+                        ...formState,
+                        hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
+                    },
+                    setLoading,
+                    openSnackbar,
+                    router,
+                    false
+                );
+
+                if (!response) {
+                    throw new Error('No se recibió respuesta del servidor');
+                }
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data) {
+                        onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente);
+                    }
+                } else {
+
+                    switch (response.status) {
+                        case 400:
+                            openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
+                            break;
+                        case 500:
+                            openSnackbar('Expediente judicial ya existe', 'warning');
+                            break;
+                        default:
+                            openSnackbar('Error en el servidor, intenta más tarde.', 'error');
+                    }
+                    throw new Error(`Error en la petición: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                // Esta es una captura general para cualquier otro error que no sea un error HTTP
+                // openSnackbar('Error en expediente judicial!', 'warning');
+            } finally {
+                setLoading(false);
             }
 
-            if (response.ok) {
-                const data = await response.json();
-                if (data) {
-                    onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente);
-                }
-            } else {
-
-                switch (response.status) {
-                    case 400:
-                        openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
-                        break;
-                    case 500:
-                        openSnackbar('Expediente judicial ya existe', 'warning');
-                        break;
-                    default:
-                        openSnackbar('Error en el servidor, intenta más tarde.', 'error');
-                }
-                throw new Error(`Error en la petición: ${response.status}`);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            // Esta es una captura general para cualquier otro error que no sea un error HTTP
-            // openSnackbar('Error en expediente judicial!', 'warning');
-        } finally {
-            setLoading(false);
+        }else{
+            openSnackbar('Completar los campos requeridos.', 'warning');
         }
     }
 
@@ -262,12 +272,15 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                 <Grid item sm={6}>
 
                     <TextField
+                        required
                         fullWidth
                         label="Nro. de expediente"
                         variant="outlined"
                         name="numeroDeExpediente"
                         value={formState.numeroDeExpediente}
                         onChange={handleChange}
+                        error={formState.numeroDeExpediente == ''}
+                        helperText={formState.numeroDeExpediente == "" ? '* Campo requerido' : ''}
                     />
 
                 </Grid>
@@ -325,16 +338,24 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                             name="caratula_expediente"
                             value={formState.caratula_expediente}
                             onChange={handleChange}
+                            error={formState.caratula_expediente == ''}
+                            helperText={formState.caratula_expediente == "" ? '* Campo requerido' : ''}
                         />
                     </FormControl>
                 </Grid>
             </Grid>
 
+            <Grid item sm={12} mt={2}>
+                <Typography variant='h6'>Hechos Punibles</Typography>
+                <Typography variant='caption' color='error' ml={2}>
+                    * Campo requerido
+                </Typography>
+            </Grid>
             {
-                !loading && (
+                !loading ? (
                 <>
                     {selecciones.map((seleccion, index) => (
-                    <Grid container spacing={2} mt={1} key={index}>
+                    <Grid container spacing={2} key={index} mt={1}>
                         <Grid item sm={6}>
                             <FormControl fullWidth>
                                 <InputLabel id="hechosPunibles-field">Hechos punibles</InputLabel>
@@ -370,7 +391,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                         </Grid>
                     </Grid>
                 ))}
-                    <Grid container spacing={2} mt={1}>
+                    <Grid container spacing={2} >
                         <Grid item>
                             <Button variant='text' onClick={handleAgregar} startIcon={<AddIcon />} sx={{background: 'none'}}>
                                 Agregar Hecho Punible
@@ -378,7 +399,10 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                         </Grid>
                     </Grid>
                 </>
-            )}
+            ) : (
+                'Cargando hechos punibles...'
+                )
+            }
             <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
                     <Button  variant='contained' onClick={handleSubmit}>

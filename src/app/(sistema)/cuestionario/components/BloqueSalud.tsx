@@ -322,11 +322,19 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         // @ts-ignore
         datosDelFormulario.vacunas_recibidas = datosSalud.vacunas_recibidas.map(objeto => objeto.id)
 
+        const datosProcesados = {
+            ...datosDelFormulario,
+            temperatura: datosDelFormulario.temperatura ? datosDelFormulario.temperatura : 0,
+            peso: datosDelFormulario.peso ? datosDelFormulario.peso : 0,
+            imc: datosDelFormulario.imc ? datosDelFormulario.imc : 0,
+            talla: datosDelFormulario.talla ? datosDelFormulario.talla : 0,
+        }
+
         const methodForm = datosSalud.id ? 'PUT' : 'POST';
 
         const respuesta = await api_request(url, {
             method: methodForm,
-            body: JSON.stringify(datosDelFormulario),
+            body: JSON.stringify(datosProcesados),
             headers: {
                 'Content-Type': 'application/json'
             }

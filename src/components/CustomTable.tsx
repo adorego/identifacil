@@ -156,7 +156,7 @@ function CustomTable({
     return (
         <Box className={'customTable'}>
 
-            <TableContainer component={Paper}>
+            <TableContainer>
 
                 <Stack direction='row'
                        justifyContent="space-between"

@@ -26,7 +26,7 @@ import {MuiFileInput} from "mui-file-input";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {fetchData} from "@/components/utils/utils";
-import FormExpedientesEmebed from "@/app/(sistema)/ppl/[id]/components/formExpedientesEmbed";
+import FormExpedientesEmebed from "@/app/(sistema)/ppl/components/formExpedientesEmbed";
 import {Close} from "@mui/icons-material";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {useRouter} from "next/navigation";

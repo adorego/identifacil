@@ -647,7 +647,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     <TextField
                                         fullWidth
                                         name='telefono_contacto_en_embajada'
-                                        label='Número de contacto de contacto'
+                                        label='Número de contacto de embajada'
                                         onChange={onDatoChange}
                                         value={datosPersonalesState.telefono_contacto_en_embajada}
                                     />
