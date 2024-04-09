@@ -298,6 +298,8 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
             log.error("Hubo un error durante la consulta de la CI:", error);
             openSnackbar("No existe la cedula de identidad", "error");
             setConsultaLoading(false)
+            setFormularioDeDatosDeIdentificacion(datosInicialesDelFormularioDeIdentificacion);
+            props.habilitarBotonSiguiente(false);
             // setError({error:true, msg:'Hubo un error en la consulta de la cedula'})
         }
 
