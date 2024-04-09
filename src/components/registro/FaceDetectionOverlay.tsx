@@ -65,9 +65,9 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
             () => {
                 if (capturar_foto && currentDetectionRef.current) {
                     progreso(1);
-                    capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas, `foto1`)
+                    capturar_rostro_y_enviar(currentDetectionRef.current.box, currentDetectionRef.current.canvas, `foto1.jpg`)
                     for(let i=1;i<numero_de_capturas;i++){
-                        setTimeout(capturar_rostro_y_enviar, i*TIEMPO_ENTRE_FOTOS, currentDetectionRef.current.box, currentDetectionRef.current.canvas, `foto${i+1}`);
+                        setTimeout(capturar_rostro_y_enviar, i*TIEMPO_ENTRE_FOTOS, currentDetectionRef.current.box, currentDetectionRef.current.canvas, `foto${i+1}.jpg`);
                     }
                     reset_capturar_foto();
                     
