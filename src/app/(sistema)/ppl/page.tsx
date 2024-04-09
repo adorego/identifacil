@@ -8,6 +8,7 @@ import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
+import FiltrosPpl from "@/app/(sistema)/ppl/components/filtrosPpl";
 
 
 const ENDPOINT: string = `/gestion_ppl/ppls`
@@ -106,8 +107,8 @@ export default function Page() {
                 <Grid item sm={12}>
                     <Paper elevation={1}>
                         <Box p={3}>
-                            <FiltrosTables
-                                dateSearchField='fechaDeNacimiento'
+                            <FiltrosPpl
+                                dateSearchField='fecha_de_ingreso'
                                 searchField='numero_de_identificacion'
                                 dataSinFiltro={listaPersonas} handleFiltro={onHandleFiltro}/>
                         </Box>

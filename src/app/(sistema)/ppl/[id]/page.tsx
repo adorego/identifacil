@@ -8,7 +8,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import NestedInformacionPreso from "./NestedInformacionPreso";
-import TabDatosPersonales from "@/app/(sistema)/ppl/[id]/components/tabDatosPenales";
+import TabDatosPersonales from "@/app/(sistema)/ppl/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
@@ -23,8 +23,8 @@ import {
     datosJudicialesType,
     datosSeguridadInicial, datosSeguridadType
 } from "@/components/utils/systemTypes";
-import TabSalidaTransitoia from "@/app/(sistema)/ppl/[id]/components/tabSalidasTransitorias";
-import TabSalidaTransitoria from "@/app/(sistema)/ppl/[id]/components/tabSalidasTransitorias";
+import TabSalidaTransitoia from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
+import TabSalidaTransitoria from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
 
 
 

@@ -36,6 +36,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
     const [editMode, setEditMode] = useState(false)
 
     useEffect(() => {
+        console.log(familiarInitialState)
         setState(familiarInitialState)
     }, [open]);
 
@@ -121,6 +122,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
 
     const handleSubmit = (event: { preventDefault: () => void; })=>{
         event.preventDefault();
+        console.log(state)
         onHandleChangeCirculo(state, editMode)
         onHandleCloseForm(); // Cierra el modal después de la acción*/
     }
@@ -235,6 +237,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     <Grid item sm={12}>
                         <TextField
                             onChange={handleChange}
+                            value={state.edad}
                             label="Edad"
                             type='number'
                             name="edad"
@@ -255,17 +258,6 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     </Grid>
                     :null}*/}
 
-                    {/* Si es hijo*/}
-                    {state.vinculo?.id == 2?
-                    <Grid item sm={12}>
-                        <TextField
-                            onChange={handleChange}
-                            label="Lugar donde se encuentra"
-                            name="lugar_donde_esta_hijo"
-                            variant="outlined"
-                            fullWidth/>
-                    </Grid>
-                        :null}
                     <Grid item sm={12}>
                         <Button variant={'contained'} type='submit'>
                             Guardar
