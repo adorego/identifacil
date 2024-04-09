@@ -97,12 +97,12 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const isEditMode = params.id !== 'crear';
     const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
-    console.log(isEditMode)
+
     /** Obtener Hechos punibles y causas*/
     useEffect(() => {
         setLoading(true)
         // Hechos punibles
-        console.log('Comenzo')
+
         Promise.all([
             fetchData(`${ENDPOINT_API}/datos_penales/hechos_punibles`).then((res) => {
 
@@ -143,97 +143,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     }, []);
 
-    /** Se obtiene los modelos completos de PPL con el ID guardado en el array de ppl de la causa*/
-    /*useEffect(() => {
-        // console.log(datosFormulario)
-
-
-        //TODO: corregir tipo typescript
-        const JsonPPL = {
-            ppls:[
-                {
-                    id_persona:17,
-                    condenado:true,
-                    hechosPuniblesCausas:[[1,12]],
-                    defensor:1,
-                    sentencia_definitiva:1288888,
-                    fecha_sentencia_definitiva:"2018-01-21",
-                    condena:{
-                        anhos:9,
-                        meses:3
-                    },
-                    fecha_de_aprehension:"2021-03-21",
-                    tiene_anhos_extra_por_medida_de_seguridad:false,
-                    fecha_de_compurgamiento_inicial:"2050-12-21",
-                    fecha_de_compurgamiento_recalculada:[
-                        {
-                            descripcion:"Buen comportamiento",
-                            fecha_recalculada:"2045-01-01",
-                            documento:"documento1.pdf"
-                        }
-                    ]
-
-                }
-            ],
-        }
-        // @ts-ignore
-        if (datosFormulario.ppls_en_expediente.length > 0) {
-            const ppl_ajustado = datosFormulario.ppls_en_expediente.map(( item : any )=>({
-                id_persona:item.ppl?.persona?.id,
-                nombre: item.ppl?.persona?.nombre,
-                apellido: item.ppl?.persona?.apellido,
-                condenado:item.condena,
-                hechosPuniblesCausas: item.hechosPuniblesCausas,
-                defensor: item.defensor?.id,
-                sentencia_definitiva: item.sentencia_definitiva,
-                fecha_sentencia_definitiva: item.fecha_sentencia_definitiva,
-                condena:{
-                    anhos: item?.condena?.anhos,
-                    meses: item?.condena?.meses
-                },
-                fecha_de_aprehension: item.fecha_de_aprehension,
-                tiene_anhos_extra_por_medida_de_seguridad: item.tiene_anhos_extra_por_medida_de_seguridad,
-                fecha_de_compurgamiento_inicial: item.condena.fecha_de_compurgamiento_inicial,
-
-
-            }))
-            console.log(datosFormulario.ppls_en_expediente)
-            console.log(ppl_ajustado)
-            setDatosFormularios((prev : any) => ({
-                ...prev,
-                ppls_en_expediente: [...ppl_ajustado],
-            }))
-        }
-        /!*if (datosFormulario.ppls_en_expediente.length > 0) {
-
-            const obtenerPersonaPorId = async (id: { id_persona: number | null; nombre: string; apellido: string } | number) => {
-                const response = await fetch(`${ENDPOINT_API}/gestion_ppl/ppls/id/${id}`);
-                if (!response.ok) throw new Error('Error al obtener la persona');
-                return response.json();
-            };
-            if (datosFormulario.ppls_en_expediente.length > 0 && datosFormulario.ppls_en_expediente.every(id => typeof id === 'number')) {
-
-                const promesas = datosFormulario.ppls_en_expediente.map((id) => obtenerPersonaPorId(id)
-                );
-
-
-                Promise.all(promesas)
-                    .then(personas => {
-                        setDatosFormularios(prev => ({
-                            ...prev,
-                            ppls: [...personas]
-                        }));
-
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener las personas:', error);
-                    });
-            }
-
-
-        }*!/
-
-    }, [datosFormulario.ppls_en_expediente]);*/
 
     /**
      * Get data de datos guardados previamentes de expediente
@@ -270,8 +179,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 fecha_de_aprehension: item.fecha_de_aprehension,
                                 tiene_anhos_extra_por_medida_de_seguridad: item.condena?.tiene_anhos_extra_por_medida_de_seguridad ? item.condena?.tiene_anhos_extra_por_medida_de_seguridad : false,
                                 anhos_extra_por_medida_de_seguridad: {
-                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad.meses ? item.condena?.anhos_extra_por_medida_de_seguridad.meses: 0,
-                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad.anhos ? item.condena?.anhos_extra_por_medida_de_seguridad.anhos : 0
+                                    meses: item.condena?.anhos_extra_por_medida_de_seguridad?.meses ? item.condena?.anhos_extra_por_medida_de_seguridad.meses: 0,
+                                    anhos: item.condena?.anhos_extra_por_medida_de_seguridad?.anhos ? item.condena?.anhos_extra_por_medida_de_seguridad.anhos : 0
                                 },
                                 fecha_de_compurgamiento_inicial: item.condena?.fecha_de_compurgamiento_inicial ? item.condena?.fecha_de_compurgamiento_inicial : null,
 
@@ -373,9 +282,55 @@ export default function FormCausa({params}: { params: { id: number | string } })
     }
 
     // TODO: Fix any type
+
+    /** Funcion para obtener personas del formulario de personas en el Expediente
+     *
+     * @param persona se recibe un objeto persona del array
+     * */
     const handlerPersona = (persona: any) => {
-        // console.log(persona)
-        if (datosFormulario.ppls_en_expediente[0] == null) {
+        console.log(datosFormulario.ppls_en_expediente.findIndex((item:any)=>item.id_persona == persona.id_persona))
+
+        // Se inicializa constante con index del ppl. Si no existe retorna -1
+        const indexOfPerson = datosFormulario.ppls_en_expediente.findIndex((item:any)=>item.id_persona == persona.id_persona)
+
+        // si el PPL no existe en el array se agrega directamente
+        if(indexOfPerson < 0){
+            setDatosFormularios((prev: any) => ({
+                ...prev,
+                ppls_en_expediente: [...prev.ppls_en_expediente, persona]
+            }))
+        }else{
+            setDatosFormularios((prev:any)=> {
+                let newArray = prev.ppls_en_expediente
+                // @ts-ignore
+                newArray[indexOfPerson] = persona
+                console.log(newArray)
+                return({
+                    ...prev,
+                    ppls_en_expediente: newArray
+                })
+            })
+        }
+        /*if(prev.ppls_en_expediente.length > 0){
+            setDatosFormularios((prev: any) => ({
+                ...prev,
+                ppls_en_expediente: [...prev.ppls_en_expediente, persona]
+            }))
+        }else{
+            setDatosFormularios(prev=> {
+                let newArray = prev
+
+                // @ts-ignore
+                newArray[miembroCriculo.indexArray] = miembroCriculo
+
+                return(
+                    newArray
+                )
+            })
+        }*/
+
+
+        /*if (datosFormulario.ppls_en_expediente[0] == null) {
             setDatosFormularios((prev: { ppls_en_expediente: any; }): CausaType | any => ({
                 ...prev,
                 ppls_en_expediente: [...prev.ppls_en_expediente, persona]
@@ -389,7 +344,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     ppls_en_expediente: [...prev.ppls_en_expediente, persona]
                 }))
             }
-        }
+        }*/
 
     }
 
@@ -399,13 +354,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
      *
      * @param persona
      */
-    const handleDeletePPL = (persona: number | null) => {
-        console.log(persona)
+    const handleDeletePPL = (valor: number | null) => {
+        console.log(valor)
         setDatosFormularios((prev: any) => ({
             ...prev,
-            ppls_en_expediente: datosFormulario.ppls_en_expediente.filter((item: {
-                id_persona: number | null;
-            }) => item.id_persona !== persona)
+            ppls_en_expediente: datosFormulario.ppls_en_expediente.filter((item:any, index:number) => index !== valor)
         }))
     }
 
@@ -417,11 +370,12 @@ export default function FormCausa({params}: { params: { id: number | string } })
         func()
     }
 
-    const handleEdit = (id_persona: number | null = null) => {
+    const handleEdit = (valor: number | null = null) => {
+        console.log('hellow?', valor)
+        const personaParaEditar = datosFormulario.ppls_en_expediente
+            .find((item:any, index:number) => index == valor);
 
-        const personaParaEditar = datosFormulario.ppls_en_expediente.find((item: {
-            id_persona: number | null;
-        }) => item.id_persona == id_persona);
+        console.log(personaParaEditar)
         // @ts-ignore
         setEditPersona(personaParaEditar);
         setIsModalOpen(true); // Esto abrirá el modal
@@ -834,7 +788,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
                     <Grid item sm={12}>
-                        <TableContainer component={Paper}>
+                        <TableContainer>
                             <Table sx={{minWidth: 650}} size="small" aria-label="a dense table">
                                 <TableHead>
                                     <TableRow>
@@ -857,16 +811,17 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                                 <TableCell component="th" scope="row">
                                                     {item.condenado ? 'Condenado' : 'Procesado'}
                                                 </TableCell>
-                                                <TableCell
-                                                    align="right">{formatDate(item.fecha_de_aprehension)}</TableCell>
+                                                <TableCell align="right">
+                                                    {formatDate(item.fecha_de_aprehension)}
+                                                </TableCell>
                                                 <TableCell align="right">
                                                     <Stack spacing={2} direction='row' justifyContent='right'>
                                                         <IconButton aria-label="edit" size="small"
-                                                                    onClick={(persona) => handleEdit(item.id_persona)}>
+                                                                    onClick={(persona) => handleEdit(index)}>
                                                             <CreateIcon fontSize="inherit"/>
                                                         </IconButton>
                                                         <IconButton aria-label="delete" size="small"
-                                                                    onClick={(persona) => handleDeletePPL(item.id_persona)}>
+                                                                    onClick={(persona) => handleDeletePPL(index)}>
                                                             <DeleteIcon fontSize="inherit"/>
                                                         </IconButton>
 
