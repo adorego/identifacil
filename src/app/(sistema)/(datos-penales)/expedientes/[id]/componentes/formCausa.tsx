@@ -465,7 +465,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
         if (stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == "") {
-            openSnackbar('Falta completar campor requeridos', 'error')
+            openSnackbar('Falta completar campos requeridos', 'error')
         } else {
 
             try {
