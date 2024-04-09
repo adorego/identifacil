@@ -36,8 +36,8 @@ interface Data {
 }
 
 interface TableOptions {
-    rowsPerPageCustom: number;
-    pagination: boolean;
+    rowsPerPageCustom?: number;
+    pagination?: boolean;
     title?: string;
     targetURL?: string;
     busqueda?: string;
@@ -144,7 +144,8 @@ function CustomTable({
         deleteRecord(row);
     };
 
-    const slicedData = sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+    const slicedData = rowsPerPage ? sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage) : sortedData;
 
     const stackStyle = {
         padding: (options.title || options.newRecord) ? '20px' : '0px',
@@ -203,7 +204,7 @@ function CustomTable({
                                     </TableCell>
                                 )
                             })}
-                            {options.targetURL ?
+                            {options.targetURL || options.deleteOption ?
                                 <TableCell>Acciones</TableCell>
                                 : ''
                             }
@@ -282,7 +283,7 @@ function CustomTable({
                                 rowsPerPageOptions={[5, 10, 25]}
                                 component="div"
                                 count={data.length}
-                                rowsPerPage={rowsPerPage}
+                                rowsPerPage={rowsPerPage ? rowsPerPage : 5}
                                 page={page}
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}

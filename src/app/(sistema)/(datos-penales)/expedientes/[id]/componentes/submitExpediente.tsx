@@ -25,7 +25,7 @@ export default async function SubmitExpediente({isEditMode, openSnackbar, datosF
     const requiredFields = ['hechosPuniblesCausas', 'caratula_expediente']
 
     if (stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == "") {
-        openSnackbar('Falta completar campor requeridos', 'error')
+        openSnackbar('Falta completar campos requeridos', 'error')
     } else {
 
         try {

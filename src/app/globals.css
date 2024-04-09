@@ -109,6 +109,7 @@ thead tr th.MuiTableCell-root {
 
 .sidebarSippy .MuiPaper-root {
     border-right: 1px dashed rgba(145, 158, 171, 0.2);
+    background-color: transparent;
 }
 
 .sidebarSippy .MuiButtonBase-root{
@@ -201,7 +202,6 @@ header.MuiPaper-root {
 
 }
 .registerContainerIdentifier {
-    height: 550px;
     align-items: center;
     justify-content: center;
     display: flex;

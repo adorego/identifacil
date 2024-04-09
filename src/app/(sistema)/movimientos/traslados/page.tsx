@@ -47,9 +47,11 @@ export default function Ppl() {
             name: row.descripcion,
         });
     };
+
     const handleCloseModal = () => {
         setModalOpen(false);
     };
+
     const handleDelete = async (id: number) => {
         const result = await deleteRecord(`/traslados/${id}`);
 
@@ -70,7 +72,6 @@ export default function Ppl() {
         handleDelete(id);
 
     }
-
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
@@ -123,9 +124,12 @@ export default function Ppl() {
                         }}>
                             {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
                             {/*Elemento de tabla de traslados filtros */}
-                            {/*<Box px={3} py={3}>
-                                <FiltrosTables dataSinFiltro={data} handleFiltro={handleFitros}/>
-                            </Box>*/}
+                            <Box px={3} py={3}>
+                                <FiltrosTables
+                                    dateSearchField='fecha_de_traslado'
+                                    searchField='numero_de_documento'
+                                    dataSinFiltro={data} handleFiltro={handleFitros}/>
+                            </Box>
 
                             {/* Elemento Tabla de Traslado*/}
                             <Box>
@@ -140,7 +144,6 @@ export default function Ppl() {
                                         targetURL: '/movimientos/traslados',
                                         rowsPerPageCustom: 5,
                                         pagination: true,
-                                        deleteOption: true,
 
                                     }}
                                 />

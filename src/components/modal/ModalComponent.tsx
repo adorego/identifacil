@@ -24,6 +24,8 @@ const style = {
     p: 4,
     paddingBottom: '30px',
     height: 'auto',
+    maxHeight: '90vh',
+    overflowY: 'auto',
 };
 
 export const ModalComponent: React.FC<ModalProps> = ({ open, onClose, children, title="" }) => (
