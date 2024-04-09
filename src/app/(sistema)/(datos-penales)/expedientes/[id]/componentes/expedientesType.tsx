@@ -21,6 +21,7 @@ export type PersonaEnExpedienteType = {
     fecha_sentencia_definitiva: Dayjs | null;
     fecha_de_compurgamiento_inicial: Dayjs | null;
     fecha_de_compurgamiento_recalculada: Array<any>;
+    hechosPuniblesCausas?: Array<[number]>
 }
 
 export const initialPeronaEnExpedienteStateForm = {

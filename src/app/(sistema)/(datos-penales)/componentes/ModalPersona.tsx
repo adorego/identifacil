@@ -24,7 +24,6 @@ import {
     PersonaEnExpedienteType
 } from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/expedientesType";
 
-
 type HechoPunible = {
     id: number;
     nombre: string;
@@ -43,35 +42,40 @@ type HechoPunibleConCausa = {
     causaId: number;
 };
 
-
 const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
-
 
 const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nombre: string; apellido: string; },) => (void), editPersona: {} | null, onOpen: boolean, onClose: () => void }> = (
     {onHandlerPersona, editPersona = null, onOpen, onClose}) => {
 
+    /** 1.  Estado del Modal */
     const {open, handleOpen, handleClose} = useModal();
 
-    /** State de PPLS para poblar el selector*/
+    /** 2. State de PPLS para poblar el selector*/
     const [personasLista, setPersonasLista] = useState<Array<any>>([])
 
-    /** State de PPLS Seleccionados */
-    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{ id_persona: number; nombre: string; apellido: string; } | null>(null)
+    /** 3. State de PPLS Seleccionados */
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{numero_de_identificacion: any; id_persona: number; nombre: string; apellido: string; } | null>(null)
 
-    // State para guardar defensores
+    /** 4. State para guardar defensores */
     const [defensoresLista, setDefensoresLista] = useState<Array<any>>([])
 
+    /** 5. State para guardar DEFENSORES */
     // State para datos de forumlarios
     const [datosFormulario, setDatosFormulario] = useState<PersonaEnExpedienteType>(initialPeronaEnExpedienteStateForm)
 
+    /** 6. State para guardar Hecho punible Selccionado? */
     // State para guardar los hechos punibles seleccionados
     const [seleccionesEnPPL, setSeleccionesEnPPL] = useState<HechoPunibleConCausa[]>([]);
 
+    /** 7. State para hechos punibles con causas seleccionados? */
     // State para guardar lista de hechos punibles y causas
-    const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]); // Supongamos que esto viene de una API
+    const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]);
+
     const {openSnackbar, closeSnackbar} = useGlobalContext();
 
+    /** Se carga al iniciar el FORM */
     useEffect(() => {
+
         // Se obtiene datos de lista de PPLs
         fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res => {
             setPersonasLista(prev => ([...res]))
@@ -107,12 +111,30 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
 
     /**Si es que hay un dato para mostrar carga el formulario con datos precargados de PPL* */
     useEffect(() => {
-        console.log(editPersona)
+        setPersonasSeleccionadas(null)
+        setDatosFormulario(initialPeronaEnExpedienteStateForm)
+        setSeleccionesEnPPL([])
+
         if (editPersona) {
-            setDatosFormulario((prev: any) => ({
-                ...prev,
-                editPersona
-            })); // Asume que editPersona tiene la forma correcta
+            // @ts-ignore
+            const personaPrevia :  PersonaEnExpedienteType = editPersona
+            console.log(personaPrevia)
+            if(personaPrevia !== undefined){
+                // @ts-ignore
+                setPersonasSeleccionadas(personaPrevia)
+                setDatosFormulario((prev: any) => ({
+                    ...prev,
+                    ...editPersona
+                })); // Asume que editPersona tiene la forma correcta
+                if(personaPrevia.hechosPuniblesCausas !== undefined && personaPrevia.hechosPuniblesCausas.length > 0){
+                    const preSeleccionPunibles = personaPrevia.hechosPuniblesCausas.map((item :any, index)=>{
+
+                        return ({hechoPunibleId: item[0] , causaId: item[1]})
+                    })
+                    setSeleccionesEnPPL(preSeleccionPunibles)
+                    // console.log(preSeleccionPunibles);
+                }
+            }
         }
     }, [editPersona, onOpen]);
 
@@ -123,6 +145,7 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
             handleOpen()
         }
     }, [onOpen]);
+
 
     const handleSelectChange = (event: SelectChangeEvent<number>) => {
         /*const persona = personasLista.filter((item : {id_persona:number; nombre:string; apellido: string;})=> item.id_persona == event.target.value)
@@ -179,40 +202,6 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
         setSeleccionesEnPPL(nuevasSelecciones);
     };
 
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
-        e.preventDefault();
-        console.log(personasSeleccionadas)
-        console.log(datosFormulario)
-
-        const aux: boolean = true
-
-        if (personasSeleccionadas && aux) {
-
-            const personaProcesada = {
-                ...datosFormulario,
-                hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
-                // @ts-ignore
-                id_persona: personasSeleccionadas.id_persona,
-                // @ts-ignore
-                nombre: personasSeleccionadas.nombre,
-                // @ts-ignore
-                apellido: personasSeleccionadas.apellido,
-                // @ts-ignore
-                apodo: personasSeleccionadas.apodo,
-            }
-            console.log(personaProcesada)
-            onHandlerPersona(personaProcesada)
-            setSeleccionesEnPPL([])
-            setDatosFormulario(initialPeronaEnExpedienteStateForm)
-            handleClose()
-        } else {
-            openSnackbar("Debe seleccionar un PPL", "error")
-            setTimeout(() => {
-                closeSnackbar()
-            }, 5000)
-        }
-    }
-
     const handleHechoPunibleChange = (index: number, nuevoHechoPunibleId: number) => {
         const nuevasSelecciones = seleccionesEnPPL.map((seleccion, idx) => {
             if (idx === index) {
@@ -240,11 +229,54 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
         setSeleccionesEnPPL(nuevasSelecciones);
     };
 
+    const handleSubmit = (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        console.log(personasSeleccionadas)
+        console.log(datosFormulario)
+
+        const aux: boolean = true
+
+        if (personasSeleccionadas && aux) {
+
+            const personaProcesada = {
+                ...datosFormulario,
+                hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
+                // @ts-ignore
+                id_persona: personasSeleccionadas.id_persona,
+                // @ts-ignore
+                nombre: personasSeleccionadas.nombre,
+                // @ts-ignore
+                apellido: personasSeleccionadas.apellido,
+                // @ts-ignore
+                apodo: personasSeleccionadas.apodo,
+                numero_de_identificacion: personasSeleccionadas.numero_de_identificacion,
+            }
+            console.log(personaProcesada)
+            onHandlerPersona(personaProcesada)
+            setSeleccionesEnPPL([])
+            setDatosFormulario(initialPeronaEnExpedienteStateForm)
+            handleClose()
+        } else {
+            openSnackbar("Debe seleccionar un PPL", "error")
+            setTimeout(() => {
+                closeSnackbar()
+            }, 5000)
+        }
+    }
+
+    const onHandleOpen = ()=>{
+        handleOpen()
+        setPersonasSeleccionadas(null)
+        setDatosFormulario(initialPeronaEnExpedienteStateForm)
+        setSeleccionesEnPPL([])
+
+    }
+
     return (
         <>
             <Stack spacing={2} direction='row' justifyContent='space-between'>
                 <Typography variant='h6'>PPLs vinculados</Typography>
-                <Button onClick={handleOpen} variant={'contained'}>
+                <Button onClick={onHandleOpen} variant={'contained'}>
                     Agregar PPL
                 </Button>
             </Stack>

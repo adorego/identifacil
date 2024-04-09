@@ -367,7 +367,6 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                                     handleDelete={handleDeleteFamiliar}
                                     handleEdit={handleEditModal}
                                 />
-
                             }
 
                         </Box>
@@ -400,8 +399,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                             </Typography>
                             {estadoFormularioDatosFamiliares.concubino ?
                                 null
-                                : <Button variant='outlined' startIcon={<AddIcon />} onClick={()=>setEstadoFormularioDatosFamiliares(
-                                    prev=>{
+                                : <Button variant='outlined' startIcon={<AddIcon />} onClick={()=>
+                                    setEstadoFormularioDatosFamiliares(prev=>{
                                         const newState = { ...prev };
                                         // Solo modificar concubino si existe
                                         if(!prev.concubino){

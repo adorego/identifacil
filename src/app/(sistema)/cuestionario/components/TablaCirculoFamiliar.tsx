@@ -1,6 +1,6 @@
 import * as React from 'react'
 import {Paper, TableContainer, Table, TableRow, TableCell, TableHead, TableBody, IconButton} from "@mui/material";
-import {Visibility, Delete} from '@mui/icons-material/';
+import {Visibility, Delete, Edit} from '@mui/icons-material/';
 
 interface tablaCirculoTypes {
     rows?: {
@@ -27,7 +27,7 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleD
 
 
     return (
-        <TableContainer component={Paper}>
+        <TableContainer sx={{bgcolor: '#FFF'}}>
             <Table sx={{minWidth: 650}} aria-label="simple table">
 
                 <TableHead>
@@ -56,7 +56,7 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleD
                                     <TableCell align="right">{row.esFuncionario ? "Funcionario" : "PPL"}</TableCell>
                                     <TableCell align="right">
                                         <IconButton aria-label="edit" onClick={(event)=>handleEdit(event, index)}>
-                                            <Visibility/>
+                                            <Edit/>
                                         </IconButton>
                                         <IconButton aria-label="delete" onClick={(event)=>handleDelete(event, index)}>
                                             <Delete/>
