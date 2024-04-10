@@ -3,20 +3,17 @@
 import {Stack, Typography, Box, Grid, Button} from "@mui/material";
 import * as React from "react";
 import StatusNav from "@/components/StatusNav";
-import {useEffect, useState} from "react";
+import {ReactNode, useEffect, useState} from "react";
 import {getRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 import Link from "next/link";
 import AddIcon from "@mui/icons-material/Add";
 
-interface propsType {
-    titulo: string;
-    url?: string;
-    newEntry?: string;
-}
 
 
-export default function TituloComponent({titulo, url = "", newEntry = ""}: propsType) {
+
+
+export default function TituloComponent({titulo, url = "", newEntry = "", children=null}: {titulo:string; url?:string; newEntry?: string, children?: ReactNode }) {
     const [datos, setDatos] = useState<{ id: number, medidaSeguridad: string }>({id: 0, medidaSeguridad: ''});
     const {openSnackbar} = useGlobalContext();
 
@@ -58,7 +55,9 @@ export default function TituloComponent({titulo, url = "", newEntry = ""}: props
                 <Grid container>
                     <Grid item>
                         <Box mt={2}>
-                            <StatusNav lastItem={datos.medidaSeguridad ? datos.medidaSeguridad : titulo}/>
+                            { children ? children
+                                : <StatusNav lastItem={datos.medidaSeguridad ? datos.medidaSeguridad : titulo} />
+                             }
                         </Box>
                     </Grid>
                 </Grid>

@@ -3,8 +3,9 @@
 import * as React from 'react';
 
 import {
-    CircularProgress,
-    Paper,
+    Breadcrumbs,
+    CircularProgress, Link,
+    Paper, Typography,
 } from "@mui/material";
 import {useEffect, useState} from "react";
 
@@ -98,6 +99,18 @@ export default function Ppl() {
         setFilterData(value)
     }
 
+    const BreadCrumb = () =>{
+        return(
+            <>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link underline="hover" color="inherit" href="/">
+                        Inicio
+                    </Link>
+                    <Typography color="text.primary">Lista de traslados</Typography>
+                </Breadcrumbs>
+            </>
+        )
+    }
 
     if (!data) {
         return (
@@ -115,7 +128,10 @@ export default function Ppl() {
 
     return (
         <Box>
-            <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'/>
+            <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'>
+                <BreadCrumb />
+            </TituloComponent>
+
 
                 {Object.keys(data).length > 0  ?
                     (
@@ -128,7 +144,9 @@ export default function Ppl() {
                                 <FiltrosTables
                                     dateSearchField='fecha_de_traslado'
                                     searchField='numero_de_documento'
-                                    dataSinFiltro={data} handleFiltro={handleFitros}/>
+                                    dataSinFiltro={data} handleFiltro={handleFitros} />
+
+
                             </Box>
 
                             {/* Elemento Tabla de Traslado*/}
