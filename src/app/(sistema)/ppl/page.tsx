@@ -77,7 +77,36 @@ export default function Page() {
         setDataFiltrado(value)
     }
 
-    if (!listaPersonas) {
+    if (listaPersonas.length == 0) {
+        return (
+            <div>
+                <TituloComponent titulo='Gestion PPL'/>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    { loading ?
+                        <Box>
+                            <CircularProgress/>
+                        </Box>
+                        : (<>
+                            <Box>
+                                <Alert color='info'>
+                                    No hay datos para mostrar en este momento
+                                </Alert>
+                            </Box>
+                        </>)
+                    }
+                </Box>
+            </div>
+        );
+    }
+
+/*    if (loading) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -86,21 +115,10 @@ export default function Page() {
                 justifyContent: 'center',
                 height: '75vh',
             }}>
-                { loading ?
-                        <CircularProgress/>
-                        : (<>
-                                <Box>
-                                    <Alert color='info'>
-                                        No hay datos para mostrar en este momento
-                                    </Alert>
-                                </Box>
-                        </>)
-                }
+                { loading && <CircularProgress/> }
             </Box>
         );
-    }
-
-
+    }*/
     return (
         <div>
             <TituloComponent titulo='Gestion PPL'/>
@@ -108,7 +126,7 @@ export default function Page() {
                 <Grid item sm={12}>
                     <Paper elevation={1}>
                         <Box p={3}>
-                            <FiltrosTables
+                            <FiltrosPpl
                                 dateSearchField='fecha_de_ingreso'
                                 searchField='numero_de_identificacion'
                                 dataSinFiltro={listaPersonas} handleFiltro={onHandleFiltro}/>
