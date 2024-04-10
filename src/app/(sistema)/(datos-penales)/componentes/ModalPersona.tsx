@@ -374,7 +374,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                             <Grid item sm={6}>
                                 <TextField
                                     fullWidth
-                                    label="anhos"
+                                    label="Años"
                                     variant="outlined"
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                                         setDatosFormulario((prevState: any) => ({
@@ -388,7 +388,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                     value={datosFormulario?.condena?.anhos}
                                     name="anhos"
                                 />
-                                <FormHelperText>* Requerido</FormHelperText>
+
                             </Grid><Grid item sm={6}>
                             <TextField
                                 fullWidth
@@ -404,9 +404,9 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                     }))
                                 }}
                                 value={datosFormulario?.condena?.meses}
-                                name="meses"
+                                name="Meses"
                             />
-                            <FormHelperText>* Requerido</FormHelperText>
+
                         </Grid>
                         </Grid>
                         : null}
@@ -540,9 +540,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                 <Grid item sm={12}>
                                     <FormControl>
                                         <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por
-                                            medid
-                                            de
-                                            seguridad?</FormLabel>
+                                            medida de seguridad?</FormLabel>
                                         <RadioGroup
                                             row
                                             aria-labelledby="anhosDeExtraSeguridad"

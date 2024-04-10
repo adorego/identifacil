@@ -307,7 +307,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
         }
 
         // si el PPL EXISTE en el array se modifica en el index existente
-        if (indexOfPerson > 0 && editMode) {
+        if (indexOfPerson >= 0 && editMode) {
             console.log('caso 2')
             setDatosFormularios((prev: any) => {
                 let newArray = prev.ppls_en_expediente
