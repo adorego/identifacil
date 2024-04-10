@@ -60,6 +60,7 @@ export default function Page() {
             .then(fetchedData => {
                 // console.log(fetchedData)
                 if(fetchedData.length > 0){
+                    console.log(fetchedData)
                     setListaPersonas(fetchedData.map((item:any)=>({
                         ...item,
                         nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
@@ -107,7 +108,7 @@ export default function Page() {
                 <Grid item sm={12}>
                     <Paper elevation={1}>
                         <Box p={3}>
-                            <FiltrosPpl
+                            <FiltrosTables
                                 dateSearchField='fecha_de_ingreso'
                                 searchField='numero_de_identificacion'
                                 dataSinFiltro={listaPersonas} handleFiltro={onHandleFiltro}/>

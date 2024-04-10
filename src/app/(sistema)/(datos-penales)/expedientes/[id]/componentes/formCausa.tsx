@@ -777,7 +777,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                     <TableRow>
                                         <TableCell>Nombre y Apellido</TableCell>
                                         <TableCell>Situacion procesal</TableCell>
-                                        <TableCell align="right">Fercha de detencion</TableCell>
+                                        <TableCell align="right">Fecha de detencion</TableCell>
                                         <TableCell align="right">Acciones</TableCell>
                                     </TableRow>
                                 </TableHead>

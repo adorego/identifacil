@@ -15,7 +15,9 @@
     position: absolute;
     max-width: 100%;
     left: 0;
-    /* border: 3px soliid red; */
+    height: auto;
+    border: 1px solid #7c7b7b;
+    border-radius: 12px;
 }
 
 .capturePhotoButton {
