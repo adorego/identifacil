@@ -18,8 +18,8 @@ export default function Main() {
                     <h1>Panel</h1>
 
                 </Grid>
-                <CardBlock name={'Ingresos'}  image={ingresosIMG.src} link='/inicio/registro/ppl'/>
-                <CardBlock name={'Movimientos'} image={trasladosIMG.src} link='/movimientos'/>
+                <CardBlock name={'Accesos PPL'}  image={ingresosIMG.src} link='/inicio/registro/ppl'/>
+                <CardBlock name={'Traslados'} image={trasladosIMG.src} link='/movimientos/traslados'/>
                 <CardBlock name={'Informes'} image={penalesIMG.src} link='/informes'/>
 
             </Grid>

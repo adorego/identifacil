@@ -42,10 +42,16 @@ type HechoPunibleConCausa = {
     causaId: number;
 };
 
+type ModalPropsType = {
+    onHandlerPersona: (arg0:any, arg1:boolean) => (void);
+    editPersona: {} | null;
+    onOpen: boolean;
+    onClose: () => void;
+}
+
 const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
-const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nombre: string; apellido: string; },) => (void), editPersona: {} | null, onOpen: boolean, onClose: () => void }> = (
-    {onHandlerPersona, editPersona = null, onOpen, onClose}) => {
+const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null, onOpen, onClose}) => {
 
     /** 1.  Estado del Modal */
     const {open, handleOpen, handleClose} = useModal();
@@ -54,22 +60,26 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
     const [personasLista, setPersonasLista] = useState<Array<any>>([])
 
     /** 3. State de PPLS Seleccionados */
-    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{numero_de_identificacion: any; id_persona: number; nombre: string; apellido: string; } | null>(null)
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{ numero_de_identificacion: any; id_persona: number; nombre: string; apellido: string; } | null>(null)
 
     /** 4. State para guardar defensores */
     const [defensoresLista, setDefensoresLista] = useState<Array<any>>([])
 
     /** 5. State para guardar DEFENSORES */
-    // State para datos de forumlarios
+        // State para datos de forumlarios
     const [datosFormulario, setDatosFormulario] = useState<PersonaEnExpedienteType>(initialPeronaEnExpedienteStateForm)
 
     /** 6. State para guardar Hecho punible Selccionado? */
-    // State para guardar los hechos punibles seleccionados
+        // State para guardar los hechos punibles seleccionados
     const [seleccionesEnPPL, setSeleccionesEnPPL] = useState<HechoPunibleConCausa[]>([]);
 
     /** 7. State para hechos punibles con causas seleccionados? */
-    // State para guardar lista de hechos punibles y causas
+        // State para guardar lista de hechos punibles y causas
     const [hechosPunibles, setHechosPunibles] = useState<HechoPunible[]>([]);
+
+    /** Modo de educicion para capturar datos */
+
+    const [isEditMode, setIsEditMode] = useState<boolean>(false)
 
     const {openSnackbar, closeSnackbar} = useGlobalContext();
 
@@ -114,54 +124,45 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
         setPersonasSeleccionadas(null)
         setDatosFormulario(initialPeronaEnExpedienteStateForm)
         setSeleccionesEnPPL([])
-
+        setIsEditMode(true)
         if (editPersona) {
+
+
             // @ts-ignore
-            const personaPrevia :  PersonaEnExpedienteType = editPersona
-            console.log(personaPrevia)
-            if(personaPrevia !== undefined){
+            const personaPrevia: PersonaEnExpedienteType = personasLista.find((item: PersonaEnExpedienteType) => item.id_persona == editPersona.id_persona)
+
+            if (personaPrevia !== undefined) {
                 // @ts-ignore
                 setPersonasSeleccionadas(personaPrevia)
                 setDatosFormulario((prev: any) => ({
                     ...prev,
                     ...editPersona
                 })); // Asume que editPersona tiene la forma correcta
-                if(personaPrevia.hechosPuniblesCausas !== undefined && personaPrevia.hechosPuniblesCausas.length > 0){
-                    const preSeleccionPunibles = personaPrevia.hechosPuniblesCausas.map((item :any, index)=>{
+                if (personaPrevia.hechosPuniblesCausas !== undefined && personaPrevia.hechosPuniblesCausas.length > 0) {
+                    const preSeleccionPunibles = personaPrevia.hechosPuniblesCausas.map((item: any, index) => {
 
-                        return ({hechoPunibleId: item[0] , causaId: item[1]})
+                        return ({hechoPunibleId: item[0], causaId: item[1]})
                     })
                     setSeleccionesEnPPL(preSeleccionPunibles)
                     // console.log(preSeleccionPunibles);
                 }
             }
+
+        }else{
+            console.log('No es edicion')
+            setIsEditMode(false)
         }
     }, [editPersona, onOpen]);
 
     /** Para controlar si es que debe abrir o cerrar el modal desde fuera del modal* */
     useEffect(() => {
+
         if (onOpen) {
 
             handleOpen()
         }
     }, [onOpen]);
 
-
-    const handleSelectChange = (event: SelectChangeEvent<number>) => {
-        /*const persona = personasLista.filter((item : {id_persona:number; nombre:string; apellido: string;})=> item.id_persona == event.target.value)
-        setPersonasVinculadas(persona[0]);*/
-
-        setDatosFormulario((prev: any) => ({
-            ...prev,
-            [event.target.name]: event.target.value
-        }))
-    };
-
-    const handleEditPersona = () => {
-        handleOpen()
-        console.log(editPersona)
-        // setDatosFormulario(editPersona)
-    }
 
     const handleChange = (event: any) => {
         const persona = personasLista.filter((item: { id_persona: number; nombre: string; apellido: string; }) => item.id_persona == event.target.value)
@@ -231,12 +232,9 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
 
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        console.log(personasSeleccionadas)
-        console.log(datosFormulario)
 
-        const aux: boolean = true
 
-        if (personasSeleccionadas && aux) {
+        if (personasSeleccionadas) {
 
             const personaProcesada = {
                 ...datosFormulario,
@@ -251,24 +249,29 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
                 apodo: personasSeleccionadas.apodo,
                 numero_de_identificacion: personasSeleccionadas.numero_de_identificacion,
             }
-            console.log(personaProcesada)
-            onHandlerPersona(personaProcesada)
+
+
+            onHandlerPersona(personaProcesada, isEditMode)
             setSeleccionesEnPPL([])
             setDatosFormulario(initialPeronaEnExpedienteStateForm)
             handleClose()
+
+
         } else {
             openSnackbar("Debe seleccionar un PPL", "error")
             setTimeout(() => {
                 closeSnackbar()
             }, 5000)
         }
+
     }
 
-    const onHandleOpen = ()=>{
+    const onHandleOpen = () => {
         handleOpen()
         setPersonasSeleccionadas(null)
         setDatosFormulario(initialPeronaEnExpedienteStateForm)
         setSeleccionesEnPPL([])
+        setIsEditMode(false)
 
     }
 
@@ -304,7 +307,7 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
                                     }}
                                     id="controllable-states-demo"
                                     options={personasLista}
-                                    getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}`}
+                                    getOptionLabel={(option) => option.apellido ? `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` : 'Seleccionar PPL'}
                                     renderInput={(params) => <TextField {...params} label="Lista de PPLs"/>}
                                 />
                             </FormControl>
@@ -524,7 +527,8 @@ const ModalPersona: FC<{ onHandlerPersona: ({}: { id_persona: number | null; nom
                             <Grid container spacing={2} mt={1} alignItems={'end'}>
                                 <Grid item sm={12}>
                                     <FormControl>
-                                        <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por medid
+                                        <FormLabel id="anhosDeExtraSeguridad">¿Cuentas con años extras de condena por
+                                            medid
                                             de
                                             seguridad?</FormLabel>
                                         <RadioGroup

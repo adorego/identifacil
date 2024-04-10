@@ -90,7 +90,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const [editPersona, setEditPersona] = useState(null);
 
 
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const {openSnackbar} = useGlobalContext();
     const router: AppRouterInstance = useRouter();
@@ -286,68 +286,48 @@ export default function FormCausa({params}: { params: { id: number | string } })
     /** Funcion para obtener personas del formulario de personas en el Expediente
      *
      * @param persona se recibe un objeto persona del array
+     * @param editMode parametro para determinar si es que el PPL existe es nuevo o una edicion. Para evitar que se
+     * cargue desde el form de agregar
      * */
-    const handlerPersona = (persona: any) => {
-        console.log(datosFormulario.ppls_en_expediente.findIndex((item:any)=>item.id_persona == persona.id_persona))
+    const handlerPersona = (persona: any, editMode: boolean) => {
+        setIsModalOpen(false)
+        const indexOfPerson = datosFormulario.ppls_en_expediente.findIndex((item: any) => item.id_persona == persona.id_persona)
 
-        // Se inicializa constante con index del ppl. Si no existe retorna -1
-        const indexOfPerson = datosFormulario.ppls_en_expediente.findIndex((item:any)=>item.id_persona == persona.id_persona)
+        console.log('Index de persona encontrada en el estado', indexOfPerson)
+        console.log(editMode)
 
-        // si el PPL no existe en el array se agrega directamente
-        if(indexOfPerson < 0){
+
+        // SI PPL ES NUEVO y no existe en el array
+        if (indexOfPerson < 0) {
+            console.log('caso 1')
             setDatosFormularios((prev: any) => ({
                 ...prev,
                 ppls_en_expediente: [...prev.ppls_en_expediente, persona]
             }))
-        }else{
-            setDatosFormularios((prev:any)=> {
+        }
+
+        // si el PPL EXISTE en el array se modifica en el index existente
+        if (indexOfPerson > 0 && editMode) {
+            console.log('caso 2')
+            setDatosFormularios((prev: any) => {
                 let newArray = prev.ppls_en_expediente
                 // @ts-ignore
                 newArray[indexOfPerson] = persona
-                console.log(newArray)
-                return({
+
+                return ({
                     ...prev,
                     ppls_en_expediente: newArray
                 })
             })
         }
-        /*if(prev.ppls_en_expediente.length > 0){
-            setDatosFormularios((prev: any) => ({
-                ...prev,
-                ppls_en_expediente: [...prev.ppls_en_expediente, persona]
-            }))
-        }else{
-            setDatosFormularios(prev=> {
-                let newArray = prev
-
-                // @ts-ignore
-                newArray[miembroCriculo.indexArray] = miembroCriculo
-
-                return(
-                    newArray
-                )
-            })
-        }*/
-
-
-        /*if (datosFormulario.ppls_en_expediente[0] == null) {
-            setDatosFormularios((prev: { ppls_en_expediente: any; }): CausaType | any => ({
-                ...prev,
-                ppls_en_expediente: [...prev.ppls_en_expediente, persona]
-            }))
-        } else {
-            if ((!datosFormulario.ppls_en_expediente.some((item: {
-                id_persona: any;
-            }) => item.id_persona == persona.id_persona) && datosFormulario.ppls_en_expediente[0] !== null)) {
-                setDatosFormularios((prev: { ppls_en_expediente: any; }): CausaType | any => ({
-                    ...prev,
-                    ppls_en_expediente: [...prev.ppls_en_expediente, persona]
-                }))
-            }
-        }*/
-
+        //
+        if (indexOfPerson >= 0 && !editMode) {
+            console.log('caso 3')
+            openSnackbar(`La PPL ${persona.nombre} ${persona.apellido} ya se encuentra vinculada al expediente`, 'warning')
+        }
     }
 
+    
     /**
      * Manejador para borrar PPLs de lista de personas
      * si el ID del ppl que se recibe se encuentra dentro del array de objetos del estado se borra
@@ -371,11 +351,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
     }
 
     const handleEdit = (valor: number | null = null) => {
-        console.log('hellow?', valor)
+
         const personaParaEditar = datosFormulario.ppls_en_expediente
             .find((item:any, index:number) => index == valor);
 
-        console.log(personaParaEditar)
+
         // @ts-ignore
         setEditPersona(personaParaEditar);
         setIsModalOpen(true); // Esto abrirá el modal
@@ -651,9 +631,13 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
                 <Grid container spacing={2} mt={1}>
-                    <Grid item sm={12}>
-                        <Divider>Expdiente extendido</Divider>
+                    <Grid container spacing={2} mt={1}>
+                        <Grid item sm={12}>
+                            <Typography variant='h6'>Datos adicionales</Typography>
+                        </Grid>
+
                     </Grid>
+
                 </Grid>
 
                 <Grid container spacing={2} mt={1}>
@@ -774,7 +758,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     <Grid item sm={12}>
                     </Grid>
                 </Grid>
-
                 <Grid container spacing={2} mt={1}>
 
 
@@ -865,7 +848,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <Button variant='contained' onClick={handleSubmit}>
                                 Guardar
                             </Button>
-                            <Button variant='outlined'>
+
+                            <Button variant='outlined' onClick={()=>router.push('/expedientes')}>
                                 Cancelar
                             </Button>
                         </Stack>

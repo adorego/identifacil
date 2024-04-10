@@ -7,6 +7,7 @@ import {Button, Card, CardActions, CardContent, CardMedia, Grid, Typography} fro
 
 import splash from '../../common/splash-img.png';
 import Link from "next/link";
+import {ChevronRight} from "@mui/icons-material";
 
 
 export default function CardBlock({name="", link="", image="", size=4}){
@@ -18,7 +19,7 @@ export default function CardBlock({name="", link="", image="", size=4}){
     return(
 
             <Grid item sm={size}>
-                <Link href={link}>
+                <Link href={link} style={{textDecoration: 'none'}}>
                     <Card style={{cursor: 'pointer'}}>
                         <CardMedia
                             sx={{ height: '250px', margin: '10px', borderRadius: '6px' }}
@@ -29,9 +30,11 @@ export default function CardBlock({name="", link="", image="", size=4}){
                             <Typography variant="h6"
                                         style={{
                                             textAlign: 'left',
-                                            textDecoration: 'none'
+                                            textDecoration: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center'
                                         }}>
-                                {name}
+                                {name} <ChevronRight />
                             </Typography>
                             <Typography variant="body2" color="text.secondary">
                             </Typography>

@@ -2,14 +2,14 @@
 
 import {
     Autocomplete,
-    Box,
+    Box, Breadcrumbs,
     Button,
     CardContent,
     CircularProgress,
     FormControl,
     Grid,
     IconButton,
-    InputLabel,
+    InputLabel, Link,
     MenuItem,
     Modal,
     Paper,
@@ -404,9 +404,27 @@ export default function Page({params}: { params: { id: number | string } }) {
         setModalPPL(0); // Resetear el formulario del modal
     };
 
+    const BreadCrumb = () =>{
+        return(
+            <>
+                <Breadcrumbs aria-label="breadcrumb">
+                    <Link underline="hover" color="inherit" href="/">
+                        Inicio
+                    </Link>
+                    <Link underline="hover" color="inherit" href="/movimientos/traslados">
+                        Lista de traslados
+                    </Link>
+                    <Typography color="text.primary">Traslado</Typography>
+                </Breadcrumbs>
+            </>
+        )
+    }
+
     return (
         <Box>
-            <TituloComponent titulo={isEditMode ? `Traslado ${trasladoForm.numero_de_documento}` : 'Crear Traslado'}/>
+            <TituloComponent titulo={isEditMode ? `Traslado ${trasladoForm.numero_de_documento}` : 'Crear Traslado'}>
+                <BreadCrumb />
+            </TituloComponent>
 
             {/*<QueryBlock/>*/}
             <Box mt={4}>
@@ -639,7 +657,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     <Grid item xs={6}>
 
                                         <FormControl fullWidth variant="outlined">
-                                            <InputLabel>Destino ddel traslado</InputLabel>
+                                            <InputLabel>Destino del traslado</InputLabel>
                                             <Select
                                                 value={trasladoForm.destinoTraslado}
                                                 onChange={handleSelectChange}
@@ -734,7 +752,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                 <Box
                     sx={styleModal}
                 >
-                    <Typography variant="h6" marginBottom={2}>Agregar PPL - {modalSaveButtonStateDisabled ? 'true' : 'false'}</Typography>
+                    <Typography variant="h6" marginBottom={2}>Agregar PPL</Typography>
                     <Grid container spacing={3}>
                         <Grid item sm={12}>
                             <FormControl fullWidth>
@@ -752,7 +770,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     }}
                                     id="controllable-states-demo"
                                     options={statePPL}
-                                    getOptionLabel={(option) => `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}`}
+                                    getOptionLabel={(option) => option.apellido ? `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` : "Seleccionar PPL"}
                                     renderInput={(params) => <TextField {...params} label="Lista de PPLs"/>}
                                 />
                             </FormControl>
