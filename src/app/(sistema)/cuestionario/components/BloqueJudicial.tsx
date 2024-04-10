@@ -389,7 +389,26 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
             </Typography>
 
             <Grid container mt={2} spacing={2}>
-                <Grid item sm={12} alignSelf='center'>
+                <Grid item sm={4} alignSelf='center'>
+                    <FormControl>
+                        <DemoContainer components={['MobileDatePicker']}>
+                            <MobileDatePicker
+                                value={estadoFormularioJudicial.fecha_ingreso_a_establecimiento ? dayjs(estadoFormularioJudicial.fecha_ingreso_a_establecimiento) : null}
+                                format="DD/MM/YYYY"
+                                name='fecha_ingreso_a_establecimiento'
+
+                                onChange={(newValue: Dayjs | null) => {
+                                    setEstadoFormularioJudicial(prev => ({
+                                        ...prev,
+                                        fecha_ingreso_a_establecimiento: newValue,
+                                        /*fecha_ingreso_a_establecimiento_modificado: true,*/
+                                    }))
+                                }}
+                                label="Fecha de ingreso"/>
+                        </DemoContainer>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={12} mt={2} alignSelf='center'>
                     <Stack spacing={2} direction={"row"} alignItems='end'>
                         <FormControl>
                             <FormLabel id="primeraVezPrision">Primera vez en prisión:</FormLabel>
@@ -410,7 +429,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                             </RadioGroup>
                         </FormControl>
 
-                        {!estadoFormularioJudicial.primeraVezEnPrision ?
+                        {!estadoFormularioJudicial.primeraVezEnPrision &&
                             <FormControl>
 
                                 <TextField
@@ -421,24 +440,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                                     onChange={onDatoChange}
                                     label="Cantidad de veces de ingreso"/>
                             </FormControl>
-                            : null}
-                        <FormControl>
-                            <DemoContainer components={['MobileDatePicker']}>
-                                <MobileDatePicker
-                                    value={estadoFormularioJudicial.fecha_ingreso_a_establecimiento ? dayjs(estadoFormularioJudicial.fecha_ingreso_a_establecimiento) : null}
-                                    format="DD/MM/YYYY"
-                                    name='fecha_ingreso_a_establecimiento'
+                        }
 
-                                    onChange={(newValue: Dayjs | null) => {
-                                        setEstadoFormularioJudicial(prev => ({
-                                            ...prev,
-                                            fecha_ingreso_a_establecimiento: newValue,
-                                            /*fecha_ingreso_a_establecimiento_modificado: true,*/
-                                        }))
-                                    }}
-                                    label="Fecha de ingreso"/>
-                            </DemoContainer>
-                        </FormControl>
                     </Stack>
                 </Grid>
             </Grid>

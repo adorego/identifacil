@@ -125,6 +125,8 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
         setDatosFormulario(initialPeronaEnExpedienteStateForm)
         setSeleccionesEnPPL([])
         setIsEditMode(true)
+
+
         if (editPersona) {
 
 
@@ -132,14 +134,23 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
             const personaPrevia: PersonaEnExpedienteType = personasLista.find((item: PersonaEnExpedienteType) => item.id_persona == editPersona.id_persona)
 
             if (personaPrevia !== undefined) {
+
+
                 // @ts-ignore
                 setPersonasSeleccionadas(personaPrevia)
                 setDatosFormulario((prev: any) => ({
                     ...prev,
                     ...editPersona
-                })); // Asume que editPersona tiene la forma correcta
-                if (personaPrevia.hechosPuniblesCausas !== undefined && personaPrevia.hechosPuniblesCausas.length > 0) {
-                    const preSeleccionPunibles = personaPrevia.hechosPuniblesCausas.map((item: any, index) => {
+                }));
+
+                // Asume que editPersona tiene la forma correcta
+
+                // @ts-ignore
+                if (editPersona.hechosPuniblesCausas !== undefined && editPersona.hechosPuniblesCausas.length > 0) {
+
+
+                    // @ts-ignore
+                    const preSeleccionPunibles = editPersona.hechosPuniblesCausas.map((item: any, index) => {
 
                         return ({hechoPunibleId: item[0], causaId: item[1]})
                     })
@@ -297,6 +308,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                         <Grid item sm={12}>
                             <FormControl fullWidth>
                                 <Autocomplete
+                                    disabled={isEditMode}
                                     fullWidth={true}
                                     value={personasSeleccionadas ? personasSeleccionadas : null}
                                     onChange={(event, newValue: any) => {

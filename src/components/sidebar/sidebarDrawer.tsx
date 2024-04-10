@@ -445,7 +445,7 @@ export default function SidebarDrawer()
                     </List>
                 </Collapse>
 
-                <ListItemButton onClick={() => handleClick('gestionUsuarios')} className={openMenus.gestionUsuarios ? 'active-button' : ''} >
+                {/*<ListItemButton onClick={() => handleClick('gestionUsuarios')} className={openMenus.gestionUsuarios ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Settings/>
                     </ListItemIcon>
@@ -453,7 +453,7 @@ export default function SidebarDrawer()
                     {openMenus.gestionUsuarios ? <ExpandLess/> : <ExpandMore/>}
                 </ListItemButton>
 
-                {/*<Collapse in={openMenus.gestionUsuarios} timeout="auto" unmountOnExit>
+                <Collapse in={openMenus.gestionUsuarios} timeout="auto" unmountOnExit>
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
                             icon={<span className='subIcon'></span>}
