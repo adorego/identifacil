@@ -180,6 +180,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     const consultarPPL = async (cedula:string | null) =>{
 
         const esMenor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') < 18)
+        const esmayor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') > 90)
 
         if(cedula !== null){
 
@@ -237,7 +238,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     /** Se realiza consulta a los datos de la policia para obtener los datos del PPL paraguayo y con cedula
      * */
     const onConsultarRegistroCivil = async () => {
-        console.log('consula estado civil')
+        console.log('consula de datos al registro civil')
 
         setConsultaLoading(true)
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_CONSULTACI_API}/get_datos_ci/`;
@@ -267,14 +268,18 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                         foto: ''
                     }
                     if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
-                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
-                        props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                        console.log("Entro aca");
+                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar);
+                        //props.actualizarIdentificacion(datosDeidentificacionAGenerar);
                         openSnackbar('Persona no puede ingresar. Debe ser mayor de edad', 'error')
                         setConsultaLoading(false)
                         props.habilitarBotonSiguiente(false);
 
-                    } else {
+                    }else if(dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') > 90){
+                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar);
+                        openSnackbar('Persona no puede ingresar. Edad mayor a 90 años', 'error');
+                        setConsultaLoading(false)
+                        props.habilitarBotonSiguiente(false);
+                    }else {
                         setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
                         props.actualizarIdentificacion(datosDeidentificacionAGenerar);
                         if(!stateEsPPL){
@@ -305,6 +310,14 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
 
     }
 
+    const onCapturarEnter = (e:React.KeyboardEvent<HTMLInputElement>) =>{
+        const {key} = e;
+        if(key === "Enter"){
+            onConsultarRegistroCivil();
+        }
+        
+    }
+
     return (
         <>
             <Grid container spacing={2} mt={3}>
@@ -313,6 +326,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                                id="cedula"
                                value={cedula}
                                name="cedula"
+                               onKeyDown={onCapturarEnter}
                                onChange={onCedulaChangeHandler}
                                fullWidth
                                label={"Ingrese cedula paraguaya"}

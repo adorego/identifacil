@@ -28,8 +28,9 @@ import {IReconocimiento} from "./FaceDetectionOverlay";
 import Identificacion from "@/app/(sistema)/identificacion/page";
 import log from "loglevel";
 import style from "./FormRegister.module.css";
+import { useGlobalContext } from "@/app/Context/store";
 
-const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
+const steps = ["Identificación", "Registro", "Datos de Ingreso", "Finalización"];
 export const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo', 'Ocuurio un error'];
 
 export interface RegistroResponse {
@@ -66,6 +67,8 @@ export default function FormRegister() {
     const foto = useRef<string | null>(null);
     const contadorReconocimiento = useRef<number>(0);
     const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
+    const {openSnackbar} = useGlobalContext();
+
 
 
     // console.log("Identidad:", identidad);
@@ -187,6 +190,8 @@ export default function FormRegister() {
                     setProgresoRegistro(EstadosProgreso[0]);
                     onStepForward();
                     setMensaje("Registro realizado correctamente");
+                    openSnackbar(`PPL Registrado!`,'success');
+                    
 
                 }
             } catch (error) {
