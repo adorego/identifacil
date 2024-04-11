@@ -384,9 +384,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                 <InputLabel>Tipo de documento</InputLabel>
 
                                 <Select
+                                    disabled
                                     id="tipo_documento"
                                     name="tipo_documento"
-                                    label='Tipo documento'
+                                    label='Tipo de documento'
                                     value={datosPersonalesState.tipoDeDocumento}
                                 >
 
@@ -516,16 +517,19 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             </FormControl>
                         </Grid>
                         <Grid item xs={4}>
-                            <TextField
-                                autoComplete="off"
-                                fullWidth
-                                label="Ciudad de Nacimiento"
-                                name="lugarDeNacimiento"
-                                value={datosPersonalesState.lugarDeNacimiento}
-                                onChange={onDatoChange}>
+                            <FormControl fullWidth variant="outlined">
+                                <InputLabel>Ciudad de nacimiento</InputLabel>
+                                <Select
+                                    value={datosPersonalesState.lugarDeNacimiento}
+                                    onChange={onDatoSelectChange}
+                                    label="Ciudad de Nacimiento"
+                                    name="lugarDeNacimiento"
+                                >
+                                    <MenuItem value={0}>Seleccionar ciudad</MenuItem>
+                                    <MenuItem value={1}>Asuncion</MenuItem>
 
-                            </TextField>
-
+                                </Select>
+                            </FormControl>
                         </Grid>
                     </Grid>
                 </Grid>

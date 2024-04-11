@@ -199,8 +199,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     ciudad: datosDeIdentificacion.ciudad,
                 }
             })
-        }else{
-            console.log('datos 2')
         }
     }, [datosDeIdentificacion]);
 

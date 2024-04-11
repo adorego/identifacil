@@ -52,7 +52,10 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
     // por si llega null en el campo entonces carga los datos iniciales vacios
     const estadoInicial = datosFamiliaresIniciales ? datosFamiliaresIniciales : datosFamiliaresInicial;
+
     const [estadoFormularioDatosFamiliares, setEstadoFormularioDatosFamiliares] = useState<datosFamiliaresType>(estadoInicial);
+
+    /** 2, Estado del circulo familiar */
     const [stateCirculoFamiliar, setStateCirculoFamiliar] = useState<circuloFamiliarStateType[]>([])
 
     const [familiarParaModal, setFamiliarParaModal] = useState<circuloFamiliarStateType | null>(null)
@@ -67,13 +70,16 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
      * @param handleClose funcion para cerrar modal
     * */
     const { open, handleOpen, handleClose } = useModal();
+
     const {openSnackbar} = useGlobalContext();
+
     const [loading, setLoading] = useState(true);
+
     const router = useRouter();
 
 
     useEffect(() => {
-
+        console.log(datosFamiliaresIniciales)
         if(datosFamiliaresIniciales){
             setEstadoFormularioDatosFamiliares(prev=>{
                 return{
@@ -207,6 +213,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     }
     const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
+
         setConsultaLoading(true)
 
         const circuloFamiliar = stateCirculoFamiliar.map(item => ({
@@ -224,6 +231,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             familiares: circuloFamiliar,
             familiares_modificado: true,
         }
+
+
         const editMod = datosFamiliaresIniciales?.id ? true : false // Si es TRUE, entonces es PUT, si es FALSE es POST
         const redirect = false
 
@@ -248,7 +257,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             });
 
 
-                console.log(respuesta)
+
             if (respuesta.success) {
                 setLoading(false);
                 setConsultaLoading(false)
@@ -260,6 +269,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                         datosFamiliares: {
                             ...estadoFormularioDatosFamiliares,
                             id: respuesta.datos.id,
+                            familiares: stateCirculoFamiliar
                         }
                     }))
                 }
@@ -388,8 +398,11 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                             open={true}
                             onClose={handleClose}
                             title='Agregar miembro del circulo familiar'>
-                            <FormularioCirculoFamiliar open={open} onClose={handleClose} onHandleChangeCirculo={handleChangeCirculo}
-                                                       savedState={familiarParaModal}/>
+                            <FormularioCirculoFamiliar
+                                open={open}
+                                onClose={handleClose}
+                                onHandleChangeCirculo={handleChangeCirculo}
+                                savedState={familiarParaModal}/>
                         </ModalComponent>
                     )}
                 </Grid>

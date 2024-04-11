@@ -1,11 +1,12 @@
 'use client'
 
 import * as React from 'react';
-import {Button, TextField, Box, Grid, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
+import {Button, TextField, Box, Grid, FormControl, InputLabel, Select, MenuItem, FormHelperText} from '@mui/material';
 import {SelectChangeEvent} from "@mui/material/Select";
 import {circuloFamiliarStateType} from "@/components/utils/systemTypes";
 import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
+import {useGlobalContext} from "@/app/Context/store";
 
 interface FormularioCirculoFamiliarProps {
     onClose: () => void;
@@ -20,11 +21,11 @@ const familiarInitialState = {
     esFuncionario: false,
     apellido: "",
     vinculo: {
-        id: 1,
+        id: 0,
         nombre: null,
     },
     establecimiento: {
-        id: 1,
+        id: 0,
         nombre: null,
     },
     edad: null,
@@ -33,7 +34,14 @@ const familiarInitialState = {
 
 export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps> = ({ onClose, onHandleChangeCirculo,savedState=null }) => {
     const [state, setState] = React.useState<circuloFamiliarStateType>(familiarInitialState)
+
     const [editMode, setEditMode] = useState(false)
+
+    const {openSnackbar} = useGlobalContext();
+
+    const [stateVinculos, setStateVinculos] = React.useState<{id:number, nombre:string}[]>([])
+
+    const [stateEstablecimientos, setStateEstablecimiento] = React.useState<{id:number, nombre:string}[]>([])
 
     useEffect(() => {
         console.log(familiarInitialState)
@@ -53,9 +61,6 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
         }
 
     }, [savedState]);
-
-    const [stateVinculos, setStateVinculos] = React.useState<{id:number, nombre:string}[]>([])
-    const [stateEstablecimientos, setStateEstablecimiento] = React.useState<{id:number, nombre:string}[]>([])
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setState(prev =>{
@@ -92,7 +97,9 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
     };
 
     const handlerVinculos = (event: SelectChangeEvent<number|string | null>) => {
+
         const vinculoActual = stateVinculos.find(vinculo => vinculo.id === event.target.value)
+
         if(vinculoActual){
             setState(prev=>{
                 return{
@@ -122,9 +129,13 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
 
     const handleSubmit = (event: { preventDefault: () => void; })=>{
         event.preventDefault();
-        console.log(state)
-        onHandleChangeCirculo(state, editMode)
-        onHandleCloseForm(); // Cierra el modal después de la acción*/
+        if(state.establecimiento.id && state.vinculo.id){
+            console.log(state)
+            onHandleChangeCirculo(state, editMode)
+            onHandleCloseForm(); // Cierra el modal después de la acción*/
+        }else{
+            openSnackbar('Debe completar los campos requeridos', 'warning');
+        }
     }
 
     useEffect(() => {
@@ -166,8 +177,8 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                             fullWidth/>
                     </Grid>
 
-                    <Grid item sm={12}>
-                        <FormControl fullWidth>
+                    <Grid item sm={12} mt={2}>
+                        <FormControl fullWidth error={state.vinculo.id == 0}>
                             <InputLabel id="vinculo-sistema-label">Vinculo familiar</InputLabel>
                             <Select
                                 labelId="vinculo-sistema-label"
@@ -177,7 +188,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                                 name='relacion'
                                 onChange={handlerVinculos}
                             >
-                                <MenuItem disabled value={""}>Seleccionar vinculo</MenuItem>
+                                <MenuItem disabled value={0}>Seleccionar vinculo</MenuItem>
                                 {
                                     stateVinculos.map((item, index) =>{
                                         if(item.id !== 3){
@@ -188,11 +199,14 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                                     })
                                 }
                             </Select>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
+
                     </Grid>
 
-                    <Grid item sm={12}>
-                        <FormControl fullWidth>
+                    <Grid item sm={12} mt={2}>
+
+                        <FormControl fullWidth error={state.establecimiento.id == 0}>
                             <InputLabel id="establecimiento-label">Establecimiento</InputLabel>
                             <Select
                                 labelId="establecimiento-label"
@@ -202,7 +216,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                                 name='establecimiento'
                                 onChange={handlerEstablecimientos}
                             >
-                                <MenuItem value={0}>Ninguno</MenuItem>
+                                <MenuItem disabled value={0}>Seleccionar establecimiento</MenuItem>
                                 {
                                     stateEstablecimientos.map((item, index) =>{
                                         return(
@@ -211,10 +225,11 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                                     })
                                 }
                             </Select>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                     </Grid>
 
-                    <Grid item sm={12}>
+                    <Grid item sm={12} mt={2}>
                         <FormControl fullWidth>
                             <InputLabel id="vinculo-sistema-label">Vinculo con el sistema</InputLabel>
                             <Select
