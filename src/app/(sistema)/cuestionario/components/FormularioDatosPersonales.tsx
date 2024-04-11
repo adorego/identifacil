@@ -457,7 +457,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item sm={4}>
-                    <FormControl fullWidth={true} error={(datosPersonalesState.estadoCivil !== null && datosPersonalesState.estadoCivil !== undefined && datosPersonalesState.estadoCivil == 0 )}>
+                    <FormControl fullWidth={true} error={datosPersonalesState.estadoCivil == 0 || datosPersonalesState.estadoCivil == null}>
                         <InputLabel htmlFor="estado_civil">
                             Estado Civil
                         </InputLabel>
@@ -563,15 +563,20 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item xs={6}>
-                    <TextField
-                        autoComplete="off"
-                        fullWidth
-                        label="Ciudad de Nacimiento"
-                        name="lugarDeNacimiento"
-                        value={datosPersonalesState.lugarDeNacimiento}
-                        onChange={onDatoChange}>
+                    <FormControl fullWidth variant="outlined" >
+                        <InputLabel>Ciudad de Nacimiento</InputLabel>
+                        <Select
+                            value={datosPersonalesState.lugarDeNacimiento ? datosPersonalesState.lugarDeNacimiento : '0'}
+                            onChange={onDatoSelectChange}
+                            label="Ciudad de Nacimiento"
+                            name="lugarDeNacimiento"
+                        >
+                            <MenuItem value={0}>Seleccionar ciudad</MenuItem>
+                            <MenuItem value={1}>Asuncion</MenuItem>
 
-                    </TextField>
+                        </Select>
+
+                    </FormControl>
 
                 </Grid>
                 <Grid item sm={8}>
@@ -639,7 +644,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item sm={4}>
-                    <FormControl fullWidth variant="outlined"  error={datosPersonalesState.departamento == 0}>
+                    <FormControl fullWidth variant="outlined"  error={datosPersonalesState.ciudad == 0}>
                         <InputLabel>Ciudad</InputLabel>
                         <Select
                             value={datosPersonalesState.ciudad}

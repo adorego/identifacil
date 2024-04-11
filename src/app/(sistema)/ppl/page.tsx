@@ -9,6 +9,7 @@ import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables"
 import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 import FiltrosPpl from "@/app/(sistema)/ppl/components/filtrosPpl";
+import dayjs from "dayjs";
 
 
 const ENDPOINT: string = `/gestion_ppl/ppls`
@@ -64,7 +65,7 @@ export default function Page() {
                     setListaPersonas(fetchedData.map((item:any)=>({
                         ...item,
                         nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
-                        fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso ? item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso : 'N/D',
+                        fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso ? dayjs(item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso).format('YYYY/MM/DD') : 'N/D',
                         apodo: item.apodo ? item.apodo : 'N/D'
                     })));
                 }

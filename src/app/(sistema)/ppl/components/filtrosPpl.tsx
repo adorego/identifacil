@@ -83,9 +83,12 @@ export default function FiltrosPpl({ dataSinFiltro, handleFiltro, searchField, d
         if(dateSearchField && valueDateStart){
             console.log('step 1')
             datosFiltrados = datosFiltrados.filter((item: any) => {
+                console.log('dato de filtro', valueDateStart.format('YYYY/MM/DD') )
+                console.log('datos lista',  item['fecha_de_ingreso'])
+
                 if (item['fecha_de_ingreso'] && item['fecha_de_ingreso'] !== 'N/D') {
 
-                    return valueDateStart.format('YYYY-MM-DD') == item['fecha_de_ingreso']
+                    return valueDateStart.format('YYYY/MM/DD') == item['fecha_de_ingreso']
                 }
             })
         }
