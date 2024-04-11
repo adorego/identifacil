@@ -229,7 +229,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                                                 nombre: datosPPL.contacto_embajada?.nombre ? datosPPL.contacto_embajada.nombre : '',
                                                 numero: datosPPL.contacto_embajada?.numero ? datosPPL.contacto_embajada.numero : '',
                                                 pais: {
-                                                    id: datosPPL.contacto_embajada?.pais.id ? datosPPL.contacto_embajada.pais.id : 0,
+                                                    id: datosPPL.contacto_embajada?.pais?.id ? datosPPL.contacto_embajada.pais.id : 0,
                                                 }
                                             }
                                         }}
