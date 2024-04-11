@@ -12,7 +12,7 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import React, {FC, useEffect, useState} from "react";
+import React, {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import {
     circuloFamiliarStateInitial,
     circuloFamiliarStateType,
@@ -38,6 +38,7 @@ interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
     id_persona: number | null;
     handleAccordion?: (s: string)=>void
+    onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 }
 
 
@@ -45,7 +46,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     {
         id_persona,
         datosFamiliaresIniciales = datosFamiliaresInicial,
-        handleAccordion
+        handleAccordion,
+        onSetDatosPPL
     }) => {
 
     // por si llega null en el campo entonces carga los datos iniciales vacios
@@ -251,6 +253,16 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                 setLoading(false);
                 setConsultaLoading(false)
 
+                // Se setea estado global
+                if(onSetDatosPPL){
+                    onSetDatosPPL((prev:any)=>({
+                        ...prev,
+                        datosFamiliares: {
+                            ...estadoFormularioDatosFamiliares,
+                            id: respuesta.datos.id,
+                        }
+                    }))
+                }
                 setEstadoFormularioDatosFamiliares(prev=>({
                     ...prev,
                     id: respuesta.datos.id,

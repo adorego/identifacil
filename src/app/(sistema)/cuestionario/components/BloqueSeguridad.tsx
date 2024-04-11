@@ -10,7 +10,7 @@ import {
     Radio,
     RadioGroup, Typography
 } from "@mui/material";
-import React, {FC, useEffect, useState} from "react";
+import React, {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import {datosSeguridadInicial, datosSeguridadType} from "@/components/utils/systemTypes";
 
 import {api_request} from "@/lib/api-request";
@@ -19,13 +19,17 @@ import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 
+class datosPersonaType {
+}
+
 interface BloqueSeguridadProps {
     datosIniciales?: datosSeguridadType;
     id_persona: number | null;
     handleAccordion?: (s: string) => void;
+    onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 }
 
-const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona, handleAccordion}) => {
+const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguridadInicial, id_persona, handleAccordion, onSetDatosPPL}) => {
 
     const estadoIncial = datosIniciales ? datosIniciales : datosSeguridadInicial
     const [estadoBloqueSeguridadFormulario, setEstadoBloqueSeguridadFormulario] = useState<datosSeguridadType>(estadoIncial);
@@ -99,9 +103,19 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
 
             })
             if (respuesta.success) {
+                if(onSetDatosPPL){
+                    onSetDatosPPL((prev:any)=>({
+                        ...prev,
+                        datosDeSeguridad: {
+                            ...estadoBloqueSeguridadFormulario,
+                            id: respuesta.datos.id,
+                        }
+                    }))
+                }
+
                 setEstadoBloqueSeguridadFormulario(prev=>({
                     ...prev,
-                    id: respuesta.datos.id,
+
                 }))
                 setConsultaLoading(false)
                 if(handleAccordion){

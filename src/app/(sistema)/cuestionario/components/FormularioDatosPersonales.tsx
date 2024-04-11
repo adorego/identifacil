@@ -17,7 +17,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import React, {ChangeEvent, FC, useEffect, useState} from "react";
+import React, {ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import SaveIcon from '@mui/icons-material/Save';
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
 import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
@@ -27,8 +27,10 @@ import dayjs, {Dayjs} from "dayjs";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
+import {usePathname, useRouter} from "next/navigation";
 
 interface datosPersonales {
+    flag?: boolean;
     id_persona: number | null;
     numero_de_identificacion: string;
     nombre: string;
@@ -68,6 +70,7 @@ interface datosPersonales {
 }
 
 const datosPersonalesInicial: datosPersonales = {
+    flag:false,
     nombre_contacto_en_embajada: '',
     contactoDeEmbajada_numero: '',
     tiene_contacto_en_embajada: false,
@@ -78,9 +81,9 @@ const datosPersonalesInicial: datosPersonales = {
     nombre: '',
     apellido: '',
     apodo: '',
-    estadoCivil: null,
+    estadoCivil: 0,
     fechaDeNacimiento: null,
-    nacionalidad: null,
+    nacionalidad: 0,
     lugarDeNacimiento: '',
     sexo: '',
     codigo_genero: 0,
@@ -95,8 +98,8 @@ const datosPersonalesInicial: datosPersonales = {
     grupoLGTBI: '',
     perteneceAComunidadLGTBI: false,
     telefono_contacto_en_embajada: '',
-    departamento: 1,
-    ciudad: 1,
+    departamento: 0,
+    ciudad: 0,
     contacto_embajada:{
         id: 0,
         nombre: '',
@@ -106,6 +109,7 @@ const datosPersonalesInicial: datosPersonales = {
 }
 
 export interface BloqueDatosPersonalesProps {
+    onSetDatosPPL?: Dispatch<SetStateAction<any>>;
     datosDeIdentificacion: {
         numero_de_identificacion: string;
         id_persona: number | null;
@@ -146,9 +150,10 @@ export interface BloqueDatosPersonalesProps {
 
 }
 
-const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, tipo_de_documento = null}) => {
+const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, tipo_de_documento = null,onSetDatosPPL}) => {
 
-
+    const pathname = usePathname()
+    const router = useRouter();
 
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial
@@ -158,10 +163,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     const [consultaLoading, setConsultaLoading] = useState(false)
 
     useEffect(() => {
-        console.log(datosDeIdentificacion)
+
         if (datosDeIdentificacion) {
-            console.log('datos iniciales')
+
             setDatosPersonalesState((prevState:any) => {
+                console.log(datosDeIdentificacion)
                 return {
                     ...prevState,
                     id_persona: datosDeIdentificacion.id_persona,
@@ -274,6 +280,28 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         )
     }
 
+    const onDatoChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const { value } = event.target;
+
+        const regex = /^\+?[0-9\(\)\s]*\.?[0-9\(\)\s]*$/;
+
+        if (value.match(regex)) {
+            setDatosPersonalesState(
+                (prev) => {
+                    return (
+                        {
+                            ...prev,
+                            [event.target.name]: value
+
+                        }
+                    )
+                }
+            )
+        }
+
+    }
+
     const onDatoSelectChange = (event: SelectChangeEvent<number | string | null>) => {
         setDatosPersonalesState(
             (previus) => {
@@ -323,38 +351,57 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         event.preventDefault();
         setConsultaLoading(true)
 
-
-        const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
-        const url = datosDeIdentificacion.id_datos_personales ?
-            `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
-            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
-        const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
-
-        console.log(datosDelFormulario)
+        if(datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil){
+            const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
+            const url = datosDeIdentificacion.id_datos_personales ?
+                `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
+                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
+            const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
 
 
 
-        const respuesta = await api_request(url, {
-            method: methodForm,
-            body: JSON.stringify(datosDelFormulario),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        if (respuesta.success) {
-            setDatosPersonalesState(prev=>({
-                ...prev,
-                id: respuesta.datos.id,
-            }))
-            setConsultaLoading(false)
-            openSnackbar("Datos guardados correctamente", "success")
-        } else {
-            if (respuesta.error) {
+
+            const respuesta = await api_request(url, {
+                method: methodForm,
+                body: JSON.stringify(datosDelFormulario),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (respuesta.success) {
+
+                /*if(onSetDatosPPL){
+                    onSetDatosPPL((prev:any)=>({
+                        ...prev,
+                        datosPersonales: {
+                            ...datosPersonalesState,
+                            id: respuesta.datos.id,
+                            flag:true,
+                        }
+                    }))
+                }*/
+
+                setDatosPersonalesState(prev=>({
+                    ...prev,
+                    id: respuesta.datos.id,
+                }))
                 setConsultaLoading(false)
-                openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
-                log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                openSnackbar("Datos guardados correctamente", "success")
+                if(pathname.startsWith('/ppl')){
+                    router.push(`/ppl/${datosDelFormulario.id_persona}`);
+                }
+            } else {
+                if (respuesta.error) {
+                    setConsultaLoading(false)
+                    openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
+                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                }
             }
+        }else{
+            openSnackbar('Completar campos requerido', 'warning')
+            setConsultaLoading(false)
         }
+
 
         // console.log("Respuesta:", respuesta);
 
@@ -410,7 +457,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item sm={4}>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} error={(datosPersonalesState.estadoCivil !== null && datosPersonalesState.estadoCivil !== undefined && datosPersonalesState.estadoCivil == 0 )}>
                         <InputLabel htmlFor="estado_civil">
                             Estado Civil
                         </InputLabel>
@@ -418,9 +465,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             id="estado_civil_id"
                             name="estadoCivil"
                             label='Estado Civil'
-                            value={datosPersonalesState.estadoCivil ? datosPersonalesState.estadoCivil : ''}
+                            value={datosPersonalesState.estadoCivil ? datosPersonalesState.estadoCivil : 0}
                             onChange={onDatoSelectChange}
                         >
+                            <MenuItem value={0}>Seleccionar estado civil</MenuItem>
                             {estadosCiviles ? estadosCiviles.map(
                                 (estadoCivil, id) => {
                                     return (
@@ -428,8 +476,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     )
                                 }
                             ) : null}
-
                         </Select>
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
                 <Grid item xs={4}>
@@ -455,6 +503,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     <FormControl fullWidth variant="outlined">
                         <InputLabel id='tipo-doc-label'>Tipo de documento</InputLabel>
                         <Select
+                            disabled
                             labelId='tipo-doc-label'
                             value={datosPersonalesState.tipoDeDocumento ? datosPersonalesState.tipoDeDocumento : 0}
                             label='Tipo de documento'
@@ -525,7 +574,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </TextField>
 
                 </Grid>
-                <Grid item sm={6}>
+                <Grid item sm={8}>
                     <TextField
                         fullWidth
                         label="Direccion"
@@ -542,7 +591,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         label="Numero de contacto"
                         name="numeroDeContacto"
                         value={datosPersonalesState.numeroDeContacto ? datosPersonalesState.numeroDeContacto : ''}
-                        onChange={onDatoChange}
+                        onChange={onDatoChangeNumber}
                     />
                 </Grid>
                 <Grid item xs={4}>
@@ -552,7 +601,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             fullWidth
                             name="contactoDeEmergencia1"
                             value={datosPersonalesState.contactoDeEmergencia1 ? datosPersonalesState.contactoDeEmergencia1 : ''}
-                            onChange={onDatoChange}
+                            onChange={onDatoChangeNumber}
                         />
                     </FormControl>
                 </Grid>
@@ -563,7 +612,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             fullWidth
                             name="contactoDeEmergencia2"
                             value={datosPersonalesState.contactoDeEmergencia2 ? datosPersonalesState.contactoDeEmergencia2 : ''}
-                            onChange={onDatoChange}
+                            onChange={onDatoChangeNumber}
                         />
                     </FormControl>
                 </Grid>
@@ -574,21 +623,23 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 </Grid>
                 <Grid item sm={4}>
 
-                    <FormControl fullWidth variant="outlined">
+                    <FormControl fullWidth variant="outlined" error={datosPersonalesState.departamento == 0}>
                         <InputLabel>Departamento</InputLabel>
                         <Select
-                            value={datosPersonalesState.departamento}
+                            value={datosPersonalesState.departamento ? datosPersonalesState.departamento : 0}
                             onChange={onDatoSelectChange}
                             label="Departamento"
                             name="departamento"
                         >
+                            <MenuItem value={0}>Seleccionar departamento</MenuItem>
                             <MenuItem value={1}>Asuncion</MenuItem>
 
                         </Select>
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
                 <Grid item sm={4}>
-                    <FormControl fullWidth variant="outlined">
+                    <FormControl fullWidth variant="outlined"  error={datosPersonalesState.departamento == 0}>
                         <InputLabel>Ciudad</InputLabel>
                         <Select
                             value={datosPersonalesState.ciudad}
@@ -596,9 +647,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Ciudad"
                             name="ciudad"
                         >
+                            <MenuItem value={0}>Seleccionar ciudad</MenuItem>
                             <MenuItem value={1}>Asuncion</MenuItem>
 
                         </Select>
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
                 <Grid item xs={4}>
@@ -700,7 +753,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         Pueblo indigenas
                     </Typography>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={12}>
                     <FormControl fullWidth variant="outlined">
                         <FormLabel>Pertenece a un pueblo indigena</FormLabel>
                         <RadioGroup

@@ -23,6 +23,7 @@ import BloqueSalud from "../../cuestionario/components/BloqueSalud";
 import BloqueSeguridad from "../../cuestionario/components/BloqueSeguridad";
 import FormularioDatosPersonales from "@/app/(sistema)/cuestionario/components/FormularioDatosPersonales";
 import BloqueGaleria from "@/app/(sistema)/cuestionario/components/BloqueGaleria";
+import {useEffect, useState} from "react";
 
 
 interface TabPanelProps {
@@ -152,12 +153,21 @@ const datosPersonaInitial: datosPersonaType = {
     registro_de_fotos: [],
 }
 
-export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: {
-    datosPersona: datosPersonaType
-}) {
+export default function NestedInformacionPreso({datosPersona = datosPersonaInitial}: { datosPersona: datosPersonaType }) {
 
-    console.log(datosPersona)
+
     const [value, setValue] = React.useState(0);
+
+    const [datosPPL, setdatosPPL] = useState<datosPersonaType>(datosPersonaInitial)
+
+    useEffect(() => {
+
+
+        if(datosPersona){
+            setdatosPPL(datosPersona)
+        }
+    }, [datosPersona]);
+
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -165,6 +175,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
 
     return (
         <Box pt={3}>
+
             <Paper elevation={1}>
                 <Box p={2}>
                     <Grid container>
@@ -187,81 +198,106 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                         <Grid item sm={10}>
                             <CustomTabPanel value={value} index={0}>
 
-                                {datosPersona ?
                                     <FormularioDatosPersonales
-                                        tipo_de_documento={datosPersona.tipo_de_documento?.id}
+                                        tipo_de_documento={datosPPL.tipo_de_documento?.id}
+                                        onSetDatosPPL={setdatosPPL}
                                         datosDeIdentificacion={{
-                                            id_persona: datosPersona.id_persona,
-                                            id_datos_personales: datosPersona.datosPersonales?.id,
-                                            nombres: datosPersona.nombre,
-                                            apellidos: datosPersona.apellido,
-                                            apodo: datosPersona.apodo,
-                                            codigo_genero: datosPersona.genero,
-                                            fechaDeNacimiento: datosPersona.fechaDeNacimiento,
-                                            nacionalidad: datosPersona?.datosPersonales?.nacionalidad?.id,
-                                            estadoCivil: datosPersona?.datosPersonales?.estadoCivil?.id,
-                                            lugarDeNacimiento: datosPersona?.datosPersonales?.lugarDeNacimiento,
-                                            direccion: datosPersona?.datosPersonales?.direccion ? datosPersona?.datosPersonales?.direccion : '',
-                                            barrioCompania: datosPersona?.datosPersonales?.barrioCompania ? datosPersona?.datosPersonales?.barrioCompania : '',
-                                            numeroDeContacto: datosPersona?.datosPersonales?.numeroDeContacto ? datosPersona?.datosPersonales?.numeroDeContacto : '',
-                                            contactoDeEmergencia1: datosPersona?.datosPersonales?.contactoDeEmergencia1  ? datosPersona?.datosPersonales?.contactoDeEmergencia1 : '',
-                                            contactoDeEmergencia2: datosPersona?.datosPersonales?.contactoDeEmergencia2 ? datosPersona?.datosPersonales?.contactoDeEmergencia2 : '',
-                                            pueblosIndigenas: datosPersona?.datosPersonales?.pueblosIndigenas,
-                                            nombreEtnia: datosPersona?.datosPersonales?.nombreEtnia,
-                                            perteneceAComunidadLGTBI: datosPersona?.datosPersonales?.perteneceAComunidadLGTBI,
-                                            numero_de_identificacion: datosPersona.numero_de_identificacion,
-                                            tiene_contacto_en_embajada: datosPersona.tiene_contacto_en_embajada,
-                                            departamento: datosPersona.departamento?.id ? datosPersona.departamento.id : 0,
-                                            ciudad: datosPersona.ciudad?.id ? datosPersona.ciudad?.id : 0,
+                                            id_persona: datosPPL.id_persona,
+                                            id_datos_personales: datosPPL.datosPersonales?.id,
+                                            nombres: datosPPL.nombre,
+                                            apellidos: datosPPL.apellido,
+                                            apodo: datosPPL.apodo,
+                                            codigo_genero: datosPPL.genero,
+                                            fechaDeNacimiento: datosPPL.fechaDeNacimiento,
+                                            nacionalidad: datosPPL?.datosPersonales?.nacionalidad?.id,
+                                            estadoCivil: datosPPL?.datosPersonales?.estadoCivil?.id,
+                                            lugarDeNacimiento: datosPPL?.datosPersonales?.lugarDeNacimiento,
+                                            direccion: datosPPL?.datosPersonales?.direccion ? datosPPL?.datosPersonales?.direccion : '',
+                                            barrioCompania: datosPPL?.datosPersonales?.barrioCompania ? datosPPL?.datosPersonales?.barrioCompania : '',
+                                            numeroDeContacto: datosPPL?.datosPersonales?.numeroDeContacto ? datosPPL?.datosPersonales?.numeroDeContacto : '',
+                                            contactoDeEmergencia1: datosPPL?.datosPersonales?.contactoDeEmergencia1  ? datosPPL?.datosPersonales?.contactoDeEmergencia1 : '',
+                                            contactoDeEmergencia2: datosPPL?.datosPersonales?.contactoDeEmergencia2 ? datosPPL?.datosPersonales?.contactoDeEmergencia2 : '',
+                                            pueblosIndigenas: datosPPL?.datosPersonales?.pueblosIndigenas,
+                                            nombreEtnia: datosPPL?.datosPersonales?.nombreEtnia,
+                                            perteneceAComunidadLGTBI: datosPPL?.datosPersonales?.perteneceAComunidadLGTBI,
+                                            numero_de_identificacion: datosPPL.numero_de_identificacion,
+                                            tiene_contacto_en_embajada: datosPPL.tiene_contacto_en_embajada,
+                                            departamento: datosPPL.departamento?.id ? datosPPL.departamento.id : 0,
+                                            ciudad: datosPPL.ciudad?.id ? datosPPL.ciudad?.id : 0,
                                             contacto_embajada: {
-                                                id: datosPersona.contacto_embajada?.id ? datosPersona.contacto_embajada.id : 0,
-                                                nombre: datosPersona.contacto_embajada?.nombre ? datosPersona.contacto_embajada.nombre : '',
-                                                numero: datosPersona.contacto_embajada?.numero ? datosPersona.contacto_embajada.numero : '',
+                                                id: datosPPL.contacto_embajada?.id ? datosPPL.contacto_embajada.id : 0,
+                                                nombre: datosPPL.contacto_embajada?.nombre ? datosPPL.contacto_embajada.nombre : '',
+                                                numero: datosPPL.contacto_embajada?.numero ? datosPPL.contacto_embajada.numero : '',
                                                 pais: {
-                                                    id: datosPersona.contacto_embajada?.pais.id ? datosPersona.contacto_embajada.pais.id : 0,
+                                                    id: datosPPL.contacto_embajada?.pais.id ? datosPPL.contacto_embajada.pais.id : 0,
                                                 }
                                             }
+                                        }}
+                                    />
 
-                                        }}/> : ''
-                                }
 
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={1}>
 
                                 <BloqueSalud
-                                    id_persona={datosPersona.id_persona}
-                                    datosAlmacenados={datosPersona.datosDeSalud}
-                                    codigo_genero={datosPersona.genero}
+                                    id_persona={datosPPL.id_persona}
+                                    datosAlmacenados={datosPPL.datosDeSalud}
+                                    codigo_genero={datosPPL.genero}
+                                    onSetDatosPPL={setdatosPPL}
                                 />
+
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={2}>
-                                <BloqueSeguridad
-                                    datosIniciales={datosPersona.datosDeSeguridad}
-                                    id_persona={datosPersona.id_persona}
-                                />
+
+                                    <BloqueSeguridad
+                                        datosIniciales={datosPPL.datosDeSeguridad}
+                                        id_persona={datosPPL.id_persona}
+                                        onSetDatosPPL={setdatosPPL}
+                                    />
+
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={3}>
-                                <BloqueEducacion id_persona={datosPersona.id_persona}
-                                                 datosEducacionIniciales={datosPersona.datosEducacion}/>
+
+                                    <BloqueEducacion
+                                        id_persona={datosPPL.id_persona}
+                                        datosEducacionIniciales={datosPPL.datosEducacion}
+                                        onSetDatosPPL={setdatosPPL}
+                                    />
+
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={4}>
-                                <BloqueFamiliares id_persona={datosPersona.id_persona}
-                                                  datosFamiliaresIniciales={datosPersona.datosFamiliares}/>
+
+                                    <BloqueFamiliares
+                                        id_persona={datosPPL.id_persona}
+                                        datosFamiliaresIniciales={datosPPL.datosFamiliares}
+                                        onSetDatosPPL={setdatosPPL}
+                                    />
+
                             </CustomTabPanel>
 
 
                             <CustomTabPanel value={value} index={5}>
-                                <BloqueJudicial id_persona={datosPersona.id_persona}
-                                                datosIniciales={datosPersona.datosJudiciales}/>
+
+                                    <BloqueJudicial
+                                        id_persona={datosPPL.id_persona}
+                                        datosIniciales={datosPPL.datosJudiciales}
+                                        onSetDatosPPL={setdatosPPL}
+                                    />
+
                             </CustomTabPanel>
 
                             <CustomTabPanel value={value} index={6}>
-                                <BloqueGaleria datosIniciales={datosPersona.registro_de_fotos}
-                                               id_persona={datosPersona.id_persona}/>
+
+                                    <BloqueGaleria
+                                        datosIniciales={datosPPL.registro_de_fotos}
+                                        id_persona={datosPPL.id_persona}
+                                        onSetDatosPPL={setdatosPPL}
+                                    />
+
                             </CustomTabPanel>
                         </Grid>
                     </Grid>

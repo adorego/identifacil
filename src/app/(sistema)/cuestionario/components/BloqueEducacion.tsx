@@ -10,7 +10,7 @@ import {
     Radio,
     RadioGroup, Typography
 } from "@mui/material";
-import {FC, useEffect, useState} from "react";
+import {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import {datosEducacionInicial, datosEducacionType} from "../../../../components/utils/systemTypes";
 
 import React from "react";
@@ -24,9 +24,10 @@ export interface BloqueEducacionProps {
     id_persona: number | null;
     datosEducacionIniciales?: datosEducacionType;
     handleAccordion?: (s: string)=>void;
+    onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 }
 
-const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales, handleAccordion}) => {
+const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales, handleAccordion,onSetDatosPPL}) => {
     /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
 
@@ -106,6 +107,16 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                 });
 
                 if (respuesta.success) {
+                    if(onSetDatosPPL){
+                        onSetDatosPPL((prev:any)=>({
+                            ...prev,
+                            datosEducacion: {
+                                ...estadoFormularioDeEducacion,
+                                id: respuesta.datos.id,
+                            },
+
+                        }))
+                    }
                     setEstadoFormularioDeEducacion(prev=>({
                         ...prev,
                         id: respuesta.datos.id,
@@ -189,7 +200,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                         />
                     </FormControl>
                 </Grid>
-                <Grid item sm={12} mt={3}>
+                <Grid item sm={12} mt={2}>
                     <FormControl>
                         <FormLabel id="datoOficio">Cuenta con algún oficio</FormLabel>
                         <RadioGroup
@@ -213,7 +224,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
             </Grid>
             { estadoFormularioDeEducacion.tieneOficio ?
                 <Grid container spacing={2}>
-                    <Grid item sm={6}>
+                    <Grid item sm={6} mt={2}>
 
                         <FormControl fullWidth={true}>
                             <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
@@ -231,7 +242,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                     </Grid>
                 </Grid>
             : null }
-            <Grid container spacing={2} mt={3}>
+            <Grid container spacing={2} mt={2}>
                 <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="datoUltimaEducativa">Ultimo lugar de trabajo</InputLabel>
