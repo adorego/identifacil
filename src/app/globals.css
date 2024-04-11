@@ -215,6 +215,16 @@ header.MuiPaper-root {
     box-shadow: 0 0 13px 0 rgba(0,0,0,0.55);
 }
 .MuiPaper-elevation1{
-    box-shadow: rgba(145, 158, 171, 0.2) 0px 0px 2px 0px, rgba(145, 158, 171, 0.12) 0px 12px 24px -4px !important;
+    box-shadow: rgba(145, 158, 171, 0.2) 0 0 2px 0, rgba(145, 158, 171, 0.12) 0 12px 24px -4px !important;
     border-radius: 16px !important;
+}
+
+.MuiInputBase-input.Mui-disabled, .MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.Mui-disabled.MuiInputBase-formControl.MuiInputBase-adornedEnd {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+}
+
+
+.MuiAccordion-root.MuiAccordion-rounded.MuiPaper-elevation.MuiPaper-elevation1.MuiPaper-root.MuiPaper-rounded {
+    border-radius: 0 !important;
 }

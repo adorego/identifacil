@@ -134,27 +134,33 @@ const initialData = {
 
 const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/id/`;
 export default function Page({ params }: { params: { id: number } }) {
+    /**1. For tabs position */
     const [value, setValue] = React.useState('1');
+
+    /**2. Para datoss precargados */
     const [data, setData] = React.useState<dataType>(initialData);
+
+    /**3. For tabs position */
     const [stateDataProfile, setStateDataProfile] = useState<any>({})
 
+    /**4. For loaders */
     const [loading, setLoading] = React.useState(true);
     const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
 
     useEffect(() => {
-        // Puedes cambiar la URL según tus necesidades
+
 
         setLoading(true)
+
         fetchData(`${ENDPOINT}${params.id}`)
             .then(fetchedData => {
                 setStateDataProfile((prev:any)=>{
-                    console.log(fetchedData)
+                    const datoDeCondena = fetchedData.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso == true).expedienteJudicial?.condenado;
                     let condenadoValue = '';
-                    if(
-                        fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).expedienteJudicial.condenado !== null
-                        && fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).expedienteJudicial.condenado !== undefined){
-                        if(fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).expedienteJudicial.condenado){
+
+                    if(datoDeCondena !== null && datoDeCondena !== undefined){
+                        if(datoDeCondena){
                             condenadoValue = 'Condenado'
                         }else{
                             condenadoValue = 'Procesado'
@@ -187,12 +193,7 @@ export default function Page({ params }: { params: { id: number } }) {
                 <TituloComponent titulo='PPL' />
             </Stack>
 
-            <Grid container sx={{
-                bgcolor: "#FFF",
-                border: '1px solid #e0e0e0',
-                borderRadius: '10px',
-                marginTop: '20px',
-            }}>
+            <Grid container sx={{bgcolor: "#FFF", border: '1px solid #e0e0e0', borderRadius: '10px', marginTop: '20px',}}>
                 <Grid item xs={12}>
                     <Grid container>
                         <Grid p={3} item sm={12}>
@@ -224,7 +225,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                                     Nombre y apellido
                                                 </Typography>
                                                 <Typography variant="body1" display="block" sx={{fontWeight: '600',}}>
-                                                    {data.nombre} {data.apellido} {`(${data.apodo})`}
+                                                    {data.nombre} {data.apellido} {data.apodo ? `(${data.apodo})` : ''}
                                                 </Typography>
                                             </Grid>
                                             <Grid item pt={0}>

@@ -1,4 +1,4 @@
-import React, {FC, useState, useEffect, SyntheticEvent, ChangeEvent} from "react";
+import React, {FC, useState, useEffect, SyntheticEvent, ChangeEvent, Dispatch, SetStateAction} from "react";
 import {
     Autocomplete, Box, Button, Chip, CircularProgress, FormControl, FormControlLabel,
     FormLabel, Grid, InputAdornment, InputLabel, MenuItem, OutlinedInput, Radio, RadioGroup,
@@ -22,6 +22,7 @@ interface BloqueSaludProps {
     datosAlmacenados?: datosDeSalud2Type;
     codigo_genero: number;
     handleAccordion?: (s: string) => void;
+    onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 }
 
 interface datosSaludSelect {
@@ -37,7 +38,16 @@ interface datosSaludSelect {
 }
 
 const datosSaludSelectInicial: datosSaludSelect = {
-    grupo_sanguineo: [{id: 1, nombre: "A"}, {id: 2, nombre: "A+"}, {id: 3, nombre: "A-"}],
+    grupo_sanguineo: [
+        {id: 1, nombre: "A+"},
+        {id: 2, nombre: "A-"},
+        {id: 3, nombre: "B+"},
+        {id: 4, nombre: "B-"},
+        {id: 5, nombre: "AB+"},
+        {id: 6, nombre: "AB-"},
+        {id: 7, nombre: "O+"},
+        {id: 8, nombre: "O-"},
+    ],
     vacunas_recibidas: [
         {
             id: 1,
@@ -82,7 +92,7 @@ const SaludFisicaInicial = {
     otros: false
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero = 2, handleAccordion}) => {
+const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero = 2, handleAccordion, onSetDatosPPL}) => {
     /** Estado seleccionados del form del form */
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
 
@@ -295,11 +305,25 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     const handleSaludFisica = (e: any) => {
         console.log(e.target.name)
+        if(e.target.name !== 'Ninguna'){
+            setStateSaludFisica(prev => ({
+                ...prev,
+                Ninguna: false,
+                [e.target.name]: e.target.checked
+            }))
+        }else{
+            setStateSaludFisica(prev => ({
+                ...prev,
+                Ninguna: true,
+                Fisica: false,
+                Motora: false,
+                Intelectual: false,
+                Visual: false,
+                Auditiva: false,
+                otros: false,
 
-        setStateSaludFisica(prev => ({
-            ...prev,
-            [e.target.name]: e.target.checked
-        }))
+            }))
+        }
     }
 
     const onDatosSaludSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -341,6 +365,15 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         })
         if (respuesta.success) {
             setConsultaLoading(false)
+            if(onSetDatosPPL){
+                onSetDatosPPL((prev:any)=>({
+                    ...prev,
+                    datosDeSalud: {
+                        ...datosSalud,
+                        id: respuesta.datos.id,
+                    }
+                }))
+            }
             setDatosSalud(prev=>({
                 ...prev,
                 id: respuesta.datos.id,
@@ -423,7 +456,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 labelId="grupo-sanquineo-label"
                                 id="grupo-sanguineo"
                                 name="grupo_sanguineo"
-                                value={datosSalud.grupo_sanguineo ? datosSalud.grupo_sanguineo?.id : ""}
+                                value={datosSalud.grupo_sanguineo ? datosSalud.grupo_sanguineo?.id : 0}
                                 onChange={onGruposSanguineoChange}
                             >
                                 <MenuItem value={0}>Seleccionar grupo sanguineo</MenuItem>
@@ -820,8 +853,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>
 
-                        <FormControl>
-                            <FormLabel id="medicamentos-id-label">¿Que medicación toma actualmente?</FormLabel>
+                        <FormControl fullWidth>
+                            <FormLabel id="medicamentos-id-label" sx={{mb:'1'}}>¿Que medicación toma actualmente?</FormLabel>
                             <Autocomplete
                                 multiple
                                 freeSolo
@@ -926,7 +959,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                         value="otros"
                                         control={<Checkbox checked={stateSaludFisica.otros} onChange={handleSaludFisica}
                                                            name='otros'/>}
-                                        label="otros"/>
+                                        label="Otros"/>
                                 </RadioGroup>
                             </FormControl>
                             {

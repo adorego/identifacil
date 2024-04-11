@@ -1,8 +1,7 @@
 'use client'
 
-import {Box, Button, DialogContentText, Grid, IconButton, TextField, Typography} from "@mui/material";
-import {useCallback, useEffect, useRef, useState} from "react";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { Button, Grid, IconButton, Typography} from "@mui/material";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import CancelIcon from '@mui/icons-material/Cancel';
 import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -25,39 +24,67 @@ type TipoGaleria = Array<TipoFoto>
 type TipoFoto = { nombre: string; foto: string; actualizado?: boolean }
 
 const fotoInitial = {foto: '', nombre: '', actualizado: false}
-const galeriaInitial = [
-    fotoInitial
-]
+const galeriaInitial = [fotoInitial]
 
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
-export default function BloqueGaleria({id_persona, datosIniciales, handleAccordion}: { id_persona: number | null; datosIniciales: TipoGaleria; handleAccordion?:(s: string)=>void }){
+export default function BloqueGaleria({id_persona, datosIniciales, handleAccordion,onSetDatosPPL}: { id_persona: number | null; datosIniciales: TipoGaleria; handleAccordion?:(s: string)=>void;    onSetDatosPPL?: Dispatch<SetStateAction<any>>; }){
+
+
+    /** 1.Estado para pantalla de carga */
     const [loading, setLoading] = useState(true);
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 2. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
-    const {openSnackbar} = useGlobalContext();
-    const router = useRouter();
-    const isEditMode = datosIniciales.length > 0 //params.id !== 'crear';
 
+    /** 3. Galeria */
     const [stateGaleria, setStateGaleria] = useState<TipoGaleria>([])
+
+    /** 4. Para bloquear boton de guardado */
     const [saveButtonState, setSaveButtonState] = useState(false)
 
     const [open, setOpen] = React.useState(false);
+
     const [img, setImg] = useState<string | null>(null);
+
+    const router = useRouter();
+    const {openSnackbar} = useGlobalContext();
+    const isEditMode = datosIniciales.length > 0 //params.id !== 'crear';
 
 
     useEffect(() => {
+
         if (datosIniciales.length > 0) {
             setStateGaleria(() => {
 
-                return datosIniciales.map(item => ({
-                    nombre: item.nombre,
-                    foto: `${ASSETS_URL}${item.foto}`
-                }))
+
+                return datosIniciales.map(item => {
+
+                    const cleanedUrl = item.foto.startsWith(ASSETS_URL) ? item.foto.slice(ASSETS_URL.length) : item.foto;
+
+                    if(item.foto.startsWith(ASSETS_URL)){
+                        return{
+                            nombre: item.nombre,
+                            foto: ASSETS_URL + cleanedUrl
+                        }
+                    }else if(item.foto.startsWith('data:image/jpeg;base64')){
+                        return{
+                            nombre: item.nombre,
+                            foto: item.foto
+                        }
+                    }else{
+                        return{
+                            nombre: item.nombre,
+                            foto: ASSETS_URL + item.foto
+                        }
+                    }
+
+
+
+                })
             })
 
         }
@@ -193,7 +220,17 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
             });
 
             setLoading(false);
+            console.log('Control de request de envio')
+            console.log(stateGaleria)
             if (response.ok) {
+                if(onSetDatosPPL){
+                    onSetDatosPPL((prev:any)=>({
+                        ...prev,
+                        registro_de_fotos: stateGaleria,
+
+                    }))
+                }
+
                 // @ts-ignore
                 setConsultaLoading(false)
                 const message = isEditMode ?
@@ -239,7 +276,7 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
                                             <CancelIcon/>
                                         </IconButton>
 
-                                        <ImgComponent urlImg={item.foto}/>
+                                        <ImgComponent urlImg={`${item.foto}`}/>
                                         {/*<Box mt={1}>
 
                                             <TextField

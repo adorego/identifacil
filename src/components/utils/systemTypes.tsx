@@ -45,7 +45,7 @@ export const datosDeSalud2Initial: datosDeSalud2Type =  {
     id_persona: null,
     tieneAfeccionADrogras: false,
     tieneAfeccionADrogas_modificado: false,
-    grupo_sanguineo: {id: null, nombre: null},
+    grupo_sanguineo: {id: 0, nombre: null},
     grupo_sanguineo_modificado: false,
     vacunas_recibidas: [],
     vacunas_recibidas_modificado: false,
@@ -311,6 +311,8 @@ interface expediente_tipo{
 }
 
 export type datosIncialesJudiciales = {
+    expediente_obj?: Object;
+    flag?: boolean;
     id?: number;
     primera_vez_en_prision?: boolean;
     cantidad_de_veces_que_ingreso?: number;
@@ -337,7 +339,7 @@ export type datosIncialesJudiciales = {
 export type datosJudicialesType = {
     key?: string | number | object;
     id?: number;
-
+    flag?: boolean;
     id_persona:number;
     establecimiento_penitenciario:number;
     primeraVezEnPrision:boolean;
@@ -361,6 +363,7 @@ export type datosJudicialesType = {
 }
 
 export const datosJudicialesInicial:datosJudicialesType = {
+    flag: false,
     id_persona: 0,
     establecimiento_penitenciario: 0,
     primeraVezEnPrision: true,
@@ -402,4 +405,41 @@ export const circuloFamiliarStateInitial = {
     establecimiento: {},
     edad: null,
     lugar_donde_esta_hijo: null
+}
+
+export type datosPersonalesType = {
+    id: number | null;
+    estadoCivil: {
+        id: number | null;
+    };
+    lugarDeNacimiento: string;
+    direccion: string;
+    barrioCompania: string;
+    nacionalidad: {
+        id: number | null;
+    };
+    numeroDeContacto: string;
+    contactoDeEmergencia1: string;
+    contactoDeEmergencia2: string;
+    pueblosIndigenas: boolean;
+    nombreEtnia: string;
+    perteneceAComunidadLGTBI: boolean;
+}
+export const datosPersonalesInitial : datosPersonalesType = {
+    id: null,
+    estadoCivil: {
+        id: null,
+    },
+    lugarDeNacimiento: "",
+    direccion: "",
+    barrioCompania: "",
+    nacionalidad: {
+        id: null,
+    },
+    numeroDeContacto: "",
+    contactoDeEmergencia1: "",
+    contactoDeEmergencia2: "",
+    pueblosIndigenas: false,
+    nombreEtnia: "",
+    perteneceAComunidadLGTBI: false,
 }

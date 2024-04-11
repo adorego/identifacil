@@ -14,7 +14,7 @@ import {
     Stack, TextField,
     Typography
 } from "@mui/material";
-import React, {FC, useEffect, useState} from "react";
+import React, {Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import {api_request} from "@/lib/api-request";
 import {datosIncialesJudiciales, datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 import AddIcon from '@mui/icons-material/Add';
@@ -39,7 +39,8 @@ interface BloqueJudicialProps {
     datosIniciales?: datosIncialesJudiciales | null;
     id_persona: number;
     numero_documento?: string | null;
-    handleAccordion?: (s: string)=> void;
+    handleAccordion?: (s: string) => void;
+    onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 
 }
 
@@ -53,17 +54,30 @@ type DocsOrdenanType = Array<{
 
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
-const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_persona,numero_documento=null, handleAccordion}) => {
-    /** Formulario con datos capturados **/
+const BloqueJudicial: FC<BloqueJudicialProps> = (
+    {
+        datosIniciales = null,
+        id_persona, numero_documento = null,
+        handleAccordion,
+        onSetDatosPPL
+    }) => {
+
+    /** 1. Formulario con datos capturados **/
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
+
+    /** 2. Formulario verificar campos incompletos **/
     const [stateErrors, setStateErrors] = useState<Object>({})
+
+    /** 3. Formulario para validacion de errores. Deprecado **/
     const [validateFormValueState, setValidateFormValueState] = useState<boolean>(false)
 
-    /**Contiene los datos para poblar el select de Expediente**/
+    /** 4. Contiene los datos para poblar el select de Expediente**/
     const [datosFormulario, setDatosFormulario] = useState<any>({})
+
+    /** 5. Formulario con datos capturados **/
     const [showExpdientesForm, setShowExpdientesForm] = useState(false)
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 6. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
 
@@ -75,16 +89,16 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
         setShowExpdientesForm(!showExpdientesForm)
     }
 
-    const handleExpedienteData = (value: any, caratula:string, expediente:string): void => {
+    const handleExpedienteData = (value: any, caratula: string, expediente: string): void => {
         console.log('Valor devuelto del expediente: ' + value)
         setShowExpdientesForm(false)
         setEstadoFormularioJudicial(prev => ({
             ...prev,
             expediente_id: value,
         }))
-        setDatosFormulario((prev:any) => ({
+        setDatosFormulario((prev: any) => ({
             ...prev,
-            expedientesSeleccionados:{
+            expedientesSeleccionados: {
                 id: value,
                 caratula_expediente: caratula,
                 numeroDeExpediente: expediente,
@@ -95,96 +109,107 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
     /** Este useEffect se ejecuta una vez al cargarse toda la pagina **/
     useEffect(() => {
-
-
-            //
-            setEstadoFormularioJudicial(prev => ({
-                ...prev,
-                id_persona: id_persona,
-                establecimiento_penitenciario: 1,
-            }))
-
-            console.log(datosIniciales)
-
-            // Se verifica que existan datos iniciales para cargar el estado
-            if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
-
-                const datos_ingreso_prision = datosIniciales.ingresos_a_prision[0];
-
-                /** Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de oficio judicial*/
-                const oficioJudicialBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "oficio_judicial");
-                // console.log(datos_ingreso_prision.documentos_que_ordenan_prision)
-                // console.log(oficioJudicialBuscado)
-
-                /**Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de resolucion MJ*/
-                const resolucionBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "resolucion_mj");
-
-                if (datos_ingreso_prision.expedienteJudicial !== undefined && datos_ingreso_prision.expedienteJudicial !== null) {
-                    setDatosFormulario((prev: any) => ({
-                        ...prev,
-                        expedientesSeleccionados: datos_ingreso_prision.expedienteJudicial
-                    }));
-
-                    setEstadoFormularioJudicial(prev => ({
-                        ...prev,
-                        expediente_id: datos_ingreso_prision.expedienteJudicial.id
-                    }))
-                }
-                const descargarArchivos = async (archivoURL: string, propiedad: string) => {
-                    const fileBlob = await downloadFile(archivoURL);
-                    const file = new File([fileBlob], `${archivoURL.split('/').pop()}`, {type: fileBlob.type});
-
-
-                    /** seteador de estado para guardaar la url de un archivo preguardado y mostrar*/
-                    setDatosFormulario((prev: any)=>({
-                        ...prev,
-                        [propiedad]:archivoURL,
-                    }))
-
-                    setEstadoFormularioJudicial((prev: any) => ({
-                        ...prev,
-                        [propiedad]: file,
-                    }))
-
-
-                }
-
-                descargarArchivos(`${ASSETS_URL}${oficioJudicialBuscado.ruta}`, 'oficioJudicial_documento')
-                descargarArchivos(`${ASSETS_URL}${resolucionBuscado.ruta}`, 'resolucion_documento')
-
-                // TODO Arreglar tipo aca
-                setEstadoFormularioJudicial((prev: any) => ({
-                    ...prev,
-                    id: datosIniciales.id, // ID DEL FORMULARIO JUDICIAL
-                    primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
-                    cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
-                    fecha_ingreso_a_establecimiento: datos_ingreso_prision.fecha_ingreso ? datos_ingreso_prision.fecha_ingreso : '',
-                    pabellon: datos_ingreso_prision.pabellon ? datos_ingreso_prision.pabellon : '',
-                    celda: datos_ingreso_prision.celda ? datos_ingreso_prision.celda : '',
-                    establecimiento_penitenciario: datos_ingreso_prision.establecimiento_penitenciario.id ? datos_ingreso_prision.establecimiento_penitenciario.id : null,
-
-                    // Documento de oficio judicial
-                    oficioJudicial_numeroDeDocumento: oficioJudicialBuscado?.numero_documento ? oficioJudicialBuscado.numero_documento : null,
-                    oficioJudicial_fechaDeDocumento: oficioJudicialBuscado?.fecha ? dayjs(oficioJudicialBuscado.fecha) : null,
-
-
-                    // Documento de Resolucion MJ
-                    resolucion_numeroDeDocumento: resolucionBuscado ? resolucionBuscado.numero_documento : null,
-                    resolucion_fechaDeDocumento: resolucionBuscado.fecha ? dayjs(resolucionBuscado.fecha) : null,
-                    // resolucion_documento: resolucionBuscado.ruta? `${ASSETS_URL}${resolucionBuscado.ruta}` : null,
-                }))
-
-            }
-
-            /** Metodo para obetener datos de expedientes y poblar la lista en el form
-             * */
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`).then(res => {
                 // console.log(res[0])
                 setDatosFormulario((prev: any) => ({
                     ...prev,
                     expedientes: res
                 }))
+            }).finally(()=>{
+                setEstadoFormularioJudicial(prev => ({
+                    ...prev,
+                    id_persona: id_persona,
+                    establecimiento_penitenciario: 1,
+                }))
+
+
+                // @ts-ignore
+                if(datosIniciales !== null && datosIniciales.flag && datosIniciales){
+                    console.log(datosFormulario)
+                    setEstadoFormularioJudicial((prev:any)=>({
+                        ...prev,
+                        ...datosIniciales
+                    }))
+                    setDatosFormulario((prev: any) => ({
+                        ...prev,
+                        expedientesSeleccionados: datosIniciales.expediente_obj ? datosIniciales.expediente_obj : null
+                    }));
+                }else{
+                    // Se verifica que existan datos iniciales para cargar el estado
+                    if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
+
+                        const datos_ingreso_prision = datosIniciales.ingresos_a_prision[0];
+
+                        /** Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de oficio judicial*/
+                        const oficioJudicialBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "oficio_judicial");
+
+                        /**Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de resolucion MJ*/
+                        const resolucionBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "resolucion_mj");
+
+                        if (datos_ingreso_prision.expedienteJudicial !== undefined && datos_ingreso_prision.expedienteJudicial !== null) {
+                            setDatosFormulario((prev: any) => ({
+                                ...prev,
+                                expedientesSeleccionados: datos_ingreso_prision.expedienteJudicial
+                            }));
+
+                            setEstadoFormularioJudicial(prev => ({
+                                ...prev,
+                                expediente_id: datos_ingreso_prision.expedienteJudicial.id
+                            }))
+                        }
+                        const descargarArchivos = async (archivoURL: string, propiedad: string) => {
+                            const fileBlob = await downloadFile(archivoURL);
+                            const file = new File([fileBlob], `${archivoURL.split('/').pop()}`, {type: fileBlob.type});
+
+
+                            /** seteador de estado para guardaar la url de un archivo preguardado y mostrar*/
+                            setDatosFormulario((prev: any) => ({
+                                ...prev,
+                                [propiedad]: archivoURL,
+                            }))
+
+                            setEstadoFormularioJudicial((prev: any) => ({
+                                ...prev,
+                                [propiedad]: file,
+                            }))
+
+
+                        }
+
+                        descargarArchivos(`${ASSETS_URL}${oficioJudicialBuscado.ruta}`, 'oficioJudicial_documento')
+                        descargarArchivos(`${ASSETS_URL}${resolucionBuscado.ruta}`, 'resolucion_documento')
+
+                        // TODO Arreglar tipo aca
+                        setEstadoFormularioJudicial((prev: any) => ({
+                            ...prev,
+                            id: datosIniciales.id, // ID DEL FORMULARIO JUDICIAL
+                            primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
+                            cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
+                            fecha_ingreso_a_establecimiento: datos_ingreso_prision.fecha_ingreso ? datos_ingreso_prision.fecha_ingreso : '',
+                            pabellon: datos_ingreso_prision.pabellon ? datos_ingreso_prision.pabellon : '',
+                            celda: datos_ingreso_prision.celda ? datos_ingreso_prision.celda : '',
+                            establecimiento_penitenciario: datos_ingreso_prision.establecimiento_penitenciario.id ? datos_ingreso_prision.establecimiento_penitenciario.id : null,
+
+                            // Documento de oficio judicial
+                            oficioJudicial_numeroDeDocumento: oficioJudicialBuscado?.numero_documento ? oficioJudicialBuscado.numero_documento : null,
+                            oficioJudicial_fechaDeDocumento: oficioJudicialBuscado?.fecha ? dayjs(oficioJudicialBuscado.fecha) : null,
+
+
+                            // Documento de Resolucion MJ
+                            resolucion_numeroDeDocumento: resolucionBuscado ? resolucionBuscado.numero_documento : null,
+                            resolucion_fechaDeDocumento: resolucionBuscado.fecha ? dayjs(resolucionBuscado.fecha) : null,
+                            // resolucion_documento: resolucionBuscado.ruta? `${ASSETS_URL}${resolucionBuscado.ruta}` : null,
+                        }))
+
+                    }
+
+                    /** Metodo para obetener datos de expedientes y poblar la lista en el form
+                     * */
+
+                }
             })
+
+
 
 
         }, []
@@ -198,6 +223,9 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                 expedientes: res
             }))
         })
+        console.log(datosFormulario)
+        console.log(estadoFormularioJudicial)
+        console.log('check useeffect')
 
     }, [datosFormulario.expedientesSeleccionados]);
 
@@ -231,7 +259,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
     const onCleanField = (event: any, nameField: string) => {
         event.preventDefault()
-        setDatosFormulario((prev:any)=>({
+        setDatosFormulario((prev: any) => ({
             ...prev,
             [nameField]: null,
         }))
@@ -241,22 +269,20 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
         }))
     }
 
-    const postData = async (url:string, data:any, method:string, headers:any = null) =>{
+    const postData = async (url: string, data: any, method: string, headers: any = null) => {
         return await api_request(url, {
             method: method,
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: data,
         })
     }
 
-    const postDataJudicial = async (url:string, data:any, method:boolean) =>{
+    const postDataJudicial = async (url: string, data: any, method: boolean) => {
         return await api_request(url, {
             method: isEditMode ? 'PUT' : 'POST',
             body: data,
         })
     }
-
-
 
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -294,7 +320,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                         break;
                     case 'object':
                         if (isDayjs(valor)) formData.append(key, valor.toISOString());
-                        if (isFile(valor))  formData.append(key, valor);
+                        if (isFile(valor)) formData.append(key, valor);
 
                         break;
                     case 'boolean':
@@ -309,62 +335,81 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
             })
 
 
-
             /** Solicitud para actualizacion del formulario judicial se verifica que el nuevo expediente seleccionaddo sea diferente al inicial */
-            if(estadoFormularioJudicial.expediente_id !== expedienteInicial){
+            if (estadoFormularioJudicial.expediente_id !== expedienteInicial) {
+
                 console.log('check 4: Expediente inicial y actualizado son diferentes')
 
                 Promise.all([
-                    await postData(url_patch_expediente, JSON.stringify({ppls:[estadoFormularioJudicial.id_persona]}), 'PATCH').then(res=>{
+                    await postData(url_patch_expediente, JSON.stringify({ppls: [estadoFormularioJudicial.id_persona]}), 'PATCH').then(res => {
                         console.log('respuestas de peticion patch')
-                        if(res.success){
+                        if (res.success) {
                             setConsultaLoading(false)
                             openSnackbar('PPL asignado a expediente correctamente')
                             //router.push(`/ppl}`)
                             // router.push(`/ppl/${id_persona}`)
                         }
                     }),
-                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res=>{
+                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res => {
                         console.log('respuestas de peticion datos judiciales')
-                        if(res.success){
+                        if (res.success) {
                             setConsultaLoading(false)
                             openSnackbar('Datos judiciales actualizado correctamente')
-                            // router.push(`/ppl`)
-                            // router.push(`/ppl/${id_persona}`)
-                            if(handleAccordion){
+                            if (onSetDatosPPL) {
+                                onSetDatosPPL((prev: any) => ({
+                                    ...prev,
+                                    datosJudiciales: {
+                                        ...estadoFormularioJudicial,
+                                        id: res.datos.id,
+                                        flag: true,
+                                        expediente_obj: datosFormulario.expedientesSeleccionados
+                                    }
+                                }))
+                            }
+                            if (handleAccordion) {
                                 handleAccordion('')
                             }
                         }
                     })
-                ]).finally(()=>{
+                ]).finally(() => {
                     setConsultaLoading(false)
                 });
 
-            }
-            else {
+            } else {
                 try {
-                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res=>{
+                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res => {
                         console.log('respuestas de peticion datos judiciales')
-                        if(res.success){
+                        if (res.success) {
                             setConsultaLoading(false)
-                            setEstadoFormularioJudicial(prev=>({
+                            if (onSetDatosPPL) {
+                                onSetDatosPPL((prev: any) => ({
+                                    ...prev,
+                                    datosJudiciales: {
+                                        ...estadoFormularioJudicial,
+                                        id: res.datos.id,
+                                        flag: true,
+                                        expediente_obj: datosFormulario.expedientesSeleccionados
+                                    }
+                                }))
+                            }
+                            setEstadoFormularioJudicial(prev => ({
                                 ...prev,
                                 id: res.datos.id,
                             }))
                             openSnackbar('Datos judiciales actualizado correctamente')
                             // router.push(`/ppl`)
                             // router.push(`/ppl/${id_persona}`)
-                            if(handleAccordion){
+                            if (handleAccordion) {
                                 handleAccordion('')
                             }
                         }
 
                     })
-                } catch (err){
+                } catch (err) {
                     console.log('err')
                 } finally {
                     setConsultaLoading(false)
-                    if(handleAccordion){
+                    if (handleAccordion) {
                         handleAccordion('')
                     }
                 }
@@ -483,34 +528,37 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                             {datosFormulario.expedientes ?
                                 (
                                     <>
-                                    {
-                                        !showExpdientesForm ?
-                                        <FormControl fullWidth>
-                                            <Autocomplete
-                                                fullWidth
-                                                value={datosFormulario.expedientesSeleccionados}
-                                                onChange={(event, newValue: any) => {
+                                        {
+                                            !showExpdientesForm ?
+                                                <FormControl fullWidth>
+                                                    <Autocomplete
+                                                        fullWidth
+                                                        value={datosFormulario.expedientesSeleccionados}
+                                                        onChange={(event, newValue: any) => {
 
-                                                    setDatosFormulario((prev: any) => ({
-                                                        ...prev,
-                                                        expedientesSeleccionados: newValue
-                                                    }));
-                                                    setEstadoFormularioJudicial(prev => ({
-                                                        ...prev,
-                                                        expediente_id: newValue?.id
-                                                    }))
-                                                }}
-                                                id="controllable-states-demo"
-                                                options={datosFormulario.expedientes}
-                                                getOptionLabel={(option: { numeroDeExpediente: string; caratula_expediente: string }) => `${option.numeroDeExpediente} -- ${option.caratula_expediente}`}
-                                                renderInput={(params) => <TextField
-                                                    sx={{width: '100% !important'}} {...params}
-                                                    label="Expediente"/>}
-                                            />
-                                        </FormControl>
-                                        : null}
+                                                            setDatosFormulario((prev: any) => ({
+                                                                ...prev,
+                                                                expedientesSeleccionados: newValue
+                                                            }));
+                                                            setEstadoFormularioJudicial(prev => ({
+                                                                ...prev,
+                                                                expediente_id: newValue?.id
+                                                            }))
+                                                        }}
+                                                        id="controllable-states-demo"
+                                                        options={datosFormulario.expedientes}
+                                                        getOptionLabel={(option: {
+                                                            numeroDeExpediente: string;
+                                                            caratula_expediente: string
+                                                        }) => `${option.numeroDeExpediente} -- ${option.caratula_expediente}`}
+                                                        renderInput={(params) => <TextField
+                                                            sx={{width: '100% !important'}} {...params}
+                                                            label="Expediente"/>}
+                                                    />
+                                                </FormControl>
+                                                : null}
                                         <Button variant='contained' onClick={handleShowExpedientesForm}>
-                                            {showExpdientesForm? 'Buscar expediente' : <AddIcon/> }
+                                            {showExpdientesForm ? 'Buscar expediente' : <AddIcon/>}
                                         </Button>
                                     </>
                                 )
@@ -519,7 +567,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
 
                     </Grid>
 
-                    </Grid>
+                </Grid>
 
                 {
                     showExpdientesForm ?
@@ -597,21 +645,23 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                                             }}
                                         />
                                         {
-                                             (
-                                                 datosFormulario.oficioJudicial_documento
-                                             ) ?
-                                                <a href={datosFormulario.oficioJudicial_documento} target='_blank'>Descargar </a>
+                                            (
+                                                datosFormulario.oficioJudicial_documento
+                                            ) ?
+                                                <a href={datosFormulario.oficioJudicial_documento}
+                                                   target='_blank'>Descargar </a>
                                                 : null
                                         }
                                     </FormControl>
                                     {
                                         estadoFormularioJudicial.oficioJudicial_documento !== null ?
-                                    <Box>
-                                        <IconButton color='error' onClick={(event) => onCleanField(event, 'oficioJudicial_documento')}>
-                                            <Close />
-                                        </IconButton>
-                                    </Box>
-                                    : null }
+                                            <Box>
+                                                <IconButton color='error'
+                                                            onClick={(event) => onCleanField(event, 'oficioJudicial_documento')}>
+                                                    <Close/>
+                                                </IconButton>
+                                            </Box>
+                                            : null}
                                 </Stack>
                             </Grid>
                         </Grid>
@@ -679,12 +729,13 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                             </FormControl>
                             {
                                 estadoFormularioJudicial.resolucion_documento !== null ?
-                            <Box>
-                                <IconButton color='error' onClick={(event) => onCleanField(event, 'resolucion_documento')}>
-                                    <Close />
-                                </IconButton>
-                            </Box>
-                            : null }
+                                    <Box>
+                                        <IconButton color='error'
+                                                    onClick={(event) => onCleanField(event, 'resolucion_documento')}>
+                                            <Close/>
+                                        </IconButton>
+                                    </Box>
+                                    : null}
                         </Stack>
                     </Grid>
                 </Grid>
@@ -692,22 +743,22 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
             <Grid container spacing={2} mt={1}>
                 <Grid item sm={12}>
 
-                            <>
-                                {
-                                    Object.keys(stateErrors).map((key:string, index:number)=>(
-                                        <Box key={index} mt={1}>
-                                            <Alert severity="error">
-                                                {
-                                                    //@ts-ignore
-                                                    stateErrors[key]
-                                                }
-                                            </Alert>
-                                        </Box>
+                    <>
+                        {
+                            Object.keys(stateErrors).map((key: string, index: number) => (
+                                <Box key={index} mt={1}>
+                                    <Alert severity="error">
+                                        {
+                                            //@ts-ignore
+                                            stateErrors[key]
+                                        }
+                                    </Alert>
+                                </Box>
 
-                                    ))
+                            ))
 
-                                }
-                            </>
+                        }
+                    </>
 
                 </Grid>
                 <Grid item sm={12}>
@@ -720,7 +771,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = ({datosIniciales = null, id_pers
                         onClick={onFormSubmit}
                         loading={consultaLoading}
                         loadingPosition='start'
-                        startIcon={<SaveIcon />}
+                        startIcon={<SaveIcon/>}
                         variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}
@@ -766,85 +817,85 @@ async function downloadFile(url: string) {
     return response.blob(); // Obtiene el contenido del archivo como Blob
 }
 
-function validateForm(formData:any, setStateErrors:any, stateError:any){
+function validateForm(formData: any, setStateErrors: any, stateError: any) {
     let aux = true;
 
-    if(formData['expediente_id'] == 0){
+    if (formData['expediente_id'] == 0) {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             expediente_id: 'Expediente es requerido.',
         }))
 
-    }else{
+    } else {
         if (stateError.hasOwnProperty('expediente_id')) {
             delete stateError['expediente_id'];
         }
     }
 
-    if(formData['oficioJudicial_numeroDeDocumento'] == ''){
+    if (formData['oficioJudicial_numeroDeDocumento'] == '') {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             oficioJudicial_numeroDeDocumento: 'Numero de documento de oficio judicial es requerido.',
         }))
-    }else{
+    } else {
         if (stateError.hasOwnProperty('oficioJudicial_numeroDeDocumento')) {
             delete stateError['oficioJudicial_numeroDeDocumento'];
         }
     }
-    if(formData['oficioJudicial_fechaDeDocumento'] == null){
+    if (formData['oficioJudicial_fechaDeDocumento'] == null) {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             oficioJudicial_fechaDeDocumento: 'Fecha de documento de oficio judicial es requerido.',
         }))
-    }else{
+    } else {
         if (stateError.hasOwnProperty('oficioJudicial_fechaDeDocumento')) {
             delete stateError['oficioJudicial_fechaDeDocumento'];
         }
     }
-    if(formData['oficioJudicial_documento'] == null){
+    if (formData['oficioJudicial_documento'] == null) {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             oficioJudicial_documento: 'Documento de oficio judicial es requerido.',
         }))
-    }else{
+    } else {
         if (stateError.hasOwnProperty('oficioJudicial_documento')) {
             delete stateError['oficioJudicial_documento'];
         }
     }
 
-    if(formData['resolucion_numeroDeDocumento'] == ''){
+    if (formData['resolucion_numeroDeDocumento'] == '') {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             resolucion_numeroDeDocumento: 'Numero de documento de Resolución MJ/DGEP es requerido.',
         }))
-    }else{
+    } else {
         if (stateError.hasOwnProperty('resolucion_numeroDeDocumento')) {
             delete stateError['resolucion_numeroDeDocumento'];
         }
     }
-    if(formData['resolucion_fechaDeDocumento'] == null){
+    if (formData['resolucion_fechaDeDocumento'] == null) {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             resolucion_fechaDeDocumento: 'Fecha de documento de Resolución MJ/DGEP es requerido.',
         }))
-    }else{
+    } else {
         if (stateError.hasOwnProperty('resolucion_fechaDeDocumento')) {
             delete stateError['resolucion_fechaDeDocumento'];
         }
     }
-    if(formData['resolucion_documento'] == null){
+    if (formData['resolucion_documento'] == null) {
         aux = false
-        setStateErrors((prev:any)=>({
+        setStateErrors((prev: any) => ({
             ...prev,
             resolucion_documento: 'Documento de Resolución MJ/DGEP es requerido.',
         }))
-    }else{
+    } else {
         if (stateError.hasOwnProperty('resolucion_documento')) {
             delete stateError['resolucion_documento'];
         }

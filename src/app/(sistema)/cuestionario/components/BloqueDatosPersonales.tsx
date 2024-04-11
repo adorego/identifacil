@@ -216,6 +216,27 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         }, []
     )
 
+    const onDatoChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const { value } = event.target;
+
+        const regex = /^\+?[0-9\(\)\s]*\.?[0-9\(\)\s]*$/;
+
+        if (value.match(regex)) {
+            setDatosPersonalesState(
+                (prev) => {
+                    return (
+                        {
+                            ...prev,
+                            [event.target.name]: value
+
+                        }
+                    )
+                }
+            )
+        }
+
+    }
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
         setDatosPersonalesState(
@@ -575,7 +596,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         label="Numero de contacto"
                         name="numeroDeContacto"
                         value={datosPersonalesState.numeroDeContacto ? datosPersonalesState.numeroDeContacto : ''}
-                        onChange={onDatoChange}
+                        onChange={onDatoChangeNumber}
                     />
                 </Grid>
                 <Grid item xs={4}>
@@ -585,7 +606,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             fullWidth
                             name="contactoDeEmergencia1"
                             value={datosPersonalesState.contactoDeEmergencia1 ? datosPersonalesState.contactoDeEmergencia1 : ''}
-                            onChange={onDatoChange}
+                            onChange={onDatoChangeNumber}
                         />
                     </FormControl>
                 </Grid>
@@ -596,7 +617,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             fullWidth
                             name="contactoDeEmergencia2"
                             value={datosPersonalesState.contactoDeEmergencia2 ? datosPersonalesState.contactoDeEmergencia2 : ''}
-                            onChange={onDatoChange}
+                            onChange={onDatoChangeNumber}
                         />
                     </FormControl>
                 </Grid>
