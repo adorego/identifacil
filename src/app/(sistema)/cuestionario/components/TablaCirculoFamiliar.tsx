@@ -25,6 +25,7 @@ interface tablaCirculoTypes {
 
 export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleDelete, handleEdit}) => {
 
+    console.log(rows)
 
     return (
         <TableContainer sx={{bgcolor: '#FFF'}}>
@@ -51,8 +52,8 @@ export const TablaCirculoFamiliar: React.FC<tablaCirculoTypes> = ({rows, handleD
                                     <TableCell component="th" scope="row">
                                         {row.nombre + " " + row.apellido}
                                     </TableCell>
-                                    <TableCell align="right">{row.vinculo.nombre}</TableCell>
-                                    <TableCell align="right">{row.establecimiento.nombre}</TableCell>
+                                    <TableCell align="right">{row.vinculo?.nombre ? row.vinculo?.nombre : 'N/D'}</TableCell>
+                                    <TableCell align="right">{row.establecimiento?.nombre ? row.establecimiento.nombre : 'N/D'}</TableCell>
                                     <TableCell align="right">{row.esFuncionario ? "Funcionario" : "PPL"}</TableCell>
                                     <TableCell align="right">
                                         <IconButton aria-label="edit" onClick={(event)=>handleEdit(event, index)}>

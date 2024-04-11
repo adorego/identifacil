@@ -6,10 +6,14 @@ import {Button, Grid, IconButton, InputAdornment, Stack, TextField} from "@mui/m
 import {SelectChangeEvent} from "@mui/material/Select";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import {DatePicker} from "@mui/x-date-pickers";
-import {Dayjs} from "dayjs";
+import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
+import dayjs, {Dayjs} from "dayjs";
 import CloseIcon from '@mui/icons-material/Close';
 import {Search} from "@mui/icons-material";
+import 'dayjs/locale/en-gb';
+import es from 'dayjs/locale/es';
+
+dayjs.locale(es); // Configura dayjs globalmente al español
 
 
 interface FiltrosTablesProps {
@@ -83,12 +87,12 @@ export default function FiltrosPpl({ dataSinFiltro, handleFiltro, searchField, d
         if(dateSearchField && valueDateStart){
             console.log('step 1')
             datosFiltrados = datosFiltrados.filter((item: any) => {
-                console.log('dato de filtro', valueDateStart.format('YYYY/MM/DD') )
+                console.log('dato de filtro', valueDateStart.format('DD/MM/YYYY') )
                 console.log('datos lista',  item['fecha_de_ingreso'])
 
                 if (item['fecha_de_ingreso'] && item['fecha_de_ingreso'] !== 'N/D') {
 
-                    return valueDateStart.format('YYYY/MM/DD') == item['fecha_de_ingreso']
+                    return valueDateStart.format('DD/MM/YYYY') == item['fecha_de_ingreso']
                 }
             })
         }
@@ -152,9 +156,10 @@ export default function FiltrosPpl({ dataSinFiltro, handleFiltro, searchField, d
                     </FormControl>
                 </Grid>*/}
                 <Grid item xs={2}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <LocalizationProvider dateAdapter={AdapterDayjs} >
                         <DatePicker
                             label={fecha_inicial ? fecha_inicial : "Por ingreso"}
+                            format="DD/MM/YYYY"
                             value={valueDateStart}
                             onChange={(newValueDateStart) => setValueDateStart(newValueDateStart)}
                             sx={{

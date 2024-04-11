@@ -62,12 +62,16 @@ export default function Page() {
                 // console.log(fetchedData)
                 if(fetchedData.length > 0){
                     console.log(fetchedData)
-                    setListaPersonas(fetchedData.map((item:any)=>({
-                        ...item,
-                        nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
-                        fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso ? dayjs(item.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso).fecha_ingreso).format('YYYY/MM/DD') : 'N/D',
-                        apodo: item.apodo ? item.apodo : 'N/D'
-                    })));
+                    setListaPersonas(fetchedData.map((item:any)=> {
+
+                        console.log(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso)
+                        return ({
+                            ...item,
+                            nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
+                            fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso ? dayjs(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso).format('DD/MM/YYYY') : 'N/D',
+                            apodo: item.apodo ? item.apodo : 'N/D'
+                        })
+                    }));
                 }
             }).finally(() => {
             setLoading(false)

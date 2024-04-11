@@ -854,7 +854,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     <Grid item sm={12}>
 
                         <FormControl fullWidth>
-                            <FormLabel id="medicamentos-id-label" sx={{mb:'1'}}>¿Que medicación toma actualmente?</FormLabel>
+                            <FormLabel id="medicamentos-id-label" sx={{mb:'20px'}}>¿Que medicación toma actualmente?</FormLabel>
                             <Autocomplete
                                 multiple
                                 freeSolo
@@ -878,7 +878,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                 </Grid>
 
                 <Grid container spacing={2} mt={2}>
-                    <Grid item sm={6}>
+                    <Grid item sm={12}>
                         <FormControl>
                             <FormLabel id="afeccionSeveraEstupefacientes">
                                 ¿Cuenta con alguna afección severa interna o externa por el consumo excesivo de
@@ -961,9 +961,11 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                                            name='otros'/>}
                                         label="Otros"/>
                                 </RadioGroup>
+
+
                             </FormControl>
                             {
-                                datosSalud.saludFisica?.discapacidad_fisica == 'otros' ?
+                                stateSaludFisica.otros ?
                                     <TextField
                                         label={'Otros'}
                                         name='explicacion_de_discapacidad'
