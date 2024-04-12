@@ -178,16 +178,29 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     const [consultaLoading, setConsultaLoading] = useState(false)
     const [stateEsPPL, setStateEsPPL] = useState<boolean>(false)
     const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
-
-    
-
     const {openSnackbar} = useGlobalContext();
     // console.log("Formulario:", formularioDeDatosDeIdentificacion);
 
+    useEffect(() => {
+        if(formularioDeDatosDeIdentificacion.cedula_identidad !== undefined){
+            // @ts-ignore
+            if(formularioDeDatosDeIdentificacion.cedula_identidad?.length > 0) {
+                verificacionPostIdentificacion(formularioDeDatosDeIdentificacion.cedula_identidad)
+               
+            }
+        }
+
+    }, [formularioDeDatosDeIdentificacion.cedula_identidad]);
+
+    useEffect(()=>{
+        props.actualizarIdentificacion(formularioDeDatosDeIdentificacion);
+    },[formularioDeDatosDeIdentificacion])
     const verificacionPostIdentificacion = async (cedula:string | null) =>{
 
         const esMenor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') < 18)
         const esMayor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') > 90)
+
+       
 
         if(cedula && cedula.length > 0){
             try{
@@ -233,16 +246,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     }
 
 
-    useEffect(() => {
-        if(formularioDeDatosDeIdentificacion.cedula_identidad !== undefined){
-            // @ts-ignore
-            if(formularioDeDatosDeIdentificacion.cedula_identidad?.length > 0) {
-                verificacionPostIdentificacion(formularioDeDatosDeIdentificacion.cedula_identidad)
-               
-            }
-        }
-
-    }, [formularioDeDatosDeIdentificacion.cedula_identidad]);
+    
 
 
     const onCedulaChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -285,7 +289,8 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                         }
 
                         
-                    )
+                    );
+                    
                    
 
                 }

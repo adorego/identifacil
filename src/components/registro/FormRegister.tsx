@@ -108,6 +108,7 @@ export default function FormRegister() {
     const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
         // console.log("Datos de identificacion:", identificacion);
         identidad.current = identificacion;
+        console.log("Identidad:",identidad.current);
     }
 
 
