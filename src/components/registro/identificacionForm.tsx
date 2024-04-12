@@ -196,10 +196,11 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                 if(resultado.ok){
                  const datos:DatosDePplCedula = await resultado.json();
                  console.log(`Datos:`,datos);
+                 
                  if(datos && datos.numero_de_identificacion){
                      openSnackbar(`Esta persona ya se encuentra registrada como PPL`,"error");
                      props.habilitarBotonSiguiente(false);
-                     setConsultaLoading(false);
+                     
                  }else{
                     if(props.identificar_ppl){//Validacion PPL
                         
@@ -214,7 +215,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                             props.habilitarBotonSiguiente(true);
                         }
                     }else{//Validacion Visitante
-                        setConsultaLoading(false);
+                        
                         props.habilitarBotonSiguiente(true);
                     }
                  }
@@ -266,6 +267,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                 body: JSON.stringify({"cedula": cedula})
             });
             console.log("Respuesta:",response);
+            setConsultaLoading(false);
             if (response.ok) {
                 const data: DatosCedulaDTO = await response.json();
                 console.log("Data:",data);
@@ -288,7 +290,8 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
 
                 }
             } else {
-                log.error("Error al consultar la cedula a la policia:", await response.json())
+                log.error("Error al consultar la cedula a la policia:", await response.json());
+                setConsultaLoading(false);
                 props.habilitarBotonSiguiente(false);
                 setFormularioDeDatosDeIdentificacion(datosInicialesDelFormularioDeIdentificacion);
                 
