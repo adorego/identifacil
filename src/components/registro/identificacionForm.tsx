@@ -15,7 +15,7 @@ import {
     SelectChangeEvent,
     TextField, Typography
 } from "@mui/material";
-import {DatePicker, DateValidationError, MobileDatePicker, PickerChangeHandlerContext} from "@mui/x-date-pickers";
+import {MobileDatePicker} from "@mui/x-date-pickers";
 import {FC, useEffect, useState} from "react";
 import {Save, Storage, Sort} from '@mui/icons-material';
 import dayjs, {Dayjs} from "dayjs";
@@ -24,7 +24,7 @@ import {LoadingButton} from "@mui/lab";
 import es from 'dayjs/locale/es'; // Importa el locale español
 
 dayjs.locale(es); // Configura dayjs globalmente al español
-import log, { getLogger } from "loglevel";
+import log from "loglevel";
 import ConfirmacionRegistro from "./ConfirmacionRegistro";
 export interface IdentificacionProps {
     habilitarBotonSiguiente: (arg0: boolean) => void;
@@ -167,6 +167,11 @@ interface DatosCedulaDTO {
     exito: boolean;
 }
 
+interface DatosDePplCedula{
+    numero_de_identificacion:string;
+    nombre:string;
+    apellido:string;
+}
 const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: IdentificacionProps) => {
     const [cedula, setCedula] = useState<string>("");
     const [formularioDeDatosDeIdentificacion, setFormularioDeDatosDeIdentificacion] = useState<DatosDeIdentificacion>(datosInicialesDelFormularioDeIdentificacion)
@@ -174,47 +179,55 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
     const [stateEsPPL, setStateEsPPL] = useState<boolean>(false)
     const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
+    
+
     const {openSnackbar} = useGlobalContext();
     // console.log("Formulario:", formularioDeDatosDeIdentificacion);
 
-    const consultarPPL = async (cedula:string | null) =>{
+    const verificacionPostIdentificacion = async (cedula:string | null) =>{
 
         const esMenor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') < 18)
-        const esmayor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') > 90)
+        const esMayor = (dayjs().diff(dayjs(formularioDeDatosDeIdentificacion.fecha_nacimiento), 'year') > 90)
 
-        if(cedula !== null){
-
+        if(cedula && cedula.length > 0){
             try{
 
-                await fetch(`${API_URL}/gestion_ppl/ppls/cedula/${cedula}`)
-                    .then((res) => res.json())
-                    .then((data) => {
-                        if(data.establecimiento){
-                            openSnackbar('Esta persona ya se encuentra registrada como PPL', 'warning')
-                            props.habilitarBotonSiguiente(false);
-                            setStateEsPPL(true)
-                        }else{
-                            
-                            if(!esMenor){
-                                props.habilitarBotonSiguiente(true);
-                            }
-                           setStateEsPPL(false)
-                        }
-                    }).catch(err=>{
+                const resultado =  await fetch(`${API_URL}/gestion_ppl/ppls/cedula/${cedula}`);
+                if(resultado.ok){
+                 const datos:DatosDePplCedula = await resultado.json();
+                 console.log(`Datos:`,datos);
+                 if(datos && datos.numero_de_identificacion){
+                     openSnackbar(`Esta persona ya se encuentra registrada como PPL`,"error");
+                     props.habilitarBotonSiguiente(false);
+                     setConsultaLoading(false);
+                 }else{
+                    if(props.identificar_ppl){//Validacion PPL
                         
-                        setStateEsPPL(false)
-                        if(!esMenor){
-                            props.habilitarBotonSiguiente(true);
-                        }else{
+                        if(esMenor){
+                            openSnackbar(`La persona es menor de edad, no puede registrarse como ppl`,"error")
                             props.habilitarBotonSiguiente(false);
+                            
+                        }else if(esMayor){
+                            openSnackbar(`La persona es mayor de edad, no puede registrarse como ppl`,"error")
+                            props.habilitarBotonSiguiente(false);
+                        }else{
+                            props.habilitarBotonSiguiente(true);
                         }
-                    })
-            } catch (error) {
-                console.log('Esta persona no existe en la base datos como PPL', 'success')
-                setStateEsPPL(false)
-            }
-        }
+                    }else{//Validacion Visitante
+                        setConsultaLoading(false);
+                        props.habilitarBotonSiguiente(true);
+                    }
+                 }
 
+ 
+                }else{
+                  openSnackbar("El servicio no se encuentra disponible en este momento, consulte con el administrador")
+                }
+             }catch(error){
+                 log.error(`Error al consultar cedula como PPL:${error}`)
+             }
+
+        }
 
     }
 
@@ -223,7 +236,7 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
         if(formularioDeDatosDeIdentificacion.cedula_identidad !== undefined){
             // @ts-ignore
             if(formularioDeDatosDeIdentificacion.cedula_identidad?.length > 0) {
-                consultarPPL(formularioDeDatosDeIdentificacion.cedula_identidad)
+                verificacionPostIdentificacion(formularioDeDatosDeIdentificacion.cedula_identidad)
                
             }
         }
@@ -252,47 +265,30 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
                 mode: 'cors',
                 body: JSON.stringify({"cedula": cedula})
             });
+            console.log("Respuesta:",response);
             if (response.ok) {
                 const data: DatosCedulaDTO = await response.json();
-
-                if (data.exito && data.datosDeCedula.nombres != "") {
-                    // console.log(data);
+                console.log("Data:",data);
+                if (data.exito) {
+                    console.log(data);
                     // se verifica que los datos de la persona a ingresar sea mayor a 18 años
-                    const datosDeidentificacionAGenerar = {
-                        ...data.datosDeCedula,
+                    setFormularioDeDatosDeIdentificacion(
+                        {...data.datosDeCedula,
+                        id_persona:null,
                         numeroDeIdentificacion:null,
                         prontuario:null,
-                        tiene_cedula: true,
-                        es_extranjero: false,
-                        id_persona: null,
-                        foto: ''
-                    }
-                    if (dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') < 18) {
-                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar);
-                        //props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                        openSnackbar('Persona no puede ingresar. Debe ser mayor de edad', 'error')
-                        setConsultaLoading(false)
-                        props.habilitarBotonSiguiente(false);
-
-                    }else if(dayjs().diff(dayjs(data.datosDeCedula.fecha_nacimiento), 'year') > 90){
-                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar);
-                        openSnackbar('Persona no puede ingresar. Edad mayor a 90 años', 'error');
-                        setConsultaLoading(false)
-                        props.habilitarBotonSiguiente(false);
-                    }else {
-                        setFormularioDeDatosDeIdentificacion(datosDeidentificacionAGenerar)
-                        props.actualizarIdentificacion(datosDeidentificacionAGenerar);
-                        if(!stateEsPPL){
-                            props.habilitarBotonSiguiente(true);
-                        }else{
-                            props.habilitarBotonSiguiente(false);
+                        es_extranjero:false,
+                        tiene_cedula:true,
+                        foto:""
                         }
-                        setConsultaLoading(false)
-                    }
+
+                        
+                    )
+                   
 
                 }
             } else {
-                log.error("Error al consultar el documento:", await response.json())
+                log.error("Error al consultar la cedula a la policia:", await response.json())
                 props.habilitarBotonSiguiente(false);
                 setFormularioDeDatosDeIdentificacion(datosInicialesDelFormularioDeIdentificacion);
                 
