@@ -474,7 +474,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
 
                         <Grid item sm={4}>
-                            <FormControl fullWidth={true}>
+                            <FormControl fullWidth={true} className='fechaNacimientoField'>
                                 <DatePicker
 
                                     value={datosPersonalesState.fechaDeNacimiento ? dayjs(datosPersonalesState.fechaDeNacimiento, 'DD/MM/YYYY') : null}

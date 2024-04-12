@@ -429,7 +429,7 @@ export default function SidebarDrawer()
 
                         <SidebarItem
                             icon={<span className='subIcon'></span>}
-                            label="Personal"
+                            label="Custodios"
                             path="/sistema/personal"
                             isActive={pathname === '/sistema/personal'}
                         />
@@ -439,6 +439,12 @@ export default function SidebarDrawer()
                             label="Vehiculo"
                             path="/sistema/vehiculo"
                             isActive={pathname === '/sistema/vehiculo'}
+                        />
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Choferes"
+                            path="/sistema/choferes"
+                            isActive={pathname === '/sistema/choferes'}
                         />
 
 

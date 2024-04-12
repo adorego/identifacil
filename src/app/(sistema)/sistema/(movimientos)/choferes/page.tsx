@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 
-import {Box, Breadcrumbs, CircularProgress, Link, Paper, Typography} from "@mui/material";
-import {useEffect, useState} from 'react';
+import {Box, CircularProgress, Paper} from "@mui/material";
+import {useEffect, useState} from "react";
 
 import CustomTable from "@/components/CustomTable";
 import ModalBorrado from "@/components/modal/ModalBorrado";
@@ -15,30 +15,31 @@ import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 // Datos para armar el header de la tabla
 const header = [
     { id: 'id', label: 'ID' },
-    { id: 'nombre', label: 'Medida de seguridad' },
-    { id: 'lastUpdate', label: 'Ultima actualización' },
+    { id: 'nombre', label: 'Nombre' },
+    { id: 'apellido', label: 'Apellido' },
+    { id: 'cedula', label: 'Cedula' },
+
 ]
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Page(){
     const { openSnackbar } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<any>(null);
 
 
-    // TODO: Si viene vacio o da error no mostrar la tabla por que explota
-    // TODO: Convertir en server side
 
-    // Se obtiene datos de la API
     async function fetchData() {
+        // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/movimientos/medidas_de_seguridad`);
+            const response = await fetch(`${API_URL}/movimientos/choferes`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-            // const data = await response.json();
-            // return data
-            return await response.json();
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error('Error al realizar la solicitud fetch:', error);
             return null; // o manejar el error de manera adecuada
@@ -47,13 +48,16 @@ export default function Page(){
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
-        // @ts-ignore
-        fetchData().then(fetchedData => setData(Object.keys(fetchedData).map(key => (fetchedData[key]))));
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+        fetchData()
+            .then((fetchedData:any) => {
+                console.log(fetchedData)
+                setData(Object.keys(fetchedData).map(key=>fetchedData[key]));
+            });
+    }, []);
 
 
     const handleDelete = async (id:number) => {
-        const result = await deleteRecord(`/medidaSeguridad/${id}`);
+        const result = await deleteRecord(`/personal/${id}`);
 
         if (result.success) {
             openSnackbar(result.message, "success");
@@ -75,12 +79,12 @@ export default function Page(){
 
     }
 
-    const handleOpenModal = (row: { id:number, medidaSeguridad: string }) => {
+    const handleOpenModal = (row: { id:number, nombre: string }) => {
 
         setModalOpen(true);
         setSelectedData({
             id: row.id,
-            name: row.medidaSeguridad,
+            name: row.nombre,
         });
     };
 
@@ -89,8 +93,8 @@ export default function Page(){
     };
 
     const listaDeItemBread = [
-        {nombre:'Lista de medidas de seguridad', url:'/sistema/medidas-seguridad', lastItem: false},
-        {nombre:'Medidas de seguridad', url:'', lastItem: true},
+        {nombre:'Lista de Choferes', url:'/sistema/choferes', lastItem: false},
+        {nombre:'Choferes', url:'', lastItem: true},
     ];
 
     if (!data) {
@@ -107,34 +111,31 @@ export default function Page(){
         );
     }
 
-
     return(
-        <>
-            <Box>
 
-                <TituloComponent titulo='Medidas de seguridad'>
-                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
-                </TituloComponent>
-                <Box mt={4} component={Paper}>
-                    <CustomTable
+        <Box>
+            <TituloComponent titulo='Choferes de movimientos penitenciarios'>
+                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+            </TituloComponent>
+            <Box mt={4} component={Paper}>
+                <CustomTable
                     showId={true}
                     headers={header}
-                    data={data}
                     // @ts-ignore
                     deleteRecord={handleOpenModal}
+                    data={data}
                     options={{
-                        title: 'Lista de medidas de seguridad',
+                        title: 'Lista de choferes',
                         pagination:true,
                         rowsPerPageCustom: 5,
-                        newRecord: '/sistema/medidas-seguridad/crear',
-                        targetURL:`/sistema/medidas-seguridad`,
+                        newRecord: '/sistema/choferes/crear',
+                        targetURL:`/sistema/choferes`,
                         deleteOption: false,
                     }}
                 />
-                    <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
-                </Box>
 
             </Box>
-        </>
+            <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
+        </Box>
     )
 }
