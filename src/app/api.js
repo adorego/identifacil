@@ -40,7 +40,7 @@ export const sendRequest = async (endpoint, data, id, isEditMode) => {
     const url = isEditMode !== 'crear'
         ? `${process.env.NEXT_PUBLIC_API_URL}${endpoint}/${id}`
         : `${process.env.NEXT_PUBLIC_API_URL}${endpoint}`;
-    console.log('kesesto: ' + isEditMode)
+
     const response = await fetch(url, {
         method: method,
         headers: { 'Content-Type': 'application/json' },

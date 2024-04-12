@@ -9,7 +9,7 @@ type DataType = {
 type SnackType = {
     open: boolean;
     message: string;
-    severity: 'success' | 'info' | 'warning' | 'error' | '';
+    severity?: 'success' | 'info' | 'warning' | 'error' | '';
 };
 
 // 1. Definicion de los States contexts globales (Getter y Setter)
@@ -19,6 +19,7 @@ interface ContextProps {
     sidebarStatus: boolean;
     setSidebarStatus: Dispatch<SetStateAction<boolean>>;
     snackbar: SnackType;
+    setSnackbar?: any;
     openSnackbar: (message: string, severity?: SnackType['severity']) => void;
     closeSnackbar: () => void;
     selectedEstablecimiento: number;
@@ -40,6 +41,7 @@ const GlobalContext = createContext<ContextProps>({
     setSidebarStatus: () => {
     },
     snackbar: SnackInitialState,
+    setSnackbar: null,
     openSnackbar: () => {
     },
     closeSnackbar: () => {
@@ -58,20 +60,21 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({childr
 
 
     const openSnackbar = (message: string, severity: string = 'success') => {
-        const validSeverities: SnackType['severity'][] = ['success', 'info', 'warning', 'error', ''];
+        const validSeverities: SnackType['severity'][] = ['success', 'info', 'warning', 'error'];
         const computedSeverity: SnackType['severity'] = validSeverities.includes(severity as SnackType['severity']) ? severity as SnackType['severity'] : 'info';
 
         setSnackbar({open: true, message, severity: computedSeverity});
     };
 
     const closeSnackbar = () => {
-        setSnackbar({open: false, message: '', severity: ''});
+
+        setSnackbar({open: false, message: '', severity:''});
     };
 
     /* 4. Agregar aqui variable de estado global */
     return (
         <GlobalContext.Provider
-            value={{userId, setUserId, sidebarStatus, setSidebarStatus, snackbar, openSnackbar, closeSnackbar, selectedEstablecimiento, setSelectedEstablecimiento}}>
+            value={{userId, setUserId, sidebarStatus, setSidebarStatus, snackbar, openSnackbar, closeSnackbar, selectedEstablecimiento, setSelectedEstablecimiento, setSnackbar}}>
             {children}
         </GlobalContext.Provider>
     );

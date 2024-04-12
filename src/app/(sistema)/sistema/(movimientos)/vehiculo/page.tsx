@@ -10,28 +10,32 @@ import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 // Datos para armar el header de la tabla
 const header = [
     { id: 'id', label: 'ID' },
     { id: 'chapa', label: 'Chapa' },
-    { id: 'modelo', label: 'Modelo' },
-    { id: 'lastUpdate', label: 'Ultima actualización' },
+    { id: 'marca', label: 'Datos vehiculo' },
+    { id: 'chasis', label: 'Chasis' },
+    { id: 'anho', label: 'Año' },
 ]
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Page(){
 
     const { openSnackbar } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<any>(null);
 
 
 
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
     async function fetchData() {
         try {
-            const response = await fetch('http://localhost:5000/vehiculo');
+            const response = await fetch(`${API_URL}/movimientos/vehiculos`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -47,10 +51,11 @@ export default function Page(){
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
         fetchData()
-            .then(fetchedData => {
-                setData(fetchedData);
+            .then((fetchedData:any) => {
+
+                setData(Object.keys(fetchedData).map(key=>fetchedData[key]));
             });
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+    }, []);
 
     const handleDelete = async (id:number) => {
         const result = await deleteRecord(`/vehiculo/${id}`);
@@ -87,11 +92,17 @@ export default function Page(){
         setModalOpen(false);
     };
 
+    const listaDeItemVehiculos = [
+        {nombre:'Lista de vehiculos', url:'/sistema/vehiculo', lastItem: false},
+        {nombre:'Vehiculo', url:'', lastItem: true},
+    ];
 
     return(
 
         <Box>
-            <TituloComponent titulo='Vehiculos' />
+            <TituloComponent titulo='Vehiculos'>
+                <BreadCrumbComponent listaDeItems={listaDeItemVehiculos} />
+            </TituloComponent>
             {!data
                 ? (
                     <Box mt={4}
@@ -118,7 +129,7 @@ export default function Page(){
                                 rowsPerPageCustom: 5,
                                 newRecord: '/sistema/vehiculo/crear',
                                 targetURL:`/sistema/vehiculo/`,
-                                deleteOption:true,
+                                deleteOption:false,
                             }}
                         />
                 </Box>)}

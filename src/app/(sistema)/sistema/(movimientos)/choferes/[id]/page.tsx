@@ -7,13 +7,13 @@ import FormChoferes from "@/app/(sistema)/sistema/(movimientos)/personal/[id]/Fo
 
 export default function Page({ params }: { params: { id: number } }){
 
-    const URL_PARAM : string = `${process.env.API_URL}/personal/${params.id}`;
-    console.log('la test: ' + URL_PARAM)
+    const URL_PARAM : string = `${process.env.API_URL}/chofer/${params.id}`;
+
     return(
         <>
 
 
-            <TituloComponent titulo='Personal' url={URL_PARAM} />
+            <TituloComponent titulo='Chofer' url={URL_PARAM} />
             <Box mt={2}>
                 <Paper elevation={1} sx={{
                     p: "20px",

@@ -392,22 +392,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     }
 
-    /*    if (!datosSalud.id) {
-            return (
-                <>
-                    <Box sx={{
-                        width: '100%',
-                        height: '450px',
-                        textAlign: 'center',
-                    }}>
-                        <CircularProgress/>
-                    </Box>
-                </>
-            )
-        } else {
-
-
-        }*/
 
 
     return (

@@ -13,10 +13,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
 });
 
 const SnackbarComponent = () => {
-    const { snackbar, openSnackbar, closeSnackbar} = useGlobalContext();
+    const { snackbar, openSnackbar, closeSnackbar, setSnackbar} = useGlobalContext();
     const [open, setOpen] = React.useState(false);
 
-
+    // console.log(snackbar)
     const handleClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') {
             return;
@@ -24,17 +24,25 @@ const SnackbarComponent = () => {
 
         setOpen(false);
     };
+    const handleExited = (value:any) => {
+        setSnackbar((prev:any)=>({
+            ...prev,
+            message: value,
+        }));
+    };
+
 
     return (
         <Snackbar
             open={snackbar.open}
-            autoHideDuration={6000}
+            TransitionProps={{ onExited: handleExited }}
+            autoHideDuration={5000}
             onClose={closeSnackbar}
             message={snackbar.message}
             anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         >
 
-            <Alert onClose={handleClose} sx={{ width: '100%' }} severity={(snackbar.severity ? snackbar.severity : 'success')}>
+            <Alert onClose={closeSnackbar} sx={{ width: '100%' }} severity={(snackbar.severity ? snackbar.severity : 'success')}>
                 {snackbar.message}
             </Alert>
         </Snackbar>

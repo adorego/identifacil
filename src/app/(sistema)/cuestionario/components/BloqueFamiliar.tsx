@@ -211,101 +211,121 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             concubino: null,
         }))
     }
+
+    const formFamiliarValidation = ()=>{
+        let auxValidator = false
+        console.log(estadoFormularioDatosFamiliares.tieneConcubino)
+        if(estadoFormularioDatosFamiliares.tieneConcubino){
+            if(estadoFormularioDatosFamiliares.concubino?.nombres
+                && estadoFormularioDatosFamiliares.concubino?.apellidos
+                && estadoFormularioDatosFamiliares.concubino?.numeroDeIdentificacion) {
+                auxValidator = true
+            }else{
+                openSnackbar('Debe completar campos de concubino', 'warning')
+            }
+        }else{
+            auxValidator = true
+        }
+
+        return auxValidator
+    }
     const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
 
-        setConsultaLoading(true)
+        if(formFamiliarValidation()){
+            setConsultaLoading(true)
 
-        const circuloFamiliar = stateCirculoFamiliar.map(item => ({
-            ...item,
-            vinculo: item.vinculo.id,
-            establecimiento: item.establecimiento.id,
-        }))
+            const circuloFamiliar = stateCirculoFamiliar.map(item => ({
+                ...item,
+                vinculo: item.vinculo.id,
+                establecimiento: item.establecimiento.id,
+            }))
 
-        // Tratamiento de datos para envio peticion
-        // Se agrega circulo familiar capturado en el modal
-        // se modifica el tipo de dato objeto de cada miembro familiar, vinculos y establecimientos para enviar solo el id
-        const datosFormulario = {
-            ...estadoFormularioDatosFamiliares,
-            id_persona: id_persona,
-            familiares: circuloFamiliar,
-            familiares_modificado: true,
-        }
-
-
-        const editMod = datosFamiliaresIniciales?.id ? true : false // Si es TRUE, entonces es PUT, si es FALSE es POST
-        const redirect = false
-
-
-
-        try {
-            setLoading(true);
-
-
-            const method = estadoFormularioDatosFamiliares.id ? 'PUT' : 'POST';
-
-            //console.log(JSON.stringify(stateForm))
-            const url = estadoFormularioDatosFamiliares.id
-                ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares/${datosFormulario.id}`
-                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`
-
-            // console.log(url)
-            const respuesta = await api_request(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosFormulario),
-            });
-
-
-
-            if (respuesta.success) {
-                setLoading(false);
-                setConsultaLoading(false)
-
-                // Se setea estado global
-                if(onSetDatosPPL){
-                    onSetDatosPPL((prev:any)=>({
-                        ...prev,
-                        datosFamiliares: {
-                            ...estadoFormularioDatosFamiliares,
-                            id: respuesta.datos.id,
-                            familiares: stateCirculoFamiliar
-                        }
-                    }))
-                }
-                setEstadoFormularioDatosFamiliares(prev=>({
-                    ...prev,
-                    id: respuesta.datos.id,
-                }))
-
-                const message = estadoFormularioDatosFamiliares.id
-                    ? `Datos Familiares actualizada correctamente.`
-                    : `Datos Familiares creada correctamente.`;
-
-                openSnackbar(message, 'success');
-
-                if(handleAccordion){
-                    handleAccordion('')
-                }
-
-                if(redirect){
-                    router.push(`/ppl`);
-                }
-                return respuesta
-            } else {
-                if (respuesta.error) {
-                    setConsultaLoading(false)
-                    setLoading(false);
-                    openSnackbar(`Error al guardar los datos`, `error`);
-                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                }
-                setConsultaLoading(false)
-                
+            // Tratamiento de datos para envio peticion
+            // Se agrega circulo familiar capturado en el modal
+            // se modifica el tipo de dato objeto de cada miembro familiar, vinculos y establecimientos para enviar solo el id
+            const datosFormulario = {
+                ...estadoFormularioDatosFamiliares,
+                id_persona: id_persona,
+                familiares: circuloFamiliar,
+                familiares_modificado: true,
             }
-        } catch (error) {
-            setConsultaLoading(false)
-            setLoading(false);
-            // console.error('Error:', error);
+
+
+            const editMod = datosFamiliaresIniciales?.id ? true : false // Si es TRUE, entonces es PUT, si es FALSE es POST
+            const redirect = false
+
+
+
+            try {
+                setLoading(true);
+
+
+                const method = estadoFormularioDatosFamiliares.id ? 'PUT' : 'POST';
+
+                //console.log(JSON.stringify(stateForm))
+                const url = estadoFormularioDatosFamiliares.id
+                    ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares/${datosFormulario.id}`
+                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`
+
+                // console.log(url)
+                const respuesta = await api_request(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosFormulario),
+                });
+
+
+
+                if (respuesta.success) {
+                    setLoading(false);
+                    setConsultaLoading(false)
+
+                    // Se setea estado global
+                    if(onSetDatosPPL){
+                        onSetDatosPPL((prev:any)=>({
+                            ...prev,
+                            datosFamiliares: {
+                                ...estadoFormularioDatosFamiliares,
+                                id: respuesta.datos.id,
+                                familiares: stateCirculoFamiliar
+                            }
+                        }))
+                    }
+                    setEstadoFormularioDatosFamiliares(prev=>({
+                        ...prev,
+                        id: respuesta.datos.id,
+                    }))
+
+                    const message = estadoFormularioDatosFamiliares.id
+                        ? `Datos Familiares actualizada correctamente.`
+                        : `Datos Familiares creada correctamente.`;
+
+                    openSnackbar(message, 'success');
+
+                    if(handleAccordion){
+                        handleAccordion('')
+                    }
+
+                    if(redirect){
+                        router.push(`/ppl`);
+                    }
+                    return respuesta
+                } else {
+                    if (respuesta.error) {
+                        setConsultaLoading(false)
+                        setLoading(false);
+                        openSnackbar(`Error al guardar los datos`, `error`);
+                        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                    }
+                    setConsultaLoading(false)
+
+                }
+            } catch (error) {
+                setConsultaLoading(false)
+                setLoading(false);
+                // console.error('Error:', error);
+            }
         }
     }
 
@@ -432,7 +452,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </Grid>
                 </Grid>
             </Grid>
-            <Grid container spacing={2} mt={2}>
+            {estadoFormularioDatosFamiliares.tieneConcubino  &&
+                <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <Box sx={{
                         border: '1px solid #E2E8F0',
@@ -470,22 +491,28 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                         <Stack spacing={2} direction={'row'}>
 
                             <TextField
+                                error={!estadoFormularioDatosFamiliares.concubino.nombres}
                                 label="Nombre"
                                 name="nombres"
                                 value={estadoFormularioDatosFamiliares.concubino? estadoFormularioDatosFamiliares.concubino.nombres : ""}
                                 onChange={handleConcubino}
                                 variant="outlined"
+                                helperText='* Campo requerido'
                                 fullWidth/>
                             <TextField
                                 label="Apellidos"
                                 name="apellidos"
+                                error={!estadoFormularioDatosFamiliares.concubino.apellidos}
                                 value={estadoFormularioDatosFamiliares.concubino? estadoFormularioDatosFamiliares.concubino.apellidos : ""}
                                 onChange={handleConcubino}
                                 variant="outlined"
+                                helperText='* Campo requerido'
                                 fullWidth/>
                             <TextField
                                 label="Numero de documento"
+                                helperText='* Campo requerido'
                                 name="numeroDeIdentificacion"
+                                error={!estadoFormularioDatosFamiliares.concubino.numeroDeIdentificacion}
                                 value={estadoFormularioDatosFamiliares.concubino? estadoFormularioDatosFamiliares.concubino.numeroDeIdentificacion : ""}
                                 onChange={handleConcubino}
                                 variant="outlined"
@@ -499,6 +526,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </Box>
                 </Grid>
             </Grid>
+            }
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <LoadingButton

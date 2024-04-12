@@ -129,7 +129,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
 
     const handleSubmit = (event: { preventDefault: () => void; })=>{
         event.preventDefault();
-        if(state.establecimiento.id && state.vinculo.id){
+        if(state.establecimiento.id && state.vinculo.id && state.nombre && state.apellido){
             console.log(state)
             onHandleChangeCirculo(state, editMode)
             onHandleCloseForm(); // Cierra el modal después de la acción*/
@@ -162,6 +162,8 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                         <TextField
                             label="Nombre"
                             name="nombre"
+                            error={!state.nombre}
+                            helperText='* Campo requerido'
                             value={state.nombre}
                             onChange={handleChange}
                             variant="outlined"
@@ -169,6 +171,8 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                     </Grid>
                     <Grid item sm={6} mt={2}>
                         <TextField
+                            error={!state.apellido}
+                            helperText='* Campo requerido'
                             label="Apellido"
                             name="apellido"
                             value={state.apellido}

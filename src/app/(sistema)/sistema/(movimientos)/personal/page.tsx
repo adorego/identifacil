@@ -10,27 +10,30 @@ import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 // Datos para armar el header de la tabla
 const header = [
     { id: 'id', label: 'ID' },
-    { id: 'nombre', label: 'Nombre y apellido' },
-    { id: 'tipo', label: 'Tipo personal' },
-    { id: 'lastUpdate', label: 'Ultima actualizacion' },
+    { id: 'nombre', label: 'Nombre' },
+    { id: 'apellido', label: 'Apellido' },
+
 ]
+
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Page(){
     const { openSnackbar } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<any>(null);
 
 
 
     async function fetchData() {
         // TODO: Si viene vacio o da error no mostrar la tabla por que explota
         try {
-            const response = await fetch('http://localhost:5000/personal');
+            const response = await fetch(`${API_URL}/movimientos/custodios`);
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -42,12 +45,14 @@ export default function Page(){
         }
     }
 
+    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
         fetchData()
-            .then(fetchedData => {
-                setData(fetchedData);
+            .then((fetchedData:any) => {
+                setData(Object.keys(fetchedData).map(key=>fetchedData[key]));
             });
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+    }, []);
+
 
     const handleDelete = async (id:number) => {
         const result = await deleteRecord(`/personal/${id}`);
@@ -85,6 +90,12 @@ export default function Page(){
         setModalOpen(false);
     };
 
+    const listaDeItemBread = [
+        {nombre:'Lista de custodios', url:'/sistema/personal', lastItem: false},
+        {nombre:'Custodio', url:'', lastItem: true},
+    ];
+
+
     if (!data) {
         return (
             <Box sx={{
@@ -102,7 +113,9 @@ export default function Page(){
     return(
 
         <Box>
-            <TituloComponent titulo='Personales del establecimiento penitenciario' />
+            <TituloComponent titulo='Custodios de movimientos penitenciarios'>
+                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+            </TituloComponent>
             <Box mt={4}>
                 <CustomTable
                     showId={true}
@@ -111,12 +124,12 @@ export default function Page(){
                     deleteRecord={handleOpenModal}
                     data={data}
                     options={{
-                        title: 'Lista de personales',
+                        title: 'Lista de custodios',
                         pagination:true,
                         rowsPerPageCustom: 5,
                         newRecord: '/sistema/personal/crear',
-                        targetURL:`/sistema/personal/`,
-                        deleteOption: true,
+                        targetURL:`/sistema/personal`,
+                        deleteOption: false,
                     }}
                 />
 
