@@ -162,7 +162,7 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
 
     useEffect(() => {
 
-        console.log(datosPersona)
+
         if(datosPersona){
             setdatosPPL(datosPersona)
         }

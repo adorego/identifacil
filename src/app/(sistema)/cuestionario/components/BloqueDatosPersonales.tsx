@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import React, {ChangeEvent, FC, useEffect, useState} from "react";
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
-import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
+import {CiudadType, DepartamentoType, EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {RequestResponse, api_request} from "@/lib/api-request";
 import dayjs, {Dayjs} from "dayjs";
@@ -40,7 +40,7 @@ interface datosPersonales {
     codigo_genero: number;
     apellido: string;
     apodo: string;
-    estadoCivil: string;
+    estadoCivil: number;
     fechaDeNacimiento: Dayjs | null;
     nacionalidad: number;
     lugarDeNacimiento: string;
@@ -74,7 +74,7 @@ const datosPersonalesInicial: datosPersonales = {
     tiene_cedula: true,
     apodo: '',
     codigo_genero: 0,
-    estadoCivil: '1',
+    estadoCivil: 0,
     fechaDeNacimiento: null,
     nacionalidad: 0,
     lugarDeNacimiento: '',
@@ -106,7 +106,8 @@ export interface BloqueDatosPersonalesProps {
 
 
 const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, handleAccordion}) => {
-    console.log(datosDeIdentificacion)
+    // console.log(datosDeIdentificacion)
+
     let numero_doc_procesado : string | null | undefined = '';
 
     switch (datosDeIdentificacion.tipo_identificacion) {
@@ -128,7 +129,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
     }
 
-
+    /** 1. Estado de datos capturados del formulario */
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial,
         fechaDeNacimiento: dayjs(datosDeIdentificacion.fecha_nacimiento),
@@ -146,12 +147,19 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     });
 
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 2. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+
     const [datosObligatorios, setDatosObligatorios] = useState<Object>({})
+
     const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
+
+    const [departamentosLista, setDepartamentosLista] = useState<Array<DepartamentoType>>([]);
+
+    const [ciudadLista, setCiudadLista] = useState<Array<CiudadType>>([]);
+
     const {openSnackbar} = useGlobalContext();
 
 
@@ -201,8 +209,59 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 }
             }
 
-            getEstadosCiviles();
-            getNacionalidades();
+            const getDepartamentos = async () => {
+                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/departamentos`;
+                try {
+
+                    const respuesta: RequestResponse = await api_request<EstadoCivilDTO>(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
+                        }
+                    });
+                    // console.log("Respuesta:", respuesta);
+                    if (respuesta.success && respuesta.datos) {
+                        setDepartamentosLista(respuesta.datos);
+                    } else {
+                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+                    }
+
+                } catch (error) {
+                    openSnackbar(`Error en la consulta de datos:${error}`, "error");
+                }
+            }
+
+            const getCiudades = async () => {
+                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/ciudades`;
+                try {
+
+                    const respuesta: RequestResponse = await api_request<EstadoCivilDTO>(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
+                        }
+                    });
+                    // console.log("Respuesta:", respuesta);
+                    if (respuesta.success && respuesta.datos) {
+                        setCiudadLista(respuesta.datos.ciudades);
+                    } else {
+                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+                    }
+
+                } catch (error) {
+                    openSnackbar(`Error en la consulta de datos:${error}`, "error");
+                }
+            }
+
+
+            Promise.all([
+                getEstadosCiviles(),
+                getNacionalidades(),
+                getDepartamentos(),
+                getCiudades(),
+            ]).finally(()=>{
+                console.info('Finished loading data.')
+            })
 
             setDatosObligatorios(prev => ({
                 ...prev,
@@ -292,8 +351,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         event.preventDefault();
         setConsultaLoading(true)
 
-        console.log('test')
-        if (datosDeIdentificacion.id_persona && FormValidator(datosObligatorios, datosPersonalesState)) {
+
+        if (datosDeIdentificacion.id_persona && datosPersonalesState.estadoCivil && datosPersonalesState.departamento && datosPersonalesState.ciudad) {
             const url = datosPersonalesState.id
                 ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosPersonalesState.id}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
@@ -330,7 +389,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
         } else {
             setConsultaLoading(false)
-            openSnackbar("Falta el número de identificación", "error");
+            openSnackbar("Completar datos requeridos.", "warning");
         }
     }
 
@@ -414,7 +473,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </Grid>
 
 
-                        <Grid item sm={6}>
+                        <Grid item sm={4}>
                             <FormControl fullWidth={true}>
                                 <DatePicker
 
@@ -426,7 +485,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                 />
                             </FormControl>
                         </Grid>
-                        <Grid item sm={6}>
+                        <Grid item sm={4}>
                             <FormControl fullWidth={true}>
                                 <TextField
                                     autoComplete="off"
@@ -436,6 +495,26 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     name="edad"
                                     value={datosPersonalesState.fechaDeNacimiento ? dayjs().diff(dayjs(datosDeIdentificacion.fecha_nacimiento), 'year') : null}
                                 />
+                            </FormControl>
+                        </Grid>
+                        <Grid item sm={4}>
+                            <FormControl fullWidth={true}>
+                                <InputLabel htmlFor="estado_civil">
+                                    Genero
+                                </InputLabel>
+                                <Select
+                                    disabled
+                                    id="estado_civil_id"
+                                    name="codigo_genero"
+                                    label='Genero'
+                                    value={datosPersonalesState.codigo_genero}
+                                >
+
+                                    <MenuItem value={1}>Femenino</MenuItem>
+                                    <MenuItem value={2}>Masculino</MenuItem>
+
+
+                                </Select>
                             </FormControl>
                         </Grid>
                         <Grid item sm={6}>
@@ -472,8 +551,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                 </Select>
                             </FormControl>
                         </Grid>
-                        <Grid item sm={4}>
-                            <FormControl fullWidth={true}>
+                        <Grid item sm={6}>
+                            <FormControl fullWidth={true} error={datosPersonalesState.estadoCivil == 0}>
                                 <InputLabel htmlFor="estado_civil">
                                     Estado Civil
                                 </InputLabel>
@@ -484,7 +563,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     value={datosPersonalesState.estadoCivil}
                                     onChange={onDatoSelectChange}
                                 >
-                                    <MenuItem value={0}>Seleccionar estado civil</MenuItem>
+                                    <MenuItem value={0} disabled>Seleccionar estado civil</MenuItem>
                                     {estadosCiviles ? estadosCiviles.map(
                                         (estadoCivil, id) => {
                                             return (
@@ -495,28 +574,12 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     ) : null}
 
                                 </Select>
+                                <FormHelperText>* Campo requerido</FormHelperText>
                             </FormControl>
+
                         </Grid>
-                        <Grid item sm={4}>
-                            <FormControl fullWidth={true}>
-                                <InputLabel htmlFor="estado_civil">
-                                    Genero
-                                </InputLabel>
-                                <Select
-                                    id="estado_civil_id"
-                                    name="codigo_genero"
-                                    label='Genero'
-                                    value={datosPersonalesState.codigo_genero}
-                                >
 
-                                    <MenuItem value={1}>Femenino</MenuItem>
-                                    <MenuItem value={2}>Masculino</MenuItem>
-
-
-                                </Select>
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={4}>
+                        <Grid item xs={6}>
                             <FormControl fullWidth variant="outlined">
                                 <InputLabel>Ciudad de nacimiento</InputLabel>
                                 <Select
@@ -525,8 +588,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                     label="Ciudad de Nacimiento"
                                     name="lugarDeNacimiento"
                                 >
-                                    <MenuItem value={0}>Seleccionar ciudad</MenuItem>
-                                    <MenuItem value={1}>Asuncion</MenuItem>
+                                    <MenuItem value={0} disabled>Seleccionar ciudad</MenuItem>
+                                    {ciudadLista.map((item,index)=>(
+                                        <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                                    ))}
 
                                 </Select>
                             </FormControl>
@@ -543,7 +608,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                 </Grid>
                 <Grid item sm={3}>
 
-                    <FormControl fullWidth variant="outlined">
+                    <FormControl fullWidth variant="outlined" error={datosPersonalesState.departamento == 0}>
                         <InputLabel>Departamento</InputLabel>
                         <Select
                             value={datosPersonalesState.departamento}
@@ -551,14 +616,18 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Departamento"
                             name="departamento"
                         >
-                            <MenuItem value={0}>Seleccionar departamento</MenuItem>
-                            <MenuItem value={1}>Asuncion</MenuItem>
+                            <MenuItem value={0} disabled>Seleccionar departamento</MenuItem>
+                            {departamentosLista.map((item,index)=>(
+                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                            ))}
+
 
                         </Select>
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
                 <Grid item sm={3}>
-                    <FormControl fullWidth variant="outlined">
+                    <FormControl fullWidth variant="outlined" error={datosPersonalesState.ciudad == 0}>
                         <InputLabel>Ciudad</InputLabel>
                         <Select
                             value={datosPersonalesState.ciudad}
@@ -566,10 +635,13 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Ciudad"
                             name="ciudad"
                         >
-                            <MenuItem value={0}>Seleccionar ciudad</MenuItem>
-                            <MenuItem value={1}>Asuncion</MenuItem>
+                            <MenuItem value={0} disabled>Seleccionar ciudad</MenuItem>
+                            {ciudadLista.map((item,index)=>(
+                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                            ))}
 
                         </Select>
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
 

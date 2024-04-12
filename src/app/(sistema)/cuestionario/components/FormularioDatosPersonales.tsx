@@ -1,6 +1,6 @@
 import {
     Box,
-    Button,
+    Button, CircularProgress,
     FormControl,
     FormControlLabel, FormHelperText,
     FormLabel,
@@ -20,7 +20,7 @@ import {
 import React, {ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useState} from "react";
 import SaveIcon from '@mui/icons-material/Save';
 import {DatePicker, DateValidationError, PickerChangeHandlerContext} from "@mui/x-date-pickers";
-import {EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
+import {CiudadType, DepartamentoType, EstadoCivil, EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {Nacionalidad, NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {RequestResponse, api_request} from "@/lib/api-request";
 import dayjs, {Dayjs} from "dayjs";
@@ -60,7 +60,7 @@ interface datosPersonales {
     telefono_contacto_en_embajada: string;
     departamento: number;
     ciudad: number;
-    contacto_embajada:{
+    contacto_embajada: {
         id: number,
         nombre: string,
         numero: string,
@@ -70,7 +70,7 @@ interface datosPersonales {
 }
 
 const datosPersonalesInicial: datosPersonales = {
-    flag:false,
+    flag: false,
     nombre_contacto_en_embajada: '',
     contactoDeEmbajada_numero: '',
     tiene_contacto_en_embajada: false,
@@ -100,7 +100,7 @@ const datosPersonalesInicial: datosPersonales = {
     telefono_contacto_en_embajada: '',
     departamento: 0,
     ciudad: 0,
-    contacto_embajada:{
+    contacto_embajada: {
         id: 0,
         nombre: '',
         numero: 'string',
@@ -136,7 +136,7 @@ export interface BloqueDatosPersonalesProps {
         contactoDeEmbajada_numero?: string;
         departamento: number;
         ciudad: number;
-        contacto_embajada:{
+        contacto_embajada: {
             id: number;
             nombre: string;
             numero: string;
@@ -150,11 +150,14 @@ export interface BloqueDatosPersonalesProps {
 
 }
 
-const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentificacion, tipo_de_documento = null,onSetDatosPPL}) => {
+const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
+                                                                   datosDeIdentificacion,
+                                                                   tipo_de_documento = null,
+                                                                   onSetDatosPPL
+                                                               }) => {
 
-    const pathname = usePathname()
-    const router = useRouter();
 
+    /** 1. Estado */
     const [datosPersonalesState, setDatosPersonalesState] = useState<datosPersonales>({
         ...datosPersonalesInicial
     });
@@ -162,12 +165,15 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
     /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
+    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    const [loading, setLoading] = useState(true)
+
     useEffect(() => {
 
         if (datosDeIdentificacion) {
 
-            setDatosPersonalesState((prevState:any) => {
-                console.log(datosDeIdentificacion)
+            setDatosPersonalesState((prevState: any) => {
+                // console.log(datosDeIdentificacion)
                 return {
                     ...prevState,
                     id_persona: datosDeIdentificacion.id_persona,
@@ -202,8 +208,17 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         }
     }, [datosDeIdentificacion]);
 
+    /**/
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+
     const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
+
+    const [departamentosLista, setDepartamentosLista] = useState<Array<DepartamentoType>>([]);
+
+    const [ciudadLista, setCiudadLista] = useState<Array<CiudadType>>([]);
+
+    const pathname = usePathname()
+    const router = useRouter();
     const {openSnackbar} = useGlobalContext();
 
 
@@ -232,15 +247,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
             }
 
-            getNacionalidades();
 
-        }, []
-    )
-
-    useEffect(() => {
             const getEstadosCiviles = async () => {
                 const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/estados_civiles`;
                 try {
+
                     const respuesta: RequestResponse = await api_request<EstadoCivilDTO>(url, {
                         method: 'GET',
                         headers: {
@@ -258,9 +269,66 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     openSnackbar(`Error en la consulta de datos:${error}`, "error");
                 }
             }
-            getEstadosCiviles();
+
+            const getDepartamentos = async () => {
+                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/departamentos`;
+                try {
+
+                    const respuesta: RequestResponse = await api_request<EstadoCivilDTO>(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
+                        }
+                    });
+                    // console.log("Respuesta:", respuesta);
+                    if (respuesta.success && respuesta.datos) {
+                        setDepartamentosLista(respuesta.datos);
+                    } else {
+                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+                    }
+
+                } catch (error) {
+                    openSnackbar(`Error en la consulta de datos:${error}`, "error");
+                }
+            }
+
+            const getCiudades = async () => {
+                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/ciudades`;
+                try {
+
+                    const respuesta: RequestResponse = await api_request<EstadoCivilDTO>(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
+                        }
+                    });
+                    // console.log("Respuesta:", respuesta);
+                    if (respuesta.success && respuesta.datos) {
+                        setCiudadLista(respuesta.datos.ciudades);
+                    } else {
+                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+                    }
+
+                } catch (error) {
+                    openSnackbar(`Error en la consulta de datos:${error}`, "error");
+                }
+            }
+
+            Promise.all([
+                getEstadosCiviles(),
+                getNacionalidades(),
+                getDepartamentos(),
+                getCiudades()
+            ]).then(()=>{
+                console.log('Finished loading elements')
+            }).finally(()=>{
+                console.log('Ending promises.')
+                setLoading(false)
+            })
+
         }, []
     )
+
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
@@ -280,7 +348,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
     const onDatoChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
 
-        const { value } = event.target;
+        const {value} = event.target;
 
         const regex = /^\+?[0-9\(\)\s]*\.?[0-9\(\)\s]*$/;
 
@@ -349,14 +417,12 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         event.preventDefault();
         setConsultaLoading(true)
 
-        if(datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil){
+        if (datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil) {
             const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
             const url = datosDeIdentificacion.id_datos_personales ?
                 `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
             const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
-
-
 
 
             const respuesta = await api_request(url, {
@@ -379,13 +445,13 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     }))
                 }*/
 
-                setDatosPersonalesState(prev=>({
+                setDatosPersonalesState(prev => ({
                     ...prev,
                     id: respuesta.datos.id,
                 }))
                 setConsultaLoading(false)
                 openSnackbar("Datos guardados correctamente", "success")
-                if(pathname.startsWith('/ppl')){
+                if (pathname.startsWith('/ppl')) {
                     router.push(`/ppl/${datosDelFormulario.id_persona}`);
                 }
             } else {
@@ -395,7 +461,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
                 }
             }
-        }else{
+        } else {
             openSnackbar('Completar campos requerido', 'warning')
             setConsultaLoading(false)
         }
@@ -403,6 +469,20 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
         // console.log("Respuesta:", respuesta);
 
+    }
+    if(loading){
+        return (
+            <Box sx={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '75vh',
+            }}>
+                <CircularProgress />
+
+            </Box>
+        )
     }
 
     return (
@@ -442,61 +522,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             onChange={onDatoChange}/>
                     </FormControl>
                 </Grid>
-                <Grid item sm={4}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="apodo">
-                            Apodo
-                        </InputLabel>
-                        <OutlinedInput
-                            label="Apodo"
-                            name="apodo"
-                            value={datosPersonalesState.apodo}
-                            onChange={onDatoChange}/>
-                    </FormControl>
-                </Grid>
-                <Grid item sm={4}>
-                    <FormControl fullWidth={true} error={datosPersonalesState.estadoCivil == 0 || datosPersonalesState.estadoCivil == null}>
-                        <InputLabel htmlFor="estado_civil">
-                            Estado Civil
-                        </InputLabel>
-                        <Select
-                            id="estado_civil_id"
-                            name="estadoCivil"
-                            label='Estado Civil'
-                            value={datosPersonalesState.estadoCivil ? datosPersonalesState.estadoCivil : 0}
-                            onChange={onDatoSelectChange}
-                        >
-                            <MenuItem value={0}>Seleccionar estado civil</MenuItem>
-                            {estadosCiviles ? estadosCiviles.map(
-                                (estadoCivil, id) => {
-                                    return (
-                                        <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
-                                    )
-                                }
-                            ) : null}
-                        </Select>
-                        <FormHelperText>* Campo requerido</FormHelperText>
-                    </FormControl>
-                </Grid>
-                <Grid item xs={4}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="codigo_genero">
-                            Genero
-                        </InputLabel>
-                        <Select
-                            disabled
-                            id="codigo_genero"
-                            name="codigo_genero"
-                            label='Genero'
-                            value={datosPersonalesState.codigo_genero}
-                            onChange={onDatoSelectChange}
-                        >
-                            <MenuItem value={1}>Femenino</MenuItem>
-                            <MenuItem value={2}>Masculino</MenuItem>
 
-                        </Select>
-                    </FormControl>
-                </Grid>
                 <Grid item sm={4}>
                     <FormControl fullWidth variant="outlined">
                         <InputLabel id='tipo-doc-label'>Tipo de documento</InputLabel>
@@ -537,7 +563,62 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         />
                     </FormControl>
                 </Grid>
+                <Grid item xs={4}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel htmlFor="codigo_genero">
+                            Genero
+                        </InputLabel>
+                        <Select
+                            disabled
+                            id="codigo_genero"
+                            name="codigo_genero"
+                            label='Genero'
+                            value={datosPersonalesState.codigo_genero}
+                            onChange={onDatoSelectChange}
+                        >
+                            <MenuItem value={1}>Femenino</MenuItem>
+                            <MenuItem value={2}>Masculino</MenuItem>
 
+                        </Select>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={4}>
+                    <FormControl fullWidth={true}>
+                        <InputLabel htmlFor="apodo">
+                            Apodo
+                        </InputLabel>
+                        <OutlinedInput
+                            label="Apodo"
+                            name="apodo"
+                            value={datosPersonalesState.apodo}
+                            onChange={onDatoChange}/>
+                    </FormControl>
+                </Grid>
+                <Grid item sm={4}>
+                    <FormControl fullWidth={true}
+                                 error={datosPersonalesState.estadoCivil == 0 || datosPersonalesState.estadoCivil == null}>
+                        <InputLabel htmlFor="estado_civil">
+                            Estado Civil
+                        </InputLabel>
+                        <Select
+                            id="estado_civil_id"
+                            name="estadoCivil"
+                            label='Estado Civil'
+                            value={datosPersonalesState.estadoCivil ? datosPersonalesState.estadoCivil : 0}
+                            onChange={onDatoSelectChange}
+                        >
+                            <MenuItem value={0}>Seleccionar estado civil</MenuItem>
+                            {estadosCiviles ? estadosCiviles.map(
+                                (estadoCivil, id) => {
+                                    return (
+                                        <MenuItem key={id} value={estadoCivil.id}>{estadoCivil.nombre}</MenuItem>
+                                    )
+                                }
+                            ) : null}
+                        </Select>
+                        <FormHelperText>* Campo requerido</FormHelperText>
+                    </FormControl>
+                </Grid>
                 <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
                         <InputLabel id='nacionalidad-label'>Nacionalidad</InputLabel>
@@ -561,7 +642,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
                 <Grid item xs={6}>
-                    <FormControl fullWidth variant="outlined" >
+                    <FormControl fullWidth variant="outlined">
                         <InputLabel>Ciudad de Nacimiento</InputLabel>
                         <Select
                             value={datosPersonalesState.lugarDeNacimiento ? datosPersonalesState.lugarDeNacimiento : '0'}
@@ -569,7 +650,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Ciudad de Nacimiento"
                             name="lugarDeNacimiento"
                         >
-                            <MenuItem value={0}>Seleccionar ciudad</MenuItem>
+                            {ciudadLista.map((item,index)=>(
+                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                            ))}
                             <MenuItem value={1}>Asuncion</MenuItem>
 
                         </Select>
@@ -577,16 +660,6 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
 
                 </Grid>
-                <Grid item sm={8}>
-                    <TextField
-                        fullWidth
-                        label="Direccion"
-                        name="direccion"
-                        value={datosPersonalesState.direccion}
-                        onChange={onDatoChange}
-                    />
-                </Grid>
-
 
                 <Grid item sm={4}>
                     <TextField
@@ -634,15 +707,19 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             label="Departamento"
                             name="departamento"
                         >
+
                             <MenuItem value={0}>Seleccionar departamento</MenuItem>
-                            <MenuItem value={1}>Asuncion</MenuItem>
+                            {departamentosLista.map((item,index)=>(
+                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                            ))}
+
 
                         </Select>
                         <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
                 <Grid item sm={4}>
-                    <FormControl fullWidth variant="outlined"  error={datosPersonalesState.ciudad == 0}>
+                    <FormControl fullWidth variant="outlined" error={datosPersonalesState.ciudad == 0}>
                         <InputLabel>Ciudad</InputLabel>
                         <Select
                             value={datosPersonalesState.ciudad}
@@ -651,7 +728,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             name="ciudad"
                         >
                             <MenuItem value={0}>Seleccionar ciudad</MenuItem>
-                            <MenuItem value={1}>Asuncion</MenuItem>
+                            {ciudadLista.map((item,index)=>(
+                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                            ))}
 
                         </Select>
                         <FormHelperText>* Campo requerido</FormHelperText>
@@ -732,7 +811,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                                     {nacionalidades ? nacionalidades.map(
                                                         (data, id) => {
                                                             return (
-                                                                <MenuItem key={data.id} value={data.id}>{data.pais}</MenuItem>
+                                                                <MenuItem key={data.id}
+                                                                          value={data.id}>{data.pais}</MenuItem>
                                                             )
                                                         }
                                                     ) : null}
@@ -749,7 +829,15 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </Grid>)
 
                     : null}
-
+                <Grid item sm={12}>
+                    <TextField
+                        fullWidth
+                        label="Direccion"
+                        name="direccion"
+                        value={datosPersonalesState.direccion}
+                        onChange={onDatoChange}
+                    />
+                </Grid>
                 {/* Seccion pueblos indigenas */}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
@@ -878,7 +966,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             }}
                             onClick={onDatosPersonalesSubmit}
                             loading={consultaLoading}
-                            startIcon={<SaveIcon />}
+                            startIcon={<SaveIcon/>}
                             loadingPosition='start'
 
                             variant="contained">
