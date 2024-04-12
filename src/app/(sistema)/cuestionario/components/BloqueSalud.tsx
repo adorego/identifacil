@@ -459,7 +459,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 value={datosSalud.grupo_sanguineo ? datosSalud.grupo_sanguineo?.id : 0}
                                 onChange={onGruposSanguineoChange}
                             >
-                                <MenuItem value={0}>Seleccionar grupo sanguineo</MenuItem>
+                                <MenuItem value={0} disabled>Seleccionar grupo sanguineo</MenuItem>
                                 {datosSaludSelectState.grupo_sanguineo.map((option, index) => (
                                     <MenuItem key={option.id} value={option.id}>{option.nombre}</MenuItem>
                                 ))}

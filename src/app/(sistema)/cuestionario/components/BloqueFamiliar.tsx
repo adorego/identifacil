@@ -410,6 +410,30 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             }
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
+                    <Grid item sm={12}>
+                        <FormControl>
+                            <FormLabel id="datoLiderFamilia">¿Tiene concubino?</FormLabel>
+                            <RadioGroup
+                                value={estadoFormularioDatosFamiliares.tieneConcubino}
+                                onChange={onSelectChange}
+                                row
+                                aria-labelledby="cabezaDeFamilia"
+                                name="tieneConcubino">
+                                <FormControlLabel
+                                    value={true}
+                                    control={<Radio/>}
+                                    label="Si"/>
+                                <FormControlLabel
+                                    value={false}
+                                    control={<Radio/>}
+                                    label="No"/>
+                            </RadioGroup>
+                        </FormControl>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid container spacing={2} mt={2}>
+                <Grid item sm={12}>
                     <Box sx={{
                         border: '1px solid #E2E8F0',
                         background: 'rgba(244,246,248, 0.30)',
