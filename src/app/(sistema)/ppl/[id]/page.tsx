@@ -25,6 +25,7 @@ import {
 } from "@/components/utils/systemTypes";
 import TabSalidaTransitoia from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
 import TabSalidaTransitoria from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 
 
@@ -186,11 +187,18 @@ export default function Page({ params }: { params: { id: number } }) {
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
+    const listaDeItemBread = [
+        {nombre:'Lista de PPL', url:'', lastItem: false},
+        {nombre:`${data ? data.nombre + ' ' + data.apellido  : 'PPL'}`, url:'', lastItem: true},
+    ];
+
 
     return (
         <Box>
             <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2}>
-                <TituloComponent titulo='PPL' />
+                <TituloComponent titulo='PPL'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
             </Stack>
 
             <Grid container sx={{bgcolor: "#FFF", border: '1px solid #e0e0e0', borderRadius: '10px', marginTop: '20px',}}>

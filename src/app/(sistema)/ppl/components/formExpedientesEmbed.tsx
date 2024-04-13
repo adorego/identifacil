@@ -143,7 +143,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
     /** Funcion para manejar datos de hechos punibles y causas
      * */
     const handleAgregar = () => {
-        const nuevaSeleccion = {hechoPunibleId: hechosPunibles[0].id, causaId: hechosPunibles[0].causas[0].id};
+        const nuevaSeleccion = {hechoPunibleId: 0, causaId: 0};
         setSelecciones([...selecciones, nuevaSeleccion]);
     };
 
@@ -169,6 +169,14 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
         setSelecciones(nuevasSelecciones);
     };
 
+
+    const isCausaSelected = (hechoPunibleId:number, causaId:number) => {
+        return selecciones.some(seleccion =>
+            seleccion.hechoPunibleId === hechoPunibleId && seleccion.causaId === causaId
+        );
+    };
+
+
     /** Funcion para manejar cambios en selector de hechos punibles
      * */
     const handleHechoPunibleChange = (index: number, nuevoHechoPunibleId: number) => {
@@ -184,66 +192,85 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
         });
         setSelecciones(nuevasSelecciones);
     };
+    const validadorHechosPunibles = ()=>{
+        let esValidado = false
+
+
+
+        // Se busca una cauda o hechos punible con id = 0
+        const busquedaDeCausaVacia = selecciones.some((item:any)=>(item.hechoPunibleId==0 || item.causaId==0))
+
+        // Si es True la busqueda significa que esta vacio. Por ende no debe habilitar
+        if(!busquedaDeCausaVacia){
+            esValidado = true
+        }else{
+            openSnackbar('Seleccionar hecho punibles y/o causa', 'warning')
+        }
+
+        return esValidado
+    }
 
     /** Funcion para enviar datos
      * */
     const handleSubmit = async () =>{
 
-        const validacionForm = formState.numeroDeExpediente
 
 
+        if(validadorHechosPunibles()){
 
-        /** Se controla campos vacios */
-        if (formState.numeroDeExpediente && formState.caratula_expediente && selecciones.length > 0){
-            try {
-                setLoading(true);
-                const response = await postFormExpedienteJudicial(
-                    false,
-                    'datos_penales/expedientes',
-                    'Expediente',
-                    {
-                        ...formState,
-                        hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
-                    },
-                    setLoading,
-                    openSnackbar,
-                    router,
-                    false
-                );
+            /** Se controla campos vacios */
+            if (formState.numeroDeExpediente && formState.caratula_expediente && selecciones.length > 0){
+                try {
+                    setLoading(true);
+                    const response = await postFormExpedienteJudicial(
+                        false,
+                        'datos_penales/expedientes',
+                        'Expediente',
+                        {
+                            ...formState,
+                            hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
+                        },
+                        setLoading,
+                        openSnackbar,
+                        router,
+                        false
+                    );
 
-                if (!response) {
-                    throw new Error('No se recibió respuesta del servidor');
+                    if (!response) {
+                        throw new Error('No se recibió respuesta del servidor');
+                    }
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data) {
+                            onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente);
+                        }
+                    } else {
+
+                        switch (response.status) {
+                            case 400:
+                                openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
+                                break;
+                            case 500:
+                                openSnackbar('Expediente judicial ya existe', 'warning');
+                                break;
+                            default:
+                                openSnackbar('Campos ingresados incorrectos.', 'error');
+                        }
+                        throw new Error(`Error en la petición: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Esta es una captura general para cualquier otro error que no sea un error HTTP
+                    // openSnackbar('Error en expediente judicial!', 'warning');
+                } finally {
+                    setLoading(false);
                 }
 
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data) {
-                        onHandledata(data.id, formState.caratula_expediente, formState.numeroDeExpediente);
-                    }
-                } else {
-
-                    switch (response.status) {
-                        case 400:
-                            openSnackbar('Petición incorrecta, revisa los datos enviados.', 'warning');
-                            break;
-                        case 500:
-                            openSnackbar('Expediente judicial ya existe', 'warning');
-                            break;
-                        default:
-                            openSnackbar('Error en el servidor, intenta más tarde.', 'error');
-                    }
-                    throw new Error(`Error en la petición: ${response.status}`);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                // Esta es una captura general para cualquier otro error que no sea un error HTTP
-                // openSnackbar('Error en expediente judicial!', 'warning');
-            } finally {
-                setLoading(false);
+            }else{
+                openSnackbar('Completar los campos requeridos.', 'warning');
             }
 
-        }else{
-            openSnackbar('Completar los campos requeridos.', 'warning');
         }
     }
 
@@ -364,6 +391,7 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                                     value={seleccion.hechoPunibleId}
                                     onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
                                 >
+                                    <MenuItem value={0} disabled>Seleccionar hecho punible</MenuItem>
                                     {hechosPunibles.map((hp) => (
                                         <MenuItem key={hp.id} value={hp.id}>{hp.nombre}</MenuItem>
                                     ))}
@@ -376,12 +404,14 @@ export default function FormExpedientesEmebed({id_persona=null, onHandledata }:{
                                 <Select
                                     label='causas'
                                     value={seleccion.causaId}
+                                    defaultValue={0}
                                     onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
                                 >
+                                    <MenuItem value={0} disabled>Seleccionar causa</MenuItem>
                                     {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => {
-
+                                        const isDisabled = isCausaSelected(seleccion.hechoPunibleId, causa.id);
                                         return(
-                                        <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
+                                        <MenuItem key={causa.id} value={causa.id} disabled={isDisabled}>{causa.nombre}</MenuItem>
                                     )})}
                                 </Select>
                             </FormControl>

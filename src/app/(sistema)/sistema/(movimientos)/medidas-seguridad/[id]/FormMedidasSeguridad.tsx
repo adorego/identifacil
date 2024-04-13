@@ -114,8 +114,12 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
     };
 
     const handleSubmit = () =>{
-        postTraslado();
-        // console.log(JSON.stringify(stateForm))
+        if(stateForm.nombre){
+            postTraslado();
+        }else{
+            openSnackbar('Debe completar el campo de medida de seguridad', 'warning')
+        }
+
     }
 
     if (loading) {
@@ -146,7 +150,7 @@ export default function FormMedidasSeguridad({params} : { params: { id: number |
                         name="nombre"
                         value={stateForm.nombre ?? ''}
                         id="nombre"
-                        label="Medidas de seguridad"
+                        label="Medida de seguridad"
                         variant="outlined" />
                 </Grid>
             </Grid>

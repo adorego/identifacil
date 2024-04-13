@@ -452,7 +452,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                 setConsultaLoading(false)
                 openSnackbar("Datos guardados correctamente", "success")
                 if (pathname.startsWith('/ppl')) {
-                    router.push(`/ppl/${datosDelFormulario.id_persona}`);
+                    window.location.reload();
                 }
             } else {
                 if (respuesta.error) {
@@ -552,7 +552,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                     />
                 </Grid>
                 <Grid item sm={4}>
-                    <FormControl fullWidth={true}>
+                    <FormControl fullWidth={true} className='fechaNacimientoField'>
                         <DatePicker
                             readOnly={true}
                             disabled
@@ -728,9 +728,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                             name="ciudad"
                         >
                             <MenuItem value={0}>Seleccionar ciudad</MenuItem>
-                            {ciudadLista.map((item,index)=>(
+                            {ciudadLista.map((item,index)=> {
+                                console.log(item)
+                                return(
                                 <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                            ))}
+                            )})}
 
                         </Select>
                         <FormHelperText>* Campo requerido</FormHelperText>
