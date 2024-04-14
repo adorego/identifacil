@@ -7,7 +7,7 @@ export default function BreadCrumbComponent({listaDeItems}:{listaDeItems:Array<a
     return(
         <>
             <Breadcrumbs aria-label="breadcrumb">
-                <Link underline="hover" color="inherit" href="/">
+                <Link underline="hover" color="inherit" href="/inicio">
                     Inicio
                 </Link>
                 {listaDeItems &&

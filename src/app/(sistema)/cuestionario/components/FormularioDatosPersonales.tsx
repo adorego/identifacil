@@ -413,11 +413,24 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
         )
     }
 
+    const extranjeroValidator = ()=>{
+        let esValidado = true
+        if(datosPersonalesState.tiene_contacto_en_embajada){
+            if(!datosPersonalesState.nombre_contacto_en_embajada && !datosPersonalesState.telefono_contacto_en_embajada && !datosPersonalesState.pais_embajada){
+                esValidado = false
+            }
+
+        }
+
+        return esValidado
+    }
+
+
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setConsultaLoading(true)
 
-        if (datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil) {
+        if (datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil && extranjeroValidator()) {
             const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
             const url = datosDeIdentificacion.id_datos_personales ?
                 `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
@@ -641,7 +654,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                         </Select>
                     </FormControl>
                 </Grid>
+
                 <Grid item xs={6}>
+
                     <FormControl fullWidth variant="outlined">
                         <InputLabel>Ciudad de Nacimiento</InputLabel>
                         <Select
@@ -749,8 +764,18 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                         />
                     </FormControl>
                 </Grid>
+                <Grid item sm={12}>
+                    <TextField
+                        fullWidth
+                        label="Direccion"
+                        name="direccion"
+                        value={datosPersonalesState.direccion}
+                        onChange={onDatoChange}
+                    />
+                </Grid>
                 {/* Seccion extranjeros*/}
-                {datosPersonalesState.es_extranjero ?
+                {/*{datosDeIdentificacion.es_extranjero || datosPersonalesState.nacionalidad !== 1 ?*/}
+                {datosPersonalesState.es_extranjero || datosPersonalesState.nacionalidad !== 1 ?
                     (<Grid item sm={12}>
                         <Grid container spacing={2} my={2}>
                             <Grid item sm={12}>
@@ -758,7 +783,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                                     Datos de Extranjeros
                                 </Typography>
                             </Grid>
-                            <Grid item xs={3}>
+                            <Grid item xs={12}>
                                 <FormControl fullWidth variant="outlined">
                                     <FormLabel>Mantiene contacto con la embajada:</FormLabel>
                                     <RadioGroup
@@ -781,28 +806,34 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                             {datosPersonalesState.tiene_contacto_en_embajada ?
                                 (
                                     <>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={4}>
                                             <TextField
+                                                helperText='* Campo requerido'
+                                                error={!datosPersonalesState.nombre_contacto_en_embajada}
                                                 fullWidth
                                                 name='nombre_contacto_en_embajada'
-                                                label='Nombre de contacto'
+                                                label='Nombre de contacto de embajada'
                                                 onChange={onDatoChange}
                                                 value={datosPersonalesState.nombre_contacto_en_embajada}
                                             />
                                         </Grid>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={4}>
                                             <TextField
+                                                helperText='* Campo requerido'
+                                                error={!datosPersonalesState.telefono_contacto_en_embajada}
                                                 fullWidth
                                                 name='telefono_contacto_en_embajada'
-                                                label='Número de contacto de contacto'
+                                                label='Número de contacto de embajada'
                                                 onChange={onDatoChange}
                                                 value={datosPersonalesState.telefono_contacto_en_embajada}
                                             />
                                         </Grid>
-                                        <Grid item xs={3}>
+                                        <Grid item xs={4}>
                                             <FormControl fullWidth variant="outlined">
                                                 <InputLabel id='pais-embajada-labe'>Pais de embajada</InputLabel>
                                                 <Select
+
+                                                    error={!datosPersonalesState.pais_embajada}
                                                     labelId='pais-embajada-label'
                                                     value={datosPersonalesState.pais_embajada ? datosPersonalesState.pais_embajada : 0}
                                                     onChange={onDatoSelectChange}
@@ -821,7 +852,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
 
 
                                                 </Select>
-                                                <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
+                                                <FormHelperText>* Campo requerido</FormHelperText>
                                             </FormControl>
                                         </Grid>
                                     </>
@@ -831,15 +862,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                     </Grid>)
 
                     : null}
-                <Grid item sm={12}>
-                    <TextField
-                        fullWidth
-                        label="Direccion"
-                        name="direccion"
-                        value={datosPersonalesState.direccion}
-                        onChange={onDatoChange}
-                    />
-                </Grid>
+
                 {/* Seccion pueblos indigenas */}
                 <Grid item sm={12}>
                     <Typography variant='h6'>
@@ -901,9 +924,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                                     <MenuItem value={'363'}>Manjui</MenuItem>
 
                                     <ListSubheader>Zamuco</ListSubheader>
-                                    <MenuItem value={'361'}>Ayoreo</MenuItem>
-                                    <MenuItem value={'362'}>Ybytoso</MenuItem>
-                                    <MenuItem value={'363'}>Tomárãho</MenuItem>
+                                    <MenuItem value={'471'}>Ayoreo</MenuItem>
+                                    <MenuItem value={'472'}>Ybytoso</MenuItem>
+                                    <MenuItem value={'473'}>Tomárãho</MenuItem>
 
                                     <ListSubheader>Guaicurú</ListSubheader>
                                     <MenuItem value={'581'}>Qom</MenuItem>

@@ -347,12 +347,24 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
         )
     }
 
+    const extranjeroValidator = ()=>{
+        let esValidado = true
+        if(datosPersonalesState.tiene_contacto_en_embajada){
+            if(!datosPersonalesState.nombre_contacto_en_embajada && !datosPersonalesState.telefono_contacto_en_embajada && !datosPersonalesState.pais_embajada){
+                esValidado = false
+            }
+
+        }
+
+        return esValidado
+    }
+
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setConsultaLoading(true)
 
 
-        if (datosDeIdentificacion.id_persona && datosPersonalesState.estadoCivil && datosPersonalesState.departamento && datosPersonalesState.ciudad) {
+        if (datosDeIdentificacion.id_persona && datosPersonalesState.estadoCivil && datosPersonalesState.departamento && datosPersonalesState.ciudad && extranjeroValidator()) {
             const url = datosPersonalesState.id
                 ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosPersonalesState.id}`
                 : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales`;
@@ -733,6 +745,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             <>
                                 <Grid item xs={4}>
                                     <TextField
+                                        helperText='* Campo requerido'
+                                        error={!datosPersonalesState.nombre_contacto_en_embajada}
                                         fullWidth
                                         name='nombre_contacto_en_embajada'
                                         label='Nombre de contacto'
@@ -742,29 +756,43 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                                 </Grid>
                                 <Grid item xs={4}>
                                     <TextField
+                                        helperText='* Campo requerido'
+                                        error={!datosPersonalesState.telefono_contacto_en_embajada}
                                         fullWidth
                                         name='telefono_contacto_en_embajada'
                                         label='Número de contacto de embajada'
-                                        onChange={onDatoChange}
+                                        onChange={onDatoChangeNumber}
                                         value={datosPersonalesState.telefono_contacto_en_embajada}
                                     />
                                 </Grid>
                                 <Grid item xs={4}>
+
                                     <FormControl fullWidth variant="outlined">
-                                        <InputLabel>Pais de embajada</InputLabel>
+                                        <InputLabel id='pais-embajada-labe'>Pais de embajada</InputLabel>
                                         <Select
-                                            value={datosPersonalesState.pais_embajada}
+                                            error={!datosPersonalesState.pais_embajada}
+                                            labelId='pais-embajada-label'
+                                            value={datosPersonalesState.pais_embajada ? datosPersonalesState.pais_embajada : 0}
                                             onChange={onDatoSelectChange}
                                             label="Pais de embajada"
                                             name="pais_embajada"
                                         >
-                                            <MenuItem value={1}>Brasil</MenuItem>
-                                            <MenuItem value={2}>Argentina</MenuItem>
-                                            <MenuItem value={3}>Chile</MenuItem>
-                                            <MenuItem value={3}>Bolivia</MenuItem>
+                                            <MenuItem value={0}>Seleccionar un país</MenuItem>
+                                            {nacionalidades && nacionalidades.map(
+                                                (data, id) => {
+                                                    return (
+                                                        <MenuItem key={data.id}
+                                                                  value={data.id}>{data.pais}</MenuItem>
+                                                    )
+                                                })
+                                            }
+
+
                                         </Select>
                                         <FormHelperText>Pais donde se encuentra la embajada</FormHelperText>
                                     </FormControl>
+
+
                                 </Grid>
                             </>
                         )

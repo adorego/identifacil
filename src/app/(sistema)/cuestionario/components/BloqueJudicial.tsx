@@ -66,7 +66,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
     const [estadoFormularioJudicial, setEstadoFormularioJudicial] = useState<datosJudicialesType>(datosJudicialesInicial)
 
     /** 2. Formulario verificar campos incompletos **/
-    const [stateErrors, setStateErrors] = useState<Object>({})
+    const [stateErrors, setStateErrors] = useState<any>({})
 
     /** 3. Formulario para validacion de errores. Deprecado **/
     const [validateFormValueState, setValidateFormValueState] = useState<boolean>(false)
@@ -109,22 +109,26 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
     /** Este useEffect se ejecuta una vez al cargarse toda la pagina **/
     useEffect(() => {
+
+            console.log('Debug UseEffect 1')
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`).then(res => {
                 // console.log(res[0])
                 setDatosFormulario((prev: any) => ({
                     ...prev,
                     expedientes: res
                 }))
-            }).finally(()=>{
+                }).finally(()=>{
+                console.log('Debug UseEffect 1.5')
                 setEstadoFormularioJudicial(prev => ({
                     ...prev,
                     id_persona: id_persona,
                     establecimiento_penitenciario: 1,
                 }))
 
-
+                console.log(datosIniciales)
                 // @ts-ignore
                 if(datosIniciales !== null && datosIniciales.flag && datosIniciales){
+                    console.log('Debug UseEffect 2')
                     console.log(datosFormulario)
                     setEstadoFormularioJudicial((prev:any)=>({
                         ...prev,
@@ -137,6 +141,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                 }else{
                     // Se verifica que existan datos iniciales para cargar el estado
                     if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
+                        console.log('Debug UseEffect 3')
 
                         const datos_ingreso_prision = datosIniciales.ingresos_a_prision[0];
 
@@ -145,6 +150,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
                         /**Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de resolucion MJ*/
                         const resolucionBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "resolucion_mj");
+
 
                         if (datos_ingreso_prision.expedienteJudicial !== undefined && datos_ingreso_prision.expedienteJudicial !== null) {
                             setDatosFormulario((prev: any) => ({
@@ -157,6 +163,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                 expediente_id: datos_ingreso_prision.expedienteJudicial.id
                             }))
                         }
+
                         const descargarArchivos = async (archivoURL: string, propiedad: string) => {
                             const fileBlob = await downloadFile(archivoURL);
                             const file = new File([fileBlob], `${archivoURL.split('/').pop()}`, {type: fileBlob.type});
@@ -177,6 +184,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                         }
 
                         descargarArchivos(`${ASSETS_URL}${oficioJudicialBuscado.ruta}`, 'oficioJudicial_documento')
+
                         descargarArchivos(`${ASSETS_URL}${resolucionBuscado.ruta}`, 'resolucion_documento')
 
                         // TODO Arreglar tipo aca
@@ -212,7 +220,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
 
 
-        }, []
+        }, [datosIniciales]
     )
 
     useEffect(() => {
@@ -285,19 +293,118 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
     }
 
 
+    function validateForm() {
+        let aux = true;
+        const formData = estadoFormularioJudicial;
+
+        console.log('hola 1')
+        console.log(datosFormulario.expedientesSeleccionados)
+        if (!datosFormulario.expedientesSeleccionados) {
+            console.log('hola 2')
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                expediente_id: 'Expediente es requerido.',
+            }))
+
+        } else {
+            if (stateErrors.hasOwnProperty('expediente_id')) {
+                delete stateErrors['expediente_id'];
+            }
+        }
+
+        if (formData['oficioJudicial_numeroDeDocumento'] == '') {
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                oficioJudicial_numeroDeDocumento: 'Numero de documento de oficio judicial es requerido.',
+            }))
+        } else {
+            if (stateErrors.hasOwnProperty('oficioJudicial_numeroDeDocumento')) {
+                delete stateErrors['oficioJudicial_numeroDeDocumento'];
+            }
+        }
+        if (formData['oficioJudicial_fechaDeDocumento'] == null) {
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                oficioJudicial_fechaDeDocumento: 'Fecha de documento de oficio judicial es requerido.',
+            }))
+        } else {
+            if (stateErrors.hasOwnProperty('oficioJudicial_fechaDeDocumento')) {
+                delete stateErrors['oficioJudicial_fechaDeDocumento'];
+            }
+        }
+        if (formData['oficioJudicial_documento'] == null) {
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                oficioJudicial_documento: 'Documento de oficio judicial es requerido.',
+            }))
+        } else {
+            if (stateErrors.hasOwnProperty('oficioJudicial_documento')) {
+                delete stateErrors['oficioJudicial_documento'];
+            }
+        }
+
+        if (formData['resolucion_numeroDeDocumento'] == '') {
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                resolucion_numeroDeDocumento: 'Numero de documento de Resolución MJ/DGEP es requerido.',
+            }))
+        } else {
+            if (stateErrors.hasOwnProperty('resolucion_numeroDeDocumento')) {
+                delete stateErrors['resolucion_numeroDeDocumento'];
+            }
+        }
+        if (formData['resolucion_fechaDeDocumento'] == null) {
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                resolucion_fechaDeDocumento: 'Fecha de documento de Resolución MJ/DGEP es requerido.',
+            }))
+        } else {
+            if (stateErrors.hasOwnProperty('resolucion_fechaDeDocumento')) {
+                delete stateErrors['resolucion_fechaDeDocumento'];
+            }
+        }
+        if (formData['resolucion_documento'] == null) {
+            aux = false
+            setStateErrors((prev: any) => ({
+                ...prev,
+                resolucion_documento: 'Documento de Resolución MJ/DGEP es requerido.',
+            }))
+        } else {
+            if (stateErrors.hasOwnProperty('resolucion_documento')) {
+                delete stateErrors['resolucion_documento'];
+            }
+        }
+
+
+        return aux
+    }
+
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         setConsultaLoading(true)
-        const validarFormulario = validateForm(estadoFormularioJudicial, setStateErrors, stateErrors)
+
+        const validarFormulario = validateForm()
 
 
         // console.log('Validar el form ' + validarFormulario)
 
 
+        /** Se controla que la persona exista y que pase todas las pruebas del form*/
         if (id_persona != null && validarFormulario) {
 
+            // Se arma URL para creacion o actualizacion de datos judiciales
             const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${isEditMode ? ('/' + estadoFormularioJudicial.id) : ''}`;
+
+            // Se arma URL para actualizacion de PPL en Expediente seleccionado
             const url_patch_expediente = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${datosFormulario.expedientesSeleccionados.id}/ppls`;
+
+            // Se crea el form data para enviar los datos
             const formData = new FormData();
 
             /** Se obtiene expediente judicial de datos iniciales pre existentes */
@@ -354,6 +461,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                         console.log('respuestas de peticion datos judiciales')
                         if (res.success) {
                             setConsultaLoading(false)
+                            console.log(res)
                             openSnackbar('Datos judiciales actualizado correctamente')
                             if (onSetDatosPPL) {
                                 onSetDatosPPL((prev: any) => ({
@@ -371,7 +479,9 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             }
                         }
                     })
-                ]).finally(() => {
+                ]).catch((err)=>{
+                    console.log(err)
+                }).finally(() => {
                     setConsultaLoading(false)
                 });
 
@@ -817,90 +927,3 @@ async function downloadFile(url: string) {
     return response.blob(); // Obtiene el contenido del archivo como Blob
 }
 
-function validateForm(formData: any, setStateErrors: any, stateError: any) {
-    let aux = true;
-
-    if (formData['expediente_id'] == 0) {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            expediente_id: 'Expediente es requerido.',
-        }))
-
-    } else {
-        if (stateError.hasOwnProperty('expediente_id')) {
-            delete stateError['expediente_id'];
-        }
-    }
-
-    if (formData['oficioJudicial_numeroDeDocumento'] == '') {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            oficioJudicial_numeroDeDocumento: 'Numero de documento de oficio judicial es requerido.',
-        }))
-    } else {
-        if (stateError.hasOwnProperty('oficioJudicial_numeroDeDocumento')) {
-            delete stateError['oficioJudicial_numeroDeDocumento'];
-        }
-    }
-    if (formData['oficioJudicial_fechaDeDocumento'] == null) {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            oficioJudicial_fechaDeDocumento: 'Fecha de documento de oficio judicial es requerido.',
-        }))
-    } else {
-        if (stateError.hasOwnProperty('oficioJudicial_fechaDeDocumento')) {
-            delete stateError['oficioJudicial_fechaDeDocumento'];
-        }
-    }
-    if (formData['oficioJudicial_documento'] == null) {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            oficioJudicial_documento: 'Documento de oficio judicial es requerido.',
-        }))
-    } else {
-        if (stateError.hasOwnProperty('oficioJudicial_documento')) {
-            delete stateError['oficioJudicial_documento'];
-        }
-    }
-
-    if (formData['resolucion_numeroDeDocumento'] == '') {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            resolucion_numeroDeDocumento: 'Numero de documento de Resolución MJ/DGEP es requerido.',
-        }))
-    } else {
-        if (stateError.hasOwnProperty('resolucion_numeroDeDocumento')) {
-            delete stateError['resolucion_numeroDeDocumento'];
-        }
-    }
-    if (formData['resolucion_fechaDeDocumento'] == null) {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            resolucion_fechaDeDocumento: 'Fecha de documento de Resolución MJ/DGEP es requerido.',
-        }))
-    } else {
-        if (stateError.hasOwnProperty('resolucion_fechaDeDocumento')) {
-            delete stateError['resolucion_fechaDeDocumento'];
-        }
-    }
-    if (formData['resolucion_documento'] == null) {
-        aux = false
-        setStateErrors((prev: any) => ({
-            ...prev,
-            resolucion_documento: 'Documento de Resolución MJ/DGEP es requerido.',
-        }))
-    } else {
-        if (stateError.hasOwnProperty('resolucion_documento')) {
-            delete stateError['resolucion_documento'];
-        }
-    }
-
-
-    return aux
-}
