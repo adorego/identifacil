@@ -10,30 +10,21 @@ import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 import FiltrosPpl from "@/app/(sistema)/ppl/components/filtrosPpl";
 import dayjs from "dayjs";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 
-const ENDPOINT: string = `/gestion_ppl/ppls`
 
 const header = [
     {id: 'id_persona', label: 'ID'},
     {id: 'nombre_apellido', label: 'Apellido, Nombre'},
     {id: 'apodo', label: 'Apodo'},
     {id: 'numero_de_identificacion', label: 'Documento'},
-    {id: 'genero', label: 'Genero', type: 'genero', dataType:[{id: 1, name: 'Femenino'},{id: 2, name:'Masculino'}]},
+    {id: 'nacionalidad', label: 'Nacionalidad'},
+    {id: 'genero', label: 'Genero', type: 'genero', dataType: [{id: 1, name: 'Femenino'}, {id: 2, name: 'Masculino'}]},
     {id: 'fecha_de_ingreso', label: 'Fecha ingreso', type: 'date'},
-    {id: 'fechaDeNacimiento', label: 'Fecha nacimiento', type: 'date'},
     /*{id: 'estado_perfil', label: 'Estado Perfil'},*/
 ]
 
-/*async function getDatos(endpoint:string=""){
-
-    const res = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}${endpoint}`)
-
-
-    if(!res.ok) throw new Error('Something went wrong')
-
-    return await res.json()
-}*/
 
 export default function Page() {
 
@@ -59,33 +50,40 @@ export default function Page() {
 
         fetchData()
             .then(fetchedData => {
-                // console.log(fetchedData)
-                if(fetchedData.length > 0){
-                    console.log(fetchedData)
-                    setListaPersonas(fetchedData.map((item:any)=> {
 
-                        console.log(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso)
+                if (fetchedData.length > 0) {
+                    console.log(fetchedData)
+                    setListaPersonas(fetchedData.map((item: any) => {
+
+                        // console.log(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso)
                         return ({
                             ...item,
                             nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
                             fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso ? dayjs(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso).format('DD/MM/YYYY') : 'N/D',
-                            apodo: item.apodo ? item.apodo : 'N/D'
+                            apodo: item.apodo ? item.apodo : 'N/D',
+                            nacionalidad: item.datosPersonales?.nacionalidad ? item.datosPersonales.nacionalidad.nombre : 'N/D'
                         })
                     }));
                 }
             }).finally(() => {
             setLoading(false)
         })
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez
+    }, []);
 
     const onHandleFiltro = (value: any) => {
         setDataFiltrado(value)
     }
 
+    const listaDeItemBread = [
+        {nombre:'Lista de PPL', url:'', lastItem: true},
+    ];
+
     if (listaPersonas.length == 0) {
         return (
             <div>
-                <TituloComponent titulo='Gestion PPL'/>
+                <TituloComponent titulo='Personas Privadas de Libertad'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
                 <Box sx={{
                     display: 'flex',
                     width: '100%',
@@ -94,7 +92,7 @@ export default function Page() {
                     height: '75vh',
                 }}>
 
-                    { loading ?
+                    {loading ?
                         <Box>
                             <CircularProgress/>
                         </Box>
@@ -111,22 +109,12 @@ export default function Page() {
         );
     }
 
-/*    if (loading) {
-        return (
-            <Box sx={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '75vh',
-            }}>
-                { loading && <CircularProgress/> }
-            </Box>
-        );
-    }*/
+
     return (
         <div>
-            <TituloComponent titulo='Gestion PPL'/>
+            <TituloComponent titulo='Personas Privadas de Libertad'>
+                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+            </TituloComponent>
             <Grid container mt={3}>
                 <Grid item sm={12}>
                     <Paper elevation={1}>

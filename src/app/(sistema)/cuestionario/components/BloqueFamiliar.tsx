@@ -231,7 +231,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     }
     const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
-
+        console.log(estadoFormularioDatosFamiliares)
         if(formFamiliarValidation()){
             setConsultaLoading(true)
 

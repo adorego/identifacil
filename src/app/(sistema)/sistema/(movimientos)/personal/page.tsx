@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {Box, CircularProgress} from "@mui/material";
+import {Box, CircularProgress, Paper} from "@mui/material";
 import {useEffect, useState} from "react";
 
 import CustomTable from "@/components/CustomTable";
@@ -116,7 +116,7 @@ export default function Page(){
             <TituloComponent titulo='Custodios de movimientos penitenciarios'>
                 <BreadCrumbComponent listaDeItems={listaDeItemBread} />
             </TituloComponent>
-            <Box mt={4}>
+            <Box mt={4} component={Paper}>
                 <CustomTable
                     showId={true}
                     headers={header}

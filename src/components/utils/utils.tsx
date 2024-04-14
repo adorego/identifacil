@@ -284,6 +284,9 @@ export const postFormExpedienteJudicial = async (
             // Aquí manejas los códigos de estado específicos
             console.log(response.status)
             switch (response.status) {
+                case 400:
+                    openSnackbar('Datos enviados incorrectos.', 'warning');
+                    break;
                 case 500:
                     openSnackbar('Petición incorrecta, faltan campos.', 'warning');
                     break;

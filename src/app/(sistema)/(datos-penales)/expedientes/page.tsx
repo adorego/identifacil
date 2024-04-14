@@ -9,6 +9,7 @@ import CustomTable from "@/components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const header = [
     {id: 'id', label: 'id'},
@@ -58,7 +59,9 @@ export default function Page() {
     const onHandleFiltro = (value: any) => {
         setDataFiltrado(value)
     }
-
+    const listaDeItemBread = [
+        {nombre:'Expedientes judiciales', url:'', lastItem: true},
+    ];
     if (!data) {
         return (
             <Box sx={{
@@ -77,7 +80,9 @@ export default function Page() {
         <>
 
             <Box mb={3}>
-                <TituloComponent  titulo='Expedientes' newEntry={'/expedientes/crear'}/>
+                <TituloComponent  titulo='Expedientes judiciales' newEntry={'/expedientes/crear'}>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
             </Box>
             <Paper>
                 <Box>

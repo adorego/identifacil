@@ -107,7 +107,12 @@ export default function FormMotivoTraslado({params}: {
     };
 
     const handleSubmit = () => {
-        postTraslado();
+        if(stateForm.nombre){
+
+            postTraslado();
+        }else{
+            openSnackbar('De completar el campo de motivo de traslado', 'warning')
+        }
         // console.log(JSON.stringify(stateForm))
     }
 
@@ -140,7 +145,7 @@ export default function FormMotivoTraslado({params}: {
                         name="nombre"
                         value={stateForm.nombre}
                         id="nombre"
-                        label="nombre"
+                        label="Motivo de traslado"
                         variant="outlined"/>
                 </Grid>
             </Grid>

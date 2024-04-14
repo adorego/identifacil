@@ -283,12 +283,7 @@ export const datosFamiliaresInicial : datosFamiliaresType = {
     familiares_modificado: false,
     tieneConcubino: false,
     tieneConcubino_modificado: false,
-    concubino: {
-        id: null,
-        nombres: null,
-        apellidos:null,
-        numeroDeIdentificacion: null
-    },
+    concubino: null,
     concubino_modificado: false,
 }
 

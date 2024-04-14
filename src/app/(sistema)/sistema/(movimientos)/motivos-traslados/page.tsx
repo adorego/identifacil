@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {Box, Breadcrumbs, CircularProgress, Link, Typography} from "@mui/material";
+import {Box, Breadcrumbs, CircularProgress, Link, Paper, Typography} from "@mui/material";
 import {useEffect, useState} from 'react';
 
 import CustomTable from "@/components/CustomTable";
@@ -100,7 +100,7 @@ export default function Page(){
             <TituloComponent titulo='Motivos de traslado'>
                 <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
             </TituloComponent>
-            <Box mt={4}>
+            <Box mt={4} component={Paper}>
                 <CustomTable
                     showId={true}
                     headers={header}

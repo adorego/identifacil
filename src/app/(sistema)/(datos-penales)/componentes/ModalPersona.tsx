@@ -204,7 +204,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
     };
 
     const handleAgregar = () => {
-        const nuevaSeleccion = {hechoPunibleId: hechosPunibles[0].id, causaId: hechosPunibles[0].causas[0].id};
+        const nuevaSeleccion = {hechoPunibleId: 0, causaId: 0};
         setSeleccionesEnPPL([...seleccionesEnPPL, nuevaSeleccion]);
     };
 
@@ -241,38 +241,56 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
         setSeleccionesEnPPL(nuevasSelecciones);
     };
 
+    const validadorHechosPunibles = ()=>{
+        let esValidado = false
+
+        for(const item of seleccionesEnPPL){
+
+
+            if(item.causaId == 0 || item.hechoPunibleId == 0){
+                openSnackbar('Seleccionar correcamente hechos punibles/causas', 'error')
+                break;
+            }else{
+                esValidado = true;
+            }
+        }
+
+        return esValidado
+    }
+
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
+        if(validadorHechosPunibles()){
+            if (personasSeleccionadas && validadorHechosPunibles()) {
 
-        if (personasSeleccionadas) {
+                const personaProcesada = {
+                    ...datosFormulario,
+                    hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
+                    // @ts-ignore
+                    id_persona: personasSeleccionadas.id_persona,
+                    // @ts-ignore
+                    nombre: personasSeleccionadas.nombre,
+                    // @ts-ignore
+                    apellido: personasSeleccionadas.apellido,
+                    // @ts-ignore
+                    apodo: personasSeleccionadas.apodo,
+                    numero_de_identificacion: personasSeleccionadas.numero_de_identificacion,
+                }
 
-            const personaProcesada = {
-                ...datosFormulario,
-                hechosPuniblesCausas: seleccionesEnPPL.map(item => Object.values(item)),
-                // @ts-ignore
-                id_persona: personasSeleccionadas.id_persona,
-                // @ts-ignore
-                nombre: personasSeleccionadas.nombre,
-                // @ts-ignore
-                apellido: personasSeleccionadas.apellido,
-                // @ts-ignore
-                apodo: personasSeleccionadas.apodo,
-                numero_de_identificacion: personasSeleccionadas.numero_de_identificacion,
+
+                onHandlerPersona(personaProcesada, isEditMode)
+                setSeleccionesEnPPL([])
+                setDatosFormulario(initialPeronaEnExpedienteStateForm)
+                handleClose()
+
+
+            } else {
+                openSnackbar("Debe seleccionar un PPL", "error")
+                setTimeout(() => {
+                    closeSnackbar()
+                }, 5000)
             }
-
-
-            onHandlerPersona(personaProcesada, isEditMode)
-            setSeleccionesEnPPL([])
-            setDatosFormulario(initialPeronaEnExpedienteStateForm)
-            handleClose()
-
-
-        } else {
-            openSnackbar("Debe seleccionar un PPL", "error")
-            setTimeout(() => {
-                closeSnackbar()
-            }, 5000)
         }
 
     }
@@ -285,6 +303,13 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
         setIsEditMode(false)
 
     }
+
+    const isCausaSelected = (hechoPunibleId:number, causaId:number) => {
+        return seleccionesEnPPL.some(seleccion =>
+            seleccion.hechoPunibleId === hechoPunibleId && seleccion.causaId === causaId
+        );
+    };
+
 
     return (
         <>
@@ -324,28 +349,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                 />
                             </FormControl>
                         </Grid>
-                        {/*<Grid item sm={12}>
-                            { (personasLista.length >0) ?
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">PPL</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    value={datosFormulario?.id_persona ? datosFormulario.id_persona: 0}
-                                    label="PPL"
-                                    name='id_persona'
-                                    onChange={handleChange}
-                                >
-                                    <MenuItem value={0}>Seleccionar PPL *</MenuItem>
-                                    {personasLista.map((item : {
-                                        id_persona: number; nombre:string; apellido: string;},index)=>(
-                                        <MenuItem key={index} value={item.id_persona}>{item.nombre}</MenuItem>
-                                    ))}
-                                </Select>
-                                <FormHelperText>Requerido</FormHelperText>
-                            </FormControl>
-                            : null}
-                        </Grid>*/}
+
                         <Grid item sm={12}>
                             <FormControl>
                                 <FormLabel id="117-procesal-field">Situacion procesal</FormLabel>
@@ -364,7 +368,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                             </FormControl>
                         </Grid>
                     </Grid>
-                    {datosFormulario.condenado ?
+                    {datosFormulario.condenado &&
                         <Grid container spacing={2} mt={1}>
                             <Grid item sm={12}>
                                 <Typography variant='overline'>
@@ -409,8 +413,8 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
 
                         </Grid>
                         </Grid>
-                        : null}
-                    {datosFormulario.condenado ?
+                    }
+                    {datosFormulario.condenado &&
                         <Grid container spacing={2} mt={1}>
                             <Grid item sm={6}>
                                 <TextField
@@ -439,7 +443,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        : null}
+                    }
                     <Grid container spacing={2} mt={1}>
                         <Grid item sm={12}>
                             <Typography variant='inherit'>
@@ -457,6 +461,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                         value={seleccion.hechoPunibleId}
                                         onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
                                     >
+                                        <MenuItem disabled value={0}>Seleccionar hecho punible</MenuItem>
                                         {hechosPunibles.map((hp) => (
                                             <MenuItem key={hp.id} value={hp.id}>{hp.nombre}</MenuItem>
                                         ))}
@@ -471,9 +476,16 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                         value={seleccion.causaId}
                                         onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
                                     >
-                                        {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => (
-                                            <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
-                                        ))}
+                                        <MenuItem value={0} disabled>Seleccionar causa</MenuItem>
+                                        {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => {
+                                            const isDisabled = isCausaSelected(seleccion.hechoPunibleId, causa.id);
+
+                                            return(
+                                                <MenuItem key={causa.id} value={causa.id} disabled={isDisabled}>
+                                                    {causa.nombre}
+                                                </MenuItem>
+                                            )
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Grid>

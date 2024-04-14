@@ -31,6 +31,8 @@ import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-
 import SubmitExpediente from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/submitExpediente";
 import {router} from "next/client";
 import {Add} from "@mui/icons-material";
+import {LoadingButton} from "@mui/lab";
+import SaveIcon from "@mui/icons-material/Save";
 
 type camposFormType = {
     id: number;
@@ -89,6 +91,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     /** 6. persona para editar */
     const [editPersona, setEditPersona] = useState(null);
 
+    const [consultaLoading, setConsultaLoading] = useState(false)
 
     const [loading, setLoading] = useState(true);
 
@@ -135,7 +138,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
         }).catch((err)=>{
             console.log('Error obteniendo datos para formulario', err)
         }).finally(()=>{
-            console.log('Finally')
+            // console.log('Finally')
             setLoading(false)
         })
 
@@ -233,7 +236,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     };
 
     const handleAgregar = () => {
-        const nuevaSeleccion = {hechoPunibleId: hechosPunibles[0].id, causaId: hechosPunibles[0].causas[0].id};
+        const nuevaSeleccion = {hechoPunibleId: 0, causaId: 0};
         setSelecciones([...selecciones, nuevaSeleccion]);
     };
 
@@ -369,10 +372,34 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     const handleSubmit = (e: any) => {
         e.preventDefault()
-        console.log('hola0')
-        postData()
+        if(validacionFormCausas()){
+            postData()
+        }
 
     }
+
+    const validacionFormCausas = () =>{
+        let esValidado = false
+
+        for(const item of selecciones){
+
+
+            if(item.causaId == 0 || item.hechoPunibleId == 0){
+                openSnackbar('Seleccionar correcamente hechos punibles/causas', 'error')
+                break;
+            }else{
+                esValidado = true;
+            }
+        }
+
+        return esValidado
+    }
+
+    const isCausaSelected = (hechoPunibleId:number, causaId:number) => {
+        return selecciones.some(seleccion =>
+            seleccion.hechoPunibleId === hechoPunibleId && seleccion.causaId === causaId
+        );
+    };
 
 
     const postData = async () => {
@@ -383,27 +410,17 @@ export default function FormCausa({params}: { params: { id: number | string } })
         const stateForm: any = {
             ...datosFormulario,
             hechosPuniblesCausas: selecciones.map((item: any) => Object.values(item)),
-            /*ppls_en_expediente: datosFormulario.ppls_en_expediente.map(item => {
-                // console.log(item.hechosPuniblesCausas)
-                console.log(item.hechosPuniblesCausas.map((item:any)=>[item.causa_judicial.id,item.hecho_punible.id]))
-                return (
-                    {
-                        ...item,
-                        hechosPuniblesCausas: item.hechosPuniblesCausas.map((item:any)=>[item.causa_judicial.id,item.hecho_punible.id])
-                    }
-                )
-            })*/
         }
 
 
 
 
         if (stateForm.hechosPuniblesCausas.length <= 0 || stateForm.caratula_expediente == '' || stateForm.numeroDeExpediente == "") {
-            openSnackbar('Falta completar campos requeridos', 'error')
+            openSnackbar('Completar campos requeridos', 'warning')
         } else {
 
             try {
-                setLoading(true);
+                setConsultaLoading(true);
 
 
                 const url = form_method == 'PUT'
@@ -420,7 +437,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     body: JSON.stringify(stateForm),
                 });
 
-                setLoading(false);
+
 
                 if (response.ok) {
                     const message = form_method == 'PUT'
@@ -453,6 +470,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
             } catch (error) {
                 setLoading(false);
                 console.error('Error:', error);
+            } finally {
+                setConsultaLoading(false);
             }
         }
 
@@ -586,10 +605,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <FormControl fullWidth>
                                 <InputLabel id="hechosPunibles-field">Hechos punibles</InputLabel>
                                 <Select
-                                    label='Hechos punibles'
-                                    value={seleccion.hechoPunibleId}
+                                    label='Hechos punibles' value={seleccion.hechoPunibleId}
                                     onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
                                 >
+                                        <MenuItem disabled value={0}>Seleccionar hecho punible</MenuItem>
                                     fullWidth {hechosPunibles.map((hp) => (
                                         <MenuItem key={hp.id} value={hp.id}>{hp.nombre}</MenuItem>
                                     ))}
@@ -601,17 +620,23 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 <InputLabel id="causas-field">Causas</InputLabel>
                                 <Select
                                     label='causas'
-                                    value={seleccion.causaId}
+                                    value={seleccion.causaId ? seleccion.causaId : 0}
                                     onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
                                 >
+                                    <MenuItem value={0} disabled>
+                                        Seleccionar causa
+                                    </MenuItem>
                                     {hechosPunibles.find(hp => hp.id === seleccion.hechoPunibleId)?.causas.map((causa) => {
-                                        /*console.log(hechosPunibles)
-                                        console.log(seleccion)
-                                        console.log(seleccion.hechoPunibleId)*/
+                                        const isDisabled = isCausaSelected(seleccion.hechoPunibleId, causa.id);
+
+
 
                                         // TODO: Calcular aca si ya existe en el estado de daos seleccionados
+
                                         return(
-                                            <MenuItem key={causa.id} value={causa.id}>{causa.nombre}</MenuItem>
+                                            <MenuItem key={causa.id} value={causa.id} disabled={isDisabled}>
+                                                {causa.nombre}
+                                            </MenuItem>
                                         )
                                     })}
                                 </Select>
@@ -845,11 +870,26 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
                         <Stack direction='row' spacing={2}>
-                            <Button variant='contained' onClick={handleSubmit}>
-                                Guardar
-                            </Button>
-
-                            <Button variant='outlined' onClick={()=>router.push('/expedientes')}>
+                            <LoadingButton
+                                sx={{
+                                    minHeight: "100%",
+                                    px: "48px",
+                                    height: '48px'
+                                }}
+                                onClick={handleSubmit}
+                                loading={consultaLoading}
+                                loadingPosition='start'
+                                startIcon={<SaveIcon />}
+                                variant="contained">
+                        <span>
+                            {consultaLoading ? 'Guardando...' : 'Guardar'}
+                        </span>
+                            </LoadingButton>
+                            <Button variant='outlined' onClick={()=>router.push('/expedientes')} sx={{
+                                minHeight: "100%",
+                                px: "48px",
+                                height: '48px'
+                            }}>
                                 Cancelar
                             </Button>
                         </Stack>
