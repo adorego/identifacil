@@ -1,4 +1,5 @@
 import {
+    Alert,
     Box,
     Button,
     FormControl,
@@ -41,7 +42,23 @@ interface BloqueFamiliarProps {
     onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 }
 
+type stateErrorsType = {
+    concubino_tiene: boolean;
+    concubino_nombre: boolean;
+    concubino_apellido: boolean;
+    concubino_documento: boolean;
 
+    circulo_tiene: boolean;
+}
+
+const stateErrorsInitial = {
+    concubino_tiene: false,
+    concubino_nombre: false,
+    concubino_apellido: false,
+    concubino_documento: false,
+
+    circulo_tiene: false,
+}
 const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     {
         id_persona,
@@ -58,10 +75,14 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     /** 2, Estado del circulo familiar */
     const [stateCirculoFamiliar, setStateCirculoFamiliar] = useState<circuloFamiliarStateType[]>([])
 
+    /** 3. Estado familiar modal */
     const [familiarParaModal, setFamiliarParaModal] = useState<circuloFamiliarStateType | null>(null)
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 4. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
+
+    /** 5. Estado para errores */
+    const [stateErrors, setStateErrors] = useState<any>({})
 
     /**
     * Custom hook para manejar el modal
@@ -214,14 +235,20 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
     const formFamiliarValidation = ()=>{
         let auxValidator = false
-        console.log(estadoFormularioDatosFamiliares.tieneConcubino)
+
+
         if(estadoFormularioDatosFamiliares.tieneConcubino){
             if(estadoFormularioDatosFamiliares.concubino?.nombres
                 && estadoFormularioDatosFamiliares.concubino?.apellidos
                 && estadoFormularioDatosFamiliares.concubino?.numeroDeIdentificacion) {
                 auxValidator = true
             }else{
-                openSnackbar('Debe completar campos de concubino', 'warning')
+                // openSnackbar('Debe completar campos de concubino', 'warning')
+                setStateErrors((prev:stateErrorsType)=>({
+                    ...prev,
+                    concubino_tiene: true,
+                }))
+                auxValidator = false
             }
         }else{
             auxValidator = true
@@ -229,10 +256,72 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
         return auxValidator
     }
+
+
+    function validateForm() {
+        const formData = estadoFormularioDatosFamiliares
+
+        let esValidado = true;
+
+
+        // Valida concubinos
+        if (formData['tieneConcubino'] == true ) {
+            if(formData.concubino?.nombres && formData.concubino?.apellidos && formData.concubino?.numeroDeIdentificacion){
+
+                if (formData.hasOwnProperty('tieneConcubino')) {
+                    delete stateErrors['tieneConcubino'];
+                }
+            }else {
+
+                esValidado = false
+                setStateErrors((prev: any) => ({
+                    ...prev,
+                    tieneConcubino: 'Datos de concubino es requerido.',
+                }))
+            }
+
+        }
+
+
+        // Valida si existe circulo familiar
+        if(stateCirculoFamiliar.length <= 0){
+
+            esValidado = false
+
+            setStateErrors((prev: any) => ({
+                ...prev,
+                tieneCirculoFamiliar: 'Debe agregar al menos un familiar.',
+            }))
+
+
+        }else{
+
+            if (stateErrors.hasOwnProperty('tieneCirculoFamiliar')) {
+
+                setStateErrors((prev:any)=>({
+                    ...prev,
+                    tieneCirculoFamiliar: '',
+                }))
+                const { ['tieneCirculoFamiliar']: _, ...nuevoObjeto } = stateErrors;
+                // Actualiza el estado con el nuevo objeto
+                setStateErrors(nuevoObjeto);
+            }
+        }
+
+
+
+        return esValidado
+    }
+
     const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
         console.log(estadoFormularioDatosFamiliares)
-        if(formFamiliarValidation()){
+
+        const validarFormulario = validateForm()
+
+        console.log(validarFormulario)
+
+        if(validarFormulario){
             setConsultaLoading(true)
 
             const circuloFamiliar = stateCirculoFamiliar.map(item => ({
@@ -528,7 +617,31 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
             </Grid>
             }
             <Grid container spacing={2} mt={2}>
+
+
+            </Grid>
+            <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
+
+                    <>
+                        {
+                            Object.keys(stateErrors).map((key: string, index: number) => (
+                                <Box key={index} mt={1}>
+                                    <Alert severity="error">
+                                        {
+                                            //@ts-ignore
+                                            stateErrors[key]
+                                        }
+                                    </Alert>
+                                </Box>
+
+                            ))
+
+                        }
+                    </>
+
+                </Grid>
+                <Grid item sm={12} mt={1}>
                     <LoadingButton
                         sx={{
                             minHeight: "100%",
@@ -553,3 +666,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 }
 
 export default BloqueFamiliar;
+
+
+
+

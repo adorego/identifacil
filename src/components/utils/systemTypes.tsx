@@ -242,11 +242,11 @@ export const familiarInicial: familiar = {
     vinculo: "",
     lugar: ""
 }
-export interface    datosConcubino {
+export interface datosConcubino {
     id: number | null;
-    numeroDeIdentificacion: string| null;
     nombres: string| null;
     apellidos: string| null;
+    numeroDeIdentificacion: string| null;
 
 }
 
