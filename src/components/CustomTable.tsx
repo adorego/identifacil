@@ -24,6 +24,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {dummyData} from "@/app/dummyData/data";
+import dayjs from "dayjs";
 
 interface Header {
     id: string;
@@ -67,12 +68,9 @@ const rowStyle = {
 
 }
 const formatDate = (dateString: string | null | number) => {
-    
+
     if (dateString && dateString !== 'N/D') {
-        const date = new Date(dateString);
-        const options = {year: 'numeric', month: '2-digit', day: '2-digit'};
-        // @ts-ignore
-        return date.toLocaleDateString(undefined, options);
+        return dateString;
     }else{
         return('N/D')
     }

@@ -87,12 +87,12 @@ export default function FiltrosPpl({ dataSinFiltro, handleFiltro, searchField, d
         if(dateSearchField && valueDateStart){
             console.log('step 1')
             datosFiltrados = datosFiltrados.filter((item: any) => {
-                console.log('dato de filtro', valueDateStart.format('DD/MM/YYYY') )
+                console.log('dato de filtro', valueDateStart.format('DD-MM-YYYY') )
                 console.log('datos lista',  item['fecha_de_ingreso'])
 
                 if (item['fecha_de_ingreso'] && item['fecha_de_ingreso'] !== 'N/D') {
 
-                    return valueDateStart.format('DD/MM/YYYY') == item['fecha_de_ingreso']
+                    return valueDateStart.format('DD-MM-YYYY') == item['fecha_de_ingreso']
                 }
             })
         }
@@ -156,10 +156,10 @@ export default function FiltrosPpl({ dataSinFiltro, handleFiltro, searchField, d
                     </FormControl>
                 </Grid>*/}
                 <Grid item xs={2}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs} >
+                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                         <DatePicker
                             label={fecha_inicial ? fecha_inicial : "Por ingreso"}
-                            format="DD/MM/YYYY"
+                            format="DD-MM-YYYY"
                             value={valueDateStart}
                             onChange={(newValueDateStart) => setValueDateStart(newValueDateStart)}
                             sx={{

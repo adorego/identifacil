@@ -19,8 +19,6 @@ import {api_request} from "@/lib/api-request";
 import {datosIncialesJudiciales, datosJudicialesInicial, datosJudicialesType} from "@/components/utils/systemTypes";
 import AddIcon from '@mui/icons-material/Add';
 import SaveIcon from '@mui/icons-material/Save';
-import {LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
-import dayjs, {Dayjs} from "dayjs";
 import {DemoContainer} from "@mui/x-date-pickers/internals/demo";
 import {MuiFileInput} from "mui-file-input";
 import log from "loglevel";
@@ -30,8 +28,12 @@ import FormExpedientesEmebed from "@/app/(sistema)/ppl/components/formExpediente
 import {Close} from "@mui/icons-material";
 import {AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import {useRouter} from "next/navigation";
-import es from 'dayjs/locale/es';
 import {LoadingButton} from "@mui/lab"; // Importa el locale español
+import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+
+import dayjs, {Dayjs} from "dayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import es from 'dayjs/locale/es';
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -85,28 +87,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
     const isEditMode = !!datosIniciales?.id;
     const router: AppRouterInstance = useRouter();
 
-    const handleShowExpedientesForm = () => {
-        setShowExpdientesForm(!showExpdientesForm)
-    }
-
-    const handleExpedienteData = (value: any, caratula: string, expediente: string): void => {
-        console.log('Valor devuelto del expediente: ' + value)
-        setShowExpdientesForm(false)
-        setEstadoFormularioJudicial(prev => ({
-            ...prev,
-            expediente_id: value,
-        }))
-        setDatosFormulario((prev: any) => ({
-            ...prev,
-            expedientesSeleccionados: {
-                id: value,
-                caratula_expediente: caratula,
-                numeroDeExpediente: expediente,
-            },
-        }))
-    }
-
-
     /** Este useEffect se ejecuta una vez al cargarse toda la pagina **/
     useEffect(() => {
 
@@ -117,20 +97,21 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                     ...prev,
                     expedientes: res
                 }))
-                }).finally(()=>{
+            }).finally(() => {
                 console.log('Debug UseEffect 1.5')
                 setEstadoFormularioJudicial(prev => ({
                     ...prev,
                     id_persona: id_persona,
                     establecimiento_penitenciario: 1,
+                    id: datosIniciales?.id ? datosIniciales.id : 0,
                 }))
 
                 console.log(datosIniciales)
                 // @ts-ignore
-                if(datosIniciales !== null && datosIniciales.flag && datosIniciales){
+                if (datosIniciales !== null && datosIniciales.flag && datosIniciales) {
                     console.log('Debug UseEffect 2')
                     console.log(datosFormulario)
-                    setEstadoFormularioJudicial((prev:any)=>({
+                    setEstadoFormularioJudicial((prev: any) => ({
                         ...prev,
                         ...datosIniciales
                     }))
@@ -138,7 +119,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                         ...prev,
                         expedientesSeleccionados: datosIniciales.expediente_obj ? datosIniciales.expediente_obj : null
                     }));
-                }else{
+                } else {
                     // Se verifica que existan datos iniciales para cargar el estado
                     if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
                         console.log('Debug UseEffect 3')
@@ -218,8 +199,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
             })
 
 
-
-
         }, [datosIniciales]
     )
 
@@ -231,12 +210,29 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                 expedientes: res
             }))
         })
-        console.log(datosFormulario)
-        console.log(estadoFormularioJudicial)
-        console.log('check useeffect')
 
     }, [datosFormulario.expedientesSeleccionados]);
 
+    const handleShowExpedientesForm = () => {
+        setShowExpdientesForm(!showExpdientesForm)
+    }
+
+    const handleExpedienteData = (value: any, caratula: string, expediente: string): void => {
+        console.log('Valor devuelto del expediente: ' + value)
+        setShowExpdientesForm(false)
+        setEstadoFormularioJudicial(prev => ({
+            ...prev,
+            expediente_id: value,
+        }))
+        setDatosFormulario((prev: any) => ({
+            ...prev,
+            expedientesSeleccionados: {
+                id: value,
+                caratula_expediente: caratula,
+                numeroDeExpediente: expediente,
+            },
+        }))
+    }
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -287,18 +283,16 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
     const postDataJudicial = async (url: string, data: any, method: boolean) => {
         return await api_request(url, {
-            method: isEditMode ? 'PUT' : 'POST',
+            method: method ? 'PUT' : 'POST',
             body: data,
         })
     }
-
 
     function validateForm() {
         let aux = true;
         const formData = estadoFormularioJudicial;
 
-        console.log('hola 1')
-        console.log(datosFormulario.expedientesSeleccionados)
+
         if (!datosFormulario.expedientesSeleccionados) {
             console.log('hola 2')
             aux = false
@@ -389,6 +383,9 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
         event.preventDefault();
         setConsultaLoading(true)
 
+        const tipoMehtod = !!estadoFormularioJudicial.id
+        console.log('TIpo metodo', tipoMehtod)
+
         const validarFormulario = validateForm()
 
 
@@ -399,7 +396,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
         if (id_persona != null && validarFormulario) {
 
             // Se arma URL para creacion o actualizacion de datos judiciales
-            const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${isEditMode ? ('/' + estadoFormularioJudicial.id) : ''}`;
+            const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${tipoMehtod ? ('/' + estadoFormularioJudicial.id) : ''}`;
 
             // Se arma URL para actualizacion de PPL en Expediente seleccionado
             const url_patch_expediente = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${datosFormulario.expedientesSeleccionados.id}/ppls`;
@@ -457,12 +454,16 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             // router.push(`/ppl/${id_persona}`)
                         }
                     }),
-                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res => {
+                    await postDataJudicial(url_dato_judicial, formData, tipoMehtod).then(res => {
                         console.log('respuestas de peticion datos judiciales')
                         if (res.success) {
                             setConsultaLoading(false)
                             console.log(res)
                             openSnackbar('Datos judiciales actualizado correctamente')
+                            setEstadoFormularioJudicial(prev => ({
+                                ...prev,
+                                id: res.datos.id,
+                            }))
                             if (onSetDatosPPL) {
                                 onSetDatosPPL((prev: any) => ({
                                     ...prev,
@@ -479,7 +480,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             }
                         }
                     })
-                ]).catch((err)=>{
+                ]).catch((err) => {
                     console.log(err)
                 }).finally(() => {
                     setConsultaLoading(false)
@@ -546,7 +547,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
             <Grid container mt={2} spacing={2}>
                 <Grid item sm={4} alignSelf='center'>
                     <FormControl>
-                        <DemoContainer components={['MobileDatePicker']}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                             <MobileDatePicker
                                 value={estadoFormularioJudicial.fecha_ingreso_a_establecimiento ? dayjs(estadoFormularioJudicial.fecha_ingreso_a_establecimiento) : null}
                                 format="DD/MM/YYYY"
@@ -560,7 +561,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                     }))
                                 }}
                                 label="Fecha de ingreso"/>
-                        </DemoContainer>
+                        </LocalizationProvider>
                     </FormControl>
                 </Grid>
                 <Grid item sm={12} mt={2} alignSelf='center'>
@@ -718,19 +719,19 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             </Grid>
                             <Grid item>
                                 <FormControl>
-
-                                    <MobileDatePicker
-                                        value={estadoFormularioJudicial.oficioJudicial_fechaDeDocumento}
-                                        name='oficioJudicial_fechaDeDocumento'
-                                        format="DD/MM/YYYY"
-                                        onChange={(newValue: Dayjs | null) => {
-                                            setEstadoFormularioJudicial(prev => ({
-                                                ...prev,
-                                                oficioJudicial_fechaDeDocumento: newValue,
-                                            }))
-                                        }}
-                                        label={"Fecha del documento"}/>
-
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                        <MobileDatePicker
+                                            value={estadoFormularioJudicial.oficioJudicial_fechaDeDocumento}
+                                            name='oficioJudicial_fechaDeDocumento'
+                                            format="DD/MM/YYYY"
+                                            onChange={(newValue: Dayjs | null) => {
+                                                setEstadoFormularioJudicial(prev => ({
+                                                    ...prev,
+                                                    oficioJudicial_fechaDeDocumento: newValue,
+                                                }))
+                                            }}
+                                            label={"Fecha del documento"}/>
+                                    </LocalizationProvider>
                                 </FormControl>
 
 
@@ -796,19 +797,20 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                     </Grid>
                     <Grid item>
                         <FormControl>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                <MobileDatePicker
 
-                            <MobileDatePicker
-
-                                value={estadoFormularioJudicial.resolucion_fechaDeDocumento}
-                                name='resolucion_fechaDeDocumento'
-                                format="DD/MM/YYYY"
-                                onChange={(newValue: Dayjs | null) => {
-                                    setEstadoFormularioJudicial(prev => ({
-                                        ...prev,
-                                        resolucion_fechaDeDocumento: newValue,
-                                    }))
-                                }}
-                                label={"Fecha del documento"}/>
+                                    value={estadoFormularioJudicial.resolucion_fechaDeDocumento}
+                                    name='resolucion_fechaDeDocumento'
+                                    format="DD/MM/YYYY"
+                                    onChange={(newValue: Dayjs | null) => {
+                                        setEstadoFormularioJudicial(prev => ({
+                                            ...prev,
+                                            resolucion_fechaDeDocumento: newValue,
+                                        }))
+                                    }}
+                                    label={"Fecha del documento"}/>
+                            </LocalizationProvider>
 
                         </FormControl>
 

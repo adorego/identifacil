@@ -8,11 +8,12 @@ import {datosDeSalud2Initial, datosDeSalud2Type} from "@/components/utils/system
 import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
-import {api_request} from "@/lib/api-request"
+import {api_request, RequestResponse} from "@/lib/api-request"
 import Checkbox from "@mui/material/Checkbox";
 import {Sort} from "@mui/icons-material";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
+import {NacionalidadesDTO} from "@/model/nacionalidad.model";
 
 
 const nineMonthsFromNow = dayjs().add(9, 'month');
@@ -93,17 +94,19 @@ const SaludFisicaInicial = {
 }
 
 const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero = 2, handleAccordion, onSetDatosPPL}) => {
-    /** Estado seleccionados del form del form */
+    /** 1. Estado seleccionados del form del form */
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
 
-    /** Datos capturados elementos del form*/
+    /** 2. Datos capturados elementos del form*/
     const [datosSalud, setDatosSalud] = useState<datosDeSalud2Type>(datosDeSalud2Initial); //datosDeSalud2Initial
 
-    /** Datos para poblar elementos del form*/
+    /** 3. Datos para poblar elementos del form*/
     const [stateSaludFisica, setStateSaludFisica] = useState<SaludFisicaType>(SaludFisicaInicial)
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 4. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
+
+    const [stateVacunas, setStateVacunas] = useState<any>([])
 
     /// TODO verificar si estado sigue vigente
     const options = ['Option 1', 'Option 2'];
@@ -114,6 +117,33 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<Array<{ id: number; nombre: string }>>([]);
 
     const {openSnackbar} = useGlobalContext();
+
+    useEffect(() => {
+        const getVacunas = async () => {
+            const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/vacunas`;
+            try {
+                const respuesta: RequestResponse = await api_request<NacionalidadesDTO>(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/json'
+                    }
+                });
+                // console.log("Respuesta:", respuesta);
+                if (respuesta.success && respuesta.datos) {
+                    setStateVacunas(respuesta.datos.vacunas);
+                } else {
+                    openSnackbar(`Error obteniendo vacunas: ${respuesta.error?.message}`, "error");
+                }
+
+            } catch (error) {
+                openSnackbar(`Error obteniendo vacunas: ${error}`, "error");
+            }
+        }
+
+        getVacunas();
+
+    }, []);
+
 
 
     useEffect(() => {
@@ -451,12 +481,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                         </FormControl>
                     </Grid>
                     <Grid item sm={6}>
+
                         <FormControl fullWidth={true}>
 
                             <Autocomplete
                                 multiple
                                 id="vacunas-recibidas"
-                                options={datosSaludSelectInicial.vacunas_recibidas} // Usa las opciones por defecto
+                                options={stateVacunas} // Usa las opciones por defecto
 
                                 value={datosSalud.vacunas_recibidas}
 

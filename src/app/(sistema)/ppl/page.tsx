@@ -56,10 +56,13 @@ export default function Page() {
                     setListaPersonas(fetchedData.map((item: any) => {
 
                         // console.log(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso)
+                        const ultimoIngreoRegistro = item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso)
+                        const fecharIngresoData = (ultimoIngreoRegistro?.fecha_ingreso) ? (dayjs(ultimoIngreoRegistro.fecha_ingreso).format('DD-MM-YYYY')) : 'N/D'
+
                         return ({
                             ...item,
                             nombre_apellido: `${item.apellido.toUpperCase()}, ${item.nombre.toUpperCase()}`,
-                            fecha_de_ingreso: item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso ? dayjs(item.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso).fecha_ingreso).format('DD/MM/YYYY') : 'N/D',
+                            fecha_de_ingreso: fecharIngresoData,
                             apodo: item.apodo ? item.apodo : 'N/D',
                             nacionalidad: item.datosPersonales?.nacionalidad ? item.datosPersonales.nacionalidad.nombre : 'N/D'
                         })

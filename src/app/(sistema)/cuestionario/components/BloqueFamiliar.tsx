@@ -260,31 +260,26 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
     function validateForm() {
         const formData = estadoFormularioDatosFamiliares
-
         let esValidado = true;
 
-
         // Valida concubinos
-        if (formData['tieneConcubino'] == true ) {
+        if (formData['tieneConcubino'] ) {
             if(formData.concubino?.nombres && formData.concubino?.apellidos && formData.concubino?.numeroDeIdentificacion){
-
                 if (formData.hasOwnProperty('tieneConcubino')) {
                     delete stateErrors['tieneConcubino'];
                 }
             }else {
-
                 esValidado = false
                 setStateErrors((prev: any) => ({
                     ...prev,
                     tieneConcubino: 'Datos de concubino es requerido.',
                 }))
             }
-
         }
 
 
         // Valida si existe circulo familiar
-        if(stateCirculoFamiliar.length <= 0){
+        if(stateCirculoFamiliar.length <= 0 && estadoFormularioDatosFamiliares.tieneCirculoFamiliar){
 
             esValidado = false
 
