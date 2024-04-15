@@ -371,6 +371,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
             datosDelFormulario.numeroDeIdentificacion = datosDeIdentificacion.cedula_identidad ? datosDeIdentificacion.cedula_identidad : null;
 
+            /*if(!!datosDelFormulario.nacionalidad && datosDelFormulario.nacionalidad !== 1){
+                datosDelFormulario.es_extranjero = true;
+            }*/
+
 
             const respuesta = await api_request(url, {
                 method: datosPersonalesState.id ? 'PUT' : 'POST',

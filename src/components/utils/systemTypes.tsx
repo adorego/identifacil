@@ -333,7 +333,7 @@ export type datosIncialesJudiciales = {
 
 export type datosJudicialesType = {
     key?: string | number | object;
-    id?: number;
+    id?: number ;
     flag?: boolean;
     id_persona:number;
     establecimiento_penitenciario:number;
