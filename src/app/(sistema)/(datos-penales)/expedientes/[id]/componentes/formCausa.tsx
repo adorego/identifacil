@@ -19,7 +19,7 @@ import {causaInitialData, CausaType, PPLsEnExpedienteDTO} from "@/components/uti
 import {fetchData, fetchFormData, formatDate, postEntity} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from "next/navigation";
-import {DatePicker} from "@mui/x-date-pickers";
+import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import MenuItem from "@mui/material/MenuItem";
 import ModalPersona from "@/app/(sistema)/(datos-penales)/componentes/ModalPersona";
@@ -33,6 +33,10 @@ import {router} from "next/client";
 import {Add} from "@mui/icons-material";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import es from 'dayjs/locale/es';
+
+dayjs.locale(es); // Configura dayjs globalmente al español
 
 type camposFormType = {
     id: number;
@@ -518,7 +522,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     </Grid>
                 </Grid>
                 <Grid container spacing={2} mt={1}>
-                    <Grid item sm={4}>
+                    <Grid item sm={12}>
                         <FormControl>
                             <FormLabel id="situacion-procesal-field">Situacion procesal</FormLabel>
                             <RadioGroup
@@ -550,17 +554,19 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     {datosFormulario.condenado ?
                         <Grid item sm={4}>
                             <FormControl fullWidth>
-                                <DatePicker
-                                    format="DD/MM/YYYY"
-                                    name='fecha_sentencia_definitiva'
-                                    onChange={(newValue: Dayjs | null) => {
-                                        setDatosFormularios((prevState: any) => ({
-                                            ...prevState,
-                                            fecha_sentencia_definitiva: newValue,
-                                        }))
-                                    }}
-                                    value={datosFormulario.fecha_sentencia_definitiva ? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
-                                    label="Fecha documento"/>
+                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                    <MobileDatePicker
+                                        format="DD/MM/YYYY"
+                                        name='fecha_sentencia_definitiva'
+                                        onChange={(newValue: Dayjs | null) => {
+                                            setDatosFormularios((prevState: any) => ({
+                                                ...prevState,
+                                                fecha_sentencia_definitiva: newValue,
+                                            }))
+                                        }}
+                                        value={datosFormulario.fecha_sentencia_definitiva ? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
+                                        label="Fecha documento"/>
+                                </LocalizationProvider>
                             </FormControl>
                         </Grid>
                         : null}
@@ -656,13 +662,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
 
                 <Grid container spacing={2} mt={1}>
-                    <Grid container spacing={2} mt={1}>
-                        <Grid item sm={12}>
-                            <Typography variant='h6'>Datos adicionales</Typography>
-                        </Grid>
-
+                    <Grid item sm={12}>
+                        <Typography variant='h6'>Datos adicionales</Typography>
                     </Grid>
-
                 </Grid>
 
                 <Grid container spacing={2} mt={1}>
@@ -721,17 +723,19 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     <Grid item sm={6}>
 
                         <FormControl fullWidth>
-                            <DatePicker
-                                format="DD/MM/YYYY"
-                                name='fecha_del_hecho'
-                                onChange={(newValue: Dayjs | null) => {
-                                    setDatosFormularios((prevState: any) => ({
-                                        ...prevState,
-                                        fecha_del_hecho: newValue,
-                                    }))
-                                }}
-                                value={datosFormulario.fecha_del_hecho ? dayjs(datosFormulario.fecha_del_hecho) : null}
-                                label="Fecha del hecho"/>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                <DatePicker
+                                    format="DD/MM/YYYY"
+                                    name='fecha_del_hecho'
+                                    onChange={(newValue: Dayjs | null) => {
+                                        setDatosFormularios((prevState: any) => ({
+                                            ...prevState,
+                                            fecha_del_hecho: newValue,
+                                        }))
+                                    }}
+                                    value={datosFormulario.fecha_del_hecho ? dayjs(datosFormulario.fecha_del_hecho) : null}
+                                    label="Fecha del hecho"/>
+                            </LocalizationProvider>
                         </FormControl>
                     </Grid>
                     <Grid item sm={3}>

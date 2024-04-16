@@ -703,7 +703,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             Documentos que ordena la reclusión
                         </Typography>
                     </Grid>
-                    <Grid item sm={12}>
+                    <Grid item sm={12} mt={2} alignItems='start'>
                         <Typography variant='subtitle1' pt={0}>Oficio judicial</Typography>
                         <Grid container spacing={2} alignItems='center'>
                             <Grid item sm={3}>
@@ -778,7 +778,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid container spacing={2} mt={1}>
+                <Grid container spacing={2} mt={2} alignItems='start'>
                     <Grid item sm={12}>
                         <Typography variant='subtitle1' pt={0}>Resolución MJ/DGEP</Typography>
                     </Grid>

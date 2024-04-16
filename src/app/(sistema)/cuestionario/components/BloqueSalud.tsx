@@ -5,7 +5,7 @@ import {
     Select, SelectChangeEvent, Stack, TextField, Typography
 } from "@mui/material";
 import {datosDeSalud2Initial, datosDeSalud2Type} from "@/components/utils/systemTypes";
-import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
+import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {api_request, RequestResponse} from "@/lib/api-request"
@@ -14,6 +14,7 @@ import {Sort} from "@mui/icons-material";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 import {NacionalidadesDTO} from "@/model/nacionalidad.model";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 
 const nineMonthsFromNow = dayjs().add(9, 'month');
@@ -93,7 +94,13 @@ const SaludFisicaInicial = {
     otros: false
 }
 
-const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datosDeSalud2Initial, codigo_genero = 2, handleAccordion, onSetDatosPPL}) => {
+const BloqueSalud: FC<BloqueSaludProps> = ({
+                                               id_persona,
+                                               datosAlmacenados = datosDeSalud2Initial,
+                                               codigo_genero = 2,
+                                               handleAccordion,
+                                               onSetDatosPPL
+                                           }) => {
     /** 1. Estado seleccionados del form del form */
     const [datosSaludSelectState, setDatosSaludSeelect] = useState<datosSaludSelect>(datosSaludSelectInicial);
 
@@ -145,7 +152,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     }, []);
 
 
-
     useEffect(() => {
         if (datosAlmacenados) {
             setDatosSalud((prev) => {
@@ -182,11 +188,17 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
     }
 
     const onGruposSanguineoChange = (event: SelectChangeEvent<number | string | any>) => {
-        const grupoSanguineoSelected = datosSaludSelectInicial.grupo_sanguineo.find(objeto => objeto.id === Number(event.target.value)) || {id: null, nombre: null};
+        const grupoSanguineoSelected = datosSaludSelectInicial.grupo_sanguineo.find(objeto => objeto.id === Number(event.target.value)) || {
+            id: null,
+            nombre: null
+        };
 
         setDatosSalud(prev => ({
             ...prev,
-            grupo_sanguineo: grupoSanguineoSelected ? {id: grupoSanguineoSelected.id, nombre: grupoSanguineoSelected.nombre} : {id: null, nombre: null},
+            grupo_sanguineo: grupoSanguineoSelected ? {
+                id: grupoSanguineoSelected.id,
+                nombre: grupoSanguineoSelected.nombre
+            } : {id: null, nombre: null},
             grupo_sanguineo_modificado: true,
         }))
     }
@@ -255,14 +267,14 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         // Permite solo números en el input
 
         if (newValue.match(/^\d*\.?\d*$/)) {
-        //if (newValue.match(/^\d*,?\d*$/)) {
+            //if (newValue.match(/^\d*,?\d*$/)) {
             console.log('si' + newValue)
             setDatosSalud((prev) => ({
                 ...prev,
                 [event.target.name]: newValue,
                 [`${event.target.name}_modificado`]: true
             }));
-        }else{
+        } else {
             console.log('no' + newValue)
         }
 
@@ -335,13 +347,13 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
     const handleSaludFisica = (e: any) => {
         console.log(e.target.name)
-        if(e.target.name !== 'Ninguna'){
+        if (e.target.name !== 'Ninguna') {
             setStateSaludFisica(prev => ({
                 ...prev,
                 Ninguna: false,
                 [e.target.name]: e.target.checked
             }))
-        }else{
+        } else {
             setStateSaludFisica(prev => ({
                 ...prev,
                 Ninguna: true,
@@ -395,8 +407,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
         })
         if (respuesta.success) {
             setConsultaLoading(false)
-            if(onSetDatosPPL){
-                onSetDatosPPL((prev:any)=>({
+            if (onSetDatosPPL) {
+                onSetDatosPPL((prev: any) => ({
                     ...prev,
                     datosDeSalud: {
                         ...datosSalud,
@@ -404,7 +416,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     }
                 }))
             }
-            setDatosSalud(prev=>({
+            setDatosSalud(prev => ({
                 ...prev,
                 id: respuesta.datos.id,
             }))
@@ -421,7 +433,6 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
 
 
     }
-
 
 
     return (
@@ -480,7 +491,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item sm={6}>
+                    <Grid item sm={12} mt={2}>
 
                         <FormControl fullWidth={true}>
 
@@ -722,44 +733,40 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Grid container spacing={2} >
-                            <Grid item sm={4} sx={{marginTop: 1}} alignItems='baseline'>
-                                {datosSalud.gestacion &&
-                                    (
+                        {datosSalud.gestacion &&
+                            <Grid container spacing={2} alignItems='baseline'>
+                                <Grid item sm={4} sx={{marginTop: 1}} alignItems='baseline'>
                                     <TextField
                                         fullWidth
                                         disabled={!datosSalud.gestacion}
                                         name="tiempo_gestacion"
                                         value={datosSalud.tiempo_gestacion ? datosSalud.tiempo_gestacion : ''}
                                         onChange={onTiempoDeGestacionChange}
-                                        margin='none'
                                         type='text'
                                         InputProps={{
                                             startAdornment: <InputAdornment position="start">semana</InputAdornment>,
                                         }}
                                         label="¿De cuantas semanas se encuentra?"/>
-                                    )
-                                }
-                            </Grid>
-                            <Grid item sm={4} sx={{marginTop: 0}}>
-                                {datosSalud.gestacion &&
+                                </Grid>
+                                <Grid item sm={4} sx={{marginTop: 0}}>
                                     <FormControl fullWidth>
-                                        <MobileDatePicker
-                                            disablePast
-                                            maxDate={nineMonthsFromNow}
-                                            format="DD/MM/YYYY"
-                                            name='fecha_parto'
-                                            value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : dayjs()}
-                                            onChange={onFechaPartoChange}
-                                            label={"Fecha de parto"}/>
-
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                            <MobileDatePicker
+                                                disablePast
+                                                maxDate={nineMonthsFromNow}
+                                                format="DD/MM/YYYY"
+                                                name='fecha_parto'
+                                                value={datosSalud.fecha_parto ? dayjs(datosSalud.fecha_parto) : dayjs()}
+                                                onChange={onFechaPartoChange}
+                                                label={"Fecha de parto"}/>
+                                        </LocalizationProvider>
                                     </FormControl>
-                                }
+                                </Grid>
                             </Grid>
-                        </Grid>
+                        }
                     </>
-                    )
-               }
+                )
+                }
 
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={12}>
@@ -869,7 +876,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({id_persona, datosAlmacenados = datos
                     <Grid item sm={12}>
 
                         <FormControl fullWidth>
-                            <FormLabel id="medicamentos-id-label" sx={{mb:'20px'}}>¿Que medicación toma actualmente?</FormLabel>
+                            <FormLabel id="medicamentos-id-label" sx={{mb: '20px'}}>¿Que medicación toma
+                                actualmente?</FormLabel>
                             <Autocomplete
                                 multiple
                                 freeSolo
