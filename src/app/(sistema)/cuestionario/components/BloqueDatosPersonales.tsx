@@ -1,4 +1,5 @@
 import {
+    Autocomplete,
     Box,
     Button,
     FormControl,
@@ -160,6 +161,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
     const [ciudadLista, setCiudadLista] = useState<Array<CiudadType>>([]);
 
+    /** 8. Estado para autcomplete de ciudades*/
+    const [selectedCity, setSelectedCity] = useState<any>({});
+
     const {openSnackbar} = useGlobalContext();
 
 
@@ -274,6 +278,18 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
 
         }, []
     )
+
+    /**
+     * Estado que actualiza el estado general cada vez que hay una modificacion en el estado de
+     *  ciudad de nacimiento seleccionado
+     * */
+    useEffect(() => {
+        setDatosPersonalesState((prev: any) => ({
+            ...prev,
+            lugarDeNacimiento: selectedCity.id
+        }))
+    }, [selectedCity]);
+
 
     const onDatoChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -596,20 +612,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         </Grid>
 
                         <Grid item xs={6}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel>Ciudad de nacimiento</InputLabel>
-                                <Select
-                                    value={datosPersonalesState.lugarDeNacimiento}
-                                    onChange={onDatoSelectChange}
-                                    label="Ciudad de Nacimiento"
-                                    name="lugarDeNacimiento"
-                                >
-                                    <MenuItem value={0} disabled>Seleccionar ciudad</MenuItem>
-                                    {ciudadLista.map((item,index)=>(
-                                        <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                                    ))}
-
-                                </Select>
+                            <FormControl fullWidth>
+                                <Autocomplete
+                                    fullWidth={true}
+                                    value={selectedCity ? selectedCity : null}
+                                    onChange={(event, newValue: any) => {
+                                        // @ts-ignore
+                                        setSelectedCity((prev: any) => ({
+                                            ...newValue
+                                        }));
+                                    }}
+                                    id="controllable-states-demo"
+                                    options={ciudadLista}
+                                    getOptionLabel={(option) => option.nombre ? `${option.nombre}` : 'Seleccionar ciudad'}
+                                    renderInput={(params) => <TextField {...params} label="Ciudades"/>}
+                                />
                             </FormControl>
                         </Grid>
                     </Grid>

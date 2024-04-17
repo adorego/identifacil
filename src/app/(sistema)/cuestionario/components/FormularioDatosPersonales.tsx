@@ -1,4 +1,5 @@
 import {
+    Autocomplete,
     Box,
     Button, CircularProgress,
     FormControl,
@@ -28,6 +29,7 @@ import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
 import {usePathname, useRouter} from "next/navigation";
+import AutocompleteCiudad from "@/components/hooks/autocompleteCiudad";
 
 interface datosPersonales {
     flag?: boolean;
@@ -150,11 +152,12 @@ export interface BloqueDatosPersonalesProps {
 
 }
 
-const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
-                                                                   datosDeIdentificacion,
-                                                                   tipo_de_documento = null,
-                                                                   onSetDatosPPL
-                                                               }) => {
+const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
+    {
+        datosDeIdentificacion,
+        tipo_de_documento = null,
+        onSetDatosPPL
+    }) => {
 
 
     /** 1. Estado */
@@ -162,65 +165,30 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
         ...datosPersonalesInicial
     });
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 2. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
-    /** Estado para manejo de spinner de boton de solicitud de guardado */
+    /** 3. Estado para manejo de spinner de boton de solicitud de guardado */
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-
-        if (datosDeIdentificacion) {
-
-            setDatosPersonalesState((prevState: any) => {
-                // console.log(datosDeIdentificacion)
-                return {
-                    ...prevState,
-                    id_persona: datosDeIdentificacion.id_persona,
-                    fechaDeNacimiento: dayjs(datosDeIdentificacion.fechaDeNacimiento, "YYYY-MM-DD"),
-                    numero_de_identificacion: datosDeIdentificacion.numero_de_identificacion,
-                    tipoDeDocumento: tipo_de_documento ? tipo_de_documento : 0,
-                    nombre: datosDeIdentificacion.nombres,
-                    apellido: datosDeIdentificacion.apellidos,
-                    nacionalidad: datosDeIdentificacion.nacionalidad ?? null,
-                    codigo_genero: datosDeIdentificacion.codigo_genero,
-                    apodo: datosDeIdentificacion.apodo,
-                    estadoCivil: datosDeIdentificacion.estadoCivil ?? null,
-                    lugarDeNacimiento: datosDeIdentificacion.lugarDeNacimiento,
-                    direccion: datosDeIdentificacion.direccion,
-                    barrioCompania: datosDeIdentificacion.barrioCompania,
-                    numeroDeContacto: datosDeIdentificacion.numeroDeContacto,
-                    contactoDeEmergencia1: datosDeIdentificacion.contactoDeEmergencia1,
-                    contactoDeEmergencia2: datosDeIdentificacion.contactoDeEmergencia2,
-                    pueblosIndigenas: datosDeIdentificacion.pueblosIndigenas,
-                    nombreEtnia: datosDeIdentificacion.nombreEtnia,
-                    perteneceAComunidadLGTBI: datosDeIdentificacion.perteneceAComunidadLGTBI,
-                    es_extranjero: tipo_de_documento == 2,
-                    tiene_contacto_en_embajada: datosDeIdentificacion.tiene_contacto_en_embajada,
-                    nombre_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.nombre,
-                    contactoDeEmbajada_id: datosDeIdentificacion.contacto_embajada.id,
-                    telefono_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.numero,
-                    pais_embajada: datosDeIdentificacion.contacto_embajada.pais?.id ? datosDeIdentificacion.contacto_embajada.pais.id : 0,
-                    departamento: datosDeIdentificacion.departamento,
-                    ciudad: datosDeIdentificacion.ciudad,
-                }
-            })
-        }
-    }, [datosDeIdentificacion]);
-
-    /**/
+    /** 4. */
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
 
+    /** 5. */
     const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
 
+    /** 6. */
     const [departamentosLista, setDepartamentosLista] = useState<Array<DepartamentoType>>([]);
 
+    /** 7. */
     const [ciudadLista, setCiudadLista] = useState<Array<CiudadType>>([]);
+
+    /** 8. Estado para autcomplete de ciudades*/
+    const [selectedCity, setSelectedCity] = useState<any>({});
 
     const pathname = usePathname()
     const router = useRouter();
     const {openSnackbar} = useGlobalContext();
-
 
     useEffect(() => {
 
@@ -319,15 +287,80 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                 getNacionalidades(),
                 getDepartamentos(),
                 getCiudades()
-            ]).then(()=>{
+            ]).then(() => {
                 console.log('Finished loading elements')
-            }).finally(()=>{
+            }).finally(() => {
                 console.log('Ending promises.')
                 setLoading(false)
             })
 
         }, []
     )
+
+
+    useEffect(() => {
+
+        if (datosDeIdentificacion) {
+            setDatosPersonalesState((prevState: any) => {
+                // console.log(datosDeIdentificacion)
+                return {
+                    ...prevState,
+                    id_persona: datosDeIdentificacion.id_persona,
+                    fechaDeNacimiento: dayjs(datosDeIdentificacion.fechaDeNacimiento, "YYYY-MM-DD"),
+                    numero_de_identificacion: datosDeIdentificacion.numero_de_identificacion,
+                    tipoDeDocumento: tipo_de_documento ? tipo_de_documento : 0,
+                    nombre: datosDeIdentificacion.nombres,
+                    apellido: datosDeIdentificacion.apellidos,
+                    nacionalidad: datosDeIdentificacion.nacionalidad ?? null,
+                    codigo_genero: datosDeIdentificacion.codigo_genero,
+                    apodo: datosDeIdentificacion.apodo,
+                    estadoCivil: datosDeIdentificacion.estadoCivil ?? null,
+                    lugarDeNacimiento: datosDeIdentificacion.lugarDeNacimiento,
+                    direccion: datosDeIdentificacion.direccion,
+                    barrioCompania: datosDeIdentificacion.barrioCompania,
+                    numeroDeContacto: datosDeIdentificacion.numeroDeContacto,
+                    contactoDeEmergencia1: datosDeIdentificacion.contactoDeEmergencia1,
+                    contactoDeEmergencia2: datosDeIdentificacion.contactoDeEmergencia2,
+                    pueblosIndigenas: datosDeIdentificacion.pueblosIndigenas,
+                    nombreEtnia: datosDeIdentificacion.nombreEtnia,
+                    perteneceAComunidadLGTBI: datosDeIdentificacion.perteneceAComunidadLGTBI,
+                    es_extranjero: tipo_de_documento == 2,
+                    tiene_contacto_en_embajada: datosDeIdentificacion.tiene_contacto_en_embajada,
+                    nombre_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.nombre,
+                    contactoDeEmbajada_id: datosDeIdentificacion.contacto_embajada.id,
+                    telefono_contacto_en_embajada: datosDeIdentificacion.contacto_embajada.numero,
+                    pais_embajada: datosDeIdentificacion.contacto_embajada.pais?.id ? datosDeIdentificacion.contacto_embajada.pais.id : 0,
+                    departamento: datosDeIdentificacion.departamento,
+                    ciudad: datosDeIdentificacion.ciudad,
+                }
+            })
+        }
+    }, [datosDeIdentificacion]);
+
+
+    /**
+     * Estado que actualiza el estado general cada vez que hay una modificacion en el estado de
+     *  ciudad de nacimiento seleccionado
+     * */
+    useEffect(() => {
+        setDatosPersonalesState((prev: any) => ({
+            ...prev,
+            lugarDeNacimiento: selectedCity.id
+        }))
+    }, [selectedCity]);
+
+
+    /** Efecto que carga el estado del autocomplete de cidad de naciomiento si es que hay datos iniciales y si ya esta
+     * cargado el estado de lista de ciudades
+     * */
+    useEffect(() => {
+
+        if(datosDeIdentificacion.lugarDeNacimiento && ciudadLista.length > 0){
+            const lugarEncontrado = ciudadLista.find(item=>  item.id == parseInt(datosDeIdentificacion.lugarDeNacimiento))
+            setSelectedCity(lugarEncontrado)
+        }
+
+    }, [datosDeIdentificacion.ciudad, ciudadLista]);
 
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -413,10 +446,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
         )
     }
 
-    const extranjeroValidator = ()=>{
+    const extranjeroValidator = () => {
         let esValidado = true
-        if(datosPersonalesState.tiene_contacto_en_embajada){
-            if(!datosPersonalesState.nombre_contacto_en_embajada && !datosPersonalesState.telefono_contacto_en_embajada && !datosPersonalesState.pais_embajada){
+        if (datosPersonalesState.tiene_contacto_en_embajada) {
+            if (!datosPersonalesState.nombre_contacto_en_embajada && !datosPersonalesState.telefono_contacto_en_embajada && !datosPersonalesState.pais_embajada) {
                 esValidado = false
             }
 
@@ -483,7 +516,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
         // console.log("Respuesta:", respuesta);
 
     }
-    if(loading){
+    if (loading) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -492,7 +525,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                 justifyContent: 'center',
                 height: '75vh',
             }}>
-                <CircularProgress />
+                <CircularProgress/>
 
             </Box>
         )
@@ -657,21 +690,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
 
                 <Grid item xs={6}>
 
-                    <FormControl fullWidth variant="outlined">
-                        <InputLabel>Ciudad de Nacimiento</InputLabel>
-                        <Select
-                            value={datosPersonalesState.lugarDeNacimiento ? datosPersonalesState.lugarDeNacimiento : '0'}
-                            onChange={onDatoSelectChange}
-                            label="Ciudad de Nacimiento"
-                            name="lugarDeNacimiento"
-                        >
-                            {ciudadLista.map((item,index)=>(
-                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                            ))}
-                            <MenuItem value={1}>Asuncion</MenuItem>
-
-                        </Select>
-
+                    <FormControl fullWidth>
+                        <Autocomplete
+                            fullWidth={true}
+                            value={selectedCity ? selectedCity : null}
+                            onChange={(event, newValue: any) => {
+                                // @ts-ignore
+                                setSelectedCity((prev: any) => ({
+                                    ...newValue
+                                }));
+                            }}
+                            id="controllable-states-demo"
+                            options={ciudadLista}
+                            getOptionLabel={(option) => option.nombre ? `${option.nombre}` : 'Seleccionar ciudad'}
+                            renderInput={(params) => <TextField {...params} label="Ciudades"/>}
+                        />
                     </FormControl>
 
                 </Grid>
@@ -724,7 +757,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                         >
 
                             <MenuItem value={0}>Seleccionar departamento</MenuItem>
-                            {departamentosLista.map((item,index)=>(
+                            {departamentosLista.map((item, index) => (
                                 <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
                             ))}
 
@@ -743,11 +776,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({
                             name="ciudad"
                         >
                             <MenuItem value={0}>Seleccionar ciudad</MenuItem>
-                            {ciudadLista.map((item,index)=> {
-                                console.log(item)
-                                return(
-                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                            )})}
+                            {ciudadLista.map((item, index) => {
+                                return (
+                                    <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                                )
+                            })}
 
                         </Select>
                         <FormHelperText>* Campo requerido</FormHelperText>

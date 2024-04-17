@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import {fetchData} from "@/components/utils/utils";
 import {SelectChangeEvent} from "@mui/material/Select";
-import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
+import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import dayjs, {Dayjs} from "dayjs";
 import {useGlobalContext} from "@/app/Context/store";
 import {Add} from "@mui/icons-material";
@@ -23,6 +23,10 @@ import {
     initialPeronaEnExpedienteStateForm,
     PersonaEnExpedienteType
 } from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/expedientesType";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import es from 'dayjs/locale/es';
+
+dayjs.locale(es); // Configura dayjs globalmente al español
 
 type HechoPunible = {
     id: number;
@@ -428,6 +432,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                             </Grid>
                             <Grid item sm={6}>
                                 <FormControl fullWidth>
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                     <MobileDatePicker
                                         format="DD/MM/YYYY"
                                         name='fecha_sentencia_definitiva'
@@ -440,6 +445,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                         value={datosFormulario.fecha_sentencia_definitiva ? dayjs(datosFormulario.fecha_sentencia_definitiva) : null}
                                         label="Fecha de emision sentencia"
                                     />
+                                    </LocalizationProvider>
                                 </FormControl>
                             </Grid>
                         </Grid>
@@ -531,18 +537,20 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                     <Grid container spacing={2} mt={1}>
                         <Grid item sm={6}>
                             <FormControl fullWidth>
-                                <DatePicker
-                                    format="DD/MM/YYYY"
-                                    name='fecha_de_aprehension'
-                                    onChange={(newValue: Dayjs | null) => {
-                                        setDatosFormulario((prevState: any) => ({
-                                            ...prevState,
-                                            fecha_de_aprehension: newValue,
-                                        }))
-                                    }}
-                                    value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : null}
-                                    label="Fecha de aprension y detencion"
-                                />
+                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                    <DatePicker
+                                        format="DD/MM/YYYY"
+                                        name='fecha_de_aprehension'
+                                        onChange={(newValue: Dayjs | null) => {
+                                            setDatosFormulario((prevState: any) => ({
+                                                ...prevState,
+                                                fecha_de_aprehension: newValue,
+                                            }))
+                                        }}
+                                        value={datosFormulario.fecha_de_aprehension ? dayjs(datosFormulario.fecha_de_aprehension) : null}
+                                        label="Fecha de aprension y detencion"
+                                    />
+                                </LocalizationProvider>
                             </FormControl>
                         </Grid>
                     </Grid>
@@ -614,6 +622,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                             <Grid container spacing={2} mt={1} alignItems={'end'}>
                                 <Grid item sm={8}>
                                     <FormControl fullWidth>
+                                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                         <MobileDatePicker
                                             format="DD/MM/YYYY"
                                             name='fecha_de_compurgamiento_inicial'
@@ -626,6 +635,7 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
                                             value={datosFormulario.fecha_de_compurgamiento_inicial ? dayjs(datosFormulario.fecha_de_compurgamiento_inicial) : null}
                                             label="Fecha de compurgamiento inicial"
                                         />
+                                        </LocalizationProvider>
                                     </FormControl>
                                 </Grid>
                             </Grid>
