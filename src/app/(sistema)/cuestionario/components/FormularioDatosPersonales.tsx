@@ -363,6 +363,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
     }, [datosDeIdentificacion.ciudad, ciudadLista]);
 
 
+
+
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // console.log(event.target.name);
         setDatosPersonalesState(
@@ -402,18 +404,31 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
     }
 
     const onDatoSelectChange = (event: SelectChangeEvent<number | string | null>) => {
-        setDatosPersonalesState(
-            (previus) => {
-                return (
-                    {
-                        ...previus,
-                        [event.target.name]: event.target.value ?? null,
-                        [`${event.target.name}_modificado`]: true
+        const nombreSelect = event.target.name
+        const valorSelect = event.target.value
 
-                    }
-                )
-            }
-        )
+        if(nombreSelect == 'departamento'){
+            setDatosPersonalesState((prev:any)=>({
+                ...prev,
+                ciudad: 0,
+                [nombreSelect]: valorSelect
+            }))
+        }else{
+
+            setDatosPersonalesState(
+                (previus) => {
+                    return (
+                        {
+                            ...previus,
+                            [event.target.name]: event.target.value ?? null,
+                            [`${event.target.name}_modificado`]: true
+
+                        }
+                    )
+                }
+            )
+
+        }
     }
 
     const onOptionSelectChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -774,12 +789,17 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                             onChange={onDatoSelectChange}
                             label="Ciudad"
                             name="ciudad"
+                            disabled={!datosPersonalesState.departamento}
                         >
+                            {/*{console.log('Departamento seleccionado', datosPersonalesState.departamento)}
+                            {console.log('lista de ciudades', ciudadLista)}*/}
                             <MenuItem value={0}>Seleccionar ciudad</MenuItem>
-                            {ciudadLista.map((item, index) => {
-                                return (
-                                    <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                                )
+                            {ciudadLista.map((item : any, index) => {
+                                if(item.departamento.id == datosPersonalesState.departamento){
+                                    return (
+                                        <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                                    )
+                                }
                             })}
 
                         </Select>

@@ -19,6 +19,7 @@ import {useGlobalContext} from "@/app/Context/store";
 import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -99,6 +100,10 @@ export default function Ppl() {
         setFilterData(value)
     }
 
+    const listaDeItemBread = [
+        {nombre:'Lista de traslados', url:'', lastItem: true},
+    ];
+
     const BreadCrumb = () =>{
         return(
             <>
@@ -129,7 +134,7 @@ export default function Ppl() {
     return (
         <Box>
             <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'>
-                <BreadCrumb />
+                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
             </TituloComponent>
 
 

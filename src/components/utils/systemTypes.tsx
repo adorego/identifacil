@@ -1,4 +1,4 @@
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 
 export type datosDeSalud2Type =  {
     id: number | null;
@@ -368,10 +368,10 @@ export const datosJudicialesInicial:datosJudicialesType = {
     celda: '',
     expediente_id: 0,
     oficioJudicial_numeroDeDocumento: '',
-    oficioJudicial_fechaDeDocumento: null,
+    oficioJudicial_fechaDeDocumento: dayjs(),
     oficioJudicial_documento: null,
     resolucion_numeroDeDocumento: '',
-    resolucion_fechaDeDocumento: null,
+    resolucion_fechaDeDocumento: dayjs(),
     resolucion_documento: null,
 }
 

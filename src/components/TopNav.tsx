@@ -23,6 +23,7 @@ import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
 import {useEffect} from "react";
 import {useGlobalContext} from "@/app/Context/store";
+import Link from "next/link";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -64,7 +65,7 @@ const StyledInputBase = styled(InputBase)(({theme}) => ({
     },
 }));
 
-const settings = ['Perfil', 'Cerrar sesión'];
+const settings = ['Cerrar sesión'];
 
 export default function TopNav() {
 
@@ -245,11 +246,13 @@ export default function TopNav() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
+
+                                <MenuItem  onClick={handleCloseUserMenu}>
+                                    <Link href='/'>
+                                        <Typography textAlign="center">Cerrar sesión</Typography>
+                                    </Link>
                                 </MenuItem>
-                            ))}
+
                         </Menu>
                     </Box>
                 </Toolbar>

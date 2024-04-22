@@ -228,7 +228,7 @@ export default function FormVehiculo({params} : { params: { id: number | string}
                         name="anho"
                         value={stateForm.anho}
                         id="anho"
-                        label="Modelo"
+                        label="Año"
                         variant="outlined" />
                 </Grid>
             </Grid>

@@ -4,7 +4,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid, IconButton,
     InputLabel,
@@ -632,6 +632,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                         <Typography sx={{fontWeight: 'bold', textTransform: 'uppercase'}}>
                             Expediente judicial
                         </Typography>
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </Grid>
 
                     <Grid item sm={12}>
@@ -705,23 +706,25 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                     </Grid>
                     <Grid item sm={12} mt={2} alignItems='start'>
                         <Typography variant='subtitle1' pt={0}>Oficio judicial</Typography>
-                        <Grid container spacing={2} alignItems='center'>
+                        <Grid container spacing={2} sx={{marginTop: '0px'}} alignItems='center'>
                             <Grid item sm={3}>
-                                <FormControl fullWidth>
-                                    <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
-                                    <OutlinedInput
-                                        required
-                                        name="oficioJudicial_numeroDeDocumento"
-                                        value={estadoFormularioJudicial.oficioJudicial_numeroDeDocumento}
-                                        label="Nro. de documento"
-                                        onChange={onDatoChange}/>
-                                </FormControl>
+                                <TextField
+                                    fullWidth
+                                    required
+                                    name="oficioJudicial_numeroDeDocumento"
+                                    value={estadoFormularioJudicial.oficioJudicial_numeroDeDocumento}
+                                    label="Nro. de documento"
+                                    helperText='* Campo requerido'
+                                    error={!estadoFormularioJudicial.oficioJudicial_numeroDeDocumento}
+                                    onChange={onDatoChange}
+                                />
                             </Grid>
                             <Grid item>
-                                <FormControl>
+                                <FormControl fullWidth>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                         <MobileDatePicker
-                                            value={estadoFormularioJudicial.oficioJudicial_fechaDeDocumento}
+
+                                            value={estadoFormularioJudicial.oficioJudicial_fechaDeDocumento ? dayjs(estadoFormularioJudicial.oficioJudicial_fechaDeDocumento) : dayjs()}
                                             name='oficioJudicial_fechaDeDocumento'
                                             format="DD/MM/YYYY"
                                             onChange={(newValue: Dayjs | null) => {
@@ -732,6 +735,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                             }}
                                             label={"Fecha del documento"}/>
                                     </LocalizationProvider>
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </FormControl>
 
 
@@ -739,7 +743,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             <Grid item sm={6}>
                                 <Stack spacing={1} direction='row' alignItems='center'>
                                     <FormControl fullWidth>
-
                                         <MuiFileInput
                                             required
                                             title="Titulo"
@@ -763,6 +766,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                                    target='_blank'>Descargar </a>
                                                 : null
                                         }
+                                        <FormHelperText>* Campo requerido</FormHelperText>
                                     </FormControl>
                                     {
                                         estadoFormularioJudicial.oficioJudicial_documento !== null ?
@@ -785,22 +789,23 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                 </Grid>
                 <Grid container spacing={2} alignItems='center'>
                     <Grid item sm={3}>
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="numeroDocumento">Nro. de documento</InputLabel>
-                            <OutlinedInput
-                                required
-                                name="resolucion_numeroDeDocumento"
-                                value={estadoFormularioJudicial.resolucion_numeroDeDocumento}
-                                label="Nro. de documento"
-                                onChange={(onDatoChange)}/>
-                        </FormControl>
+                        <TextField
+                            required
+                            fullWidth
+                            name="resolucion_numeroDeDocumento"
+                            helperText='* Campo requerido'
+                            error={!estadoFormularioJudicial.resolucion_numeroDeDocumento}
+                            value={estadoFormularioJudicial.resolucion_numeroDeDocumento}
+                            label="Nro. de documento"
+                            onChange={(onDatoChange)}
+                        />
                     </Grid>
                     <Grid item>
                         <FormControl>
                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                 <MobileDatePicker
 
-                                    value={estadoFormularioJudicial.resolucion_fechaDeDocumento}
+                                    value={estadoFormularioJudicial.resolucion_fechaDeDocumento ? dayjs(estadoFormularioJudicial.resolucion_fechaDeDocumento) : dayjs()}
                                     name='resolucion_fechaDeDocumento'
                                     format="DD/MM/YYYY"
                                     onChange={(newValue: Dayjs | null) => {
@@ -811,7 +816,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                     }}
                                     label={"Fecha del documento"}/>
                             </LocalizationProvider>
-
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
 
                     </Grid>
@@ -820,6 +825,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             <FormControl fullWidth>
                                 <MuiFileInput
                                     required
+                                    error={!estadoFormularioJudicial.resolucion_documento}
                                     value={estadoFormularioJudicial.resolucion_documento}
                                     variant="outlined"
                                     label="Seleccionar documento"
@@ -838,6 +844,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                         <a href={datosFormulario.resolucion_documento} target='_blank'> Descargar </a>
                                         : null
                                 }
+                                <FormHelperText>* Campo requerido</FormHelperText>
                             </FormControl>
                             {
                                 estadoFormularioJudicial.resolucion_documento !== null ?

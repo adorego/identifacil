@@ -1,12 +1,13 @@
 'use client'
 
 import {
+    Alert,
     Autocomplete,
     Box, Breadcrumbs,
     Button,
     CardContent,
     CircularProgress,
-    FormControl,
+    FormControl, FormHelperText,
     Grid,
     IconButton,
     InputLabel, Link,
@@ -34,8 +35,11 @@ import {SelectChangeEvent} from '@mui/material/Select';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from 'next/navigation';
-import {DatePicker, MobileDatePicker} from "@mui/x-date-pickers";
+import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+
 import dayjs, {Dayjs} from "dayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
 
 dayjs.locale(es); // Configura dayjs globalmente al español
@@ -57,11 +61,11 @@ const initialPPL: Array<number> = [0];
 const initialTrasladoForm: TrasladoForm = {
     id: 0,
     numero_de_documento: '',
-    fechaDocumento: null,
-    fechaTraslado: null,
+    fechaDocumento: dayjs(),
+    fechaTraslado: dayjs(),
     autorizo: 0,
     motivoTraslado: 0,
-    medidasSeguridad: [0],
+    medidasSeguridad: 0,
     descripcionMotivo: '',
     custodia: 0,
     chofer: 0,
@@ -98,24 +102,48 @@ const URL_ENDPOINT_ESTABLECIMIENTOS = `${API_URL}/establecimientos`;
 
 export default function Page({params}: { params: { id: number | string } }) {
 
-    const [establecimientos, setEstablecimientos] = useState<[]>([]);
-    const [motivos, setMotivos] = useState<Motivo[]>([]);
-    const [medidas, setMedidas] = useState<Medidas[]>([]);
-    const [custodio, setCustodio] = useState<[]>([]);
-    const [chofer, setChofer] = useState<[]>([]);
-    const [vehiculos, setVehiculo] = useState<Vehiculo[]>([]);
-    const [funcionario, setFuncionario] = useState<[]>([]);
-    const [modalPPL, setModalPPL] = React.useState<number>(0);
-
-    const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
-
-    /** State de PPLS Seleccionados */
-    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{ id_persona: number; nombre: string; apellido: string; } | null>(null)
-
+    /** 1. Estado para capturar datos del FORM */
     const [trasladoForm, setTrasladoForm] = useState<TrasladoForm>(initialTrasladoForm);
 
-    const [loading, setLoading] = useState(true);
+    /**2. */
+    const [motivos, setMotivos] = useState<Motivo[]>([]);
+
+    /**3. */
+    const [medidas, setMedidas] = useState<Medidas[]>([]);
+
+    /**4. */
+    const [custodio, setCustodio] = useState<[]>([]);
+
+    /**5. */
+    const [chofer, setChofer] = useState<[]>([]);
+
+    /**6. */
+    const [vehiculos, setVehiculo] = useState<Vehiculo[]>([]);
+
+    /**7. */
+    const [funcionario, setFuncionario] = useState<[]>([]);
+
+    /**8. */
+    const [modalPPL, setModalPPL] = React.useState<number>(0);
+
+    /**9. */
+    const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
+
+    /**10. */
+    const [establecimientos, setEstablecimientos] = useState<[]>([]);
+
+    /**11. State de PPLS Seleccionados */
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{
+        id_persona: number;
+        nombre: string;
+        apellido: string;
+    } | null>(null)
+
+    /**12. */
     const [modalSaveButtonStateDisabled, setModalSaveButtonStateDisabled] = useState(false);
+
+    /**13. */
+    const [loading, setLoading] = useState(true);
 
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
@@ -215,7 +243,13 @@ export default function Page({params}: { params: { id: number | string } }) {
                             origenTraslado: data.origenTraslado.id,
                             destinoTraslado: data.destinoTraslado.id,
                             documentoAdjunto: data.documentoAdjunto,
-                            PPLs: data.ppls.map((item: any) => ({id_persona: item.persona.id, nombre: item.persona.nombre, apellido: item.persona.apellido, apodo: item.persona.datosPersonales?.apodo, numero_de_identificacion: item.persona.numero_identificacion})),
+                            PPLs: data.ppls.map((item: any) => ({
+                                id_persona: item.persona.id,
+                                nombre: item.persona.nombre,
+                                apellido: item.persona.apellido,
+                                apodo: item.persona.datosPersonales?.apodo,
+                                numero_de_identificacion: item.persona.numero_identificacion
+                            })),
                             lastUpdate: '',
                         }
 
@@ -262,11 +296,10 @@ export default function Page({params}: { params: { id: number | string } }) {
         }
     };
 
+
     // Manejador de envio
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        const form_method = isEditMode ? 'PUT' : 'POST'
-
 
         const form_procesado =
             {
@@ -288,64 +321,23 @@ export default function Page({params}: { params: { id: number | string } }) {
                 ppls: Object.keys(trasladoForm.PPLs).map(key => trasladoForm.PPLs[key].id_persona),
             }
 
-        console.log(form_method)
-        console.log(trasladoForm)
-        console.log(form_procesado)
+        if (formTrasladoValidator(form_procesado)) {
 
-        postForm(
-            isEditMode,
-            'movimientos',
-            'movimiento',
-            form_procesado,
-            setLoading,
-            openSnackbar,
-            router,
-            true,
-            '/movimientos/traslados'
-        );
+            postForm(
+                isEditMode,
+                'movimientos',
+                'movimiento',
+                form_procesado,
+                setLoading,
+                openSnackbar,
+                router,
+                true,
+                '/movimientos/traslados'
+            );
+        }
+
     }
 
-    /*useEffect(() => {
-        // @ts-ignore
-        if (isEditMode) {
-
-            setLoading(true);
-            fetchFormData(params.id, 'traslados') // Usa la función importada
-                .then((data) => {
-                    if (data) {
-                        console.log(data);
-                        setTrasladoForm(data);
-                    }
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
-    }, [isEditMode, params.id]);*/
-
-    /*const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        /!*console.log(trasladoForm)*!/
-        const response = await sendRequest('/traslados', trasladoForm, params.id, isEditMode);
-
-        setLoading(false);
-        if (response.ok) {
-            // @ts-ignore
-            const message = isEditMode !== 'crear'
-                ? 'Traslado actualizado correctamente.'
-                : 'Traslado agregado correctamente.';
-            openSnackbar(message, 'success');
-            router.push('/movimientos/');
-        } else {
-            openSnackbar('Error en la operación.', 'error');
-            console.error('Error:', await response.text());
-        }
-
-        postTraslado();
-        // console.log(JSON.stringify(trasladoForm))
-    };*/
 
     // ************ Agrgar PPLS A TRASLADOS Logica MODAL *********
     const [open, setOpen] = React.useState(false);
@@ -377,18 +369,11 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     };
 
-    /*const handleTextModalChange = (field: keyof PPLType) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const value = event.target.value;
-
-        setModalPPL(prev => ({...prev, [field]: value}));
-    };
-*/
-
-    const handleDeleteRecord = (value:any)=>{
+    const handleDeleteRecord = (value: any) => {
         console.log(value.id_persona)
-        setTrasladoForm((prev:any)=>({
+        setTrasladoForm((prev: any) => ({
             ...prev,
-            PPLs: trasladoForm.PPLs.filter((item:any)=> item.id_persona !== value.id_persona)
+            PPLs: trasladoForm.PPLs.filter((item: any) => item.id_persona !== value.id_persona)
         }))
     }
 
@@ -404,26 +389,16 @@ export default function Page({params}: { params: { id: number | string } }) {
         setModalPPL(0); // Resetear el formulario del modal
     };
 
-    const BreadCrumb = () =>{
-        return(
-            <>
-                <Breadcrumbs aria-label="breadcrumb">
-                    <Link underline="hover" color="inherit" href="/">
-                        Inicio
-                    </Link>
-                    <Link underline="hover" color="inherit" href="/movimientos/traslados">
-                        Lista de traslados
-                    </Link>
-                    <Typography color="text.primary">Traslado</Typography>
-                </Breadcrumbs>
-            </>
-        )
-    }
+    const listaDeItemBread = [
+        {nombre: 'Lista de traslados', url: '/movimientos/traslados', lastItem: true},
+        {nombre: 'Traslado', url: '', lastItem: true},
+    ];
+
 
     return (
         <Box>
             <TituloComponent titulo={isEditMode ? `Traslado ${trasladoForm.numero_de_documento}` : 'Crear Traslado'}>
-                <BreadCrumb />
+                <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
             </TituloComponent>
 
             {/*<QueryBlock/>*/}
@@ -452,6 +427,8 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             fullWidth
                                             label="Nro. del documento"
                                             variant="outlined"
+                                            helperText='* Campo requerido'
+                                            error={!trasladoForm.numero_de_documento}
                                             value={trasladoForm.numero_de_documento}
                                             name="numero_de_documento"
                                             onChange={handleInputChange}/>
@@ -460,37 +437,45 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     {/* Fecha del documento */}
                                     <Grid item xs={3}>
                                         <FormControl fullWidth>
-                                            <MobileDatePicker
-                                                label="Fecha del documento"
-                                                format="DD/MM/YYYY"
-                                                name='fechaDocumento'
-                                                value={trasladoForm.fechaDocumento ? dayjs(trasladoForm.fechaDocumento) : null}
-                                                onChange={(newValue: Dayjs | null) => {
-                                                    setTrasladoForm(prevState => ({
-                                                        ...prevState,
-                                                        fechaDocumento: newValue,
-                                                    }))
-                                                }}
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                                <MobileDatePicker
+                                                    label="Fecha del documento"
+                                                    format="DD/MM/YYYY"
+                                                    name='fechaDocumento'
+                                                    value={trasladoForm.fechaDocumento ? dayjs(trasladoForm.fechaDocumento) : dayjs()}
+                                                    onChange={(newValue: Dayjs | null) => {
+                                                        setTrasladoForm(prevState => ({
+                                                            ...prevState,
+                                                            fechaDocumento: newValue,
+                                                        }))
+                                                    }}
 
-                                            />
+                                                />
+                                            </LocalizationProvider>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
                                     {/* Fecha del traslado */}
                                     <Grid item xs={3}>
-                                        <MobileDatePicker
-                                            label="Fecha del traslado"
-                                            format="DD/MM/YYYY"
-                                            name='fechaTraslado'
-                                            value={trasladoForm.fechaTraslado ? dayjs(trasladoForm.fechaTraslado) : null}
-                                            onChange={(newValue: Dayjs | null) => {
-                                                setTrasladoForm(prevState => ({
-                                                    ...prevState,
-                                                    fechaTraslado: newValue,
-                                                }))
-                                            }}
+                                        <FormControl fullWidth>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                                <MobileDatePicker
+                                                    label="Fecha del traslado"
+                                                    format="DD/MM/YYYY"
+                                                    name='fechaTraslado'
+                                                    value={trasladoForm.fechaTraslado ? dayjs(trasladoForm.fechaTraslado) : dayjs()}
+                                                    onChange={(newValue: Dayjs | null) => {
+                                                        setTrasladoForm(prevState => ({
+                                                            ...prevState,
+                                                            fechaTraslado: newValue,
+                                                        }))
+                                                    }}
 
-                                        />
+                                                />
+                                            </LocalizationProvider>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
+                                        </FormControl>
                                     </Grid>
 
                                     {/* Persona que autorizó traslado */}
@@ -498,6 +483,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Persona que autorizó traslado</InputLabel>
                                             <Select
+                                                error={!trasladoForm.autorizo}
                                                 value={trasladoForm.autorizo}
                                                 onChange={handleSelectChange}
                                                 label="Persona que autorizó traslado"
@@ -513,6 +499,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -521,6 +508,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Tipo de medidas de seguridad</InputLabel>
                                             <Select
+                                                error={!trasladoForm.medidasSeguridad}
                                                 value={trasladoForm.medidasSeguridad}
                                                 onChange={handleSelectChange}
                                                 label="Tipo de medidas de seguridad"
@@ -536,6 +524,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -544,6 +533,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Motivo del traslado</InputLabel>
                                             <Select label='Motivo del traslado'
+                                                    error={!trasladoForm.motivoTraslado}
                                                     value={trasladoForm.motivoTraslado}
                                                     onChange={handleSelectChange}
                                                     name="motivoTraslado"
@@ -555,6 +545,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -574,11 +565,15 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Personal de custodia</InputLabel>
                                             <Select
+                                                error={!trasladoForm.custodia}
                                                 value={trasladoForm.custodia}
                                                 onChange={handleSelectChange}
                                                 label="Personal de custodia"
                                                 name="custodia"
                                             >
+                                                <MenuItem value={0}>
+                                                    Seleccionar custodio
+                                                </MenuItem>
                                                 {/* Replace these menu items with your options */}
                                                 {custodio.map((row: any, index) => (
                                                     <MenuItem key={index} value={row.id}>
@@ -586,6 +581,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
 
                                     </Grid>
@@ -596,18 +592,24 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>chofer</InputLabel>
                                             <Select
+                                                error={!trasladoForm.chofer}
                                                 value={trasladoForm.chofer}
                                                 onChange={handleSelectChange}
                                                 label="chofer"
                                                 name="chofer"
                                             >
+                                                <MenuItem value={0}>
+                                                    Seleccionar chofer
+                                                </MenuItem>
                                                 {/* Replace these menu items with your options */}
                                                 {chofer.map((row: any) => (
                                                     <MenuItem key={row.id} value={row.id}>
                                                         {row.apellido}, {row.nombre} - {row.cedula}
                                                     </MenuItem>
+
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
 
                                     </Grid>
@@ -618,18 +620,20 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Chapa del vehiculo</InputLabel>
                                             <Select
+                                                error={!trasladoForm.vehiculoId}
                                                 value={trasladoForm.vehiculoId}
                                                 onChange={handleSelectChange}
                                                 label="Chapa del vehiculo"
                                                 name="vehiculoId"
                                             >
-
+                                                <MenuItem value={0}>Seleccionar chapa del vehiculo</MenuItem>
                                                 {vehiculos.map(vehiculo => (
                                                     <MenuItem key={vehiculo.id} value={vehiculo.id}>
                                                         {vehiculo.chapa}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -638,18 +642,20 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Modelo del vehiculo</InputLabel>
                                             <Select
+                                                error={!trasladoForm.vehiculoId}
                                                 value={trasladoForm.vehiculoId}
                                                 onChange={handleSelectChange}
                                                 label="Modelo del vehiculo"
                                                 name="vehiculoId"
                                             >
-
+                                                <MenuItem value={0}>Seleccionar vehiculo</MenuItem>
                                                 {vehiculos.map((vehiculo: any) => (
                                                     <MenuItem key={vehiculo.id} value={vehiculo.id}>
                                                         {vehiculo.marca}
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -659,11 +665,13 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Destino del traslado</InputLabel>
                                             <Select
+                                                error={!trasladoForm.destinoTraslado}
                                                 value={trasladoForm.destinoTraslado}
                                                 onChange={handleSelectChange}
                                                 label="Destino del traslado"
                                                 name="destinoTraslado"
                                             >
+                                                <MenuItem value={0}>Seleccionar destino del traslado</MenuItem>
                                                 {/* Replace these menu items with your options */}
                                                 {establecimientos.map((row: any) => (
                                                     <MenuItem key={row.id} value={row.id}>
@@ -671,6 +679,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     </MenuItem>
                                                 ))}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -715,6 +724,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             </Grid>
                                         </Grid>
                                     </Grid>
+                                    {trasladoForm.PPLs.length > 0 ?
                                     <Grid item xs={12}>
                                         <CustomTable
                                             data={trasladoForm.PPLs}
@@ -722,12 +732,17 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             showId={true}
                                             deleteRecord={handleDeleteRecord}
                                             options={{
-                                                pagination:true,
-                                                deleteOption:true,
+                                                pagination: true,
+                                                deleteOption: true,
                                             }}
                                         />
                                     </Grid>
+                                    :
+                                        <Grid item sm={12}>
+                                            <Alert severity='warning'>Debe agregar al menos una PPL</Alert>
+                                        </Grid>
 
+                                    }
 
                                     <Grid item xs={12}>
                                         <Button
@@ -761,7 +776,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     value={personasSeleccionadas ? personasSeleccionadas : null}
                                     onChange={(event, newValue: any) => {
                                         // @ts-ignore
-                                        if(newValue) {
+                                        if (newValue) {
                                             handleSelectModalChange(newValue.id_persona)
                                         }
                                         setPersonasSeleccionadas((prev: any) => ({
@@ -812,3 +827,62 @@ export default function Page({params}: { params: { id: number | string } }) {
     );
 };
 
+
+const formTrasladoValidator = (formDatos: any) => {
+    let esValidado = true;
+    console.log('alert 1')
+    console.log('alert 222', formDatos.ppls)
+    if (!formDatos.numero_de_documento) {
+        esValidado = false
+        console.log('alert 2')
+    }
+
+    if (!formDatos.fecha_de_documento) {
+        esValidado = false
+        console.log('alert 2')
+    }
+
+    if (!formDatos.autorizado_por) {
+        esValidado = false
+        console.log('alert 3')
+    }
+
+    if (!formDatos.chofer) {
+        esValidado = false
+        console.log('alert 4')
+    }
+
+    if (!formDatos.vehiculo) {
+        esValidado = false
+        console.log('alert 5')
+    }
+
+    if (!formDatos.motivo_de_traslado) {
+        esValidado = false
+        console.log('alert 6')
+    }
+
+    if (formDatos.custodios.length <= 0) {
+        esValidado = false
+        console.log('alert 7')
+    }
+
+    if (formDatos.medidas_de_seguridad.length <= 0) {
+        esValidado = false
+        console.log('alert 8')
+    }
+
+    if (formDatos.ppls.length <= 0) {
+        esValidado = false
+        console.log('alert 8')
+    }
+
+    if (!formDatos.destinoTraslado) {
+        esValidado = false
+        console.log('alert 9')
+    }
+
+
+
+    return esValidado
+}

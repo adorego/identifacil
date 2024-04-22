@@ -29,7 +29,7 @@ import Identificacion from "@/app/(sistema)/identificacion/page";
 import log from "loglevel";
 import style from "./FormRegister.module.css";
 
-const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Confirmacion"];
+const steps = ["Identificación", "Reconocimiento", "Cuestionarios", "Finalización"];
 export const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo', 'Ocuurio un error'];
 
 export interface RegistroResponse {
