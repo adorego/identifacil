@@ -22,6 +22,7 @@ import SidebarItem from "@/components/sidebar/sidebarItem";
 import SelectorEstablecimiento from "@/components/sidebar/SelectorEstablecimiento";
 import {useGlobalContext} from "@/app/Context/store";
 import UserNotification from "@/components/notiification/UserNotification";
+import AuthStatus from "@/components/authStatus";
 
 const drawerWidth = 279;
 
@@ -120,6 +121,7 @@ export default function SidebarDrawer()
                         Sippy
                     </Typography>
                 </Box>
+
                 <IconButton
                     color="inherit"
                     aria-label="open drawer"
@@ -479,6 +481,10 @@ export default function SidebarDrawer()
                 </ListItemButton> */}
 
             </List>
+            {/*<Box alignItems='center' justifyContent='center'>
+
+                <AuthStatus />
+            </Box>*/}
         </Drawer>
 
     );
