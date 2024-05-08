@@ -28,7 +28,7 @@ import dayjs, {Dayjs} from "dayjs";
 import {DatosDeIdentificacion} from "@/components/registro/identificacionForm";
 import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
-import {FormValidator} from "@/app/middleware/formValidator";
+
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 
@@ -322,20 +322,34 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
             }))
     }
 
-    const onDatoSelectChange = (event: SelectChangeEvent<number | string>) => {
-        setDatosPersonalesState(
-            (previus) => {
-                return (
-                    {
-                        ...previus,
-                        [event.target.name]: event.target.value,
-                        [`${event.target.name}_modificado`]: true
+    const onDatoSelectChange = (event: SelectChangeEvent<number | string | null>) => {
+        const nombreSelect = event.target.name
+        const valorSelect = event.target.value
 
-                    }
-                )
-            }
-        )
+        if(nombreSelect == 'departamento'){
+            setDatosPersonalesState((prev:any)=>({
+                ...prev,
+                ciudad: 0,
+                [nombreSelect]: valorSelect
+            }))
+        }else{
+
+            setDatosPersonalesState(
+                (previus) => {
+                    return (
+                        {
+                            ...previus,
+                            [event.target.name]: event.target.value ?? null,
+                            [`${event.target.name}_modificado`]: true
+
+                        }
+                    )
+                }
+            )
+
+        }
     }
+
 
     const onOptionSelectChange = (event: ChangeEvent<HTMLInputElement>) => {
 
@@ -669,9 +683,13 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                             name="ciudad"
                         >
                             <MenuItem value={0} disabled>Seleccionar ciudad</MenuItem>
-                            {ciudadLista.map((item,index)=>(
-                                <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
-                            ))}
+                            {ciudadLista.map((item : any, index) => {
+                                if(item.departamento.id == datosPersonalesState.departamento){
+                                    return (
+                                        <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
+                                    )
+                                }
+                            })}
 
                         </Select>
                         <FormHelperText>* Campo requerido</FormHelperText>

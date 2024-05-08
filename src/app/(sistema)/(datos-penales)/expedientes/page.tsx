@@ -89,8 +89,8 @@ export default function Page() {
                     <Box p={3}>
                         <FiltrosTables
                             placeholderSearchBar="Buscar por número de expediente..."
-                            fecha_inicial="Fecha inicial hecho"
-                            fecha_final="Fecha inicial hecho"
+                            fecha_inicial="Fecha hecho desde"
+                            fecha_final="Fecha hecho hasta"
                             dateSearchField='fecha_del_hecho'
                             searchField='numeroDeExpediente'
                             dataSinFiltro={data} handleFiltro={onHandleFiltro}/>

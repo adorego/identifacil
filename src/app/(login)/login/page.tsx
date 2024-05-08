@@ -6,6 +6,7 @@ import splash from '../../../common/images/logo-sippy.png';
 import styles from './layout.module.css'
 import {useRouter} from 'next/navigation';
 import { useState } from 'react';
+import {signIn} from "next-auth/react";
 
 interface datosIdentificacion{
     numeroDeDocumento:string;
@@ -21,10 +22,19 @@ export default function Login() {
     const router = useRouter();
     const [estadoFormularioLogin, setEstadoFormularioLogin] = useState(datosIdentificacionInicial);
 
-    const onAceptarClick = () => {
-        if(estadoFormularioLogin.numeroDeDocumento === "111111" && estadoFormularioLogin.clave === "admin"){
+    const onAceptarClick = async () => {
+
+
+        const responseNextAuth = await signIn('credentials', {
+            username: estadoFormularioLogin.numeroDeDocumento,
+            password: estadoFormularioLogin.clave,
+            redirect: false,
+        })
+
+        console.log(responseNextAuth)
+        /*if(estadoFormularioLogin.numeroDeDocumento === "111111" && estadoFormularioLogin.clave === "admin"){
             router.push('/inicio');
-        }
+        }*/
     };
 
 
@@ -43,33 +53,24 @@ export default function Login() {
         <>
             <Grid container component="main" sx={{height: '100vh'}}>
                 <CssBaseline/>
-                <Grid
-                    item
-                    xs={false}
-                    sm={6}
-                    md={8}
-                    sx={{
+                <Grid item xs={false} sm={6} md={7} sx={{
                         backgroundImage: `url(${splash.src})`,
                         backgroundRepeat: 'no-repeat',
                         backgroundSize: 'auto',
                         backgroundPosition: 'center',
-
                     }}
                 />
-                <Grid item xs={12} sm={8} md={4} component={Paper} elevation={6} square
-                      className={styles.gridLogin}
-                      sx={{
+                <Grid item xs={12} sm={8} md={5} className={styles.gridLogin} sx={{
                           borderLeft: '1px solid #e3f9e8',
                           boxShadow: 'none',
                           display: 'flex',
                           flexDirection: 'column',
                           justifyContent: 'center',
-
                       }}>
                     <Box
                         sx={{
                             my: 8,
-                            mx: 10,
+                            mx: 20,
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',

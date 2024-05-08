@@ -38,7 +38,6 @@ export default function Page() {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
-
             return await response.json();
         } catch (error) {
             console.error('Error al realizar la solicitud fetch:', error);

@@ -3,15 +3,12 @@
 import '@/app/globals.css';
 
 import {GlobalContextProvider, useGlobalContext} from "@/app/Context/store";
-import React, { useState } from 'react';
-
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { AlertColor } from '@mui/material';
+import React from 'react';
 import AlternateLayout from "@/app/(sistema)/layouts/AlternateLayout";
 import {Inter} from 'next/font/google';
-import { LocalizationProvider } from '@mui/x-date-pickers';
 import SnackbarComponent from "@/components/snackback/SnackBarComponent";
 import ThemeRegistry from "@/../theme/ThemeRegistry";
+import SessionProviderWrapper   from "../../../utils/sessionProviderWrapper";
 
 const inter = Inter({subsets: ['latin']});
 
@@ -27,23 +24,26 @@ export default function RootLayout({children,}: {
   
 
   return (
-      <ThemeRegistry>
-          <html lang="en">
-            <body className={inter.className} suppressHydrationWarning={true}>
-                
-                
-                  <GlobalContextProvider>
-                      <SnackbarComponent />
+      <SessionProviderWrapper>
+          <ThemeRegistry>
+              <html lang="en">
+              <body className={inter.className} suppressHydrationWarning={true}>
 
-                      <AlternateLayout>
-                          {children}
-                      </AlternateLayout>
-                  </GlobalContextProvider>
-                
-              
-              
-            </body>
-          </html>
-      </ThemeRegistry>
+
+              <GlobalContextProvider>
+                  <SnackbarComponent />
+
+                  <AlternateLayout>
+                      {children}
+                  </AlternateLayout>
+              </GlobalContextProvider>
+
+
+
+              </body>
+              </html>
+          </ThemeRegistry>
+      </SessionProviderWrapper>
+
   )
 }

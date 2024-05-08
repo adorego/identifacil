@@ -171,6 +171,10 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                             name="nivelAcademico"
                         >
                             <FormControlLabel
+                                value="ninguna"
+                                control={<Radio/>
+                                } label="Ninguna"/>
+                            <FormControlLabel
                                 value="primaria"
                                 control={<Radio/>
                                 } label="Primaria"/>
@@ -182,24 +186,23 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                                 value="terciaria"
                                 control={<Radio/>
                                 } label="Terciaria"/>
-                            <FormControlLabel
-                                value="ninguna"
-                                control={<Radio/>
-                                } label="Ninguna"/>
+
                         </RadioGroup>
                     </FormControl>
                 </Grid>
-                <Grid item sm={6}>
-                    <FormControl fullWidth={true}>
-                        <InputLabel htmlFor="institucionEducativa">Institución educativa</InputLabel>
-                        <OutlinedInput
-                            name="institucionEducativa"
-                            label="Institución educativa"
-                            value={estadoFormularioDeEducacion?.institucionEducativa}
-                            onChange={onDatoChange}
-                        />
-                    </FormControl>
-                </Grid>
+                {estadoFormularioDeEducacion?.nivelAcademico !== 'ninguna' &&
+                    <Grid item sm={6}>
+                        <FormControl fullWidth={true}>
+                            <InputLabel htmlFor="institucionEducativa">Institución educativa</InputLabel>
+                            <OutlinedInput
+                                name="institucionEducativa"
+                                label="Institución educativa"
+                                value={estadoFormularioDeEducacion?.institucionEducativa}
+                                onChange={onDatoChange}
+                            />
+                        </FormControl>
+                    </Grid>
+                }
                 <Grid item sm={12} mt={2}>
                     <FormControl>
                         <FormLabel id="datoOficio">Cuenta con algún oficio</FormLabel>

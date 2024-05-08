@@ -753,6 +753,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
                                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                             <MobileDatePicker
                                                 disablePast
+
                                                 maxDate={nineMonthsFromNow}
                                                 format="DD/MM/YYYY"
                                                 name='fecha_parto'
