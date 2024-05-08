@@ -32,7 +32,6 @@ export default function RootLayout({children,}: {
 
               <GlobalContextProvider>
                   <SnackbarComponent />
-
                   <AlternateLayout>
                       {children}
                   </AlternateLayout>

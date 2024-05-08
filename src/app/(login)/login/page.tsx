@@ -25,16 +25,16 @@ export default function Login() {
     const onAceptarClick = async () => {
 
 
-        const responseNextAuth = await signIn('credentials', {
+        /*const responseNextAuth = await signIn('credentials', {
             username: estadoFormularioLogin.numeroDeDocumento,
             password: estadoFormularioLogin.clave,
             redirect: false,
         })
 
-        console.log(responseNextAuth)
-        /*if(estadoFormularioLogin.numeroDeDocumento === "111111" && estadoFormularioLogin.clave === "admin"){
+        console.log(responseNextAuth)*/
+        if(estadoFormularioLogin.numeroDeDocumento === "111111" && estadoFormularioLogin.clave === "admin"){
             router.push('/inicio');
-        }*/
+        }
     };
 
 
