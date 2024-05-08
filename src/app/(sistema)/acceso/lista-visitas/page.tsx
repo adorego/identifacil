@@ -18,23 +18,19 @@ import {useGlobalContext} from "@/app/Context/store";
 import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
+import dayjs from "dayjs";
 
 const header2 = [
     {id: 'id', label: 'ID'},
     {id: 'visitante', label: 'Apellido, Nombre'},
-    {id: 'tipo', label: 'tipo'},
-    {id: 'fecha_salida', label: 'Fecha', type: 'date'},
-    {id: 'hora_salida', label: 'Hora'},
+    {id: 'tipo', label: 'tipo', type: 'tipo', dataType: [{id: 0, name: 'Entrada'}, {id: 1, name: 'Salida'}]},
+    {id: 'fecha', label: 'Fecha', type: 'date'},
+    {id: 'hora', label: 'Hora'},
     {id: 'observacion', label: 'Observacion'},
     {id: 'ppl_que_visito', label: 'PPL visitado'},
 ]
 
-const dataMedidas = [
-    {id: 1, nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_medida: 'Encadenamiento', fecha_inicio: '01/01/2024', fecha_fin: '01/02/2024'  },
-    {id: 2, nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_medida: 'Huelga de hambre', fecha_inicio: '01/01/2024', fecha_fin: '01/02/2024'  },
-    {id: 3, nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_medida: 'Encadenamiento', fecha_inicio: '01/01/2024', fecha_fin: '01/02/2024'  },
-    {id: 4, nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_medida: 'Huelga de hambre', fecha_inicio: '01/01/2024', fecha_fin: '01/02/2024'  },
-]
+
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
@@ -44,7 +40,7 @@ export default function Ppl() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
     const [loading, setLoading] = useState(true)
-    
+
     const {openSnackbar} = useGlobalContext();
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
@@ -55,9 +51,11 @@ export default function Ppl() {
             name: row.descripcion,
         });
     };
+
     const handleCloseModal = () => {
         setModalOpen(false);
     };
+
     const handleDelete = async (id: number) => {
         const result = await deleteRecord(`/traslados/${id}`);
 
@@ -79,47 +77,32 @@ export default function Ppl() {
 
     }
 
-
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
-        fetchData(`${API_URL}/entrada_salida/visitantes/salidas`)
-            .then(fetchedData => {
-                 console.log(fetchedData)
-                const dataProcesado = fetchedData.map((item:any)=>({
-                    id: item.id,
-                    visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,
-                    fecha_salida: item.fecha_salida,
-                    hora_salida: item.hora_salida,
-                    observacion: item.observacion,
-                    ppl_que_visito: `${item.ppl_que_visito.persona.apellido} ${item.ppl_que_visito.persona.nombre}`,
-                    tipo: 'Salida'
-                }))
-
-                console.log(dataProcesado)
-                // TODO: veritifcar porque hace problema typescript aca
-                setData(dataProcesado);
-                setLoading(false)
-            });
-        fetchData(`${API_URL}/entrada_salida/visitantes/ingresos`)
+        fetchData(`${API_URL}/entrada_salida/visitantes/entrada_salida`)
             .then(fetchedData => {
                 // console.log(fetchedData)
-                const dataProcesado = fetchedData.map((item:any)=>({
-                    id: item.id,
-                    visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,
-                    fecha_salida: item.fecha_ingreso,
-                    hora_salida: item.hora_ingreso,
-                    observacion: item.observacion,
-                    ppl_que_visito: `${item.ppl_a_visitar.persona.apellido} ${item.ppl_a_visitar.persona.nombre}`,
-                    tipo: 'Entrada'
-                }))
 
-                console.log(dataProcesado)
-                // TODO: veritifcar porque hace problema typescript aca
-
-                //@ts-ignore
-                setData((prev:any)=>([...prev, ...dataProcesado]));
                 setLoading(false)
+                const dataProcesado = fetchedData.map((item:any)=> {
+                    console.log(dayjs(item.fecha).format('DD/MM/YYYY'))
+                    return ({
+                        id: item.id,
+                        // visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,
+                        fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
+                        hora: dayjs(item.fecha).format('HH:mm'),
+                        observacion: item.observacion,
+                        // ppl_que_visito: `${item.ppl_que_visito.persona.apellido} ${item.ppl_que_visito.persona.nombre}`,
+                        tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
+                    })
+                })
+                setData(dataProcesado);
+                /*console.log(dataProcesado)
+                // TODO: veritifcar porque hace problema typescript aca
+                setData(dataProcesado);
+                setLoading(false)*/
             });
+
     }, []);
 
     const handleFitros = (value: any) => {
