@@ -81,18 +81,18 @@ export default function Ppl() {
     useEffect(() => {
         fetchData(`${API_URL}/entrada_salida/visitantes/entrada_salida`)
             .then(fetchedData => {
-                // console.log(fetchedData)
+                console.log(fetchedData)
 
                 setLoading(false)
                 const dataProcesado = fetchedData.map((item:any)=> {
                     console.log(dayjs(item.fecha).format('DD/MM/YYYY'))
                     return ({
                         id: item.id,
-                        // visitante: `${item.visitante.apellido}, ${item.visitante.nombre}`,
+                        visitante: `${item.nombre_visita}, ${item.apellido_ppl}`,
                         fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
                         hora: dayjs(item.fecha).format('HH:mm'),
-                        observacion: item.observacion,
-                        // ppl_que_visito: `${item.ppl_que_visito.persona.apellido} ${item.ppl_que_visito.persona.nombre}`,
+                        observacion: item.observacion ? item.observacion : 'N/D',
+                        ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
                         tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
                     })
                 })

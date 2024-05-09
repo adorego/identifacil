@@ -157,7 +157,8 @@ export default function Page({ params }: { params: { id: number } }) {
         fetchData(`${ENDPOINT}${params.id}`)
             .then(fetchedData => {
                 setStateDataProfile((prev:any)=>{
-                    const datoDeCondena = fetchedData.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso == true).expedienteJudicial?.condenado;
+                    const datoDeCondena = fetchedData.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso == true)?.expedienteJudicial?.condenado;
+
                     let condenadoValue = '';
 
                     if(datoDeCondena !== null && datoDeCondena !== undefined){
