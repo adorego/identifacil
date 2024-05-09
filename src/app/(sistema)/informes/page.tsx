@@ -1,4 +1,4 @@
-
+'use client'
 
 import {Box, Grid, Typography} from "@mui/material";
 import * as React from "react";
@@ -7,6 +7,7 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import CardReport from "@/components/blocks/cardReport";
 import CheckEstablecimiento from "@/app/(sistema)/informes/components/checkEstablecimientos";
 import EstablecimientoBox from "@/app/(sistema)/informes/components/EstablecimientoBox";
+import {useEffect, useState} from "react";
 
 const styles = {
     databox: {
@@ -34,26 +35,24 @@ const styles = {
     }
 }
 
-const API_URL = process.env.API_REGISTRO;
+const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
-async function getData(url:string) {
-    const res = await fetch(url)
-    // The return value is *not* serialized
-    // You can return Date, Map, Set, etc.
 
-    if (!res.ok) {
-        // This will activate the closest `error.js` Error Boundary
-        throw new Error('Failed to fetch data')
-    }
 
-    return res.json()
-}
+export default function Page() {
 
-// http://localhost:4001/api/registro/datos_penales/condenados_procesados
 
-export default async function Page() {
-    const data = await getData(`${API_URL}/datos_penales/condenados_procesados`)
-    const establecimiento = await getData(`${API_URL}/establecimientos`)
+    const [datosCondenados, setDatosCondenados] = useState<any>({})
+
+    useEffect(() => {
+        fetch(`${API_URL}/datos_penales/condenados_procesados`).then((res)=>{
+            return res.json()
+        }).then((data)=>{
+
+            setDatosCondenados(data)
+        })
+
+    }, []);
 
 
     // @ts-ignore
@@ -95,7 +94,7 @@ export default async function Page() {
                                                 </Box>
                                                 <Box sx={{ textAlign: 'left', marginLeft: '20px'}}>
                                                     <Typography variant='h4' sx={{fontWeight: '700'}}>
-                                                        { data.condenados ? data.condenados : 'N/D'}
+                                                        { datosCondenados.condenados ? datosCondenados.condenados : 'N/D'}
                                                     </Typography>
                                                     <Typography variant='h6'>
                                                         Condenados
@@ -110,7 +109,7 @@ export default async function Page() {
                                                 </Box>
                                                 <Box sx={{ textAlign: 'left', marginLeft: '20px'}}>
                                                     <Typography variant='h4' sx={{fontWeight: '700'}}>
-                                                        { data.procesados ? data.procesados : 'N/D'}
+                                                        { datosCondenados.procesados ? datosCondenados.procesados : 'N/D'}
                                                     </Typography>
                                                     <Typography variant='h6'>
                                                         Procesados
@@ -118,19 +117,6 @@ export default async function Page() {
                                                 </Box>
                                             </Box>
                                         </Grid>
-        {/*                                <Grid item sm={3}>
-                                            <Box sx={styles.databox}>
-                                                <Box sx={styles.iconBox}>
-                                                    <SyncAlt fontSize='large' color='inherit'/>
-                                                </Box>
-                                                <Box sx={{ textAlign: 'left', marginLeft: '20px'}}>
-                                                    <Typography variant='h4' sx={{fontWeight: '700'}}>58</Typography>
-                                                    <Typography variant='h6'>
-                                                        En transito
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        </Grid>*/}
                                     </Grid>
 
                                 </Box>

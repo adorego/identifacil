@@ -88,7 +88,7 @@ export default function Ppl() {
                     console.log(dayjs(item.fecha).format('DD/MM/YYYY'))
                     return ({
                         id: item.id,
-                        visitante: `${item.nombre_visita}, ${item.apellido_ppl}`,
+                        visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
                         fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
                         hora: dayjs(item.fecha).format('HH:mm'),
                         observacion: item.observacion ? item.observacion : 'N/D',
