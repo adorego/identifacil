@@ -50,6 +50,8 @@ export default function Page() {
         }).then((data)=>{
 
             setDatosCondenados(data)
+        }).catch((err:any)=>{
+            console.log('Error obteniendo datos de condenados', err)
         })
 
     }, []);
