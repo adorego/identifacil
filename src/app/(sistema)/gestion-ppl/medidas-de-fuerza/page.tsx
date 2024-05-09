@@ -120,7 +120,7 @@ export default function Ppl() {
     return (
         <>
             <Box >
-                <TituloComponent titulo='Medidas de fuerza' url='/' newEntry='/ppl/medidas-de-fuerza/crear'/>
+                <TituloComponent titulo='Medidas de fuerza' url='/' newEntry='/gestion-ppl/medidas-de-fuerza/crear'/>
 
                 <Box mt={3}>
                     <CustomTable
