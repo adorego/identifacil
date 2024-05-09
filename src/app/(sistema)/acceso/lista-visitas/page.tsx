@@ -77,6 +77,7 @@ export default function Ppl() {
 
     }
 
+    
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
         fetchData(`${API_URL}/entrada_salida/visitantes/entrada_salida`)
