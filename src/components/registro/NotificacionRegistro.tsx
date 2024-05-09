@@ -39,6 +39,7 @@ const NotificacionRegistro = (props:NotificacionRegistroProps) =>{
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={URL.createObjectURL(props.foto)} width={120} height={220} alt="foto" />
           </Box>
         </Modal>

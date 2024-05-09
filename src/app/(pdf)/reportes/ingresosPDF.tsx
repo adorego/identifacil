@@ -75,8 +75,10 @@ export default function IngresosPDF({data}){
                         paddingBottom: '10px'
 
                     }}>
-                    <Image src={ministerioLogo.src}  style={styles.imgContainerMinisterio} />
-                    <Image src={Logo.src}  style={styles.imgContainer} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img alt='Logo Ministerio' src={ministerioLogo.src}  style={styles.imgContainerMinisterio} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img alt='Logo Sippy' src={Logo.src}  style={styles.imgContainer} />
                 </View>
                 <View>
                     <Text style={styles.title}>
