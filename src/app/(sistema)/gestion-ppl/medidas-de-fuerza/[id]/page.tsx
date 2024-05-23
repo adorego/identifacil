@@ -42,6 +42,8 @@ import es from 'dayjs/locale/es';
 import {api_request, RequestResponse} from "@/lib/api-request";
 import {NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {EstadoCivilDTO} from "@/model/estadoCivil.model";
+import {MuiFileInput} from "mui-file-input";
+
 dayjs.locale(es); // Configura dayjs globalmente al español
 
 const styleModal = {
@@ -62,7 +64,7 @@ const headersPPL = [
     {id: 'id', label: 'ID'},
     {id: 'fecha', label: 'Fecha registro'},
     {id: 'diagnostico', label: 'Descripcion registro medico'},
-    {id: 'adjunto', label: 'Documento adjunto'},
+    {id: 'archivo_registro_medico', label: 'Documento adjunto'},
 ];
 
 interface medidaFuerzaType {
@@ -88,6 +90,7 @@ const medidaFuerzaInitial = {
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 const URL_ENDPOINT = `${API_URL}/movimientos/motivos_de_traslado`;
 
+const registroInitial = {fecha_consulta: null, diagnostico: '', file: null}
 
 export default function Page({params}: { params: { id: number | string } }) {
 
@@ -105,6 +108,11 @@ export default function Page({params}: { params: { id: number | string } }) {
     const [stateTiposMedidas, setStateTiposMedidas] = useState([]);
     const [stateMotivosMedidas, setStateMotivosMedidas] = useState([]);
     const [stateHistorialMedico, setStateHistorialMedico] = useState([]);
+    const [stateRegistroMedicoModal, setStateRegistroMedicoModal] = useState<{
+        fecha_consulta: Dayjs | null;
+        diagnostico: string;
+        documento_registro_medico?: File | null;
+    }>(registroInitial);
 
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
@@ -114,8 +122,8 @@ export default function Page({params}: { params: { id: number | string } }) {
     useEffect(() => {
         // Fetch para PPL lista para traslado
 
-        if(isEditMode){
-            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/medida_de_fuerza/${params.id}`).then((res:any) => {
+        if (isEditMode) {
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/medida_de_fuerza/${params.id}`).then((res: any) => {
                 // @ts-ignore
                 const dato_procesado = {
                     ...res,
@@ -138,7 +146,8 @@ export default function Page({params}: { params: { id: number | string } }) {
             })
 
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
-              console.log(res)
+                console.log(res)
+                setStateHistorialMedico(res)
             })
         }
 
@@ -157,7 +166,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                 setStateMotivosMedidas(res);
             }),
 
-        ]).finally(()=>{
+        ]).finally(() => {
             console.info('Finished loading data.')
         })
 
@@ -172,7 +181,6 @@ export default function Page({params}: { params: { id: number | string } }) {
             [name]: event.target.value,
         }));
     }
-
 
 
     // Manejador de envio
@@ -223,6 +231,39 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     const handleClose = () => {
         setOpen(false);
+    };
+
+    const handleSubmitModalMedico = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+        console.log(dayjs(stateRegistroMedicoModal.fecha_consulta).format('YYYY-MM-DD'))
+        const formData = new FormData();
+        formData.append('fecha', stateRegistroMedicoModal.fecha_consulta ? stateRegistroMedicoModal.fecha_consulta.toISOString() : '');
+        formData.append('diagnostico', stateRegistroMedicoModal.diagnostico);
+        if (stateRegistroMedicoModal.documento_registro_medico) {
+            formData.append('documento_registro_medico', stateRegistroMedicoModal.documento_registro_medico);
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/registro_medico/${params.id}`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al enviar los datos del registro médico');
+            }
+
+            const data = await response.json();
+            console.log(data);
+            // Manejar la respuesta exitosa
+            // @ts-ignore
+            setStateHistorialMedico((prev: any) => [...prev, stateRegistroMedicoModal]);
+            setStateRegistroMedicoModal(registroInitial)
+            handleClose();
+        } catch (err) {
+            console.error(err);
+            // Manejar el error
+        }
     };
 
     return (
@@ -287,7 +328,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             >
                                                 <MenuItem value={0}>Seleccionar tipo de medida</MenuItem>
                                                 {stateTiposMedidas ? stateTiposMedidas.map(
-                                                    (data:any, id) => {
+                                                    (data: any, id) => {
                                                         return (
                                                             <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
                                                         )
@@ -307,7 +348,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             >
                                                 <MenuItem value={0}>Seleccionar motivo de medida</MenuItem>
                                                 {stateMotivosMedidas ? stateMotivosMedidas.map(
-                                                    (data:any, id) => {
+                                                    (data: any, id) => {
                                                         return (
                                                             <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
                                                         )
@@ -316,8 +357,6 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             </Select>
                                         </FormControl>
                                     </Grid>
-
-
 
 
                                     {/* Documento adjunto */}
@@ -331,7 +370,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     name='fecha_de_inicio'
                                                     value={stateMedidasDeFuerza.fecha_de_inicio ? dayjs(stateMedidasDeFuerza.fecha_de_inicio) : null}
                                                     onChange={(newValue: Dayjs | null) => {
-                                                        setStateMedidasDeFuerza((prevState:any) => ({
+                                                        setStateMedidasDeFuerza((prevState: any) => ({
                                                             ...prevState,
                                                             fecha_de_inicio: newValue,
                                                         }))
@@ -351,7 +390,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     name='fecha_de_fin'
                                                     value={stateMedidasDeFuerza.fecha_de_fin ? dayjs(stateMedidasDeFuerza.fecha_de_fin) : null}
                                                     onChange={(newValue: Dayjs | null) => {
-                                                        setStateMedidasDeFuerza((prevState:any) => ({
+                                                        setStateMedidasDeFuerza((prevState: any) => ({
                                                             ...prevState,
                                                             fecha_de_fin: newValue,
                                                         }))
@@ -364,31 +403,29 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     </Grid>
 
 
-
-
-
                                     {/* Agregar PPL Button */}
                                     {stateMedidasDeFuerza.id &&
-                                    (<>
-                                        <Grid item xs={12}>
-                                            <Grid container spacing={2} alignItems='center'>
-                                                <Grid item xs={6}>
-                                                    <Typography variant='h6'>Historial medico</Typography>
-                                                </Grid>
-                                                <Grid item xs={6} textAlign='right'>
-                                                    <Button startIcon={<Add />} variant="text" color="primary" onClick={handleOpen}>
-                                                        Agregar registro medico
-                                                    </Button>
+                                        (<>
+                                            <Grid item xs={12}>
+                                                <Grid container spacing={2} alignItems='center'>
+                                                    <Grid item xs={6}>
+                                                        <Typography variant='h6'>Historial medico</Typography>
+                                                    </Grid>
+                                                    <Grid item xs={6} textAlign='right'>
+                                                        <Button startIcon={<Add/>} variant="text" color="primary"
+                                                                onClick={handleOpen}>
+                                                            Agregar registro medico
+                                                        </Button>
+                                                    </Grid>
                                                 </Grid>
                                             </Grid>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <CustomTable
-                                                data={stateHistorialMedico}
-                                                headers={headersPPL}
-                                                showId={true}/>
-                                        </Grid>
-                                    </>)
+                                            <Grid item xs={12}>
+                                                <CustomTable
+                                                    data={stateHistorialMedico}
+                                                    headers={headersPPL}
+                                                    showId={true}/>
+                                            </Grid>
+                                        </>)
                                     }
 
                                     <Grid item xs={12}>
@@ -416,19 +453,75 @@ export default function Page({params}: { params: { id: number | string } }) {
                 >
                     <Typography variant="h6" marginBottom={2}>Agregar PPL</Typography>
                     <Grid container spacing={3}>
-                        <Grid item xs={12}>
 
+                        <Grid item xs={12}>
+                            <FormControl fullWidth>
+                                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                    <MobileDatePicker
+                                        label="Fecha de consulta"
+                                        format="DD/MM/YYYY"
+                                        name='fecha_consulta'
+                                        value={stateRegistroMedicoModal.fecha_consulta ? dayjs(stateRegistroMedicoModal.fecha_consulta) : null}
+                                        onChange={(newValue: Dayjs | null) => {
+                                            setStateRegistroMedicoModal((prevState: any) => ({
+                                                ...prevState,
+                                                fecha_consulta: newValue,
+                                            }))
+                                        }}
+
+                                    />
+                                </LocalizationProvider>
+                                <FormHelperText>* Campo requerido</FormHelperText>
+                            </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <Button variant="contained" color="primary">
+                            <TextField
+                                fullWidth
+                                label='Diagnostico'
+                                name='diagnostico'
+                                value={stateRegistroMedicoModal.diagnostico}
+                                onChange={(e) => {
+                                    setStateRegistroMedicoModal((prev: any) => ({
+                                        ...prev,
+                                        [e.target.name]: e.target.value,
+                                    }))
+                                }}
+                            />
+                        </Grid>
+
+
+                        <Grid item sm={12}>
+                            <FormControl fullWidth>
+                                <MuiFileInput
+                                    fullWidth
+                                    required
+                                    error={!stateRegistroMedicoModal.documento_registro_medico}
+                                    value={stateRegistroMedicoModal.documento_registro_medico}
+                                    variant="outlined"
+                                    label="Seleccionar documento"
+                                    getInputText={(value) => value ? value.name : ''}
+                                    onChange={(newValue) => {
+                                        setStateRegistroMedicoModal((prev:any) => ({
+                                            ...prev,
+                                            documento_registro_medico: newValue,
+                                        }))
+                                    }}
+                                />
+                            </FormControl>
+                        </Grid>
+
+
+                        <Grid item xs={12}>
+                            <Button variant="contained" color="primary" onClick={handleSubmitModalMedico}>
                                 Guardar
                             </Button>
                         </Grid>
                     </Grid>
+
                 </Box>
             </Modal>
 
         </Box>
-    );
+);
 };
 

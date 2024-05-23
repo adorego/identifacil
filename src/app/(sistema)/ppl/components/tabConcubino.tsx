@@ -46,6 +46,7 @@ const styleModal = {
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 interface conyugesTipo {
+    id_persona?: number | null;
     id: number | null;
     numero_de_identificacion: string | null;
     tipo_de_identificacion?: number | null;
@@ -136,7 +137,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                 const res = await fetch(`${API_URL}/conyuge/${id_persona}`);
                 if (!res.ok) throw new Error('Error al obtener el cónyuge');
                 const data = await res.json();
-
+                    console.log(data)
                 // Ajustar el estado del conyuge
                 setStateConyugeVista({
                     ...data,
@@ -174,14 +175,20 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
 
     const handleClose = (type: string | null = null) => {
         setAnchorEl(null);
-        console.log('hola')
+
         if (type == 'modificar_concubino') {
             setStateConyuge({...stateConyugeVista})
             handleOpenModal()
         }
 
         if (type == 'agregar_concubino') {
+            setStateConyuge({
+                ...conyugesInitial,
+                id: stateConyugeVista.id? stateConyugeVista.id : null
+
+            })
             handleOpenModal()
+
         }
     };
 
@@ -296,11 +303,12 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
             const data = await response.json();
             console.log(data);
             // Manejar la respuesta exitosa
+            handleCloseModal()
         } catch (err) {
             console.error(err);
             // Manejar el error
         } finally {
-            handleCloseModal()
+
         }
     }
 
