@@ -1,11 +1,12 @@
 'use client'
 
 import {
+    Autocomplete,
     Box,
     Button,
     CardContent,
     CircularProgress,
-    FormControl,
+    FormControl, FormHelperText,
     Grid,
     IconButton,
     InputLabel,
@@ -33,8 +34,15 @@ import {SelectChangeEvent} from '@mui/material/Select';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from 'next/navigation';
-import {DatePicker} from "@mui/x-date-pickers";
+import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+
 import dayjs, {Dayjs} from "dayjs";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import es from 'dayjs/locale/es';
+import {api_request, RequestResponse} from "@/lib/api-request";
+import {NacionalidadesDTO} from "@/model/nacionalidad.model";
+import {EstadoCivilDTO} from "@/model/estadoCivil.model";
+dayjs.locale(es); // Configura dayjs globalmente al español
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -48,292 +56,163 @@ const styleModal = {
     p: 4,
 };
 
-const initialPPL: Array<number> = [0];
-
-const initialTrasladoForm: TrasladoForm = {
-    id: 0,
-    numero_de_documento: '',
-    fechaDocumento: null,
-    fechaTraslado: null,
-    autorizo: 0,
-    motivoTraslado: 0,
-    medidasSeguridad: [0],
-    descripcionMotivo: '',
-    custodia: 0,
-    chofer: 0,
-    vehiculoId: 0,
-    origenTraslado: 1,
-    destinoTraslado: 0,
-    documentoAdjunto: '',
-    PPLs: [],
-    lastUpdate: '',
-};
 
 // Datos para traslados nombre;alias;motivo;fechaTraslado;
 const headersPPL = [
     {id: 'id', label: 'ID'},
     {id: 'fecha', label: 'Fecha registro'},
-    {id: 'descripcion', label: 'Descripcion registro medico'},
+    {id: 'diagnostico', label: 'Descripcion registro medico'},
     {id: 'adjunto', label: 'Documento adjunto'},
 ];
 
+interface medidaFuerzaType {
+    id: number | null;
+    ppl: number;
+    tipo_de_medida_de_fuerza: number;
+    fecha_de_inicio: Dayjs | null;
+    fecha_de_fin: Dayjs | null;
+    motivo: number;
+    exigencias?: string;
+    negociadores?: number;
+}
 
-const dataMedidas = [
-    {id: 1, fecha: '01/01/2024', descripcion: 'Verificacion de estado de PPL', adjunto: 'ver doc. adjunto'  },
-    {id: 2, fecha: '01/01/2024', descripcion: 'Verificacion de estado de PPL', adjunto: 'ver doc. adjunto'  },
-    {id: 3, fecha: '01/01/2024', descripcion: 'Verificacion de estado de PPL', adjunto: 'ver doc. adjunto'  },
-    {id: 4, fecha: '01/01/2024', descripcion: 'Verificacion de estado de PPL', adjunto: 'ver doc. adjunto'  },
-]
+const medidaFuerzaInitial = {
+    id: null,
+    ppl: 0,
+    tipo_de_medida_de_fuerza: 0,
+    fecha_de_inicio: null,
+    fecha_de_fin: null,
+    motivo: 0,
+}
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 const URL_ENDPOINT = `${API_URL}/movimientos/motivos_de_traslado`;
-const URL_ENDPOINT_MEDIDAS = `${API_URL}/movimientos/medidas_de_seguridad`;
-const URL_ENDPOINT_CUSTODIO = `${API_URL}/movimientos/custodios`;
-const URL_ENDPOINT_CHOFER = `${API_URL}/movimientos/choferes`;
-const URL_ENDPOINT_VEHICULOS = `${API_URL}/movimientos/vehiculos`;
-const URL_ENDPOINT_ESTABLECIMIENTOS = `${API_URL}/establecimientos`;
 
-// TODO: Cuando se envia el submit se debe bloquear el boton de guardado
-// TODO: Luego de enviar la peticion se debe mostrar una alerta de que se guardo correctamente
-// TODO: hacer un spinner que bloquee toda la pantalla cuando carga o guarda los datos
-// TODO: Origen de destino debe ser dinamico
 
 export default function Page({params}: { params: { id: number | string } }) {
 
-    const [establecimientos, setEstablecimientos] = useState<[]>([]);
-    const [motivos, setMotivos] = useState<Motivo[]>([]);
-    const [medidas, setMedidas] = useState<Medidas[]>([]);
-    const [custodio, setCustodio] = useState<[]>([]);
-    const [chofer, setChofer] = useState<[]>([]);
-    const [vehiculos, setVehiculo] = useState<Vehiculo[]>([]);
-    const [funcionario, setFuncionario] = useState<[]>([]);
-    const [modalPPL, setModalPPL] = React.useState<number>(0);
 
-    const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
-    const [trasladoForm, setTrasladoForm] = useState<TrasladoForm>(initialTrasladoForm);
-
+    const [stateMedidasDeFuerza, setStateMedidasDeFuerza] = useState<medidaFuerzaType>(medidaFuerzaInitial);
     const [loading, setLoading] = useState(false);
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{
+        id_persona: number;
+        nombre: string;
+        apellido: string;
+        numero_de_identificacion?: string | number;
+    } | null>(null)
+    const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
+
+    const [stateTiposMedidas, setStateTiposMedidas] = useState([]);
+    const [stateMotivosMedidas, setStateMotivosMedidas] = useState([]);
+    const [stateHistorialMedico, setStateHistorialMedico] = useState([]);
+
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const isEditMode: boolean = params?.id !== 'crear';
 
 
-    const handleLoading = (value: boolean): void => {
-        // console.log('ahora ' + value);
-        setLoading(value);
-        // console.log('edit:' + isEditMode)
+    useEffect(() => {
+        // Fetch para PPL lista para traslado
+
+        if(isEditMode){
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/medida_de_fuerza/${params.id}`).then((res:any) => {
+                // @ts-ignore
+                const dato_procesado = {
+                    ...res,
+                    motivo: res.motivo ? res.motivo.id : null,
+                    tipo_de_medida_de_fuerza: res.tipo_de_medida_de_fuerza ? res.tipo_de_medida_de_fuerza.id : null,
+                    fecha_de_fin: res.fecha_fin ? dayjs(res.fecha_fin).format('YYYY-MM-DD') : null,
+                    fecha_de_inicio: res.fecha_inicio ? dayjs(res.fecha_inicio).format('YYYY-MM-DD') : null,
+                    ppl: res.ppl ? res.ppl.persona.id : null,
+                }
+                console.log(dato_procesado)
+                setStateMedidasDeFuerza(dato_procesado)
+
+                setPersonasSeleccionadas({
+                    id_persona: res.ppl.persona.id,
+                    nombre: res.ppl.persona.nombre,
+                    apellido: res.ppl.persona.apellido,
+                    numero_de_identificacion: res.ppl.persona.numero_identificacion,
+                })
+
+            })
+
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
+              console.log(res)
+            })
+        }
+
+
+        Promise.all([
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res => {
+                // @ts-ignore
+                setStatePPL(res);
+            }),
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/tipo_de_medida_de_fuerza`).then(res => {
+                // @ts-ignore
+                setStateTiposMedidas(res);
+            }),
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/motivo_de_medida_de_fuerza`).then(res => {
+                // @ts-ignore
+                setStateMotivosMedidas(res);
+            }),
+
+        ]).finally(()=>{
+            console.info('Finished loading data.')
+        })
+
+    }, []);
+
+
+    const handleSelectChange = (event: SelectChangeEvent<string | number | [number]>) => {
+        const name = event.target.name;
+
+        setStateMedidasDeFuerza((prev: any) => ({
+            ...prev,
+            [name]: event.target.value,
+        }));
     }
 
-    // Función para cargar los motivos desde el endpoint
-
-
-
-    // Cargar datos para edición
-    /*useEffect(() => {
-        if (isEditMode) {
-            // const GetPorID_URL = `${API_URL}/movimientos/getPorId/${params.id}`
-
-            handleLoading(true);
-
-            fetch(GetPorID_URL)
-                .then(response => {
-                    return response.json()
-                })
-                .then(data => {
-                    console.log(data)
-                    // TODO: Asegúrate de que el array no esté vacío y de que el objeto tenga las propiedades necesarias
-                    // TODO: FALTA GUARDAR PPLS
-
-                    if (data.id) {
-                        //TODO: Corregir el setter del form para ver el attachment
-                        console.log('hola')
-                        const datosOrdenados = {
-                            id: data.id,
-                            numero_de_documento: data.numero_de_documento,
-                            fechaDocumento: data.fecha_de_documento,
-                            fechaTraslado: data.fecha_de_traslado,
-                            autorizo: data.autorizado_por.id,
-                            motivoTraslado: data.motivo_de_traslado.id,
-                            medidasSeguridad: data.medidas_de_seguridad[0].id,
-                            descripcionMotivo: data.descripcion_motivo,
-                            custodia: data.custodios[0]?.id,
-                            chofer: data.chofer.id,
-                            vehiculoId: data.vehiculo.id,
-                            origenTraslado: data.origenTraslado.id,
-                            destinoTraslado: data.destinoTraslado.id,
-                            documentoAdjunto: data.documentoAdjunto,
-                            PPLs: data.ppls.map((item:any)=>({id_persona: item.persona.id, nombre: item.persona.nombre, apellido: item.persona.apellido, apodo: item.persona.datosPersonales?.apodo, numero_de_identificacion: item.persona.numero_identificacion})),
-                            lastUpdate: '',
-                        }
-
-                        console.log(datosOrdenados)
-
-                        setTrasladoForm(datosOrdenados);
-                    }
-                }).then(() => {
-                handleLoading(false);
-            })
-                .catch(error => {
-                    handleLoading(true);
-                    console.error('Error:', error)
-                }).finally(() => {
-                handleLoading(false);
-            });
-
-        }else{
-            handleLoading(false);
-        }
-    }, [isEditMode, params.id]);*/
-
-    // Manejadores para inputs fields
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const {name, value} = e.target;
-        setTrasladoForm(prev => ({...prev, [name]: value}));
-    };
-
-    // Manejador para actualizar selects
-    const handleSelectChange = (event: SelectChangeEvent<string|number|[number]>) => {
-        const name = event.target.name as keyof typeof trasladoForm;
-        // console.log('value: ' + event.target.value);
-        setTrasladoForm({
-            ...trasladoForm,
-            [name]: event.target.value,
-        });
-    };
-
-    // Manejador para cambios de input files
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const {name, files} = e.target;
-        if (files) {
-            setTrasladoForm(prev => ({...prev, [name]: files[0]}));
-        }
-    };
-
-    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-    const postTraslado = async () => {
-        try {
-            setLoading(true);
-
-            await delay(5000);
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_JSON_SERVER}/traslados`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(trasladoForm) // trasladoForm contiene los datos de tu formulario
-            });
-
-            setLoading(false);
-
-            if (response.ok) {
-                openSnackbar("Traslado creado correctamente.", "success");
-                router.push('/movimientos/traslados');
-            }
-            if (!response.ok) {
-                throw new Error('Error en la petición');
-            }
-
-            const data = await response.json();
-            console.log('Traslado creado:', data);
-        } catch (error) {
-            setLoading(false);
-
-            console.error('Error:', error);
-        }
-    };
 
 
     // Manejador de envio
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const form_method = isEditMode ? 'PUT' : 'POST'
 
+        // TODO: Armar logica de post
+        // TODO: Agregar PPL Agregado en el autocomplete
+        // console.log(personasSeleccionadas)
+        const state_procesado = {
+            ...stateMedidasDeFuerza,
+            ppl: personasSeleccionadas ? personasSeleccionadas.id_persona : null,
+        }
 
 
-        const form_procesado =
-            {
-                id: trasladoForm.id,
-                numero_de_documento: trasladoForm.numero_de_documento,
-                fecha_de_documento: trasladoForm.fechaDocumento,
-                fecha_de_traslado: trasladoForm.fechaTraslado,
-                autorizado_por: trasladoForm.autorizo,
-                motivo_de_traslado: trasladoForm.motivoTraslado,
-                medidas_de_seguridad: [trasladoForm.medidasSeguridad],
-                descripcion_motivo: trasladoForm.descripcionMotivo,
-                custodios: [trasladoForm.custodia],
-                chofer: trasladoForm.chofer,
-                vehiculo: trasladoForm.vehiculoId,
-                origenTraslado: trasladoForm.origenTraslado,
-                destinoTraslado: trasladoForm.destinoTraslado,
-                documentoAdjunto: trasladoForm.documentoAdjunto,
-                // @ts-ignore
-                ppls: Object.keys(trasladoForm.PPLs).map(key=>trasladoForm.PPLs[key].id_persona),
+        try {
+            const response = await fetch(`${API_URL}/medida_de_fuerza`, {
+                method: stateMedidasDeFuerza.id ? 'PUT' : 'POST',
+                // body: formData,
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(state_procesado),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al enviar los datos');
             }
 
-        console.log(form_method)
-        console.log(trasladoForm)
-        console.log(form_procesado)
-
-        postForm(
-            isEditMode,
-            'movimientos',
-            'movimiento',
-            form_procesado,
-            setLoading,
-            openSnackbar,
-            router,
-            true,
-            '/movimientos/traslados'
-        );
+            const data = await response.json();
+            console.log(data);
+            // Manejar la respuesta exitosa
+            router.push('/gestion-ppl/medidas-de-fuerza');
+        } catch (err) {
+            console.error(err);
+            // Manejar el error
+        }
     }
-
-    /*useEffect(() => {
-        // @ts-ignore
-        if (isEditMode) {
-
-            setLoading(true);
-            fetchFormData(params.id, 'traslados') // Usa la función importada
-                .then((data) => {
-                    if (data) {
-                        console.log(data);
-                        setTrasladoForm(data);
-                    }
-                })
-                .finally(() => {
-                    setLoading(false);
-                });
-        } else {
-            setLoading(false);
-        }
-    }, [isEditMode, params.id]);*/
-
-    /*const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        /!*console.log(trasladoForm)*!/
-        const response = await sendRequest('/traslados', trasladoForm, params.id, isEditMode);
-
-        setLoading(false);
-        if (response.ok) {
-            // @ts-ignore
-            const message = isEditMode !== 'crear'
-                ? 'Traslado actualizado correctamente.'
-                : 'Traslado agregado correctamente.';
-            openSnackbar(message, 'success');
-            router.push('/movimientos/');
-        } else {
-            openSnackbar('Error en la operación.', 'error');
-            console.error('Error:', await response.text());
-        }
-
-        postTraslado();
-        // console.log(JSON.stringify(trasladoForm))
-    };*/
 
     // ************ Agrgar PPLS A TRASLADOS Logica MODAL *********
     const [open, setOpen] = React.useState(false);
-
 
 
     const handleOpen = () => {
@@ -344,35 +223,6 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     const handleClose = () => {
         setOpen(false);
-    };
-
-    const handleSelectModalChange = (event: SelectChangeEvent) => {
-        const value : number = parseInt(event.target.value);
-        // @ts-ignore
-        if(!trasladoForm.PPLs.includes(value)) {
-
-            setModalPPL(value)
-        }else{
-            openSnackbar('PPL ya esta agregado', 'warning')
-        }
-
-    };
-
-    /*const handleTextModalChange = (field: keyof PPLType) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const value = event.target.value;
-
-        setModalPPL(prev => ({...prev, [field]: value}));
-    };
-*/
-    const addPPLToState = () => {
-        // @ts-ignore
-
-        setTrasladoForm(prev=>({
-            ...prev,
-            PPLs: [...prev.PPLs, statePPL.find(item=> item.id_persona == modalPPL)]
-        }))
-        handleClose();
-        setModalPPL(0); // Resetear el formulario del modal
     };
 
     return (
@@ -400,66 +250,69 @@ export default function Page({params}: { params: { id: number | string } }) {
                             : (<form noValidate autoComplete="off" onSubmit={handleSubmit}>
                                 <Grid container spacing={3}>
                                     {/* Nro. del documento */}
-                                    <Grid item xs={4}>
-                                        <TextField
-                                            fullWidth
-                                            label="Nro. del documento"
-                                            variant="outlined"
-                                            value={trasladoForm.numero_de_documento}
-                                            name="numero_de_documento"
-                                            onChange={handleInputChange}/>
+                                    <Grid item xs={8}>
+                                        <FormControl fullWidth>
+                                            <Autocomplete
+                                                fullWidth={true}
+                                                value={personasSeleccionadas ? personasSeleccionadas : null}
+                                                onChange={(event, newValue: any) => {
+                                                    // @ts-ignore
+                                                    setPersonasSeleccionadas((prev: any) => ({
+                                                        ...newValue
+                                                    }));
+                                                }}
+                                                id="controllable-states-demo"
+                                                options={statePPL}
+                                                getOptionLabel={(option) => option.apellido ? `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` : "Seleccionar PPL"}
+                                                renderInput={(params) => <TextField {...params} label="PPL"/>}
+                                            />
+                                        </FormControl>
                                     </Grid>
 
 
                                     {/* Fecha del traslado */}
                                     <Grid item xs={4}>
-                                        <DatePicker
-                                            label="Fecha del traslado"
-                                            format="DD/MM/YYYY"
-                                            name='fechaTraslado'
-                                            value={trasladoForm.fechaTraslado ? dayjs(trasladoForm.fechaTraslado) : null}
-                                            onChange={(newValue: Dayjs | null) => {
-                                                setTrasladoForm(prevState => ({
-                                                    ...prevState,
-                                                    fechaTraslado: newValue,
-                                                }))
-                                            }}
 
-                                        />
                                     </Grid>
 
                                     {/* Persona que autorizó traslado */}
-                                    <Grid item xs={6}>
+                                    <Grid item xs={8}>
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Tipo de medida de fuerza</InputLabel>
                                             <Select
-                                                value={trasladoForm.autorizo}
+                                                value={stateMedidasDeFuerza.tipo_de_medida_de_fuerza}
                                                 onChange={handleSelectChange}
                                                 label="Tipo de medida de fuerza"
-                                                name="autorizo"
+                                                name="tipo_de_medida_de_fuerza"
                                             >
-
-                                                <MenuItem value={0}>Seleccionar medida de fuerza</MenuItem>
-                                                <MenuItem value={1}>Huelga de hambre</MenuItem>
-                                                <MenuItem value={2}>Encadanamiento</MenuItem>
-                                                <MenuItem value={3}>Lesiones Fisicas</MenuItem>
+                                                <MenuItem value={0}>Seleccionar tipo de medida</MenuItem>
+                                                {stateTiposMedidas ? stateTiposMedidas.map(
+                                                    (data:any, id) => {
+                                                        return (
+                                                            <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
+                                                        )
+                                                    }
+                                                ) : null}
                                             </Select>
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={8}>
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Motivo</InputLabel>
                                             <Select
-                                                value={trasladoForm.autorizo}
+                                                value={stateMedidasDeFuerza.motivo}
                                                 onChange={handleSelectChange}
-                                                label="Motivo"
-                                                name="autorizo"
+                                                label="motivo"
+                                                name="motivo"
                                             >
-
-                                                <MenuItem value={0}>Seleccionar medida de fuerza</MenuItem>
-                                                <MenuItem value={1}>Huelga de hambre</MenuItem>
-                                                <MenuItem value={2}>Encadanamiento</MenuItem>
-                                                <MenuItem value={3}>Lesiones Fisicas</MenuItem>
+                                                <MenuItem value={0}>Seleccionar motivo de medida</MenuItem>
+                                                {stateMotivosMedidas ? stateMotivosMedidas.map(
+                                                    (data:any, id) => {
+                                                        return (
+                                                            <MenuItem key={id} value={data.id}>{data.nombre}</MenuItem>
+                                                        )
+                                                    }
+                                                ) : null}
                                             </Select>
                                         </FormControl>
                                     </Grid>
@@ -470,37 +323,43 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     {/* Documento adjunto */}
                                     {/* Fecha del documento */}
                                     <Grid item xs={6}>
-                                        <FormControl fullWidth={true}>
-                                            <DatePicker
-                                                label="Fecha y hora de inicio"
-                                                format="DD/MM/YYYY"
-                                                name='fecha_inicio'
-                                                value={trasladoForm.fechaDocumento ? dayjs(trasladoForm.fechaDocumento) : null}
-                                                onChange={(newValue: Dayjs | null) => {
-                                                    setTrasladoForm(prevState => ({
-                                                        ...prevState,
-                                                        fechaDocumento: newValue,
-                                                    }))
-                                                }}
+                                        <FormControl fullWidth>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                                <MobileDatePicker
+                                                    label="Fecha de inicio"
+                                                    format="DD/MM/YYYY"
+                                                    name='fecha_de_inicio'
+                                                    value={stateMedidasDeFuerza.fecha_de_inicio ? dayjs(stateMedidasDeFuerza.fecha_de_inicio) : null}
+                                                    onChange={(newValue: Dayjs | null) => {
+                                                        setStateMedidasDeFuerza((prevState:any) => ({
+                                                            ...prevState,
+                                                            fecha_de_inicio: newValue,
+                                                        }))
+                                                    }}
 
-                                            />
+                                                />
+                                            </LocalizationProvider>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={6}>
-                                        <FormControl fullWidth={true}>
-                                            <DatePicker
-                                                label="Fecha y hora de inicio"
-                                                format="DD/MM/YYYY"
-                                                name='fecha_inicio'
-                                                value={trasladoForm.fechaDocumento ? dayjs(trasladoForm.fechaDocumento) : null}
-                                                onChange={(newValue: Dayjs | null) => {
-                                                    setTrasladoForm(prevState => ({
-                                                        ...prevState,
-                                                        fechaDocumento: newValue,
-                                                    }))
-                                                }}
+                                        <FormControl fullWidth>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                                <MobileDatePicker
+                                                    label="Fecha de fin"
+                                                    format="DD/MM/YYYY"
+                                                    name='fecha_de_fin'
+                                                    value={stateMedidasDeFuerza.fecha_de_fin ? dayjs(stateMedidasDeFuerza.fecha_de_fin) : null}
+                                                    onChange={(newValue: Dayjs | null) => {
+                                                        setStateMedidasDeFuerza((prevState:any) => ({
+                                                            ...prevState,
+                                                            fecha_de_fin: newValue,
+                                                        }))
+                                                    }}
 
-                                            />
+                                                />
+                                            </LocalizationProvider>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -509,25 +368,28 @@ export default function Page({params}: { params: { id: number | string } }) {
 
 
                                     {/* Agregar PPL Button */}
-                                    <Grid item xs={12}>
-                                        <Grid container spacing={2} alignItems='center'>
-                                            <Grid item xs={6}>
-                                                <Typography variant='h6'>Historial medico</Typography>
-                                            </Grid>
-                                            <Grid item xs={6} textAlign='right'>
-                                                <Button startIcon={<Add />} variant="text" color="primary" onClick={handleOpen}>
-                                                    Agregar registro medico
-                                                </Button>
+                                    {stateMedidasDeFuerza.id &&
+                                    (<>
+                                        <Grid item xs={12}>
+                                            <Grid container spacing={2} alignItems='center'>
+                                                <Grid item xs={6}>
+                                                    <Typography variant='h6'>Historial medico</Typography>
+                                                </Grid>
+                                                <Grid item xs={6} textAlign='right'>
+                                                    <Button startIcon={<Add />} variant="text" color="primary" onClick={handleOpen}>
+                                                        Agregar registro medico
+                                                    </Button>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <CustomTable
-                                            data={dataMedidas}
-                                            headers={headersPPL}
-                                            showId={true}/>
-                                    </Grid>
-
+                                        <Grid item xs={12}>
+                                            <CustomTable
+                                                data={stateHistorialMedico}
+                                                headers={headersPPL}
+                                                showId={true}/>
+                                        </Grid>
+                                    </>)
+                                    }
 
                                     <Grid item xs={12}>
                                         <Button
@@ -555,28 +417,10 @@ export default function Page({params}: { params: { id: number | string } }) {
                     <Typography variant="h6" marginBottom={2}>Agregar PPL</Typography>
                     <Grid container spacing={3}>
                         <Grid item xs={12}>
-                            <FormControl fullWidth variant="outlined">
-                                <InputLabel>PPL</InputLabel>
-                                <Select
-                                    onChange={handleSelectModalChange}
-                                    label="PPL"
-                                    name="PPL"
-                                >
-                                    {/* Replace these menu items with your options */}
-                                    <MenuItem value={0}>
-                                        Seleccionar PPL
-                                    </MenuItem>
 
-                                    {statePPL.map((item: any, index: number) => (
-                                        <MenuItem key={index} value={item.id_persona}>
-                                            {item.nombre + ' ' + item.apellido}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
                         </Grid>
                         <Grid item xs={12}>
-                            <Button variant="contained" color="primary" onClick={addPPLToState}>
+                            <Button variant="contained" color="primary">
                                 Guardar
                             </Button>
                         </Grid>

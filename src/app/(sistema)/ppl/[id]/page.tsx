@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
-import {Grid, Stack, Box, CircularProgress} from "@mui/material";
+import {Grid, Stack, Box, CircularProgress, Paper} from "@mui/material";
 import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
@@ -26,7 +26,7 @@ import {
 import TabSalidaTransitoia from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
 import TabSalidaTransitoria from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
-
+import TabConcubino from "@/app/(sistema)/ppl/components/tabConcubino";
 
 
 type dataType = {
@@ -40,7 +40,7 @@ type dataType = {
     genero: number;
     fecha_nacimiento: string;
     numero_de_identificacion: string;
-    datosPersonales:{
+    datosPersonales: {
         id: number | null;
         estadoCivil: {
             id: number | null;
@@ -63,7 +63,7 @@ type dataType = {
     datosEducacion: datosEducacionType;
     datosDeSalud: datosDeSalud2Type;
     datosJudiciales: datosJudicialesType;
-    registro_de_fotos: Array<{nombre:string; foto:string}>;
+    registro_de_fotos: Array<{ nombre: string; foto: string }>;
     tiene_contacto_en_embajada: boolean;
     departamento: {
         id: number;
@@ -71,11 +71,11 @@ type dataType = {
     ciudad: {
         id: number;
     }
-    contacto_embajada?:{
+    contacto_embajada?: {
         id: number;
         nombre: string;
         numero: string;
-        pais:{
+        pais: {
             id: number;
         }
     }
@@ -93,9 +93,9 @@ const initialData = {
     genero: 2,
     fecha_nacimiento: '',
     numero_de_identificacion: '',
-    datosPersonales:{
+    datosPersonales: {
         id: null,
-        estadoCivil:{
+        estadoCivil: {
             id: null,
         },
         lugarDeNacimiento: "",
@@ -121,20 +121,20 @@ const initialData = {
         id: 0,
     },
     ciudad: {
-        id:0,
+        id: 0,
     },
-    contactoDeEmbajada:{
+    contactoDeEmbajada: {
         id: 0,
         nombre: '',
         numero: '',
-        pais:{
+        pais: {
             id: 0
         }
     }
 }
 
 const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/id/`;
-export default function Page({ params }: { params: { id: number } }) {
+export default function Page({params}: { params: { id: number } }) {
     /**1. For tabs position */
     const [value, setValue] = React.useState('1');
 
@@ -156,29 +156,30 @@ export default function Page({ params }: { params: { id: number } }) {
 
         fetchData(`${ENDPOINT}${params.id}`)
             .then(fetchedData => {
-                setStateDataProfile((prev:any)=>{
-                    const datoDeCondena = fetchedData.datosJudiciales?.ingresos_a_prision?.find((item:any)=>item.ultimo_ingreso == true)?.expedienteJudicial?.condenado;
+                setStateDataProfile((prev: any) => {
+                    console.log(fetchedData)
+                    const datoDeCondena = fetchedData ? fetchedData?.datosJudiciales?.ingresos_a_prision?.find((item: any) => item.ultimo_ingreso == true)?.expedienteJudicial?.condenado : null;
 
                     let condenadoValue = '';
 
-                    if(datoDeCondena !== null && datoDeCondena !== undefined){
-                        if(datoDeCondena){
+                    if (datoDeCondena !== null && datoDeCondena !== undefined) {
+                        if (datoDeCondena) {
                             condenadoValue = 'Condenado'
-                        }else{
+                        } else {
                             condenadoValue = 'Procesado'
                         }
-                    }else{
+                    } else {
                         condenadoValue = 'N/D'
                     }
 
-                    return({
+                    return ({
 
                         condenado: condenadoValue,
-                        fecha_ingreso: fetchedData.datosJudiciales?.ingresos_a_prision.length > 0 ? fetchedData.datosJudiciales?.ingresos_a_prision.find((item:any)=>item.ultimo_ingreso).fecha_ingreso : 'N/D'
+                        fecha_ingreso: fetchedData?.datosJudiciales?.ingresos_a_prision.length > 0 ? fetchedData.datosJudiciales?.ingresos_a_prision.find((item: any) => item.ultimo_ingreso).fecha_ingreso : 'N/D'
                     })
                 })
                 setData(fetchedData);
-            }).finally(()=> {
+            }).finally(() => {
 
             setLoading(false)
         });
@@ -189,8 +190,8 @@ export default function Page({ params }: { params: { id: number } }) {
         setValue(newValue);
     };
     const listaDeItemBread = [
-        {nombre:'Lista de PPL', url:'', lastItem: false},
-        {nombre:`${data ? data.nombre + ' ' + data.apellido  : 'PPL'}`, url:'', lastItem: true},
+        {nombre: 'Lista de PPL', url: '', lastItem: false},
+        {nombre: `${data ? data.nombre + ' ' + data.apellido : 'PPL'}`, url: '', lastItem: true},
     ];
 
 
@@ -198,11 +199,12 @@ export default function Page({ params }: { params: { id: number } }) {
         <Box>
             <Stack direction='row' alignItems='center' justifyContent='space-between' spacing={2}>
                 <TituloComponent titulo='PPL'>
-                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
                 </TituloComponent>
             </Stack>
 
-            <Grid container sx={{bgcolor: "#FFF", border: '1px solid #e0e0e0', borderRadius: '10px', marginTop: '20px',}}>
+            <Grid container
+                  sx={{bgcolor: "#FFF", border: '1px solid #e0e0e0', borderRadius: '10px', marginTop: '20px',}}>
                 <Grid item xs={12}>
                     <Grid container>
                         <Grid p={3} item sm={12}>
@@ -210,15 +212,16 @@ export default function Page({ params }: { params: { id: number } }) {
                                 <Box className='imageContainer' sx={{marginRight: '40px'}}>
                                     {
                                         !loading ?
-                                        <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile' alt={`foto-perfil-${data.nombre + '-' + data.apellido}`}/>
-                                        :
+                                            <img src={`${ASSETS_URL}${data.foto}`} className='imageProfile'
+                                                 alt={`foto-perfil-${data.nombre + '-' + data.apellido}`}/>
+                                            :
                                             (
                                                 <Box sx={{
                                                     display: 'flex',
                                                     justifyContent: 'center',
                                                     alignItems: 'center'
                                                 }}>
-                                                    <CircularProgress />
+                                                    <CircularProgress/>
                                                 </Box>
                                             )
                                     }
@@ -226,7 +229,7 @@ export default function Page({ params }: { params: { id: number } }) {
                                 </Box>
                                 <Stack direction='column' justifyContent='center'>
 
-                                    { loading ?
+                                    {loading ?
                                         'Cargando'
                                         : <Grid container mt={1} spacing={2}>
                                             <Grid item m={0}>
@@ -290,10 +293,11 @@ export default function Page({ params }: { params: { id: number } }) {
                 <TabContext value={value}>
 
                     {/* Tabs */}
-                    <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
-                            <Tab label="Informaciones" value="1" />
-                            <Tab label="Datos penales" value="2" />
+                            <Tab label="Informaciones" value="1"/>
+                            <Tab label="Datos penales" value="2"/>
+                            <Tab label="Conyugue" value="3"/>
                             {/*<Tab label="Salidas Transitorias" value="3" />*/}
                             {/*<Tab label="Perfil" value="1" />*/}
                         </TabList>
@@ -350,14 +354,14 @@ export default function Page({ params }: { params: { id: number } }) {
                                 </Grid>
                             </Grid>
                         </TabPanel>*/}
-                        <TabPanel value="1" sx={{p:'0'}}>
-                            <NestedInformacionPreso datosPersona={data} />
+                        <TabPanel value="1" sx={{p: '0'}}>
+                            <NestedInformacionPreso datosPersona={data}/>
                         </TabPanel>
-                        <TabPanel value="2" sx={{p:'0'}}>
+                        <TabPanel value="2" sx={{p: '0'}}>
                             <TabDatosPersonales idPersona={data.id_persona}/>
                         </TabPanel>
-                        <TabPanel value="3" sx={{p:'0'}}>
-                            <TabSalidaTransitoria id_persona={data.id_persona} />
+                        <TabPanel value="3" sx={{p: '0'}}>
+                            <TabConcubino id_persona={params.id} />
                         </TabPanel>
                     </Box>
                 </TabContext>

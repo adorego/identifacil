@@ -26,7 +26,7 @@ import AuthStatus from "@/components/authStatus";
 
 const drawerWidth = 279;
 
-type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales' | 'visitantes' | 'gestionPPl' | 'gestionUsuarios';
+type OpenMenusKeys = 'registroAccesos' | 'sistema' | 'datosMovimientos' | 'movimientos' | 'datosPenales' | 'visitantes' | 'gestionPPl' | 'gestionUsuarios' | 'medidasDeFuerza';
 
 const openedMixin = (theme: Theme): CSSObject => ({
     width: drawerWidth,
@@ -89,6 +89,7 @@ export default function SidebarDrawer()
         datosPenales: false,
         gestionPPl: false,
         gestionUsuarios: false,
+        medidasDeFuerza: false,
     });
 
     const pathname = usePathname()
@@ -227,7 +228,7 @@ export default function SidebarDrawer()
 
 
                 {/* ------------------------- Menu gestion ppl ------------------------- */}
-                {/* <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
+                 <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
                     <ListItemIcon>
                         <Person />
                     </ListItemIcon>
@@ -238,19 +239,19 @@ export default function SidebarDrawer()
                     <List sx={{marginLeft: "20px"}} component="div" disablePadding>
                         <SidebarItem
                             icon={<span className='subIcon'></span>}
-                            label="Mediadas de fuerza"
+                            label="Medidas de fuerza"
                             path="/gestion-ppl/medidas-de-fuerza"
                             isActive={pathname === '/gestion-ppl/medidas-de-fuerza'}
                         />
-                        <SidebarItem
+                        {/*<SidebarItem
                             icon={<span className='subIcon'></span>}
                             label="Faltas y sanciones"
                             path="/gestion-ppl/faltas"
                             isActive={pathname === '/gestion-ppl/faltas'}
-                        />
+                        />*/}
 
                     </List>
-                </Collapse>*/}
+                </Collapse>
 
                 {/*<SidebarItem
                             icon={<AirportShuttle />}
@@ -450,6 +451,38 @@ export default function SidebarDrawer()
                         />
 
 
+                    </List>
+                </Collapse>
+
+
+                {/* ------------------------- Menu de Sistema de medidas de fuerza ------------------------- */}
+
+                <ListItemButton onClick={() => handleClick('medidasDeFuerza')} className={openMenus.medidasDeFuerza ? 'active-button' : ''} >
+                    <ListItemIcon>
+                        <Settings/>
+                    </ListItemIcon>
+                    <ListItemText primary={'Medidas de fuerza'} hidden={false}/>
+                    {openMenus.medidasDeFuerza ? <ExpandLess/> : <ExpandMore/>}
+                </ListItemButton>
+
+                <Collapse in={openMenus.medidasDeFuerza} timeout="auto" unmountOnExit>
+                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Tipos medidas de fuerza"
+                            path="/sistema/tipos-medidas-de-fuerza"
+                            isActive={pathname === '/sistema/tipos-medidas-de-fuerza'}
+                        />
+                    </List>
+                </Collapse>
+                <Collapse in={openMenus.medidasDeFuerza} timeout="auto" unmountOnExit>
+                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                        <SidebarItem
+                            icon={<span className='subIcon'></span>}
+                            label="Motivos"
+                            path="/sistema/motivos-de-medida-de-fuerza"
+                            isActive={pathname === '/sistema/motivos-de-medida-de-fuerza'}
+                        />
                     </List>
                 </Collapse>
 
