@@ -343,6 +343,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
      *  ciudad de nacimiento seleccionado
      * */
     useEffect(() => {
+        console.log(selectedCity)
         setDatosPersonalesState((prev: any) => ({
             ...prev,
             lugarDeNacimiento: selectedCity.id
@@ -783,7 +784,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                 </Grid>
                 <Grid item sm={4}>
                     <FormControl fullWidth variant="outlined" error={datosPersonalesState.ciudad == 0}>
-                        <InputLabel>Ciudad</InputLabel>
+                        <InputLabel>Ciudad! - {datosPersonalesState.ciudad} </InputLabel>
                         <Select
                             value={datosPersonalesState.ciudad}
                             onChange={onDatoSelectChange}
@@ -794,6 +795,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                             {/*{console.log('Departamento seleccionado', datosPersonalesState.departamento)}
                             {console.log('lista de ciudades', ciudadLista)}*/}
                             <MenuItem value={0}>Seleccionar ciudad</MenuItem>
+
                             {ciudadLista.map((item : any, index) => {
                                 if(item.departamento.id == datosPersonalesState.departamento){
                                     return (

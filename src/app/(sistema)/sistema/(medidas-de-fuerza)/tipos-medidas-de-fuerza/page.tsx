@@ -9,7 +9,7 @@ import {
 import {useEffect, useState} from "react";
 
 import Box from '@mui/material/Box';
-import CustomTable from "../../../../components/CustomTable";
+import CustomTable from "../../../../../components/CustomTable";
 import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
@@ -18,15 +18,10 @@ import {useGlobalContext} from "@/app/Context/store";
 import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
-import dayjs from "dayjs";
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'ppl', label: 'Apellido, Nombre'},
-    {id: 'tipo_de_medida_de_fuerza', label: 'Tipo'},
-    {id: 'motivo', label: 'Motivo'},
-    {id: 'fecha_inicio', label: 'Fecha inicio'},
-    {id: 'fecha_fin', label: 'Fecha fin'},
+    {id: 'nombre', label: 'Descripcion'},
 ]
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
@@ -37,6 +32,24 @@ export default function Ppl() {
     const [filterData, setFilterData] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
+
+
+    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
+    useEffect(() => {
+        fetchData(`${API_URL}/tipo_de_medida_de_fuerza`)
+            .then(fetchedData => {
+                /*console.log(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
+                    ...item,
+                    destinoTraslado: item.destinoTraslado.nombre,
+                    origenTraslado: item.origenTraslado.nombre
+                })))*/
+                // TODO: veritifcar porque hace problema typescript aca
+
+                //@ts-ignore
+                setData(fetchedData);
+                console.log(fetchedData)
+            });
+    }, []);
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
@@ -50,33 +63,13 @@ export default function Ppl() {
         setModalOpen(false);
     };
 
-
-    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
-    useEffect(() => {
-        fetchData(`${API_URL}/medida_de_fuerza`)
-            .then(fetchedData => {
-                const data_procesado = fetchedData.map((item: any) => ({
-                    fecha_inicio: item.fecha_inicio ? dayjs(item.fecha_inicio).format('DD/MM/YYYY') : 'N/D',
-                    fecha_fin: item.fecha_inicio ? dayjs(item.fecha_fin).format('DD/MM/YYYY') : 'N/D',
-                    motivo: item.motivo ? item.motivo.nombre : 'N/D',
-                    tipo_de_medida_de_fuerza: item.tipo_de_medida_de_fuerza ? item.tipo_de_medida_de_fuerza.nombre : 'N/D',
-                    ppl: item.ppl ? item.ppl.id : 'N/D',
-                    id: item.id ? item.id : 'N/D',
-                }))
-
-                /*console.log(data_procesado)*/
-                // @ts-ignore
-                setData(data_procesado);
-
-            });
-    }, []);
-
     const handleFitros = (value: any) => {
         // console.log(value)
         setFilterData(value)
     }
 
-    if (!data) {
+    console.log(data)
+    if (data == null) {
         return (
             <Box sx={{
                 display: 'flex',
@@ -92,9 +85,8 @@ export default function Ppl() {
 
     return (
         <>
-            {console.log(data)}
-            <Box>
-                <TituloComponent titulo='Medidas de fuerza' url='/' newEntry='/gestion-ppl/medidas-de-fuerza/crear'/>
+            <Box >
+                <TituloComponent titulo='Tipo de medidas de fuerza' url='/' newEntry='/sistema/tipos-medidas-de-fuerza/crear'/>
 
                 <Box mt={3}>
                     <CustomTable
@@ -104,13 +96,13 @@ export default function Ppl() {
                         deleteRecord={handleOpenModal}
                         options={{
 
-                            targetURL: '/gestion-ppl/medidas-de-fuerza',
+                            targetURL: '/sistema/tipos-medidas-de-fuerza',
                             rowsPerPageCustom: 5,
                             pagination: true,
-
                         }}
                     />
                 </Box>
+
 
 
                 {/*<ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>*/}
@@ -118,5 +110,4 @@ export default function Ppl() {
         </>
     )
 }
-
 

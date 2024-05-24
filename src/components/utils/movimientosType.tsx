@@ -55,7 +55,7 @@ export interface Vehiculo {
 
 export interface pplTraslado {
     id_persona: number;
-    id: string; // O número, según tu API
+    id?: string; // O número, según tu API
     nombre: string;
     apellido: string;
 }
