@@ -12,7 +12,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ChangeEvent, useState} from "react"
+import {ChangeEvent, SyntheticEvent, useState} from "react"
 import {IdentificationResponse, initialResponse} from "../../../../model/respuesta-identificacion";
 import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWithLayout";
 import {IReconocimiento} from "@/components/registro/FaceDetectionOverlay";
@@ -20,6 +20,7 @@ import log from "loglevel";
 import style from "./page.module.css";
 import {useGlobalContext} from "@/app/Context/store";
 import { api_request } from "@/lib/api-request";
+import { RadioButtonChecked } from "@mui/icons-material";
 
 const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo'];
 
@@ -72,18 +73,19 @@ const solicitudEntradaVisitanteInicial: SolicitudEntradaVisitante = {
     observacion: ""
 }
 export default function EntradaSalidaVisitante() {
-    const [progresoReconocimiento, setProgresoReconocmiento] = useState(EstadosProgreso[0]);
+    const [progresoReconocimiento, setProgresoReconocimiento] = useState(EstadosProgreso[0]);
     const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
     const [identificationData, setIdentificationData] = useState<IdentificationResponse>(initialResponse);
-    const [visitanteIdentificado, setVisitanteIdentificado] = useState<boolean>(false);
-    const [pplIdentificado, setPPLIdentificado] = useState(false);
+    const [visitanteIdentificado, setVisitanteIdentificado] = useState<boolean>(true);//true para pruebas
+    const [pplIdentificado, setPPLIdentificado] = useState(true);//true para pruebas
     const [autorizarIngreso, setAutorizarIngreso] = useState<string>("inicio");
-    const [entrada_salida, setEntradaSalida] = useState<boolean | null>(null);
+    const [entrada_salida, setEntradaSalida] = useState<boolean | null>(true);//true para pruebas
     const [pplAVisitar, setpplAVisitar] = useState<pplAVisitar>(datosInicialesPplAVisitar);
     const [entradaVisitante, setEntradaVisitante] = useState<SolicitudEntradaVisitante>(solicitudEntradaVisitanteInicial);
     const [mensaje, setMensaje] = useState("");
     const {openSnackbar} = useGlobalContext();
     const {selectedEstablecimiento} = useGlobalContext();
+    const [ingreso_a_privada,setIngresoAPrivada] = useState(false);
 
 
     const habilitar_envio_de_datos = visitanteIdentificado && pplIdentificado;
@@ -99,7 +101,7 @@ export default function EntradaSalidaVisitante() {
             descriptorFacial: reconocimiento.descriptor
         }
         // console.log("Data to send:", dataToSend);
-        setProgresoReconocmiento(EstadosProgreso[2]);
+        setProgresoReconocimiento(EstadosProgreso[2]);
         const response = await fetch(url, {
             method: 'POST',
             body: JSON.stringify(dataToSend),
@@ -116,7 +118,7 @@ export default function EntradaSalidaVisitante() {
             return false;
         } else {
             const data: IdentificationResponse = await response.json();
-            setProgresoReconocmiento(EstadosProgreso[0]);
+            setProgresoReconocimiento(EstadosProgreso[0]);
             
             if(data.esPPL){
                 openSnackbar(`La persona es un PPL`,'error');
@@ -144,11 +146,11 @@ export default function EntradaSalidaVisitante() {
     }
 
     const actualizar_progreso = (progreso: number) => {
-        setProgresoReconocmiento(EstadosProgreso[progreso]);
+        setProgresoReconocimiento(EstadosProgreso[progreso]);
     }
 
     const cerrar_dialogo = () => {
-        setProgresoReconocmiento(EstadosProgreso[0]);
+        setProgresoReconocimiento(EstadosProgreso[0]);
     }
 
     const onCedulaChangeManejador = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -230,8 +232,14 @@ export default function EntradaSalidaVisitante() {
     }
 
     const entradaSalidaVisitante = async () => {
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/visitantes/`
-        
+        console.log("Llamada a entradaSalidaVisitante");
+        let url = ""
+        if(ingreso_a_privada){
+            url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/conyuge/`
+        }else{
+            url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/visitantes/`
+        }
+        console.log("url inicial:",url);  
         console.log("Establecimiento seleccionado:",selectedEstablecimiento);
         
         if(entrada_salida){//Registro de Entrada
@@ -247,7 +255,11 @@ export default function EntradaSalidaVisitante() {
                 
             }
             else{
-                const url_entrada = url + "entrada";
+                const url_entrada = ingreso_a_privada === true ? "ingreso_conyuge" : "entrada";
+                console.log("url para entrada:",url_entrada);
+                const url_final =  url + url_entrada;
+                console.log("url final para entrada:",url_final);
+                 
                 const fecha_hora = new Date();
                 const datos_a_enviar ={
                     visitante:identificationData.id_persona,
@@ -258,7 +270,7 @@ export default function EntradaSalidaVisitante() {
                     observacion:entradaVisitante.observacion
                 }
                 console.log("Datos a enviar:",datos_a_enviar);
-                const respuestaIngresoVisitante = await api_request(url_entrada,{
+                const respuestaIngresoVisitante = await api_request(url_final,{
                     method:'POST',
                     headers:{"Content-type":"application/json"},
                     body:JSON.stringify(datos_a_enviar)
@@ -279,7 +291,8 @@ export default function EntradaSalidaVisitante() {
                 openSnackbar(`Debe identificarse la persona visitante`,"error");
             }
             else{
-                const url_entrada = url + "salida";
+                const url_entrada = ingreso_a_privada ? "salida_conyuge" : "salida";
+                console.log("url:",url_entrada);
                 const fecha_hora = new Date();
                 const respuestaIngresoVisitante = await api_request(url_entrada,{
                     method:'POST',
@@ -304,6 +317,10 @@ export default function EntradaSalidaVisitante() {
         setpplAVisitar(datosInicialesPplAVisitar);
         setVisitanteIdentificado(false);
         setPPLIdentificado(false);
+    }
+
+    const onIngresoPrivadaChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
+        setIngresoAPrivada(!ingreso_a_privada);
     }
     
    
@@ -402,6 +419,9 @@ export default function EntradaSalidaVisitante() {
                                                     </FormControl>
 
                                                 </Grid>
+                                                <Grid>
+
+                                                </Grid>
                                                 <Grid item sm={3}>
                                                     <FormControl fullWidth={true} sx={{}}>
                                                         <Button variant="contained" onClick={onConsultarManejador}>
@@ -457,6 +477,30 @@ export default function EntradaSalidaVisitante() {
                                                                 control={<Radio/>}
                                                                 label="Salida"/>
                                                         </RadioGroup>
+                                                        
+                                                    </FormControl>
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <FormControl fullWidth  variant="outlined">
+                                                        <Typography
+                                                            sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "10px"}}>
+                                                            Ingreso a la privada como conyuge
+                                                        </Typography>
+                                                        <RadioGroup
+                                                            value={ingreso_a_privada}
+                                                            onChange={onIngresoPrivadaChange}
+                                                            row
+                                                            aria-labelledby="entradaSalida"
+                                                            name="entrada_salida">
+                                                                <FormControlLabel
+                                                                    value={false}
+                                                                    control={<Radio/>}
+                                                                    label="No"/>
+                                                                <FormControlLabel
+                                                                    value={true}
+                                                                    control={<Radio/>}
+                                                                    label="Si"/>
+                                                            </RadioGroup>
                                                     </FormControl>
                                                 </Grid>
                                                 {entrada_salida != null &&
