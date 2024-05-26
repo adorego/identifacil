@@ -76,10 +76,10 @@ export default function EntradaSalidaVisitante() {
     const [progresoReconocimiento, setProgresoReconocimiento] = useState(EstadosProgreso[0]);
     const showSpinner = progresoReconocimiento === EstadosProgreso[0] ? false : true;
     const [identificationData, setIdentificationData] = useState<IdentificationResponse>(initialResponse);
-    const [visitanteIdentificado, setVisitanteIdentificado] = useState<boolean>(true);//true para pruebas
-    const [pplIdentificado, setPPLIdentificado] = useState(true);//true para pruebas
+    const [visitanteIdentificado, setVisitanteIdentificado] = useState<boolean>(false);//true para pruebas
+    const [pplIdentificado, setPPLIdentificado] = useState(false);//true para pruebas
     const [autorizarIngreso, setAutorizarIngreso] = useState<string>("inicio");
-    const [entrada_salida, setEntradaSalida] = useState<boolean | null>(true);//true para pruebas
+    const [entrada_salida, setEntradaSalida] = useState<boolean | null>(false);//true para pruebas
     const [pplAVisitar, setpplAVisitar] = useState<pplAVisitar>(datosInicialesPplAVisitar);
     const [entradaVisitante, setEntradaVisitante] = useState<SolicitudEntradaVisitante>(solicitudEntradaVisitanteInicial);
     const [mensaje, setMensaje] = useState("");
@@ -261,22 +261,36 @@ export default function EntradaSalidaVisitante() {
                 console.log("url final para entrada:",url_final);
                  
                 const fecha_hora = new Date();
-                const datos_a_enviar ={
-                    visitante:identificationData.id_persona,
-                    ppl_a_visitar:pplAVisitar.id_persona,
-                    fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
-                    hora_ingreso:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
-                    establecimiento:selectedEstablecimiento,
-                    observacion:entradaVisitante.observacion
+                let datos_a_enviar = null;
+                if(ingreso_a_privada){
+                    datos_a_enviar ={
+                        conyuge:identificationData.id_persona,
+                        ppl:pplAVisitar.id_persona,
+                        fecha:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        hora:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
+                        establecimiento:selectedEstablecimiento,
+                        observacion:entradaVisitante.observacion
+                    }
+                }else{
+                    datos_a_enviar ={
+                        visitante:identificationData.id_persona,
+                        ppl_a_visitar:pplAVisitar.id_persona,
+                        fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        hora_ingreso:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
+                        establecimiento:selectedEstablecimiento,
+                        observacion:entradaVisitante.observacion
+                    }
                 }
+               
                 console.log("Datos a enviar:",datos_a_enviar);
                 const respuestaIngresoVisitante = await api_request(url_final,{
                     method:'POST',
                     headers:{"Content-type":"application/json"},
                     body:JSON.stringify(datos_a_enviar)
                 })
+                console.log("Datos recibidos:",respuestaIngresoVisitante);
                 if(!respuestaIngresoVisitante.success){
-                    openSnackbar(`Ocurrió un error:${respuestaIngresoVisitante.error}`,'error')
+                    openSnackbar(`Ocurrió un error:${respuestaIngresoVisitante.error?.message}`,'error')
                 }else{
                     openSnackbar(`Registro de visitante exitoso`,'success')
                 }
@@ -291,23 +305,39 @@ export default function EntradaSalidaVisitante() {
                 openSnackbar(`Debe identificarse la persona visitante`,"error");
             }
             else{
-                const url_entrada = ingreso_a_privada ? "salida_conyuge" : "salida";
-                console.log("url:",url_entrada);
+                const url_entrada =  ingreso_a_privada ? "salida_conyuge" : "salida";
+                const url_final = url + url_entrada;
+                console.log("url final:",url_final);
                 const fecha_hora = new Date();
-                const respuestaIngresoVisitante = await api_request(url_entrada,{
-                    method:'POST',
-                    headers:{"Content-type":"application/json"},
-                    body:JSON.stringify({
+                let datos_a_enviar = null;
+                if(ingreso_a_privada){
+                    datos_a_enviar ={
+                        conyuge:identificationData.id_persona,
+                        ppl_que_visito:pplAVisitar.id_persona,
+                        fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        hora_salida:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
+                        establecimiento:selectedEstablecimiento,
+                        observacion:entradaVisitante.observacion
+                    }
+                }else{
+                    datos_a_enviar ={
                         visitante:identificationData.id_persona,
                         ppl_que_visito:pplAVisitar.id_persona,
                         fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
                         hora_salida:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                         establecimiento:selectedEstablecimiento,
                         observacion:entradaVisitante.observacion
-                    })
+                    }
+                }
+                console.log("Datos a enviar:",datos_a_enviar);
+                const respuestaSalidaVisitante = await api_request(url_final,{
+                    method:'POST',
+                    headers:{"Content-type":"application/json"},
+                    body:JSON.stringify(datos_a_enviar)
                 })
-                if(!respuestaIngresoVisitante.success){
-                    openSnackbar(`Ocurrió un error:${respuestaIngresoVisitante.error}`,'error')
+                console.log("Datos recibidos:", respuestaSalidaVisitante)
+                if(!respuestaSalidaVisitante.success){
+                    openSnackbar(`Ocurrió un error:${respuestaSalidaVisitante.error?.message}`,'error')
                 }else{
                     openSnackbar(`Registro de salida de visitante exitoso`,'success')
                 }
@@ -484,7 +514,7 @@ export default function EntradaSalidaVisitante() {
                                                     <FormControl fullWidth  variant="outlined">
                                                         <Typography
                                                             sx={{fontWeight: 'bold', textTransform: 'uppercase', mt: "10px"}}>
-                                                            Ingreso a la privada como conyuge
+                                                            Ingreso/Salida de zona privada como conyuge
                                                         </Typography>
                                                         <RadioGroup
                                                             value={ingreso_a_privada}
