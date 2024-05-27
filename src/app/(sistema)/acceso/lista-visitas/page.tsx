@@ -86,12 +86,12 @@ export default function Ppl() {
 
                 setLoading(false)
                 const dataProcesado = fetchedData.map((item:any)=> {
-                    console.log(dayjs(item.fecha).format('DD/MM/YYYY'))
+                    console.log(item.hora);
                     return ({
                         id: item.id,
                         visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
                         fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
-                        hora: dayjs(item.fecha).format('HH:mm'),
+                        hora: item.hora,
                         observacion: item.observacion ? item.observacion : 'N/D',
                         ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
                         tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
