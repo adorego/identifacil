@@ -35,26 +35,13 @@ export default function Ppl() {
     const {openSnackbar} = useGlobalContext();
     const [data, setData] = useState(null);
     const [filterData, setFilterData] = useState(null);
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
-
-    const handleOpenModal = (row: { id: number, descripcion: string }) => {
-
-        setModalOpen(true);
-        setSelectedData({
-            id: row.id,
-            name: row.descripcion,
-        });
-    };
-    const handleCloseModal = () => {
-        setModalOpen(false);
-    };
 
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
         fetchData(`${API_URL}/medida_de_fuerza`)
             .then(fetchedData => {
+                console.log(fetchedData)
                 const data_procesado = fetchedData.map((item: any) => ({
                     fecha_inicio: item.fecha_inicio ? dayjs(item.fecha_inicio).format('DD/MM/YYYY') : 'N/D',
                     fecha_fin: item.fecha_inicio ? dayjs(item.fecha_fin).format('DD/MM/YYYY') : 'N/D',
@@ -92,7 +79,7 @@ export default function Ppl() {
 
     return (
         <>
-            {console.log(data)}
+
             <Box>
                 <TituloComponent titulo='Medidas de fuerza' url='/' newEntry='/gestion-ppl/medidas-de-fuerza/crear'/>
 
@@ -101,7 +88,6 @@ export default function Ppl() {
                         showId={true}
                         headers={header2}
                         data={data}
-                        deleteRecord={handleOpenModal}
                         options={{
 
                             targetURL: '/gestion-ppl/medidas-de-fuerza',

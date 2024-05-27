@@ -105,6 +105,7 @@ function CustomTable({
         setOrderBy(property);
     };
 
+
     const sortedData = data.slice().sort((a, b) => {
         const isAsc = order === 'asc';
         const property = orderBy;
@@ -213,16 +214,25 @@ function CustomTable({
                         {
                             slicedData.map((row:Data, index:number) => (
                                 <TableRow key={index}>
-                                    {headers.map((header) => {
+                                    {headers.map((header, index) => {
                                         if (header.id === 'id' && !showId) return null;
 
                                         return (
                                             <TableCell sx={(header.id == 'id' ? rowStyle : {})} key={header.id}>
 
                                                 {header.type === 'date' ? formatDate(row[header.id]) : null }
-                                                {(header.type === 'boolean' && header.id == 'condenado') ? (row[header.id]? 'Condenado' : 'Procesado') : null }
-                                                {(header.type !== 'date' && header.type !== 'boolean' && header.type !== 'genero') ? row[header.id] : null}
+                                                {(header.type === 'condenado') ? (row[header.id]? 'Condenado' : 'Procesado') : null }
+                                                {(header.type !== 'date' && header.type !== 'boolean' && header.type !== 'genero' && header.type !== 'customCode') ? row[header.id] : null}
                                                 {(header.type === 'genero') ? (row[header.id] == 1 ? 'Femenino' : 'Masculino') : null }
+                                                {header.type === 'customCode' &&
+                                                    (
+                                                        <>
+
+                                                            {row[header.id]}
+                                                        </>
+
+                                                    )
+                                                }
 
                                             </TableCell>
                                         );

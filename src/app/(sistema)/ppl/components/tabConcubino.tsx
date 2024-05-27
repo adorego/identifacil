@@ -4,7 +4,7 @@ import {
     Alert,
     Box,
     Button, FormControl, FormControlLabel, FormGroup, FormHelperText, FormLabel,
-    Grid, InputLabel,
+    Grid, IconButton, InputLabel,
     ListItemIcon,
     ListItemText,
     MenuItem,
@@ -27,6 +27,9 @@ import {LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import Checkbox from "@mui/material/Checkbox";
 import VerDatosConcubinos from "@/app/(sistema)/ppl/components/concubino/verDatosConcubinos";
+import {onConsultarRegistroCivil} from "@/components/utils/utils_client";
+import SearchIcon from "@mui/icons-material/Search";
+import {useGlobalContext} from "@/app/Context/store";
 
 
 const styleModal = {
@@ -42,44 +45,43 @@ const styleModal = {
 };
 
 
-
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 interface conyugesTipo {
     id_persona?: number | null;
     id: number | null;
-    numero_de_identificacion: string | null;
+    numero_de_identificacion: string;
     tipo_de_identificacion?: number | null;
-    nombres: string | null;
-    apellidos: string | null;
-    es_extranjero: boolean | null;
+    nombres: string;
+    apellidos: string;
+    es_extranjero: boolean;
     fecha_de_nacimiento: Dayjs | null;
-    edad: null;
-    sexo: null;
-    lugar_de_nacimiento: null;
-    direccion: null;
-    barrio: null;
-    compania: null;
-    numero_de_contacto: string | null;
+    edad: string;
+    sexo: number;
+    lugar_de_nacimiento: string;
+    direccion: string;
+    barrio: string;
+    compania: string;
+    numero_de_contacto: string;
     dias_de_visita: number[];
 
 }
 
 const conyugesInitial = {
     id: null,
-    numero_de_identificacion: null,
+    numero_de_identificacion: '',
     tipo_de_identificacion: 1,
-    nombres: null,
-    apellidos: null,
-    es_extranjero: null,
+    nombres: '',
+    apellidos: '',
+    es_extranjero: false,
     fecha_de_nacimiento: null,
-    edad: null,
-    sexo: null,
-    lugar_de_nacimiento: null,
-    direccion: null,
-    barrio: null,
-    compania: null,
-    numero_de_contacto: null,
+    edad: '',
+    sexo: 1,
+    lugar_de_nacimiento: '',
+    direccion: '',
+    barrio: '',
+    compania: '',
+    numero_de_contacto: '',
     dias_de_visita: [1, 2]
 }
 
@@ -119,7 +121,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const open = Boolean(anchorEl);
-
+    const {openSnackbar} = useGlobalContext();
     useEffect(() => {
         const fetchData = async () => {
             /** Para obtener historial de conyuges */
@@ -137,7 +139,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                 const res = await fetch(`${API_URL}/conyuge/${id_persona}`);
                 if (!res.ok) throw new Error('Error al obtener el cónyuge');
                 const data = await res.json();
-                    console.log(data)
+                console.log(data)
                 // Ajustar el estado del conyuge
                 setStateConyugeVista({
                     ...data,
@@ -184,7 +186,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
         if (type == 'agregar_concubino') {
             setStateConyuge({
                 ...conyugesInitial,
-                id: stateConyugeVista.id? stateConyugeVista.id : null
+                id: stateConyugeVista.id ? stateConyugeVista.id : null
 
             })
             handleOpenModal()
@@ -209,6 +211,51 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
         }))
     }
 
+    const onDatoChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        const { value } = event.target;
+
+        const regex = /^\+?[0-9\(\)\s]*\.?[0-9\(\)\s]*$/;
+
+        if (value.match(regex)) {
+            setStateConyuge(
+                (prev) => {
+                    return (
+                        {
+                            ...prev,
+                            [event.target.name]: value
+
+                        }
+                    )
+                }
+            )
+        }
+
+    }
+
+    const handleCedulaChange = async (cedula: string) => {
+
+        if (cedula && stateConyuge.tipo_de_identificacion == 1) {
+            const datosCedula = await onConsultarRegistroCivil(cedula)
+            if(datosCedula){
+                setStateConyuge((prev: any) => ({
+                    ...prev,
+                    nombres: datosCedula.nombres ? datosCedula.nombres : '',
+                    apellidos: datosCedula.apellidos,
+                    numero_de_identificacion: datosCedula.cedula_identidad,
+                    fecha_de_nacimiento: datosCedula.fecha_nacimiento ? dayjs(datosCedula.fecha_nacimiento): null,
+                    edad: datosCedula.fecha_nacimiento ? dayjs().diff(dayjs(datosCedula.fecha_nacimiento), 'year') : '',
+                    sexo: parseInt(datosCedula.codigo_genero)
+                }))
+            }
+        }
+
+        /*setStateConyuge((prev) => ({
+            ...prev,
+            [name]: value
+        }))*/
+    }
+
     const onDatoSelectChange = (event: SelectChangeEvent<number | string | null>) => {
         const name = event.target.name
         const value = event.target.value
@@ -230,85 +277,106 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
         }))
     }
 
+    const formValidator = ()=>{
+        return !!stateConyuge.nombres
+            && !!stateConyuge.apellidos
+            && !!stateConyuge.numero_de_identificacion
+            && !!stateConyuge.tipo_de_identificacion
+            && !!stateConyuge.fecha_de_nacimiento
+            && !!stateConyuge.edad
+            && !!stateConyuge.sexo
+            && !!stateConyuge.direccion
+            && !!stateConyuge.lugar_de_nacimiento
+            && !!stateConyuge.barrio
+            && !!stateConyuge.compania
+            && !!stateConyuge.numero_de_contacto
+            && !!stateConyuge.direccion;
+    }
+
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
+        if(formValidator()){
 
-        // const dias_visitas_procesasdo = Object.keys(stateDiasDeVisita)
+            // const dias_visitas_procesasdo = Object.keys(stateDiasDeVisita)
 
-        const dias_visitas_procesasdo = Object.keys(stateDiasDeVisita)
-            .map((key: string) => {
-                if (stateDiasDeVisita[key] === true) {
-                    return key;
-                } else {
-                    return null;
-                }
-            })
-            .filter(key => key !== null)
-            .map(key => {
-                switch (key) {
-                    case 'Domingo':
-                        return 1;
-                    case 'Lunes':
-                        return 2;
-                    case 'Martes':
-                        return 3;
-                    case 'Miercoles':
-                        return 4;
-                    case 'Jueves':
-                        return 5;
-                    case 'Viernes':
-                        return 6;
-                    case 'Sabado':
-                        return 7;
-                    default:
+            const dias_visitas_procesasdo = Object.keys(stateDiasDeVisita)
+                .map((key: string) => {
+                    if (stateDiasDeVisita[key] === true) {
+                        return key;
+                    } else {
                         return null;
+                    }
+                })
+                .filter(key => key !== null)
+                .map(key => {
+                    switch (key) {
+                        case 'Domingo':
+                            return 1;
+                        case 'Lunes':
+                            return 2;
+                        case 'Martes':
+                            return 3;
+                        case 'Miercoles':
+                            return 4;
+                        case 'Jueves':
+                            return 5;
+                        case 'Viernes':
+                            return 6;
+                        case 'Sabado':
+                            return 7;
+                        default:
+                            return null;
+                    }
+                })
+                .filter(index => index !== null);
+
+
+            const formData = new FormData();
+            formData.append('id_persona', '35');
+            formData.append('numero_de_identificacion', stateConyuge.numero_de_identificacion ?? '');
+            formData.append('nombres', stateConyuge.nombres ?? '');
+            formData.append('apellidos', stateConyuge.apellidos ?? '');
+            formData.append('es_extranjero', stateConyuge.es_extranjero ? 'true' : 'false');
+            formData.append('fecha_de_nacimiento', stateConyuge.fecha_de_nacimiento ? stateConyuge.fecha_de_nacimiento.toISOString() : '');
+            formData.append('edad', stateConyuge.edad ?? '');
+            formData.append('sexo', stateConyuge.sexo.toString() ?? '');
+            formData.append('lugar_de_nacimiento', stateConyuge.lugar_de_nacimiento ?? '');
+            formData.append('direccion', stateConyuge.direccion ?? '');
+            formData.append('barrio', stateConyuge.barrio ?? '');
+            formData.append('compania', stateConyuge.compania ?? '');
+            formData.append('numero_de_contacto', stateConyuge.numero_de_contacto ?? '');
+            // formData.append('dias_de_visita', dias_visitas_procesasdo);
+
+            try {
+                const response = await fetch(`${API_URL}/conyuge`, {
+                    method: stateConyuge.id ? 'PUT' : 'POST',
+                    // body: formData,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        ...stateConyuge,
+                        id_persona: id_persona,
+                        dias_de_visita: dias_visitas_procesasdo
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al enviar los datos');
                 }
-            })
-            .filter(index => index !== null);
 
-        console.log(dias_visitas_procesasdo)
-        const formData = new FormData();
-        formData.append('id_persona', '35');
-        formData.append('numero_de_identificacion', stateConyuge.numero_de_identificacion ?? '');
-        formData.append('nombres', stateConyuge.nombres ?? '');
-        formData.append('apellidos', stateConyuge.apellidos ?? '');
-        formData.append('es_extranjero', stateConyuge.es_extranjero ? 'true' : 'false');
-        formData.append('fecha_de_nacimiento', stateConyuge.fecha_de_nacimiento ? stateConyuge.fecha_de_nacimiento.toISOString() : '');
-        formData.append('edad', stateConyuge.edad ?? '');
-        formData.append('sexo', stateConyuge.sexo ?? '');
-        formData.append('lugar_de_nacimiento', stateConyuge.lugar_de_nacimiento ?? '');
-        formData.append('direccion', stateConyuge.direccion ?? '');
-        formData.append('barrio', stateConyuge.barrio ?? '');
-        formData.append('compania', stateConyuge.compania ?? '');
-        formData.append('numero_de_contacto', stateConyuge.numero_de_contacto ?? '');
-        // formData.append('dias_de_visita', dias_visitas_procesasdo);
+                const data = await response.json();
+                console.log(data);
+                setStateConyugeVista(stateConyuge)
+                // Manejar la respuesta exitosa
+                handleCloseModal()
+            } catch (err) {
+                console.error(err);
+                // Manejar el error
+            } finally {
 
-        try {
-            const response = await fetch(`${API_URL}/conyuge`, {
-                method: stateConyuge.id ? 'PUT' : 'POST',
-                // body: formData,
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    ...stateConyuge,
-                    id_persona: id_persona,
-                    dias_de_visita: dias_visitas_procesasdo
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al enviar los datos');
             }
-
-            const data = await response.json();
-            console.log(data);
-            // Manejar la respuesta exitosa
-            handleCloseModal()
-        } catch (err) {
-            console.error(err);
-            // Manejar el error
-        } finally {
-
+        }else{
+            openSnackbar('Completar campos requeridos', 'error')
         }
     }
 
@@ -321,7 +389,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                     <Box p={3}>
                         <Stack direction='row' justifyContent='space-between'>
                             <Typography variant='h6'>
-                                Datos de conyugue
+                                Datos de conyuge
                             </Typography>
                             <Button
                                 id="basic-button"
@@ -343,7 +411,8 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                     'aria-labelledby': 'basic-button',
                                 }}
                             >
-                                <MenuItem onClick={() => handleClose('modificar_concubino')}>
+                                <MenuItem onClick={() => handleClose('modificar_concubino')}
+                                          disabled={!stateConyugeVista.id}>
                                     <ListItemIcon>
                                         <Edit fontSize="small"/>
                                     </ListItemIcon>
@@ -384,7 +453,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                     <Box mt={2}>
                         <form>
                             <Grid container spacing={2}>
-                                <Grid item sm={4}>
+                                <Grid item sm={3}>
                                     <FormControl fullWidth variant="outlined">
                                         <FormLabel>Extranjero:</FormLabel>
                                         <RadioGroup
@@ -422,14 +491,27 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         </Select>
                                     </FormControl>
                                 </Grid>
-                                <Grid item sm={4}>
-                                    <TextField
-                                        fullWidth
-                                        label='Nro. documento'
-                                        name='numero_de_identificacion'
-                                        value={stateConyuge.numero_de_identificacion}
-                                        onChange={handleChange}
-                                    />
+                                <Grid item sm={5}>
+                                    <Stack direction='row' spacing={1} justifyContent='space-between'>
+
+                                        <TextField
+                                            fullWidth
+                                            label='Nro. documento'
+                                            name='numero_de_identificacion'
+                                            error={!stateConyuge.numero_de_identificacion}
+                                            value={stateConyuge.numero_de_identificacion}
+                                            onChange={handleChange}
+                                        />
+
+                                        <Button sx={{height: '50px'}} variant='contained'
+                                                disabled={!(stateConyuge.numero_de_identificacion && stateConyuge.tipo_de_identificacion == 1)}
+                                                onClick={() => handleCedulaChange(stateConyuge.numero_de_identificacion)}>
+
+                                            <SearchIcon/>
+                                        </Button>
+
+                                    </Stack>
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
                             </Grid>
                             <Grid container spacing={2} mt={1}>
@@ -438,18 +520,22 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         fullWidth
                                         label='Nombre'
                                         name='nombres'
+                                        error={!stateConyuge.nombres}
                                         value={stateConyuge.nombres}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
                                 <Grid item sm={6}>
                                     <TextField
                                         fullWidth
                                         label='Apellido'
                                         name='apellidos'
+                                        error={!stateConyuge.apellidos}
                                         value={stateConyuge.apellidos}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
 
 
@@ -478,9 +564,11 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         fullWidth
                                         label='Edad'
                                         name='edad'
+                                        error={!stateConyuge.edad}
                                         value={stateConyuge.edad}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
                                 <Grid item sm={4}>
                                     <FormControl fullWidth variant="outlined">
@@ -509,9 +597,11 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         fullWidth
                                         label='Direccion residencia'
                                         name='direccion'
+                                        error={!stateConyuge.direccion}
                                         value={stateConyuge.direccion}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
 
                                 <Grid item sm={4}>
@@ -519,27 +609,32 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         fullWidth
                                         label='Ciudad de residencia'
                                         name='lugar_de_nacimiento'
+                                        error={!stateConyuge.lugar_de_nacimiento}
                                         value={stateConyuge.lugar_de_nacimiento}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
                                 <Grid item sm={4}>
                                     <TextField
                                         fullWidth
                                         label='Barrio de residencia'
                                         name='barrio'
-                                        value={stateConyuge.barrio}
+                                        error={!stateConyuge.barrio}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
                                 <Grid item sm={4}>
                                     <TextField
                                         fullWidth
                                         label='Compañia de residencia'
                                         name='compania'
+                                        error={!stateConyuge.compania}
                                         value={stateConyuge.compania}
                                         onChange={handleChange}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
 
                                 <Grid item sm={4}>
@@ -547,9 +642,11 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         fullWidth
                                         label='Numero de contacto'
                                         name='numero_de_contacto'
+                                        error={!stateConyuge.numero_de_contacto}
                                         value={stateConyuge.numero_de_contacto}
-                                        onChange={handleChange}
+                                        onChange={onDatoChangeNumber}
                                     />
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </Grid>
                                 <Grid item sm={12}>
                                     <FormControl>
@@ -609,7 +706,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         <Button variant='contained' onClick={handleSubmit}>
                                             Guardar
                                         </Button>
-                                        <Button variant='outlined' onClick={()=> {
+                                        <Button variant='outlined' onClick={() => {
                                             handleCloseModal()
                                             setStateConyuge(conyugesInitial)
                                         }}>

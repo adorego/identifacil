@@ -43,6 +43,7 @@ import {api_request, RequestResponse} from "@/lib/api-request";
 import {NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {MuiFileInput} from "mui-file-input";
+import Link from "next/link";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -64,7 +65,7 @@ const headersPPL = [
     {id: 'id', label: 'ID'},
     {id: 'fecha', label: 'Fecha registro'},
     {id: 'diagnostico', label: 'Descripcion registro medico'},
-    {id: 'archivo_registro_medico', label: 'Documento adjunto'},
+    {id: 'archivo_registro_medico', label: 'Documento adjunto', type: 'customCode'},
 ];
 
 interface medidaFuerzaType {
@@ -82,15 +83,16 @@ const medidaFuerzaInitial = {
     id: null,
     ppl: 0,
     tipo_de_medida_de_fuerza: 0,
-    fecha_de_inicio: null,
+    fecha_de_inicio: dayjs(),
     fecha_de_fin: null,
     motivo: 0,
 }
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
+const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 const URL_ENDPOINT = `${API_URL}/movimientos/motivos_de_traslado`;
 
-const registroInitial = {fecha_consulta: null, diagnostico: '', file: null}
+const registroInitial = {fecha_consulta: dayjs(), diagnostico: '', file: null}
 
 export default function Page({params}: { params: { id: number | string } }) {
 
@@ -146,8 +148,23 @@ export default function Page({params}: { params: { id: number | string } }) {
             })
 
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
-                console.log(res)
-                setStateHistorialMedico(res)
+
+                const datos_procesados = res.map((data:any)=>({
+                    ...data,
+                    archivo_registro_medico: data. archivo_registro_medico && (
+                        <Link href={`${ASSETS_URL}${data.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                    )
+                }))
+
+
+
+                /*{
+                    ...res,
+                    archivo_registro_medico: res. archivo_registro_medico && (
+                        <Link href={`${res.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                    )
+                }*/
+                setStateHistorialMedico(datos_procesados)
             })
         }
 
@@ -182,40 +199,55 @@ export default function Page({params}: { params: { id: number | string } }) {
         }));
     }
 
+    const formValidator = ()=>{
+        // @ts-ignore
+        if( !!stateMedidasDeFuerza.motivo && !!stateMedidasDeFuerza.tipo_de_medida_de_fuerza && !!stateMedidasDeFuerza.fecha_de_inicio && !!personasSeleccionadas.id_persona){
+            return true
+        }else{
+            return false
+        }
+    }
 
     // Manejador de envio
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        const form_method = isEditMode ? 'PUT' : 'POST'
 
-        // TODO: Armar logica de post
-        // TODO: Agregar PPL Agregado en el autocomplete
-        // console.log(personasSeleccionadas)
-        const state_procesado = {
-            ...stateMedidasDeFuerza,
-            ppl: personasSeleccionadas ? personasSeleccionadas.id_persona : null,
-        }
+        if(formValidator()){
 
+            const form_method = isEditMode ? 'PUT' : 'POST'
 
-        try {
-            const response = await fetch(`${API_URL}/medida_de_fuerza`, {
-                method: stateMedidasDeFuerza.id ? 'PUT' : 'POST',
-                // body: formData,
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(state_procesado),
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al enviar los datos');
+            // TODO: Armar logica de post
+            // TODO: Agregar PPL Agregado en el autocomplete
+            // console.log(personasSeleccionadas)
+            const state_procesado = {
+                ...stateMedidasDeFuerza,
+                ppl: personasSeleccionadas ? personasSeleccionadas.id_persona : null,
             }
 
-            const data = await response.json();
-            console.log(data);
-            // Manejar la respuesta exitosa
-            router.push('/gestion-ppl/medidas-de-fuerza');
-        } catch (err) {
-            console.error(err);
-            // Manejar el error
+
+            try {
+                const response = await fetch(`${API_URL}/medida_de_fuerza${stateMedidasDeFuerza.id && ('/' + params.id) }`, {
+                    method: stateMedidasDeFuerza.id ? 'PUT' : 'POST',
+                    // body: formData,
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(state_procesado),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al enviar los datos');
+                }
+
+                const data = await response.json();
+
+                // Manejar la respuesta exitosa
+                openSnackbar(`${stateMedidasDeFuerza.id ? 'Medida de fuerza actualizado correctamente' : 'Medida de fuerza creado correctamente'}`)
+                router.push('/gestion-ppl/medidas-de-fuerza');
+            } catch (err) {
+                console.error(err);
+                // Manejar el error
+            }
+        }else{
+            openSnackbar('Completar campos requeridos', 'error')
         }
     }
 
@@ -225,7 +257,8 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     const handleOpen = () => {
         // Reseteamos los valores del formulario del modal antes de abrirlo
-        // setModalPPL(initialPPL);
+        setStateRegistroMedicoModal(registroInitial)
+
         setOpen(true);
     };
 
@@ -233,37 +266,46 @@ export default function Page({params}: { params: { id: number | string } }) {
         setOpen(false);
     };
 
+    const formModalValidator = () =>{
+        return !!stateRegistroMedicoModal.fecha_consulta && !!stateRegistroMedicoModal.diagnostico && !!stateRegistroMedicoModal.documento_registro_medico;
+    }
+
     const handleSubmitModalMedico = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        console.log(dayjs(stateRegistroMedicoModal.fecha_consulta).format('YYYY-MM-DD'))
-        const formData = new FormData();
-        formData.append('fecha', stateRegistroMedicoModal.fecha_consulta ? stateRegistroMedicoModal.fecha_consulta.toISOString() : '');
-        formData.append('diagnostico', stateRegistroMedicoModal.diagnostico);
-        if (stateRegistroMedicoModal.documento_registro_medico) {
-            formData.append('documento_registro_medico', stateRegistroMedicoModal.documento_registro_medico);
-        }
 
-        try {
-            const response = await fetch(`${API_URL}/registro_medico/${params.id}`, {
-                method: 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al enviar los datos del registro médico');
+        if(formModalValidator()){
+            const formData = new FormData();
+            formData.append('fecha', stateRegistroMedicoModal.fecha_consulta ? stateRegistroMedicoModal.fecha_consulta.toISOString() : '');
+            formData.append('diagnostico', stateRegistroMedicoModal.diagnostico);
+            if (stateRegistroMedicoModal.documento_registro_medico) {
+                formData.append('documento_registro_medico', stateRegistroMedicoModal.documento_registro_medico);
             }
 
-            const data = await response.json();
-            console.log(data);
-            // Manejar la respuesta exitosa
-            // @ts-ignore
-            setStateHistorialMedico((prev: any) => [...prev, stateRegistroMedicoModal]);
-            setStateRegistroMedicoModal(registroInitial)
-            handleClose();
-        } catch (err) {
-            console.error(err);
-            // Manejar el error
+            try {
+                const response = await fetch(`${API_URL}/registro_medico/${params.id}`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al enviar los datos del registro médico');
+                }
+
+                const data = await response.json();
+                console.log(data);
+                // Manejar la respuesta exitosa
+                // @ts-ignore
+                setStateHistorialMedico((prev: any) => [...prev, stateRegistroMedicoModal]);
+                setStateRegistroMedicoModal(registroInitial)
+                handleClose();
+            } catch (err) {
+                console.error(err);
+                // Manejar el error
+            }
+        }else{
+            openSnackbar('Completar campos requeridos', 'error')
         }
+
     };
 
     return (
@@ -305,8 +347,12 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                 id="controllable-states-demo"
                                                 options={statePPL}
                                                 getOptionLabel={(option) => option.apellido ? `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` : "Seleccionar PPL"}
-                                                renderInput={(params) => <TextField {...params} label="PPL"/>}
+                                                renderInput={(params) =>
+                                                    <TextField
+                                                        error={!personasSeleccionadas}
+                                                    {...params} label="PPL"/>}
                                             />
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -322,6 +368,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             <InputLabel>Tipo de medida de fuerza</InputLabel>
                                             <Select
                                                 value={stateMedidasDeFuerza.tipo_de_medida_de_fuerza}
+                                                error={!stateMedidasDeFuerza.tipo_de_medida_de_fuerza}
                                                 onChange={handleSelectChange}
                                                 label="Tipo de medida de fuerza"
                                                 name="tipo_de_medida_de_fuerza"
@@ -335,6 +382,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     }
                                                 ) : null}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={8}>
@@ -342,6 +390,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             <InputLabel>Motivo</InputLabel>
                                             <Select
                                                 value={stateMedidasDeFuerza.motivo}
+                                                error={!stateMedidasDeFuerza.motivo}
                                                 onChange={handleSelectChange}
                                                 label="motivo"
                                                 name="motivo"
@@ -355,6 +404,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                     }
                                                 ) : null}
                                             </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -398,7 +448,7 @@ export default function Page({params}: { params: { id: number | string } }) {
 
                                                 />
                                             </LocalizationProvider>
-                                            <FormHelperText>* Campo requerido</FormHelperText>
+
                                         </FormControl>
                                     </Grid>
 
@@ -461,7 +511,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         label="Fecha de consulta"
                                         format="DD/MM/YYYY"
                                         name='fecha_consulta'
-                                        value={stateRegistroMedicoModal.fecha_consulta ? dayjs(stateRegistroMedicoModal.fecha_consulta) : null}
+                                        value={stateRegistroMedicoModal.fecha_consulta ? dayjs(stateRegistroMedicoModal.fecha_consulta) : dayjs()}
                                         onChange={(newValue: Dayjs | null) => {
                                             setStateRegistroMedicoModal((prevState: any) => ({
                                                 ...prevState,
@@ -477,6 +527,9 @@ export default function Page({params}: { params: { id: number | string } }) {
                         <Grid item xs={12}>
                             <TextField
                                 fullWidth
+                                multiline
+                                error={!stateRegistroMedicoModal.diagnostico}
+                                rows='4'
                                 label='Diagnostico'
                                 name='diagnostico'
                                 value={stateRegistroMedicoModal.diagnostico}
@@ -487,6 +540,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     }))
                                 }}
                             />
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </Grid>
 
 
@@ -508,6 +562,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     }}
                                 />
                             </FormControl>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </Grid>
 
 

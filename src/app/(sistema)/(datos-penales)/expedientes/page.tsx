@@ -17,7 +17,7 @@ const header = [
     {id: 'caratula_expediente', label: 'Caratula'},
     {id: 'fecha_del_hecho', label: 'Fecha del hecho', type: 'date'},
     {id: 'fecha_de_compurgamiento_inicial', label: 'Compurgamiento', type: 'date'},
-    {id: 'condenado', label: 'Condenado', type: 'boolean'},
+    {id: 'condenado', label: 'Condenado', type: 'condenado'},
 ]
 
 
