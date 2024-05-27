@@ -23,10 +23,11 @@ import dayjs from "dayjs";
 const header2 = [
     {id: 'id', label: 'ID'},
     {id: 'visitante', label: 'Apellido, Nombre'},
-    {id: 'tipo', label: 'tipo', type: 'tipo', dataType: [{id: 0, name: 'Entrada'}, {id: 1, name: 'Salida'}]},
+    {id: 'tipo', label: 'Tipo Acceso', type: 'tipo', dataType: [{id: 0, name: 'Entrada'}, {id: 1, name: 'Salida'}]},
     {id: 'fecha', label: 'Fecha', type: 'date'},
     {id: 'hora', label: 'Hora'},
     {id: 'observacion', label: 'Observacion'},
+    {id: 'tipo_visita', label: 'Tipo de Visita'},
     {id: 'ppl_que_visito', label: 'PPL visitado'},
 ]
 
@@ -92,6 +93,7 @@ export default function Ppl() {
                         visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
                         fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
                         hora: item.hora,
+                        tipo_visita: item.visita_privada ? "Visita Privada" : "Visita Normal",
                         observacion: item.observacion ? item.observacion : 'N/D',
                         ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
                         tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
