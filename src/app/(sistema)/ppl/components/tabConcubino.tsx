@@ -111,17 +111,24 @@ const stateDiasDeVisitaInitial = {
 
 export default function TabConcubino({id_persona}: { id_persona: number }) {
 
+    /** 1. Estado para datos del formulario modal de conguge*/
     const [stateConyuge, setStateConyuge] = useState<conyugesTipo>(conyugesInitial);
+
+    /** 2. Estado para datos del de visualizacion de conguge*/
     const [stateConyugeVista, setStateConyugeVista] = useState<conyugesTipo>(conyugesInitial);
+
+    /** 3. Estado para datos de trabla de conguge*/
     const [stateListaConyuges, setStateListaConyuges] = useState([]);
+
+    /** 4. Estado para datos de dias de visita de conguge*/
     const [stateDiasDeVisita, setStateDiasDeVisita] = useState<stateDiasDeVisitaType>(stateDiasDeVisitaInitial);
 
     const [error, setError] = useState(null);
     const [openModal, setOpenModal] = React.useState(false);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
     const open = Boolean(anchorEl);
     const {openSnackbar} = useGlobalContext();
+
     useEffect(() => {
         const fetchData = async () => {
             /** Para obtener historial de conyuges */
@@ -139,6 +146,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                 const res = await fetch(`${API_URL}/conyuge/${id_persona}`);
                 if (!res.ok) throw new Error('Error al obtener el cónyuge');
                 const data = await res.json();
+
                 console.log(data)
                 // Ajustar el estado del conyuge
                 setStateConyugeVista({
@@ -150,13 +158,13 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
 
                 // Ajustar el estado de los días de visita
                 const diasVisita = {
-                    Domingo: data.dias_de_visita.includes(0),
-                    Lunes: data.dias_de_visita.includes(1),
-                    Martes: data.dias_de_visita.includes(2),
-                    Miercoles: data.dias_de_visita.includes(3),
-                    Jueves: data.dias_de_visita.includes(4),
-                    Viernes: data.dias_de_visita.includes(5),
-                    Sabado: data.dias_de_visita.includes(6)
+                    Domingo: data.dias_de_visita.includes(1),
+                    Lunes: data.dias_de_visita.includes(2),
+                    Martes: data.dias_de_visita.includes(3),
+                    Miercoles: data.dias_de_visita.includes(4),
+                    Jueves: data.dias_de_visita.includes(5),
+                    Viernes: data.dias_de_visita.includes(6),
+                    Sabado: data.dias_de_visita.includes(7)
                 };
                 setStateDiasDeVisita(diasVisita);
             } catch (err: any) {
@@ -170,6 +178,11 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
     }, [id_persona]);
 
 
+    useEffect(() => {
+
+    }, [openModal]);
+
+
     /* HANDLERS DEL DE MENU Y MODALS*/
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
@@ -179,6 +192,16 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
         setAnchorEl(null);
 
         if (type == 'modificar_concubino') {
+            const diasVisita = {
+                Domingo: stateConyugeVista.dias_de_visita.includes(1),
+                Lunes: stateConyugeVista.dias_de_visita.includes(2),
+                Martes: stateConyugeVista.dias_de_visita.includes(3),
+                Miercoles: stateConyugeVista.dias_de_visita.includes(4),
+                Jueves: stateConyugeVista.dias_de_visita.includes(5),
+                Viernes: stateConyugeVista.dias_de_visita.includes(6),
+                Sabado: stateConyugeVista.dias_de_visita.includes(7)
+            };
+            setStateDiasDeVisita(diasVisita);
             setStateConyuge({...stateConyugeVista})
             handleOpenModal()
         }
@@ -189,15 +212,17 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                 id: stateConyugeVista.id ? stateConyugeVista.id : null
 
             })
+            setStateDiasDeVisita(stateDiasDeVisitaInitial)
             handleOpenModal()
 
         }
     };
 
     const handleOpenModal = () => {
-        console.log('hola')
+
         setOpenModal(true)
     };
+
     const handleCloseModal = () => setOpenModal(false);
 
     /* HANDLERS DEL FORM*/
@@ -296,10 +321,11 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
 
+
+        // Se valida campos requeridos
         if(formValidator()){
 
-            // const dias_visitas_procesasdo = Object.keys(stateDiasDeVisita)
-
+            // se convierte el estado de dias de visita al array ej: [1,2,4] para poder enviar.
             const dias_visitas_procesasdo = Object.keys(stateDiasDeVisita)
                 .map((key: string) => {
                     if (stateDiasDeVisita[key] === true) {
@@ -332,6 +358,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                 .filter(index => index !== null);
 
 
+            // Se prepara formdata para enviar (No funciona actualmente con este
             const formData = new FormData();
             formData.append('id_persona', '35');
             formData.append('numero_de_identificacion', stateConyuge.numero_de_identificacion ?? '');
@@ -348,6 +375,8 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
             formData.append('numero_de_contacto', stateConyuge.numero_de_contacto ?? '');
             // formData.append('dias_de_visita', dias_visitas_procesasdo);
 
+
+            // Request post/update de conyuge
             try {
                 const response = await fetch(`${API_URL}/conyuge`, {
                     method: stateConyuge.id ? 'PUT' : 'POST',
@@ -366,7 +395,20 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
 
                 const data = await response.json();
                 console.log(data);
-                setStateConyugeVista(stateConyuge)
+
+                // @ts-ignore
+                setStateConyugeVista({...stateConyuge, dias_de_visita: dias_visitas_procesasdo})
+                const diasVisita = {
+                    Domingo: dias_visitas_procesasdo.includes(1),
+                    Lunes: dias_visitas_procesasdo.includes(2),
+                    Martes: dias_visitas_procesasdo.includes(3),
+                    Miercoles: dias_visitas_procesasdo.includes(4),
+                    Jueves: dias_visitas_procesasdo.includes(5),
+                    Viernes: dias_visitas_procesasdo.includes(6),
+                    Sabado: dias_visitas_procesasdo.includes(7)
+                };
+
+                setStateDiasDeVisita(diasVisita)
                 // Manejar la respuesta exitosa
                 handleCloseModal()
             } catch (err) {

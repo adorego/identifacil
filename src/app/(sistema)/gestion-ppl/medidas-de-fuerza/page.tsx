@@ -19,6 +19,7 @@ import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
 import dayjs from "dayjs";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -63,6 +64,10 @@ export default function Ppl() {
         setFilterData(value)
     }
 
+    const listaDeItemBread = [
+        {nombre:'Lista de medidas de seguridad', url:'/sistema/medidas-seguridad', lastItem: true},
+    ];
+
     if (!data) {
         return (
             <Box sx={{
@@ -72,6 +77,9 @@ export default function Ppl() {
                 justifyContent: 'center',
                 height: '75vh',
             }}>
+                <TituloComponent titulo='Medidas de fuerza'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
                 <CircularProgress/>
             </Box>
         );
@@ -81,16 +89,19 @@ export default function Ppl() {
         <>
 
             <Box>
-                <TituloComponent titulo='Medidas de fuerza' url='/' newEntry='/gestion-ppl/medidas-de-fuerza/crear'/>
 
-                <Box mt={3}>
+                <TituloComponent titulo='Medidas de fuerza'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
+                <Box mt={4} component={Paper}>
                     <CustomTable
                         showId={true}
                         headers={header2}
                         data={data}
                         options={{
-
+                            title: 'Lista de medidas de fuerza',
                             targetURL: '/gestion-ppl/medidas-de-fuerza',
+                            newRecord: '/gestion-ppl/medidas-de-fuerza/crear',
                             rowsPerPageCustom: 5,
                             pagination: true,
 

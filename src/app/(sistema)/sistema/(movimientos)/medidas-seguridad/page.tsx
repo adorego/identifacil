@@ -89,8 +89,7 @@ export default function Page(){
     };
 
     const listaDeItemBread = [
-        {nombre:'Lista de medidas de seguridad', url:'/sistema/medidas-seguridad', lastItem: false},
-        {nombre:'Medidas de seguridad', url:'', lastItem: true},
+        {nombre:'Lista de medidas de seguridad', url:'/sistema/medidas-seguridad', lastItem: true},
     ];
 
     if (!data) {
