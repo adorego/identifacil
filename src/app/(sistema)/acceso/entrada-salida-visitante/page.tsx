@@ -232,15 +232,13 @@ export default function EntradaSalidaVisitante() {
     }
 
     const entradaSalidaVisitante = async () => {
-        console.log("Llamada a entradaSalidaVisitante");
+       
         let url = ""
         if(ingreso_a_privada){
             url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/conyuge/`
         }else{
             url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/entrada_salida/visitantes/`
         }
-        console.log("url inicial:",url);  
-        console.log("Establecimiento seleccionado:",selectedEstablecimiento);
         
         if(entrada_salida){//Registro de Entrada
             //Validación de datos
@@ -256,17 +254,16 @@ export default function EntradaSalidaVisitante() {
             }
             else{
                 const url_entrada = ingreso_a_privada === true ? "ingreso_conyuge" : "entrada";
-                console.log("url para entrada:",url_entrada);
                 const url_final =  url + url_entrada;
-                console.log("url final para entrada:",url_final);
                  
                 const fecha_hora = new Date();
+                console.log("Fecha y hora:", fecha_hora, fecha_hora.getMonth());
                 let datos_a_enviar = null;
                 if(ingreso_a_privada){
                     datos_a_enviar ={
                         conyuge:identificationData.id_persona,
                         ppl:pplAVisitar.id_persona,
-                        fecha:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        fecha:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()+1}/${fecha_hora.getDate()}`,
                         hora:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                         establecimiento:selectedEstablecimiento,
                         observacion:entradaVisitante.observacion
@@ -275,7 +272,7 @@ export default function EntradaSalidaVisitante() {
                     datos_a_enviar ={
                         visitante:identificationData.id_persona,
                         ppl_a_visitar:pplAVisitar.id_persona,
-                        fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        fecha_ingreso:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()+1}/${fecha_hora.getDate()}`,
                         hora_ingreso:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                         establecimiento:selectedEstablecimiento,
                         observacion:entradaVisitante.observacion
@@ -314,7 +311,7 @@ export default function EntradaSalidaVisitante() {
                     datos_a_enviar ={
                         conyuge:identificationData.id_persona,
                         ppl_que_visito:pplAVisitar.id_persona,
-                        fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()+1}/${fecha_hora.getDate()}`,
                         hora_salida:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                         establecimiento:selectedEstablecimiento,
                         observacion:entradaVisitante.observacion
@@ -323,7 +320,7 @@ export default function EntradaSalidaVisitante() {
                     datos_a_enviar ={
                         visitante:identificationData.id_persona,
                         ppl_que_visito:pplAVisitar.id_persona,
-                        fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()}/${fecha_hora.getDate()}`,
+                        fecha_salida:`${fecha_hora.getFullYear()}/${fecha_hora.getMonth()+1}/${fecha_hora.getDate()}`,
                         hora_salida:`${fecha_hora.getHours()}:${fecha_hora.getMinutes()}:${fecha_hora.getSeconds()}`,
                         establecimiento:selectedEstablecimiento,
                         observacion:entradaVisitante.observacion
