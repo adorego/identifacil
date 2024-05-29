@@ -226,7 +226,7 @@ export default function Page({params}: { params: { id: number | string } }) {
 
 
             try {
-                const response = await fetch(`${API_URL}/medida_de_fuerza${stateMedidasDeFuerza.id && ('/' + params.id) }`, {
+                const response = await fetch(`${API_URL}/medida_de_fuerza${isEditMode ? ('/' + params.id) : '' }`, {
                     method: stateMedidasDeFuerza.id ? 'PUT' : 'POST',
                     // body: formData,
                     headers: {'Content-Type': 'application/json'},
