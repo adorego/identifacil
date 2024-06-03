@@ -41,6 +41,7 @@ import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
+import {signIn, useSession} from "next-auth/react";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -148,7 +149,15 @@ export default function Page({params}: { params: { id: number | string } }) {
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
     const isEditMode: boolean = params?.id !== 'crear';
+    const { data: session, status } = useSession();
 
+
+    useEffect(() => {
+
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     const handleLoading = (value: boolean): void => {
         // console.log('ahora ' + value);
@@ -395,6 +404,45 @@ export default function Page({params}: { params: { id: number | string } }) {
     ];
 
 
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
     return (
         <Box>
             <TituloComponent titulo={isEditMode ? `Traslado ${trasladoForm.numero_de_documento}` : 'Crear Traslado'}>
@@ -425,7 +473,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     <Grid item xs={3}>
                                         <TextField
                                             fullWidth
-                                            label="Nro. del documento"
+                                            label="Nro. de documento de traslado"
                                             variant="outlined"
                                             helperText='* Campo requerido'
                                             error={!trasladoForm.numero_de_documento}

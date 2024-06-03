@@ -4,12 +4,65 @@ import {Suspense, useEffect, useState} from "react"
 
 import Loading from "./loading"
 import CardBlock from "../../../components/blocks/CardBlock";
-import {Grid} from "@mui/material";
+import {Alert, Box, CircularProgress, Grid} from "@mui/material";
 import ingresosIMG from '../../../common/acceso-ppl.png';
 import penalesIMG from '../../../common/control-ppl.png';
 import trasladosIMG from '../../../common/traslados.png';
+import { useSession, signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import TituloComponent from "@/components/titulo/tituloComponent";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import * as React from "react";
 
 export default function Main() {
+    const { data: session, status } = useSession();
+
+
+    useEffect(() => {
+        console.log(session)
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     return (
         <Suspense fallback={<Loading/>}>

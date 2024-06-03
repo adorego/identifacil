@@ -11,6 +11,7 @@ import {fetchData} from "@/components/utils/utils";
 import FiltrosPpl from "@/app/(sistema)/ppl/components/filtrosPpl";
 import dayjs from "dayjs";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import {signIn, useSession} from "next-auth/react";
 
 
 
@@ -31,19 +32,14 @@ export default function Page() {
     const [listaPersonas, setListaPersonas] = useState([])
     const [dataFiltrado, setDataFiltrado] = useState(null);
     const [loading, setLoading] = useState(true)
+    const { data: session, status } = useSession();
 
-    async function fetchData() {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`);
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error al realizar la solicitud fetch:', error);
-            return null; // o manejar el error de manera adecuada
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            signIn();
         }
-    }
+    }, [status]);
 
     useEffect(() => {
 
@@ -72,6 +68,21 @@ export default function Page() {
         })
     }, []);
 
+    async function fetchData() {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error al realizar la solicitud fetch:', error);
+            return null; // o manejar el error de manera adecuada
+        }
+    }
+
+
+
     const onHandleFiltro = (value: any) => {
         setDataFiltrado(value)
     }
@@ -79,6 +90,47 @@ export default function Page() {
     const listaDeItemBread = [
         {nombre:'Lista de PPL', url:'', lastItem: true},
     ];
+
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     if (listaPersonas.length == 0) {
         return (

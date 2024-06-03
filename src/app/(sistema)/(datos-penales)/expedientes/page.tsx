@@ -10,6 +10,7 @@ import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables"
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import {signIn, useSession} from "next-auth/react";
 
 const header = [
     {id: 'id', label: 'id'},
@@ -33,6 +34,15 @@ export default function Page() {
 
     const [data, setData] = useState(null);
     const [dataFiltrado, setDataFiltrado] = useState(null);
+    const { data: session, status } = useSession();
+
+
+    useEffect(() => {
+
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     async function fetchData() {
         try {
@@ -62,6 +72,49 @@ export default function Page() {
     const listaDeItemBread = [
         {nombre:'Expedientes judiciales', url:'', lastItem: true},
     ];
+
+
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
     if (!data) {
         return (
             <Box sx={{
@@ -75,6 +128,7 @@ export default function Page() {
             </Box>
         );
     }
+
 
     return (
         <>

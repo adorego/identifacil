@@ -2,7 +2,7 @@
 
 import {
     Box,
-    Button,
+    Button, CircularProgress,
     Divider,
     FormControl,
     FormControlLabel,
@@ -29,6 +29,7 @@ import Identificacion from "@/app/(sistema)/identificacion/page";
 import log from "loglevel";
 import style from "./FormRegister.module.css";
 import { useGlobalContext } from "@/app/Context/store";
+import {signIn, useSession} from "next-auth/react";
 
 const steps = ["Identificación", "Registro", "Datos de Ingreso", "Finalización"];
 export const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo', 'Ocuurio un error'];
@@ -62,13 +63,14 @@ export default function FormRegister() {
     const [mensaje, setMensaje] = useState("");
     const [registroRealizado, setRegistroRealizado] = useState(false);
 
+
     const identidad = useRef<DatosDeIdentificacion | null>(null);
     const reconocimientos = useRef<Array<IReconocimiento>>([])
     const foto = useRef<string | null>(null);
     const contadorReconocimiento = useRef<number>(0);
     const showSpinner = progresoRegistro === EstadosProgreso[0] ? false : true;
     const {openSnackbar} = useGlobalContext();
-
+    const { data: session, status } = useSession();
 
 
     // console.log("Identidad:", identidad);
@@ -242,6 +244,51 @@ export default function FormRegister() {
 
     const cerrar_dialogo = () => {
         setProgresoRegistro(EstadosProgreso[0]);
+    }
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
     }
 
     return (

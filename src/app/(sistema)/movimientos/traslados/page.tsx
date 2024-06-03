@@ -20,6 +20,7 @@ import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import {signIn, useSession} from "next-auth/react";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -40,6 +41,16 @@ export default function Ppl() {
     const [filterData, setFilterData] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
+
+    const { data: session, status } = useSession();
+
+
+    useEffect(() => {
+
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
@@ -114,6 +125,47 @@ export default function Ppl() {
                     <Typography color="text.primary">Lista de traslados</Typography>
                 </Breadcrumbs>
             </>
+        )
+    }
+
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
         )
     }
 

@@ -12,7 +12,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ChangeEvent, SyntheticEvent, useState} from "react"
+import {ChangeEvent, SyntheticEvent, useEffect, useState} from "react"
 import {IdentificationResponse, initialResponse} from "../../../../model/respuesta-identificacion";
 import FaceRecognitionWithLayout from "@/components/registro/FaceRecognitionWithLayout";
 import {IReconocimiento} from "@/components/registro/FaceDetectionOverlay";
@@ -21,6 +21,8 @@ import style from "./page.module.css";
 import {useGlobalContext} from "@/app/Context/store";
 import { api_request } from "@/lib/api-request";
 import { RadioButtonChecked } from "@mui/icons-material";
+import {signIn, useSession} from "next-auth/react";
+import * as React from "react";
 
 const EstadosProgreso: Array<string> = ['No iniciado', 'Generando datos biométricos', 'Almacenando en la Base de Datos', 'Registro completo'];
 
@@ -86,7 +88,7 @@ export default function EntradaSalidaVisitante() {
     const {openSnackbar} = useGlobalContext();
     const {selectedEstablecimiento} = useGlobalContext();
     const [ingreso_a_privada,setIngresoAPrivada] = useState(false);
-
+    const { data: session, status } = useSession();
 
     const habilitar_envio_de_datos = visitanteIdentificado && pplIdentificado;
     const llamado_de_prueba = (reconocimiento:IReconocimiento)=>{
@@ -352,8 +354,55 @@ export default function EntradaSalidaVisitante() {
     const onIngresoPrivadaChange=(event:React.ChangeEvent<HTMLInputElement>)=>{
         setIngresoAPrivada(!ingreso_a_privada);
     }
-    
-   
+
+
+
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
     return (
         <>
 

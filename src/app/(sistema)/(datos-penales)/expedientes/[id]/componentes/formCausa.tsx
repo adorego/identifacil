@@ -35,6 +35,7 @@ import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
+import {signIn, useSession} from "next-auth/react";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -103,6 +104,16 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const router: AppRouterInstance = useRouter();
     const isEditMode = params.id !== 'crear';
     const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
+
+    const { data: session, status } = useSession();
+
+
+    useEffect(() => {
+
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
 
     /** Obtener Hechos punibles y causas*/
@@ -482,6 +493,47 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     }
 
+
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     if (loading) {
         return (
