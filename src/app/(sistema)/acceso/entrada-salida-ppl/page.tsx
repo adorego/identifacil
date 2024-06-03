@@ -16,7 +16,7 @@ import {
     TextField,
     Typography
 } from "@mui/material";
-import {ChangeEvent, useContext, useState} from "react"
+import React, {ChangeEvent, useContext, useEffect, useState} from "react"
 import {IdentificationResponse, initialResponse} from "../../../../model/respuesta-identificacion";
 import {ThumbDown, ThumbUp} from "@mui/icons-material";
 
@@ -29,6 +29,7 @@ import { error } from "console";
 import { api_request } from "@/lib/api-request";
 import { log } from "loglevel";
 import { exit } from "process";
+import {signIn, useSession} from "next-auth/react";
 
 const NUMERO_DE_CAPTURAS:number=3;
 
@@ -75,6 +76,8 @@ export default function EntradaSalidaPPL() {
     const [mensaje, setMensaje] = useState("");
     const {openSnackbar} = useGlobalContext();
     const {selectedEstablecimiento} = useGlobalContext();
+    const { data: session, status } = useSession();
+
 
     const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
         const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/identificacion/`;
@@ -184,6 +187,53 @@ export default function EntradaSalidaPPL() {
             }
         }
     }
+
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
     return (
         <Box sx={{padding: '20px'}}>
             <FormControl className={style.form}>

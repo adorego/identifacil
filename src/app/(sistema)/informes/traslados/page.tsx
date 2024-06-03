@@ -1,11 +1,11 @@
 'use client'
 
-import {Box, Breadcrumbs, Grid, Link, Paper} from "@mui/material";
+import {Box, Breadcrumbs, CircularProgress, Grid, Link, Paper} from "@mui/material";
 import {destinosTrasladosData, motivosTrasladosData, rangoTiempoData, reclsusosData} from "../../../dummyData/data";
 
 import CustomTable from "../../../../components/CustomTable";
 import PenitenciariaFilter from "../components/penitenciariaFilter";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 
 const trasladosDummy = reclsusosData();
@@ -13,35 +13,67 @@ const motivosTrasladosDummy = motivosTrasladosData();
 const rangoTiempoDymmy = rangoTiempoData();
 const destinosDymmy = destinosTrasladosData();
 
-
+const headerInternos = [
+    { id: 'nombre', label: 'Nombre y Apellido' },
+    { id: 'apellido', label: 'Alias' },
+    { id: 'cantidad_de_traslado', label: 'Cantidad' },
+]
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default  function Page(){
 
-    const [data, setData] = useState(null);
+    const [data, setData] = useState({
+        ppl_con_mas_traslados: [],
+        motivos_con_cantidad: [],
+        medidas_de_seguridad_con_cantidad: [],
+        destinos_con_cantidad: []
+    });
 
     useEffect(() => {
-        fetchData(`${API_URL}/movimientos`)
+        fetchData(`${API_URL}/movimientos/informe_traslados`)
             .then(fetchedData => {
                 console.log(fetchedData)
-                console.log(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
 
-                    id: item.id,
-                    destinoTraslado: item.destinoTraslado.nombre,
-                    origenTraslado: item.origenTraslado.nombre
-                })))
-                // TODO: veritifcar porque hace problema typescript aca
 
                 //@ts-ignore
-                setData(Object.keys(fetchedData).map(key => fetchedData[key]).map(item => ({
-                    ...item,
-                    destinoTraslado: item.destinoTraslado.nombre,
-                    origenTraslado: item.origenTraslado.nombre
-                })));
+                if(fetchedData){
+                    setData({
+                        destinos_con_cantidad: fetchedData.destinos_con_cantidad?.map((item:any)=>{
+                            return item[1]
+                        }),
+                        medidas_de_seguridad_con_cantidad: fetchedData.medidas_de_seguridad_con_cantidad?.map((item:any)=>{
+                            return item[1]
+                        }),
+                        ppl_con_mas_traslados :fetchedData.ppl_con_mas_traslados?.map((item:any)=>{
+                            return item[1]
+                        }),
+                        motivos_con_cantidad :fetchedData.motivos_con_cantidad?.map((item:any)=>{
+                            return item[1]
+                        })
+                    });
+                }
             });
     }, []);
 
+    if (!data) {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
     // TODO: Hacer las paginas de detalle de las tablas
     return(
         <>
@@ -60,8 +92,12 @@ export default  function Page(){
                 <Grid container spacing={2} mt={2}>
                     <Grid item sm={6}>
                         <CustomTable
-                            data={trasladosDummy.rowsCustom}
-                            headers={trasladosDummy.headersCustom}
+                            data={data.ppl_con_mas_traslados}
+                            headers={[
+                                { id: 'apellido', label: 'Nombre' },
+                                { id: 'nombre', label: 'Nombre' },
+                                { id: 'cantidad_de_traslado', label: 'Cantidad' },
+                            ]}
                             options={
                                 {
                                     rowsPerPageCustom: 5,
@@ -76,8 +112,11 @@ export default  function Page(){
                     </Grid>
                     <Grid item sm={6}>
                         <CustomTable
-                            data={motivosTrasladosDummy.data}
-                            headers={motivosTrasladosDummy.header}
+                            data={data.motivos_con_cantidad}
+                            headers={[
+                                { id: 'nombre', label: 'Motivo' },
+                                { id: 'cantidad', label: 'Cantidad' },
+                            ]}
                             options={
                                 {
                                     rowsPerPageCustom: 5,
@@ -91,16 +130,19 @@ export default  function Page(){
                         />
                     </Grid>
 
-                    <Grid item sm={4}>
+                    <Grid item sm={6}>
                         <CustomTable
-                            data={rangoTiempoDymmy.data}
-                            headers={rangoTiempoDymmy.header}
+                            data={data.destinos_con_cantidad}
+                            headers={[
+                                { id: 'destino', label: 'Motivo' },
+                                { id: 'cantidad', label: 'Cantidad' },
+                            ]}
                             options={
                                 {
                                     rowsPerPageCustom: 4,
-                                    title: 'Por rango de tiempo',
+                                    title: 'Destino con mas cantidad',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/rango-tiempo',
+                                    /*expandedList: '/informes/traslados/rango-tiempo',*/
                                     deleteOption:false,
                                 }
                             }
@@ -108,33 +150,20 @@ export default  function Page(){
                         />
                     </Grid>
 
-                    <Grid item sm={4}>
-                        <CustomTable
-                            data={destinosDymmy.data}
-                            headers={destinosDymmy.header}
-                            options={
-                                {
-                                    rowsPerPageCustom: 4,
-                                    title: 'Destinos con mas traslados',
-                                    pagination: false,
-                                    expandedList: '/informes/traslados/destinos-mas-traslados',
-                                    deleteOption:false,
-                                }
-                            }
 
-                        />
-                    </Grid>
-
-                    <Grid item sm={4}>
+                    <Grid item sm={6}>
                         <CustomTable
-                            data={destinosDymmy.data}
-                            headers={destinosDymmy.header}
+                            data={data.medidas_de_seguridad_con_cantidad}
+                            headers={[
+                                { id: 'medida', label: 'Motivo' },
+                                { id: 'cantidad', label: 'Cantidad' },
+                            ]}
                             options={
                                 {
                                     rowsPerPageCustom: 4,
                                     title: 'Tiempo de reclusion',
                                     pagination: false,
-                                    expandedList: '/informes/traslados/tiempo-reclusion',
+                                    /*expandedList: '/informes/traslados/tiempo-reclusion',*/
                                     deleteOption:false,
                                 }
                             }

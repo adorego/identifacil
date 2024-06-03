@@ -20,6 +20,7 @@ import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
 import dayjs from "dayjs";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import {signIn, useSession} from "next-auth/react";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -36,7 +37,7 @@ export default function Ppl() {
     const {openSnackbar} = useGlobalContext();
     const [data, setData] = useState(null);
     const [filterData, setFilterData] = useState(null);
-
+    const { data: session, status } = useSession();
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
@@ -59,6 +60,13 @@ export default function Ppl() {
             });
     }, []);
 
+    useEffect(() => {
+        console.log(session)
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
+
     const handleFitros = (value: any) => {
         // console.log(value)
         setFilterData(value)
@@ -67,6 +75,47 @@ export default function Ppl() {
     const listaDeItemBread = [
         {nombre:'Lista de medidas de seguridad', url:'/sistema/medidas-seguridad', lastItem: true},
     ];
+
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     if (!data) {
         return (

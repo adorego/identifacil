@@ -27,6 +27,7 @@ import TabSalidaTransitoia from "@/app/(sistema)/ppl/components/tabSalidasTransi
 import TabSalidaTransitoria from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import TabConcubino from "@/app/(sistema)/ppl/components/tabConcubino";
+import {signIn, useSession} from "next-auth/react";
 
 
 type dataType = {
@@ -134,6 +135,8 @@ const initialData = {
 }
 
 const ENDPOINT = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls/id/`;
+const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
+
 export default function Page({params}: { params: { id: number } }) {
     /**1. For tabs position */
     const [value, setValue] = React.useState('1');
@@ -146,8 +149,15 @@ export default function Page({params}: { params: { id: number } }) {
 
     /**4. For loaders */
     const [loading, setLoading] = React.useState(true);
-    const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
+    const { data: session, status } = useSession();
+
+    /** Hook para manejo de sesion */
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     useEffect(() => {
 
@@ -189,11 +199,52 @@ export default function Page({params}: { params: { id: number } }) {
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
     };
+
     const listaDeItemBread = [
         {nombre: 'Lista de PPL', url: '', lastItem: false},
         {nombre: `${data ? data.nombre + ' ' + data.apellido : 'PPL'}`, url: '', lastItem: true},
     ];
 
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     return (
         <Box>

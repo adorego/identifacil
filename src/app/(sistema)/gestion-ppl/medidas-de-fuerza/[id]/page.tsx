@@ -44,6 +44,7 @@ import {NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {EstadoCivilDTO} from "@/model/estadoCivil.model";
 import {MuiFileInput} from "mui-file-input";
 import Link from "next/link";
+import {signIn, useSession} from "next-auth/react";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -120,6 +121,15 @@ export default function Page({params}: { params: { id: number | string } }) {
     const router = useRouter();
     const isEditMode: boolean = params?.id !== 'crear';
 
+    const { data: session, status } = useSession();
+
+
+    useEffect(() => {
+
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     useEffect(() => {
         // Fetch para PPL lista para traslado
@@ -307,6 +317,46 @@ export default function Page({params}: { params: { id: number | string } }) {
         }
 
     };
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     return (
         <Box>

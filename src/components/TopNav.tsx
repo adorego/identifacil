@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {Avatar, Tooltip} from "@mui/material";
+import {Avatar, Button, Tooltip} from "@mui/material";
 import {alpha, styled} from '@mui/material/styles';
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -24,6 +24,7 @@ import styles from "./TopNav.module.css";
 import {useEffect} from "react";
 import {useGlobalContext} from "@/app/Context/store";
 import Link from "next/link";
+import { signOut } from 'next-auth/react';
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -111,6 +112,11 @@ export default function TopNav() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+
+    const handleCerrarSesion = () =>{
+        signOut({ callbackUrl: '/login' })
+    }
+
     const menuId = 'primary-search-account-menu';
 
     const renderMenu = (
@@ -248,9 +254,9 @@ export default function TopNav() {
                         >
 
                                 <MenuItem  onClick={handleCloseUserMenu}>
-                                    <Link href='/'>
+                                    <Button variant='text' onClick={handleCerrarSesion}>
                                         <Typography textAlign="center">Cerrar sesión</Typography>
-                                    </Link>
+                                    </Button>
                                 </MenuItem>
 
                         </Menu>

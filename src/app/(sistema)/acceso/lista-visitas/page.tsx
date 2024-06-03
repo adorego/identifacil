@@ -19,6 +19,8 @@ import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
 import dayjs from "dayjs";
+import {signIn, useSession} from "next-auth/react";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -32,7 +34,6 @@ const header2 = [
 ]
 
 
-
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Ppl() {
@@ -43,6 +44,46 @@ export default function Ppl() {
     const [loading, setLoading] = useState(true)
 
     const {openSnackbar} = useGlobalContext();
+    const {data: session, status} = useSession();
+
+    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
+    useEffect(() => {
+        fetchData(`${API_URL}/entrada_salida/visitantes/entrada_salida`)
+            .then(fetchedData => {
+                console.log(fetchedData)
+
+                setLoading(false)
+                const dataProcesado = fetchedData.map((item: any) => {
+                    console.log(dayjs(item.fecha).format('DD/MM/YYYY'))
+                    return ({
+                        id: item.id,
+                        visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
+                        fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
+                        hora: dayjs(item.fecha).format('HH:mm'),
+                        observacion: item.observacion ? item.observacion : 'N/D',
+                        ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
+                        tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
+                    })
+                })
+                setData(dataProcesado);
+                /*console.log(dataProcesado)
+                // TODO: veritifcar porque hace problema typescript aca
+                setData(dataProcesado);
+                setLoading(false)*/
+            });
+
+    }, []);
+
+    const handleFitros = (value: any) => {
+        // console.log(value)
+        setFilterData(value)
+    }
+
+    useEffect(() => {
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
@@ -78,65 +119,82 @@ export default function Ppl() {
 
     }
 
-    
-    // Se ejectua ni bien se monta el componente para luego llamara fecthcData
-    useEffect(() => {
-        fetchData(`${API_URL}/entrada_salida/visitantes/entrada_salida`)
-            .then(fetchedData => {
-                console.log(fetchedData)
 
-                setLoading(false)
-                const dataProcesado = fetchedData.map((item:any)=> {
-                    console.log(item.hora);
-                    return ({
-                        id: item.id,
-                        visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
-                        fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
-                        hora: item.hora,
-                        tipo_visita: item.visita_privada ? "Visita Privada" : "Visita Normal",
-                        observacion: item.observacion ? item.observacion : 'N/D',
-                        ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
-                        tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
-                    })
-                })
-                setData(dataProcesado);
-                /*console.log(dataProcesado)
-                // TODO: veritifcar porque hace problema typescript aca
-                setData(dataProcesado);
-                setLoading(false)*/
-            });
+    const listaDeItemBread = [
+        {nombre: 'Lista de visitas', url: '/', lastItem: true},
+    ];
 
-    }, []);
 
-    const handleFitros = (value: any) => {
-        // console.log(value)
-        setFilterData(value)
+    if (status === 'loading') {
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
     }
 
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     // @ts-ignore
     if (loading) {
         return (
-            <Box sx={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '75vh',
-            }}>
-                <CircularProgress/>
+            <Box>
+
+                <TituloComponent titulo='Lista de visitas'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
+                </TituloComponent>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+                    <CircularProgress/>
+                </Box>
             </Box>
         );
     }
 
     return (
         <>
-            { data.length > 0 ?
+            {data.length > 0 ?
                 (
-                    <Box >
-                        <TituloComponent titulo='Lista de visitas' url='/' />
+                    <Box>
 
-                        <Box mt={3}>
+                        <TituloComponent titulo='Lista de visitas'>
+                            <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
+                        </TituloComponent>
+                        <Box mt={4} component={Paper}>
                             <CustomTable
                                 showId={false}
                                 headers={header2}
@@ -151,18 +209,18 @@ export default function Ppl() {
                         </Box>
 
 
-
-                        <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
+                        <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData}
+                                      metodo={handleDeleteRecord}/>
                     </Box>
                 )
                 : (
-                <>
-                    <TituloComponent titulo='Lista de visitas' url='/' />
-                    <Box sx={{}}>
-                        <NoDataBox />
-                    </Box>
-                </>
-                ) }
+                    <>
+                        <TituloComponent titulo='Lista de visitas' url='/'/>
+                        <Box sx={{}}>
+                            <NoDataBox/>
+                        </Box>
+                    </>
+                )}
 
         </>
     )

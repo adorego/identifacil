@@ -1,6 +1,6 @@
 'use client'
 
-import {Box, Grid, Typography} from "@mui/material";
+import {Box, CircularProgress, Grid, Typography} from "@mui/material";
 import * as React from "react";
 import {PeopleAlt, VerifiedUser, SyncAlt, WorkHistory} from "@mui/icons-material";
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
@@ -8,6 +8,7 @@ import CardReport from "@/components/blocks/cardReport";
 import CheckEstablecimiento from "@/app/(sistema)/informes/components/checkEstablecimientos";
 import EstablecimientoBox from "@/app/(sistema)/informes/components/EstablecimientoBox";
 import {useEffect, useState} from "react";
+import {signIn, useSession} from "next-auth/react";
 
 const styles = {
     databox: {
@@ -40,9 +41,15 @@ const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 
 export default function Page() {
-
-
     const [datosCondenados, setDatosCondenados] = useState<any>({})
+    const { data: session, status } = useSession();
+
+    useEffect(() => {
+
+        if (status === 'unauthenticated') {
+            signIn();
+        }
+    }, [status]);
 
     useEffect(() => {
         fetch(`${API_URL}/datos_penales/condenados_procesados`).then((res)=>{
@@ -56,6 +63,47 @@ export default function Page() {
 
     }, []);
 
+
+
+
+    if (status === 'loading') {
+        return(
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        <CircularProgress/>
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
+
+    if (!session) {
+        signIn();
+        return (
+            <div>
+                <Box sx={{
+                    display: 'flex',
+                    width: '100%',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '75vh',
+                }}>
+
+                    <Box>
+                        Regirigiendo...
+                    </Box>
+                </Box>
+            </div>
+        )
+    }
 
     // @ts-ignore
     return (
