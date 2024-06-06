@@ -25,17 +25,15 @@ export default function SessionWatcher(permisos: Array<String> = [], rol: string
         const datos_sesion : any = {...session}
         // Para encontrar si el permiso existe dentro del array
         // @ts-ignore
-        console.log(datos_sesion.roles[0]?.permisos.map((item:any)=> item.nombre).includes('Crear rol'))
+        // console.log(datos_sesion.roles[0]?.permisos.map((item:any)=> item.nombre).includes('Crear rol'))
 
-        console.log(datos_sesion.roles[0])
+        console.log(datos_sesion)
         // console.log(session)
         if (status === 'unauthenticated') {
             signIn();
         }
 
-        if (datos_sesion.roles[0].nombre !== rol){
-            router.push('/ppl');
-        }
+
 
 
     }, [status]);
