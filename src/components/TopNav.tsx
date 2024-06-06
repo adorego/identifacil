@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {Avatar, Button, Tooltip} from "@mui/material";
+import {Avatar, Button, Divider, ListItemIcon, ListItemText, MenuList, Stack, Tooltip} from "@mui/material";
 import {alpha, styled} from '@mui/material/styles';
 
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -21,10 +21,11 @@ import SearchIcon from '@mui/icons-material/Search';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import styles from "./TopNav.module.css";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useGlobalContext} from "@/app/Context/store";
 import Link from "next/link";
-import { signOut } from 'next-auth/react';
+import {signOut, useSession} from 'next-auth/react';
+import {Logout, Power, PowerOff, PowerSettingsNew} from "@mui/icons-material";
 
 const Search = styled('div')(({theme}) => ({
     position: 'relative',
@@ -71,10 +72,25 @@ const settings = ['Cerrar sesión'];
 export default function TopNav() {
 
     const {sidebarStatus, setSidebarStatus} = useGlobalContext();
+    const {data: session, status} = useSession();
 
-    useEffect(()=>{
+    const [stateSession, setStateSession] = useState({
+        nombre: '',
+        apellido: '',
+    });
+    useEffect(() => {
         setSidebarStatus(!sidebarStatus);
-    },[])
+
+    }, [])
+
+    useEffect(() => {
+
+        if (session) {
+            // @ts-ignore
+            setStateSession(session)
+        }
+    }, [session])
+
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -113,8 +129,9 @@ export default function TopNav() {
         setAnchorElUser(null);
     };
 
-    const handleCerrarSesion = () =>{
-        signOut({ callbackUrl: '/login' })
+    const handleCerrarSesion = () => {
+        handleCloseUserMenu()
+        signOut({callbackUrl: '/login'})
     }
 
     const menuId = 'primary-search-account-menu';
@@ -202,7 +219,7 @@ export default function TopNav() {
                         color: '#000',
                         boxShadow: 'none',
                         borderBottom: '1px solid #E2E8F0'
-                    }} >
+                    }}>
                 <Toolbar>
                     {/*<Search>
                         <SearchIconWrapper>
@@ -233,7 +250,7 @@ export default function TopNav() {
                     <Box sx={{flexGrow: 0}} mx={2}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{p: 0}}>
-                                 <Avatar alt="Remy Sharp" src='https://ui-avatars.com/api/?font-size=0.33' />
+                                <Avatar alt="Remy Sharp" src={`https://ui-avatars.com/api/?background=c9f1d4&color=263238&bold=true&font-size=0.33&name=${stateSession.nombre}+${stateSession.apellido}`}/>
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -252,12 +269,26 @@ export default function TopNav() {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
+                            <MenuList dense sx={{py: 0, width: '180px'}}>
 
-                                <MenuItem  onClick={handleCloseUserMenu}>
-                                    <Button variant='text' onClick={handleCerrarSesion}>
-                                        <Typography textAlign="center">Cerrar sesión</Typography>
-                                    </Button>
+                                <Box p={1}>
+                                    <ListItemText sx={{px: 1}}>
+                                        {stateSession.nombre + ' ' + stateSession.apellido}
+                                    </ListItemText>
+                                </Box>
+
+                                <Divider/>
+                                <MenuItem onClick={handleCerrarSesion} sx={{px: 2}}>
+
+                                    <Typography
+                                        variant='inherit'
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            color: 'rgb(255, 86, 48)'
+                                        }}
+                                    >Cerrar sesión</Typography>
                                 </MenuItem>
+                            </MenuList>
 
                         </Menu>
                     </Box>
