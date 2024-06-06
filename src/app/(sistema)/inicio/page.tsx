@@ -65,9 +65,13 @@ export default function Main() {
         )
     }
 
+
     return (
         <Suspense fallback={<Loading/>}>
-            <SessionWatcher permisos={['ver-inicio']} rol='administrador'/>
+            <SessionWatcher
+                // @ts-ignore
+                permisos={['ver-inicio']}
+                rol='administrador'/>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <h1>Panel </h1>
