@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import * as React from "react";
+import SessionWatcher from "@/components/sessionWatcher";
 
 export default function Main() {
     const { data: session, status } = useSession();
@@ -66,9 +67,10 @@ export default function Main() {
 
     return (
         <Suspense fallback={<Loading/>}>
+            <SessionWatcher permisos={['ver-inicio']} rol='administrador'/>
             <Grid container spacing={2}>
                 <Grid item xs={12}>
-                    <h1>Panel</h1>
+                    <h1>Panel </h1>
 
                 </Grid>
                 <CardBlock name={'Accesos PPL'}  image={ingresosIMG.src} link='/inicio/registro/ppl'/>
