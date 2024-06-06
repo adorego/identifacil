@@ -10,14 +10,9 @@ import {useEffect, useState} from "react";
 
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
-import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
-import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
-import {deleteRecord} from "@/app/api";
-import {useGlobalContext} from "@/app/Context/store";
-import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
-import NoDataBox from "@/components/loadingScreens/noDataBox";
+
 import dayjs from "dayjs";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import {signIn, useSession} from "next-auth/react";
@@ -34,7 +29,7 @@ const header2 = [
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Ppl() {
-    const {openSnackbar} = useGlobalContext();
+
     const [data, setData] = useState(null);
     const [filterData, setFilterData] = useState(null);
     const { data: session, status } = useSession();

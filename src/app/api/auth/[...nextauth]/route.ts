@@ -90,7 +90,7 @@ const handler = NextAuth({
         },
         // @ts-ignore
         async session({ session, token }) {
-                console.log('experimento3 ', token)
+
             return {
                 ...session,
                 ...token,

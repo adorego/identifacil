@@ -8,7 +8,6 @@ import {
     CircularProgress,
     FormControl, FormHelperText,
     Grid,
-    IconButton,
     InputLabel,
     MenuItem,
     Modal,
@@ -18,30 +17,23 @@ import {
     Typography,
 } from '@mui/material';
 import {
-    Medidas,
-    Motivo,
-    PPLType,
-    TrasladoForm,
-    Vehiculo,
     pplTraslado
 } from "@/components/utils/movimientosType"
 import React, {useEffect, useState} from 'react';
-import {fetchData, fetchFormData, postEntity, postForm} from "@/components/utils/utils";
+import {fetchData} from "@/components/utils/utils";
 
 import CustomTable from "@/components/CustomTable";
-import {Add, FileUploadOutlined} from "@mui/icons-material";
+import {Add} from "@mui/icons-material";
 import {SelectChangeEvent} from '@mui/material/Select';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from 'next/navigation';
-import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+import { LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
-import {api_request, RequestResponse} from "@/lib/api-request";
-import {NacionalidadesDTO} from "@/model/nacionalidad.model";
-import {EstadoCivilDTO} from "@/model/estadoCivil.model";
+
 import {MuiFileInput} from "mui-file-input";
 import Link from "next/link";
 import {signIn, useSession} from "next-auth/react";
@@ -91,7 +83,7 @@ const medidaFuerzaInitial = {
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
-const URL_ENDPOINT = `${API_URL}/movimientos/motivos_de_traslado`;
+
 
 const registroInitial = {fecha_consulta: dayjs(), diagnostico: '', file: null}
 
@@ -228,7 +220,7 @@ export default function Page({params}: { params: { id: number | string } }) {
 
             // TODO: Armar logica de post
             // TODO: Agregar PPL Agregado en el autocomplete
-            // console.log(personasSeleccionadas)
+
             const state_procesado = {
                 ...stateMedidasDeFuerza,
                 ppl: personasSeleccionadas ? personasSeleccionadas.id_persona : null,

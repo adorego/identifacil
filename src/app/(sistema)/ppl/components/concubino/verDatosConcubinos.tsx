@@ -151,9 +151,11 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                                      data={stateListaConyuges}
                         />
                         :
-                        (<Alert variant="standard" severity="info">
-                            No hay concubinos anteriores en este momento.
-                        </Alert>)
+                        (
+                            <Alert variant="standard" severity="info">
+                                No hay concubinos anteriores en este momento.
+                            </Alert>
+                        )
                     }
                 </Grid>
             </Grid>

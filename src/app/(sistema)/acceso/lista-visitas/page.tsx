@@ -10,7 +10,6 @@ import {useEffect, useState} from "react";
 
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../components/CustomTable";
-import FiltrosTables from "@/app/(sistema)/movimientos/components/filtrosTables";
 import ModalBorrado from "@/components/modal/ModalBorrado";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
@@ -54,30 +53,24 @@ export default function Ppl() {
 
                 setLoading(false)
                 const dataProcesado = fetchedData.map((item: any) => {
-                    console.log(dayjs(item.fecha).format('DD/MM/YYYY'))
+                    console.log('control de fecha ', dayjs(item.fecha).format('HH:mm'))
                     return ({
                         id: item.id,
                         visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
                         fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
-                        hora: dayjs(item.fecha).format('HH:mm'),
+                        hora: item.hora,
                         observacion: item.observacion ? item.observacion : 'N/D',
                         ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
-                        tipo: item.tipo == 0 ? 'Entrada' : 'Salida'
+                        tipo: item.tipo == 0 ? 'Entrada' : 'Salida',
+                        tipo_visita: item.visita_privada ? "Visita Privada" : "Visita transitoria"
                     })
                 })
                 setData(dataProcesado);
-                /*console.log(dataProcesado)
-                // TODO: veritifcar porque hace problema typescript aca
-                setData(dataProcesado);
-                setLoading(false)*/
+
             });
 
     }, []);
 
-    const handleFitros = (value: any) => {
-        // console.log(value)
-        setFilterData(value)
-    }
 
     useEffect(() => {
         if (status === 'unauthenticated') {
@@ -123,7 +116,6 @@ export default function Ppl() {
     const listaDeItemBread = [
         {nombre: 'Lista de visitas', url: '/', lastItem: true},
     ];
-
 
     if (status === 'loading') {
         return (
@@ -226,4 +218,4 @@ export default function Ppl() {
     )
 }
 
-const trasladosDummy = reclsusosData();
+
