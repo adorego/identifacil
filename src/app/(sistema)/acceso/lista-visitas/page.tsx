@@ -20,7 +20,8 @@ import NoDataBox from "@/components/loadingScreens/noDataBox";
 import dayjs from "dayjs";
 import {signIn, useSession} from "next-auth/react";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
-
+import utc from "dayjs/plugin/utc";
+dayjs.extend(utc);
 const header2 = [
     {id: 'id', label: 'ID'},
     {id: 'visitante', label: 'Apellido, Nombre'},
@@ -35,7 +36,7 @@ const header2 = [
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
-export default function Ppl() {
+export default function Page() {
     const [data, setData] = useState<any>([]);
     const [filterData, setFilterData] = useState(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -53,11 +54,11 @@ export default function Ppl() {
 
                 setLoading(false)
                 const dataProcesado = fetchedData.map((item: any) => {
-                    console.log('control de fecha ', dayjs(item.fecha).format('HH:mm'))
+                    console.log('control de fecha ', `${item.id} ${dayjs(item.fecha).utc().format('DD/MM/YYYY')}`)
                     return ({
                         id: item.id,
                         visitante: `${item.nombre_visita}, ${item.apellido_visita}`,
-                        fecha: dayjs(item.fecha).format('DD/MM/YYYY'),
+                        fecha: dayjs(item.fecha).utc().format('DD/MM/YYYY'),
                         hora: item.hora,
                         observacion: item.observacion ? item.observacion : 'N/D',
                         ppl_que_visito: `${item.apellido_ppl}, ${item.nombre_ppl} `,
@@ -188,7 +189,7 @@ export default function Ppl() {
                         </TituloComponent>
                         <Box mt={4} component={Paper}>
                             <CustomTable
-                                showId={false}
+                                showId={true}
                                 headers={header2}
                                 data={data}
                                 deleteRecord={handleOpenModal}
