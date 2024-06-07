@@ -50,7 +50,7 @@ const handler = NextAuth({
                 if (res.ok) {
                     // const decoded = await decode(user.access_token);
                     const decoded : tokenLoginType = jwtDecode(user.access_token)
-
+                    console.log('decoded_token en route.ts', decoded)
 
                     return {
                         id: decoded.sub.toString(),
@@ -78,6 +78,7 @@ const handler = NextAuth({
     },
     callbacks: {
         async jwt({ token, user }) {
+            console.log('token param en callback', token);
             const cookieStore = cookies();
             const newtoken = cookieStore.get('next-auth.session-token')?.value
             const tokenDecoded = await decode({
@@ -85,8 +86,9 @@ const handler = NextAuth({
                 secret: process.env.NEXTAUTH_SECRET as string,
             });
 
+            console.log('token param en callback', token);
 
-            return {...tokenDecoded, ...user};
+            return {...tokenDecoded, ...user, ...token};
         },
         // @ts-ignore
         async session({ session, token }) {
