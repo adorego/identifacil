@@ -88,7 +88,7 @@ const handler = NextAuth({
 
             console.log('token param en callback', token);
 
-            return {...tokenDecoded, ...user, ...token};
+            return {...user, ...token};
         },
         // @ts-ignore
         async session({ session, token }) {
