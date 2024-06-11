@@ -107,6 +107,9 @@ export default function FormMotivoDeMedidasDeFuerza({params} : { params: { id: n
                 openSnackbar(message, 'success');
                 router.push('/sistema/motivos-de-medida-de-fuerza');
             } else {
+                if(response.status === 524){
+                    openSnackbar('El nombre de este motivo de medida de fuerza ya existe', 'error');
+                }
                 throw new Error('Error en la petición');
             }
         } catch (error) {

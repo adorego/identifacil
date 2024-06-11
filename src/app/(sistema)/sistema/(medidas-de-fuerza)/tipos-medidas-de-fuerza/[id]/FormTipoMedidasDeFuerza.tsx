@@ -97,6 +97,8 @@ export default function FormTipoMedidasDeFuerza({params} : { params: { id: numbe
             });
 
             setLoading(false);
+            console.log('Step: ' + 0)
+            console.log(response)
             if (response.ok) {
                 // @ts-ignore
                 const message = isEditMode ?
@@ -105,11 +107,16 @@ export default function FormTipoMedidasDeFuerza({params} : { params: { id: numbe
                 openSnackbar(message, 'success');
                 router.push('/sistema/tipos-medidas-de-fuerza');
             } else {
-                throw new Error('Error en la petición');
+                if(response.status){
+                    openSnackbar('Este tipo de medida de fuerza ya existe', 'error');
+                    throw new Error(`Error en la petición: ${response.status}`);
+                }
+
             }
         } catch (error) {
             setLoading(false);
-            console.error('Error:', error);
+            console.log('Error:', 2);
+            // openSnackbar(error, 'error');
         }
     };
 
