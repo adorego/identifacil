@@ -38,13 +38,13 @@ export default function Ppl() {
     useEffect(() => {
         fetchData(`${API_URL}/medida_de_fuerza`)
             .then(fetchedData => {
-                console.log(fetchedData)
+                // console.log(fetchedData)
                 const data_procesado = fetchedData.map((item: any) => ({
                     fecha_inicio: item.fecha_inicio ? dayjs(item.fecha_inicio).format('DD/MM/YYYY') : 'N/D',
-                    fecha_fin: item.fecha_inicio ? dayjs(item.fecha_fin).format('DD/MM/YYYY') : 'N/D',
+                    fecha_fin: item.fecha_fin ? dayjs(item.fecha_fin).format('DD/MM/YYYY') : 'N/D',
                     motivo: item.motivo ? item.motivo.nombre : 'N/D',
                     tipo_de_medida_de_fuerza: item.tipo_de_medida_de_fuerza ? item.tipo_de_medida_de_fuerza.nombre : 'N/D',
-                    ppl: item.ppl ? item.ppl.id : 'N/D',
+                    ppl: item.ppl ? (item.ppl.persona.nombre + ' ' + item.ppl.persona.apellido) : 'N/D',
                     id: item.id ? item.id : 'N/D',
                 }))
 

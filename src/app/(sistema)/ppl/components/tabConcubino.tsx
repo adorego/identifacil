@@ -221,7 +221,10 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
         setOpenModal(true)
     };
 
-    const handleCloseModal = () => setOpenModal(false);
+    const handleCloseModal = (event?:object, reason?:string) => {
+        if (reason && reason === "backdropClick") return;
+        setOpenModal(false);
+    }
 
     /* HANDLERS DEL FORM*/
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
