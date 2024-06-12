@@ -3,6 +3,7 @@ import style from "@/app/(sistema)/ppl/components/tabConcubino.module.css";
 import dayjs from "dayjs";
 import CustomTable from "@/components/CustomTable";
 import * as React from "react";
+import {useEffect, useState} from "react";
 
 const header = [
     {id: 'id', label: 'ID'},
@@ -18,8 +19,13 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
     stateConyuge: any,
     stateListaConyuges: any
 }) {
-    console.log(stateConyuge.dias_de_visita)
+    const [vistaDatosConguge, setVistaDatosConguge] = useState<any>({})
 
+    useEffect(() => {
+        if(stateConyuge){
+            setVistaDatosConguge(stateConyuge)
+        }
+    }, [stateConyuge]);
 
     const getDiasDeVisita = (dias: number[]): string[] => {
 
@@ -35,7 +41,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Nombre
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.nombres ? stateConyuge.nombres : 'N/D'}
+                            {vistaDatosConguge.nombres ? vistaDatosConguge.nombres : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -45,7 +51,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Apellido
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.apellidos ? stateConyuge.apellidos : 'N/D'}
+                            {vistaDatosConguge.apellidos ? vistaDatosConguge.apellidos : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -56,7 +62,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Fecha de nacimiento
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.fecha_de_nacimiento ? dayjs(stateConyuge.fecha_de_nacimiento).format('DD/MM/YYYY') : 'N/D'}
+                            {vistaDatosConguge.fecha_de_nacimiento ? dayjs(vistaDatosConguge.fecha_de_nacimiento).format('DD/MM/YYYY') : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -66,7 +72,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Edad
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.edad ? stateConyuge.edad : 'N/D'}
+                            {vistaDatosConguge.edad ? vistaDatosConguge.edad : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -76,7 +82,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Sexo
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.sexo ? stateConyuge.sexo : 'N/D'}
+                            {vistaDatosConguge.sexo ? vistaDatosConguge.sexo : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -87,7 +93,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Dirección actual
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.direccion ? stateConyuge.direccion : 'N/D'}
+                            {vistaDatosConguge.direccion ? vistaDatosConguge.direccion : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -98,7 +104,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Ciudad de residencia
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.lugar_de_nacimiento ? stateConyuge.lugar_de_nacimiento : 'N/D'}
+                            {vistaDatosConguge.lugar_de_nacimiento ? vistaDatosConguge.lugar_de_nacimiento : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -108,7 +114,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Barrio de residencia
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.barrio ? stateConyuge.barrio : 'N/D'}
+                            {vistaDatosConguge.barrio ? vistaDatosConguge.barrio : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -118,7 +124,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Compañia de residencia
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.compania ? stateConyuge.compania : 'N/D'}
+                            {vistaDatosConguge.compania ? vistaDatosConguge.compania : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -129,7 +135,7 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                             Número de contacto
                         </span>
                         <span className={`${style.boldBody}`}>
-                            {stateConyuge.numero_de_contacto ? stateConyuge.numero_de_contacto : 'N/D'}
+                            {vistaDatosConguge.numero_de_contacto ? vistaDatosConguge.numero_de_contacto : 'N/D'}
                         </span>
                     </div>
                 </Grid>
@@ -137,7 +143,9 @@ export default function VerDatosConcubinos({stateConyuge, stateListaConyuges}: {
                     <div className={`${style.formTabsContainerElements}`}>
                         <span className="caption-font">Días de visita</span>
                         <span className={`${style.boldBody}`}>
-                            {getDiasDeVisita(stateConyuge.dias_de_visita).join(", ") || 'N/D'}
+                            {vistaDatosConguge.dias_de_visita &&
+                                (getDiasDeVisita(vistaDatosConguge.dias_de_visita).join(", ") || 'N/D')
+                            }
                         </span>
                     </div>
                 </Grid>

@@ -29,7 +29,6 @@ import {onConsultarRegistroCivil} from "@/components/utils/utils_client";
 import SearchIcon from "@mui/icons-material/Search";
 import {useGlobalContext} from "@/app/Context/store";
 
-
 const styleModal = {
     position: 'absolute' as 'absolute',
     top: '50%',
@@ -41,7 +40,6 @@ const styleModal = {
     boxShadow: 24,
     p: 4,
 };
-
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
@@ -95,7 +93,6 @@ interface stateDiasDeVisitaType {
     Sabado: boolean;
 }
 
-
 const stateDiasDeVisitaInitial = {
     Domingo: false,
     Lunes: false,
@@ -105,7 +102,6 @@ const stateDiasDeVisitaInitial = {
     Viernes: false,
     Sabado: false
 }
-
 
 export default function TabConcubino({id_persona}: { id_persona: number }) {
 
@@ -174,7 +170,6 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
             fetchData();
         }
     }, [id_persona]);
-
 
     useEffect(() => {
 
@@ -663,6 +658,7 @@ export default function TabConcubino({id_persona}: { id_persona: number }) {
                                         fullWidth
                                         label='Barrio de residencia'
                                         name='barrio'
+                                        value={stateConyuge.barrio}
                                         error={!stateConyuge.barrio}
                                         onChange={handleChange}
                                     />
