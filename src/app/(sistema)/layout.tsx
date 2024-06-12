@@ -30,7 +30,7 @@ export default async function RootLayout({children,}: {
 
 
 
-    //console.log('session en layout: ',session)
+    console.log('session en layout: ',session)
     // console.log(session);
 
     if (!session) {

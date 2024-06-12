@@ -74,7 +74,7 @@ export const authOptions = {
     callbacks: {
         // @ts-ignore
         async jwt({ token, user }) {
-            // console.log('token param en callback', token);
+            console.log('token param en callback', token);
             const cookieStore = cookies();
             const newtoken = cookieStore.get('next-auth.session-token')?.value
             const tokenDecoded = await decode({
