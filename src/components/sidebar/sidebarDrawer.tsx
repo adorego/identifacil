@@ -7,7 +7,7 @@ import {
     ExpandLess,
     ExpandMore,
     Fingerprint,
-    Hail,
+    Hail, ManageAccounts,
     Mood, Person,
     Settings
 } from "@mui/icons-material";
@@ -485,6 +485,16 @@ export default function SidebarDrawer()
                         />
                     </List>
                 </Collapse>
+
+
+                {/* ------------------------- Menu de Sistema de Gestion de usuarios ------------------------- */}
+
+                <SidebarItem
+                    icon={<ManageAccounts/>}
+                    label="Gestion de usuarios"
+                    path="/sistema/gestion-de-usuarios"
+                    isActive={pathname === '/sistema/gestion-de-usuarios'}
+                />
 
                 {/*<ListItemButton onClick={() => handleClick('gestionUsuarios')} className={openMenus.gestionUsuarios ? 'active-button' : ''} >
                     <ListItemIcon>

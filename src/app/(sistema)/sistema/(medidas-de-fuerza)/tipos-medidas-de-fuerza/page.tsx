@@ -18,6 +18,7 @@ import {useGlobalContext} from "@/app/Context/store";
 import {reclsusosData} from "@/app/dummyData/data";
 import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -68,6 +69,10 @@ export default function Ppl() {
         setFilterData(value)
     }
 
+    const listaDeItemBread = [
+        {nombre:'Lista de tipo de medidas de fuerza', url:'', lastItem: true},
+    ];
+
     console.log(data)
     if (data == null) {
         return (
@@ -86,16 +91,19 @@ export default function Ppl() {
     return (
         <>
             <Box >
-                <TituloComponent titulo='Tipo de medidas de fuerza' url='/' newEntry='/sistema/tipos-medidas-de-fuerza/crear'/>
 
-                <Box mt={3}>
+                <TituloComponent titulo='Tipo de medidas de fuerza'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
+                <Box mt={4} component={Paper}>
                     <CustomTable
                         showId={true}
                         headers={header2}
                         data={data}
                         deleteRecord={handleOpenModal}
                         options={{
-
+                            title: 'Lista de tipos de medidas de fuerza',
+                            newRecord: '/sistema/tipos-medidas-de-fuerza/crear',
                             targetURL: '/sistema/tipos-medidas-de-fuerza',
                             rowsPerPageCustom: 5,
                             pagination: true,

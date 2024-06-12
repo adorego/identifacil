@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {CircularProgress} from "@mui/material";
+import {CircularProgress, Paper} from "@mui/material";
 import {useEffect, useState} from "react";
 import Box from '@mui/material/Box';
 import CustomTable from "../../../../../components/CustomTable";
@@ -73,7 +73,7 @@ export default function Ppl() {
             <Box >
                 <TituloComponent titulo='Motivos de medidas de fuerza' url='/' newEntry='/sistema/motivos-de-medida-de-fuerza/crear'/>
 
-                <Box mt={3}>
+                <Box mt={4} component={Paper}>
                     <CustomTable
                         showId={true}
                         headers={header2}

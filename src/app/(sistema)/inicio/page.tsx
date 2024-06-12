@@ -13,14 +13,14 @@ import { useRouter } from 'next/router';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import * as React from "react";
-import SessionWatcher from "@/components/sessionWatcher";
+import SessionWatcher from "@/components/authComponents/sessionWatcher";
 
 export default function Main() {
     const { data: session, status } = useSession();
 
 
     useEffect(() => {
-        console.log(session)
+
         if (status === 'unauthenticated') {
             signIn();
         }
@@ -68,10 +68,7 @@ export default function Main() {
 
     return (
         <Suspense fallback={<Loading/>}>
-            <SessionWatcher
-                // @ts-ignore
-                permisos={['ver-inicio']}
-                rol='administrador'/>
+
             <Grid container spacing={2}>
                 <Grid item xs={12}>
                     <h1>Panel </h1>

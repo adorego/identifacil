@@ -9,6 +9,10 @@ import {Inter} from 'next/font/google';
 import SnackbarComponent from "@/components/snackback/SnackBarComponent";
 import ThemeRegistry from "@/../theme/ThemeRegistry";
 import SessionProviderWrapper   from "../../../utils/sessionProviderWrapper";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/authOptions";
+import { redirect } from 'next/navigation';
+import SessionWatcher from "@/components/authComponents/sessionWatcher";
 
 const inter = Inter({subsets: ['latin']});
 
@@ -18,31 +22,47 @@ export const metadata = {
 };
 
 
-export default function RootLayout({children,}: {
-  children: React.ReactNode
+export default async function RootLayout({children,}: {
+    children: React.ReactNode
 }) {
-  
-
-  return (
-      <SessionProviderWrapper>
-          <ThemeRegistry>
-              <html lang="en">
-              <body className={inter.className} suppressHydrationWarning={true}>
-
-
-              <GlobalContextProvider>
-                  <SnackbarComponent />
-                  <AlternateLayout>
-                      {children}
-                  </AlternateLayout>
-              </GlobalContextProvider>
+    // @ts-ignore
+    const session = await getServerSession(authOptions);
 
 
 
-              </body>
-              </html>
-          </ThemeRegistry>
-      </SessionProviderWrapper>
+    //console.log('session en layout: ',session)
+    // console.log(session);
 
-  )
+    if (!session) {
+        // Redirect to the login page if the user is not authenticated
+        redirect('/login');
+    }
+
+
+
+    return (
+        <SessionProviderWrapper>
+            <ThemeRegistry>
+                <html lang="en">
+                <body className={inter.className} suppressHydrationWarning={true}>
+
+
+                <GlobalContextProvider>
+                    <SnackbarComponent/>
+                    <AlternateLayout>
+
+                        <SessionWatcher
+                            // @ts-ignore
+                            sessionData={session.roles}/>
+                        {children}
+                    </AlternateLayout>
+                </GlobalContextProvider>
+
+
+                </body>
+                </html>
+            </ThemeRegistry>
+        </SessionProviderWrapper>
+
+    )
 }
