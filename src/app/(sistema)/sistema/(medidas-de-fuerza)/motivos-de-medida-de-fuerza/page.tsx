@@ -9,6 +9,7 @@ import CustomTable from "../../../../../components/CustomTable";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {fetchData} from "@/components/utils/utils";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 
 const header2 = [
@@ -53,7 +54,11 @@ export default function Ppl() {
         setFilterData(value)
     }
 
-    console.log(data)
+    const listaDeItemBread = [
+        {nombre:'Lista de motivos de medidas de fuerza', url:'', lastItem: true},
+    ];
+
+
     if (data == null) {
         return (
             <Box sx={{
@@ -71,7 +76,10 @@ export default function Ppl() {
     return (
         <>
             <Box >
-                <TituloComponent titulo='Motivos de medidas de fuerza' url='/' newEntry='/sistema/motivos-de-medida-de-fuerza/crear'/>
+                <TituloComponent titulo='Motivos de medidas de fuerza'>
+                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                </TituloComponent>
+
 
                 <Box mt={4} component={Paper}>
                     <CustomTable
@@ -80,7 +88,8 @@ export default function Ppl() {
                         data={data}
                         deleteRecord={handleOpenModal}
                         options={{
-
+                            title: 'Lista de motivos de medidas de fuerza',
+                            newRecord: '/sistema/motivos-de-medida-de-fuerza/crear',
                             targetURL: '/sistema/motivos-de-medida-de-fuerza',
                             rowsPerPageCustom: 5,
                             pagination: true,

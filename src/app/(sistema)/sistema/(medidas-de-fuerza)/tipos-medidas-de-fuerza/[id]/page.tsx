@@ -13,7 +13,7 @@ import FormTipoMedidasDeFuerza
 export default function Page({ params }: { params: { id: number } }) {
     const URL_PARAM : string = `${process.env.NEXT_PUBLIC_API_URL}/movimientos/tipo_de_medida_de_fuerza/${params.id}`;
     const listaDeMigajas = [
-        {nombre:'Lista de medidas de seguridad', url:'/sistema/tipo_de_medida_de_fuerza', lastItem: false},
+        {nombre:'Lista de medidas de seguridad', url:'/sistema/tipos-medidas-de-fuerza/', lastItem: false},
         {nombre:'Tipo de medida de fuerza', url:'', lastItem: true},
     ];
 

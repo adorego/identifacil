@@ -97,8 +97,7 @@ export default function FormTipoMedidasDeFuerza({params} : { params: { id: numbe
             });
 
             setLoading(false);
-            console.log('Step: ' + 0)
-            console.log(response)
+
             if (response.ok) {
                 // @ts-ignore
                 const message = isEditMode ?
