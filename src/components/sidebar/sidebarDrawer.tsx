@@ -23,6 +23,8 @@ import SelectorEstablecimiento from "@/components/sidebar/SelectorEstablecimient
 import {useGlobalContext} from "@/app/Context/store";
 import UserNotification from "@/components/notiification/UserNotification";
 import AuthStatus from "@/components/authStatus";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
+import {useSession} from "next-auth/react";
 
 const drawerWidth = 279;
 
@@ -91,7 +93,7 @@ export default function SidebarDrawer()
         gestionUsuarios: false,
         medidasDeFuerza: false,
     });
-
+    const { data: session } : {data:any; } = useSession();
     const pathname = usePathname()
 
     const handleClick = (menu: OpenMenusKeys) => {
@@ -155,103 +157,129 @@ export default function SidebarDrawer()
 
 
                 {/* <ListItem disablePadding> */}
-                <ListItemButton onClick={() => handleClick('registroAccesos')} className={openMenus.registroAccesos ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Fingerprint/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Accesos PPL'} hidden={false}/>
-                    {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
+                {PermissionValidator('ver_accesos_ppl', session) &&
+                (<>
+                    <ListItemButton onClick={() => handleClick('registroAccesos')} className={openMenus.registroAccesos ? 'active-button' : ''} >
+                        <ListItemIcon>
+                            <Fingerprint/>
+                        </ListItemIcon>
+                        <ListItemText primary={'Accesos PPL'} hidden={false}/>
+                        {openMenus.registroAccesos ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemButton>
+                </>)}
+                    <Collapse in={openMenus.registroAccesos} timeout="auto" unmountOnExit>
+                        <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                            {PermissionValidator('registrar_ppl', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Registro PPL"
+                                path="/inicio/registro/ppl"
+                                isActive={pathname === '/inicio/registro/ppl'}
+                            />
+                            }
 
-                <Collapse in={openMenus.registroAccesos} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Registro PPL"
-                            path="/inicio/registro/ppl"
-                            isActive={pathname === '/inicio/registro/ppl'}
-                        />
-                        
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Entrada/Salida PPL"
-                            path="/acceso/entrada-salida-ppl"
-                            isActive={pathname === '/acceso/entrada-salida-ppl'}
-                        />
-                        
-                        
-                    </List>
-                </Collapse>
+                            {PermissionValidator('entrada_salida_ppl', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Entrada/Salida PPL"
+                                path="/acceso/entrada-salida-ppl"
+                                isActive={pathname === '/acceso/entrada-salida-ppl'}
+                            />}
 
-                <ListItemButton onClick={() => handleClick('visitantes')} className={openMenus.visitantes ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Hail/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Visitante'} hidden={false}/>
-                    {openMenus.visitantes ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
 
-                <Collapse in={openMenus.visitantes} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Registro Visitante"
-                            path="/inicio/registro/visitante"
-                            isActive={pathname === '/inicio/registro/visitante'}
-                        />
-                        
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Entrada/Salida Visitante"
-                            path="/acceso/entrada-salida-visitante"
-                            isActive={pathname === '/acceso/entrada-salida-visitante'}
-                        />
+                        </List>
+                    </Collapse>
 
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Lista de visitas"
-                            path="/acceso/lista-visitas"
-                            isActive={pathname === '/acceso/lista-visitas'}
-                        />
-                        
-                    </List>
-                </Collapse>
+
+                {/* Menu visitante */}
+                {PermissionValidator('ver_visitante', session) &&
+                <>
+                    <ListItemButton onClick={() => handleClick('visitantes')} className={openMenus.visitantes ? 'active-button' : ''} >
+                        <ListItemIcon>
+                            <Hail/>
+                        </ListItemIcon>
+                        <ListItemText primary={'Visitante'} hidden={false}/>
+                        {openMenus.visitantes ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemButton>
+                </>}
+                    <Collapse in={openMenus.visitantes} timeout="auto" unmountOnExit>
+                        <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+
+                            {PermissionValidator('registro_visitante', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Registro Visitante"
+                                path="/inicio/registro/visitante"
+                                isActive={pathname === '/inicio/registro/visitante'}
+                            />
+                            }
+
+                            {PermissionValidator('entrada_salida_visitante', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Entrada/Salida Visitante"
+                                path="/acceso/entrada-salida-visitante"
+                                isActive={pathname === '/acceso/entrada-salida-visitante'}
+                            />
+                            }
+
+                            {PermissionValidator('lista_visitas', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Lista de visitas"
+                                path="/acceso/lista-visitas"
+                                isActive={pathname === '/acceso/lista-visitas'}
+                            />
+                            }
+
+                        </List>
+                    </Collapse>
+
 
                 {/* Menu de PPL */}
-                <SidebarItem
-                    icon={<Mood/>}
-                    label="PPL"
-                    path="/ppl"
-                    isActive={pathname === '/ppl'}
-                />
-
+                {PermissionValidator('ver_ppl', session) &&
+                    <SidebarItem
+                        icon={<Mood/>}
+                        label="PPL"
+                        path="/ppl"
+                        isActive={pathname === '/ppl'}
+                    />
+                }
 
                 {/* ------------------------- Menu gestion ppl ------------------------- */}
-                 <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Person />
-                    </ListItemIcon>
-                    <ListItemText primary={'Gestion PPL'} hidden={false}/>
-                    {openMenus.gestionPPl ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
-                <Collapse in={openMenus.gestionPPl} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Medidas de fuerza"
-                            path="/gestion-ppl/medidas-de-fuerza"
-                            isActive={pathname === '/gestion-ppl/medidas-de-fuerza'}
-                        />
-                        {/*<SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Faltas y sanciones"
-                            path="/gestion-ppl/faltas"
-                            isActive={pathname === '/gestion-ppl/faltas'}
-                        />*/}
+                {PermissionValidator('ver_gestion_pl', session) &&
+                 (<>
+                     <ListItemButton onClick={() => handleClick('gestionPPl')} className={openMenus.gestionPPl ? 'active-button' : ''} >
+                        <ListItemIcon>
+                            <Person />
+                        </ListItemIcon>
+                        <ListItemText primary={'Gestion PPL'} hidden={false}/>
+                        {openMenus.gestionPPl ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemButton>
+                     </>
+                 )}
+                    <Collapse in={openMenus.gestionPPl} timeout="auto" unmountOnExit>
+                        <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                            {PermissionValidator('ver_medidas_de_fuerza', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Medidas de fuerza"
+                                path="/gestion-ppl/medidas-de-fuerza"
+                                isActive={pathname === '/gestion-ppl/medidas-de-fuerza'}
+                            />
+                            }
 
-                    </List>
-                </Collapse>
+                            {/*<SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Faltas y sanciones"
+                                path="/gestion-ppl/faltas"
+                                isActive={pathname === '/gestion-ppl/faltas'}
+                            />*/}
+
+                        </List>
+                    </Collapse>
+
+
 
                 {/*<SidebarItem
                             icon={<AirportShuttle />}
@@ -261,273 +289,231 @@ export default function SidebarDrawer()
                         />*/}
 
                 {/* ------------------------- Menu Penales ------------------------- */}
-                <ListItemButton onClick={() => handleClick('datosPenales')} className={openMenus.datosPenales ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <AccountBalance/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Datos penales'} hidden={false}/>
-                    {openMenus.datosPenales ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
+                {PermissionValidator('ver_datos_penales', session) &&
+                    <>
+                        <ListItemButton onClick={() => handleClick('datosPenales')} className={openMenus.datosPenales ? 'active-button' : ''} >
+                            <ListItemIcon>
+                                <AccountBalance/>
+                            </ListItemIcon>
+                            <ListItemText primary={'Datos penales'} hidden={false}/>
+                            {openMenus.datosPenales ? <ExpandLess/> : <ExpandMore/>}
+                        </ListItemButton>
+                    </>
+                }
+                        <Collapse in={openMenus.datosPenales} timeout="auto" unmountOnExit>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                {PermissionValidator('ver_expedientes', session) &&
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Expedientes"
+                                    path="/expedientes"
+                                    isActive={pathname === '/expedientes'}
+                                />
+                                }
+                            </List>
+                            {/*<List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Audiencias"
+                                    path="/audiencias"
+                                    isActive={pathname === '/audiencias'}
+                                />
+                            </List>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                <SidebarItem
+                                    icon={<Settings/>}
+                                    label="Libertades"
+                                    path="/libertades"
+                                    isActive={pathname === '/libertades'}
+                                />
+                            </List>*/}
+                        </Collapse>
 
-                <Collapse in={openMenus.datosPenales} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Expedientes"
-                            path="/expedientes"
-                            isActive={pathname === '/expedientes'}
-                        />
-                    </List>
-                    {/*<List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<Settings/>}
-                            label="Audiencias"
-                            path="/audiencias"
-                            isActive={pathname === '/audiencias'}
-                        />
-                    </List>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<Settings/>}
-                            label="Libertades"
-                            path="/libertades"
-                            isActive={pathname === '/libertades'}
-                        />
-                    </List>*/}
-                </Collapse>
 
                 {/* ------------------------- Menu Movimientos ------------------------- */}
-                <ListItemButton onClick={() => handleClick('movimientos')} className={openMenus.movimientos ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <AirportShuttle/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Movimientos'} hidden={false}/>
-                    {openMenus.movimientos ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
+                {PermissionValidator('ver_movimientos', session) &&
+                    <>
+                        <ListItemButton onClick={() => handleClick('movimientos')} className={openMenus.movimientos ? 'active-button' : ''} >
+                            <ListItemIcon>
+                                <AirportShuttle/>
+                            </ListItemIcon>
+                            <ListItemText primary={'Movimientos'} hidden={false}/>
+                            {openMenus.movimientos ? <ExpandLess/> : <ExpandMore/>}
+                        </ListItemButton>
+                    </>}
+                        <Collapse in={openMenus.movimientos} timeout="auto" unmountOnExit>
+                            <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                                {PermissionValidator('ver_traslados', session) &&
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Traslados"
+                                    path="/movimientos/traslados"
+                                    isActive={pathname === '/movimientos/traslados'}
+                                />
+                                }
+                                {/*<SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Salidas especiales"
+                                    path="/movimientos/salidasEspeciales"
+                                    isActive={pathname === '/movimientos/salidasEspeciales'}
+                                />
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Salidas Transitorias"
+                                    path="/movimientos/salidasTransitorias"
+                                    isActive={pathname === '/movimientos/salidasTransitorias'}
+                                />
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Movimiento interno"
+                                    path="/movimientos/movimiento-interno"
+                                    isActive={pathname === '/movimientos/movimiento-interno'}
+                                />
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Bajas"
+                                    path="/movimientos/bajas"
+                                    isActive={pathname === '/movimientos/bajas'}
+                                />*/}
 
-                <Collapse in={openMenus.movimientos} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Traslados"
-                            path="/movimientos/traslados"
-                            isActive={pathname === '/movimientos/traslados'}
-                        />
-                        {/*<SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Salidas especiales"
-                            path="/movimientos/salidasEspeciales"
-                            isActive={pathname === '/movimientos/salidasEspeciales'}
-                        />
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Salidas Transitorias"
-                            path="/movimientos/salidasTransitorias"
-                            isActive={pathname === '/movimientos/salidasTransitorias'}
-                        />
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Movimiento interno"
-                            path="/movimientos/movimiento-interno"
-                            isActive={pathname === '/movimientos/movimiento-interno'}
-                        />
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Bajas"
-                            path="/movimientos/bajas"
-                            isActive={pathname === '/movimientos/bajas'}
-                        />*/}
+                            </List>
+                        </Collapse>
 
-                    </List>
-                </Collapse>
+                        {/* Menu de Reportes */}
+                        {PermissionValidator('ver_informes', session) &&
+                            <SidebarItem
+                                icon={<BarChart/>}
+                                label="Informes"
+                                path="/informes"
+                                isActive={pathname === '/informes'}
+                            />
+                        }
 
-                {/* Menu de Reportes */}
-                <SidebarItem
-                    icon={<BarChart/>}
-                    label="Informes"
-                    path="/informes"
-                    isActive={pathname === '/informes'}
-                />
-
-                {/* Menu de Bloqueados */}
-                {/* <ListItemButton disabled>
-                    <ListItemIcon>
-                        <Hail/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Gestión de Visitas'} hidden={false}/>
-
-                </ListItemButton> */}
-
-{/*                <ListItemButton disabled>
-                    <ListItemIcon>
-                        <AccountBalance/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Defensoría'} hidden={false}/>
-                </ListItemButton>
-
-                <ListItemButton disabled>
-                    <ListItemIcon>
-                        <Key/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Autorizaciones'} hidden={false}/>
-                </ListItemButton>*/}
 
                 {/* ------------------------- Menu de Sistema ------------------------- */}
-                {open ? <Typography variant='overline' display="block" align="left" pl='16px'>
-                    Sistema
-                </Typography> : ''
-
+                {PermissionValidator('ver_menu_sistemas', session) &&
+                    (open ? <Typography variant='overline' display="block" align="left" pl='16px'>
+                        Sistema
+                    </Typography> : '')
                 }
 
-                {/*<ListItemButton onClick={() => handleClick('sistema')} className={openMenus.sistema ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Settings/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Sistema'} hidden={false}/>
-                    {openMenus.sistema ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
-
-                <Collapse in={openMenus.sistema} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Camaras"
-                            path="/sistema/camaras"
-                            isActive={pathname === '/sistema/camaras'}
-                        />
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Roles"
-                            path="/sistema/roles"
-                            isActive={pathname === '/sistema/roles'}
-                        />
-
-                    </List>
-                </Collapse>*/}
 
                 {/* ------------------------- Menu de Sistema movimiento------------------------- */}
 
-                <ListItemButton onClick={() => handleClick('datosMovimientos')} className={openMenus.datosMovimientos ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Settings/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Datos de movimientos'} hidden={false}/>
-                    {openMenus.datosMovimientos ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
+                {PermissionValidator('ver_datos_movimientos', session) &&
+                <>
+                    <ListItemButton onClick={() => handleClick('datosMovimientos')} className={openMenus.datosMovimientos ? 'active-button' : ''} >
+                        <ListItemIcon>
+                            <Settings/>
+                        </ListItemIcon>
+                        <ListItemText primary={'Datos de movimientos'} hidden={false}/>
+                        {openMenus.datosMovimientos ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemButton>
+                </>}
+                    <Collapse in={openMenus.datosMovimientos} timeout="auto" unmountOnExit>
 
-                <Collapse in={openMenus.datosMovimientos} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Medidas de seguridad"
-                            path="/sistema/medidas-seguridad"
-                            isActive={pathname === '/sistema/medidas-seguridad'}
-                        />
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Motivos de traslados"
-                            path="/sistema/motivos-traslados"
-                            isActive={pathname === '/sistema/motivos-traslados'}
-                        />
+                        <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                            {PermissionValidator('ver_medidas_de_seguridad', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Medidas de seguridad"
+                                path="/sistema/medidas-seguridad"
+                                isActive={pathname === '/sistema/medidas-seguridad'}
+                            />
+                            }
 
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Custodios"
-                            path="/sistema/personal"
-                            isActive={pathname === '/sistema/personal'}
-                        />
+                            {PermissionValidator('ver_motivos_de_traslados', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Motivos de traslados"
+                                path="/sistema/motivos-traslados"
+                                isActive={pathname === '/sistema/motivos-traslados'}
+                            />
+                            }
 
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Vehiculo"
-                            path="/sistema/vehiculo"
-                            isActive={pathname === '/sistema/vehiculo'}
-                        />
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Choferes"
-                            path="/sistema/choferes"
-                            isActive={pathname === '/sistema/choferes'}
-                        />
+                            {PermissionValidator('ver_custodios', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Custodios"
+                                path="/sistema/personal"
+                                isActive={pathname === '/sistema/personal'}
+                            />
+                            }
+
+                            {PermissionValidator('ver_vehiculo', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Vehiculo"
+                                path="/sistema/vehiculo"
+                                isActive={pathname === '/sistema/vehiculo'}
+                            />
+                            }
+
+                            {PermissionValidator('ver_choferes', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Choferes"
+                                path="/sistema/choferes"
+                                isActive={pathname === '/sistema/choferes'}
+                            />
+                            }
 
 
-                    </List>
-                </Collapse>
+                        </List>
+                    </Collapse>
+
 
 
                 {/* ------------------------- Menu de Sistema de medidas de fuerza ------------------------- */}
+                {PermissionValidator('ver_datos_medidas_de_fuerza', session) &&
+                <>
+                    <ListItemButton onClick={() => handleClick('medidasDeFuerza')} className={openMenus.medidasDeFuerza ? 'active-button' : ''} >
+                        <ListItemIcon>
+                            <Settings/>
+                        </ListItemIcon>
+                        <ListItemText primary={'Medidas de fuerza'} hidden={false}/>
+                        {openMenus.medidasDeFuerza ? <ExpandLess/> : <ExpandMore/>}
+                    </ListItemButton>
+                </>
+                }
+                    <Collapse in={openMenus.medidasDeFuerza} timeout="auto" unmountOnExit>
 
-                <ListItemButton onClick={() => handleClick('medidasDeFuerza')} className={openMenus.medidasDeFuerza ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Settings/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Medidas de fuerza'} hidden={false}/>
-                    {openMenus.medidasDeFuerza ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
+                        <List sx={{marginLeft: "20px"}} component="div" disablePadding>
+                            {PermissionValidator('ver_tipo_de_medidas_de_fuerza', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Tipos medidas de fuerza"
+                                path="/sistema/tipos-medidas-de-fuerza"
+                                isActive={pathname === '/sistema/tipos-medidas-de-fuerza'}
+                            />
+                            }
+                            {PermissionValidator('ver_motivos_de_medida_de_fuerza', session) &&
+                            <SidebarItem
+                                icon={<span className='subIcon'></span>}
+                                label="Motivos"
+                                path="/sistema/motivos-de-medida-de-fuerza"
+                                isActive={pathname === '/sistema/motivos-de-medida-de-fuerza'}
+                            />
+                            }
+                        </List>
+                    </Collapse>
 
-                <Collapse in={openMenus.medidasDeFuerza} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Tipos medidas de fuerza"
-                            path="/sistema/tipos-medidas-de-fuerza"
-                            isActive={pathname === '/sistema/tipos-medidas-de-fuerza'}
-                        />
-                    </List>
-                </Collapse>
-                <Collapse in={openMenus.medidasDeFuerza} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Motivos"
-                            path="/sistema/motivos-de-medida-de-fuerza"
-                            isActive={pathname === '/sistema/motivos-de-medida-de-fuerza'}
-                        />
-                    </List>
-                </Collapse>
 
 
                 {/* ------------------------- Menu de Sistema de Gestion de usuarios ------------------------- */}
 
+                {PermissionValidator('ver_datos_gestion_usuarios', session) &&
                 <SidebarItem
                     icon={<ManageAccounts/>}
                     label="Gestion de usuarios"
                     path="/sistema/gestion-de-usuarios"
                     isActive={pathname === '/sistema/gestion-de-usuarios'}
                 />
+                }
 
-                {/*<ListItemButton onClick={() => handleClick('gestionUsuarios')} className={openMenus.gestionUsuarios ? 'active-button' : ''} >
-                    <ListItemIcon>
-                        <Settings/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Gestion de usuario'} hidden={false}/>
-                    {openMenus.gestionUsuarios ? <ExpandLess/> : <ExpandMore/>}
-                </ListItemButton>
-
-                <Collapse in={openMenus.gestionUsuarios} timeout="auto" unmountOnExit>
-                    <List sx={{marginLeft: "20px"}} component="div" disablePadding>
-                        <SidebarItem
-                            icon={<span className='subIcon'></span>}
-                            label="Roles"
-                            path="/sistema/roles"
-                            isActive={pathname === '/sistema/roles'}
-                        />
-
-                    </List>
-                </Collapse>*/}
-
-                {/* <ListItemButton disabled>
-                    <ListItemIcon>
-                        <ManageAccounts/>
-                    </ListItemIcon>
-                    <ListItemText primary={'Gestión de Funcionarios'} hidden={false}/>
-                </ListItemButton> */}
 
             </List>
-            {/*<Box alignItems='center' justifyContent='center'>
 
-                <AuthStatus />
-            </Box>*/}
         </Drawer>
 
     );

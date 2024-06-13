@@ -15,6 +15,8 @@ export default function Page(){
             <TituloComponent titulo='Gestion de usuarios'>
                 <BreadCrumbComponent listaDeItems={listaDeItemBread} />
             </TituloComponent>
+
+            {/* Vista de Tabla de Usuarios, roles y permisos*/}
             <TableView />
         </>
     )

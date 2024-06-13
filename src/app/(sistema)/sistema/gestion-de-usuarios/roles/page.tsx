@@ -4,8 +4,8 @@ import * as React from 'react';
 
 import {Box, Breadcrumbs, Link, Typography} from "@mui/material";
 
-import CustomTable from "../../../../components/CustomTable";
-import TituloComponent from "../../../../components/titulo/tituloComponent";
+import CustomTable from "../../../../../components/CustomTable";
+import TituloComponent from "../../../../../components/titulo/tituloComponent";
 
 const header2 = [
     {id: 'id', label: 'ID'},

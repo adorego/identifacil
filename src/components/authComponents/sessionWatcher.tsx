@@ -73,6 +73,46 @@ const pageMapping = [
         nombre: 'Informers',
         url: '/informes',
         permission: 'ver_informers',
+    },
+    {
+        nombre: 'Ver medidas de seguridad',
+        url: '/medidas-seguridad',
+        permission: 'ver_medidas_de_seguridad',
+    },
+    {
+        nombre: 'Ver motivos de traslados',
+        url: '/sistema/motivos-traslados',
+        permission: 'ver_motivos_de_traslados',
+    },
+    {
+        nombre: 'Ver Custodiso',
+        url: '/sistema/personal',
+        permission: 'ver_custodios',
+    },
+    {
+        nombre: 'Ver Vehiculos',
+        url: '/sistema/vehiculo',
+        permission: 'ver_vehiculo',
+    },
+    {
+        nombre: 'Ver choferes',
+        url: '/sistema/choferes',
+        permission: 'ver_choferes',
+    },
+    {
+        nombre: 'Ver tipo de medidas de fuerza',
+        url: '/sistema/tipos-medidas-de-fuerza',
+        permission: 'ver_tipo_de_medidas_de_fuerza',
+    },
+    {
+        nombre: 'Ver motivo de medidas de fuerza',
+        url: '/sistema/motivos-de-medida-de-fuerza',
+        permission: 'ver_motivos_de_medida_de_fuerza',
+    },
+    {
+        nombre: 'Ver gestion de usuarios',
+        url: '/sistema/gestion-de-usuarios',
+        permission: 'ver_gestion_de_usuarios',
     }
 ]
 
@@ -91,7 +131,7 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     const pathname = usePathname();
 
     useEffect(() => {
-        //console.log(sessionData)
+        console.log(sessionData)
         if(sessionData){
 
             setSessionState((prev:any)=>({

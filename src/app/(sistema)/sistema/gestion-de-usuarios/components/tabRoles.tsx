@@ -48,7 +48,9 @@ export default function TabRoles(){
                 headers={headers}
                 data={data}
                 options={{
-                    /*targetURL: '/sistema/tipos-medidas-de-fuerza',*/
+                    title: 'Lista de roles',
+                    newRecord: '/sistema/gestion-de-usuarios/roles/crear',
+                    targetURL: '/sistema/gestion-de-usuarios/roles',
                     rowsPerPageCustom: 5,
                     pagination: true,
                 }}
