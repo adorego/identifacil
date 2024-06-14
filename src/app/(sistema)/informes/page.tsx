@@ -63,9 +63,6 @@ export default function Page() {
 
     }, []);
 
-
-
-
     if (status === 'loading') {
         return(
             <div>
@@ -178,15 +175,15 @@ export default function Page() {
                                 Reportes
                             </Typography>
                         </Grid>
-                        <Grid item sm={4}>
+                        <Grid item sm={6}>
                             <CardReport nombre='Reporte de ingreso' link='/informes/ingresos' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
                         </Grid>
-                        <Grid item sm={4}>
+                        <Grid item sm={6}>
                             <CardReport nombre='Reporte de traslados' link='/informes/traslados' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
                         </Grid>
-                        <Grid item sm={4}>
+                        {/*<Grid item sm={4}>
                             <CardReport nombre='Reporte de visitas' link='/informes/visitas' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
-                        </Grid>
+                        </Grid>*/}
                         {/*<Grid item sm={3}>
                             <CardReport nombre='Reporte de Bajas' link='/informes/ingresos' icon={<SwapHorizIcon color='primary' fontSize='large'/>} />
                         </Grid>*/}

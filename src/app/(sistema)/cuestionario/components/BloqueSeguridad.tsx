@@ -18,6 +18,8 @@ import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 class datosPersonaType {
 }
@@ -37,6 +39,8 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
     /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_seguridad', session) || PermissionValidator('actualizar_ppl_form_seguridad', session);
     const {openSnackbar} = useGlobalContext();
 
     useEffect(() => {
@@ -85,55 +89,57 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        setConsultaLoading(true)
+        if(sessionData){
+            setConsultaLoading(true)
 
-        const methodForm = estadoBloqueSeguridadFormulario?.id  ? 'PUT' : 'POST';
+            const methodForm = estadoBloqueSeguridadFormulario?.id  ? 'PUT' : 'POST';
 
-        if (id_persona) {
-            const url = estadoBloqueSeguridadFormulario?.id ?
-                `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${estadoBloqueSeguridadFormulario.id}`
-                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
+            if (id_persona) {
+                const url = estadoBloqueSeguridadFormulario?.id ?
+                    `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${estadoBloqueSeguridadFormulario.id}`
+                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
 
 
 
-            const respuesta = await api_request(url, {
-                method: methodForm,
-                body: JSON.stringify({...estadoBloqueSeguridadFormulario, id_persona: id_persona}),
-                headers: {'Content-Type': 'application/json'}
+                const respuesta = await api_request(url, {
+                    method: methodForm,
+                    body: JSON.stringify({...estadoBloqueSeguridadFormulario, id_persona: id_persona}),
+                    headers: {'Content-Type': 'application/json'}
 
-            })
-            if (respuesta.success) {
-                if(onSetDatosPPL){
-                    onSetDatosPPL((prev:any)=>({
+                })
+                if (respuesta.success) {
+                    if(onSetDatosPPL){
+                        onSetDatosPPL((prev:any)=>({
+                            ...prev,
+                            datosDeSeguridad: {
+                                ...estadoBloqueSeguridadFormulario,
+                                id: respuesta.datos.id,
+                            }
+                        }))
+                    }
+
+                    setEstadoBloqueSeguridadFormulario(prev=>({
                         ...prev,
-                        datosDeSeguridad: {
-                            ...estadoBloqueSeguridadFormulario,
-                            id: respuesta.datos.id,
-                        }
+
                     }))
-                }
-
-                setEstadoBloqueSeguridadFormulario(prev=>({
-                    ...prev,
-
-                }))
-                setConsultaLoading(false)
-                if(handleAccordion){
-                    handleAccordion('')
-                }
-
-                openSnackbar("Datos guardados correctamente", "success")
-            } else {
-                if (respuesta.error) {
                     setConsultaLoading(false)
-                    openSnackbar(`Error al guardar los datos`, `error`);
-                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                }
-            }
+                    if(handleAccordion){
+                        handleAccordion('')
+                    }
 
-        } else {
-            setConsultaLoading(false)
-            openSnackbar("Falta el identifiicador de la persona", "error");
+                    openSnackbar("Datos guardados correctamente", "success")
+                } else {
+                    if (respuesta.error) {
+                        setConsultaLoading(false)
+                        openSnackbar(`Error al guardar los datos`, `error`);
+                        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                    }
+                }
+
+            } else {
+                setConsultaLoading(false)
+                openSnackbar("Falta el identifiicador de la persona", "error");
+            }
         }
     }
 
@@ -385,6 +391,7 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                         : null
                     }
                 </Grid>
+                {sessionData &&
                 <Grid item sm={12}>
                     <LoadingButton
                         sx={{
@@ -403,6 +410,7 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                     </LoadingButton>
 
                 </Grid>
+                }
             </Grid>
         </Box>
     )

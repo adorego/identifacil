@@ -34,6 +34,8 @@ import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 import {api_request} from "@/lib/api-request";
 import log from "loglevel";
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 interface BloqueFamiliarProps {
     datosFamiliaresIniciales?: datosFamiliaresType | any;
@@ -97,7 +99,8 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
     const [loading, setLoading] = useState(true);
 
     const router = useRouter();
-
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_familiares', session) || PermissionValidator('actualizar_ppl_form_familiares', session);
 
     useEffect(() => {
         console.log(datosFamiliaresIniciales)
@@ -310,106 +313,111 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
 
     const handleSubmit = async (e: { preventDefault: () => void; })=>{
         e.preventDefault()
-        console.log(estadoFormularioDatosFamiliares)
+        if(sessionData){
 
-        const validarFormulario = validateForm()
+            console.log(estadoFormularioDatosFamiliares)
 
-        console.log(validarFormulario)
+            const validarFormulario = validateForm()
 
-        if(validarFormulario){
-            setConsultaLoading(true)
+            console.log(validarFormulario)
 
-            const circuloFamiliar = stateCirculoFamiliar.map(item => ({
-                ...item,
-                vinculo: item.vinculo.id,
-                establecimiento: item.establecimiento.id,
-            }))
+            if(validarFormulario){
+                setConsultaLoading(true)
 
-            // Tratamiento de datos para envio peticion
-            // Se agrega circulo familiar capturado en el modal
-            // se modifica el tipo de dato objeto de cada miembro familiar, vinculos y establecimientos para enviar solo el id
-            const datosFormulario = {
-                ...estadoFormularioDatosFamiliares,
-                id_persona: id_persona,
-                familiares: circuloFamiliar,
-                familiares_modificado: true,
-            }
+                const circuloFamiliar = stateCirculoFamiliar.map(item => ({
+                    ...item,
+                    vinculo: item.vinculo.id,
+                    establecimiento: item.establecimiento.id,
+                }))
 
-
-            const editMod = datosFamiliaresIniciales?.id ? true : false // Si es TRUE, entonces es PUT, si es FALSE es POST
-            const redirect = false
-
-
-
-            try {
-                setLoading(true);
-
-
-                const method = estadoFormularioDatosFamiliares.id ? 'PUT' : 'POST';
-
-                //console.log(JSON.stringify(stateForm))
-                const url = estadoFormularioDatosFamiliares.id
-                    ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares/${datosFormulario.id}`
-                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`
-
-                // console.log(url)
-                const respuesta = await api_request(url, {
-                    method: method,
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datosFormulario),
-                });
-
-
-
-                if (respuesta.success) {
-                    setLoading(false);
-                    setConsultaLoading(false)
-
-                    // Se setea estado global
-                    if(onSetDatosPPL){
-                        onSetDatosPPL((prev:any)=>({
-                            ...prev,
-                            datosFamiliares: {
-                                ...estadoFormularioDatosFamiliares,
-                                id: respuesta.datos.id,
-                                familiares: stateCirculoFamiliar
-                            }
-                        }))
-                    }
-                    setEstadoFormularioDatosFamiliares(prev=>({
-                        ...prev,
-                        id: respuesta.datos.id,
-                    }))
-
-                    const message = estadoFormularioDatosFamiliares.id
-                        ? `Datos Familiares actualizada correctamente.`
-                        : `Datos Familiares creada correctamente.`;
-
-                    openSnackbar(message, 'success');
-
-                    if(handleAccordion){
-                        handleAccordion('')
-                    }
-
-                    if(redirect){
-                        router.push(`/ppl`);
-                    }
-                    return respuesta
-                } else {
-                    if (respuesta.error) {
-                        setConsultaLoading(false)
-                        setLoading(false);
-                        openSnackbar(`Error al guardar los datos`, `error`);
-                        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                    }
-                    setConsultaLoading(false)
-
+                // Tratamiento de datos para envio peticion
+                // Se agrega circulo familiar capturado en el modal
+                // se modifica el tipo de dato objeto de cada miembro familiar, vinculos y establecimientos para enviar solo el id
+                const datosFormulario = {
+                    ...estadoFormularioDatosFamiliares,
+                    id_persona: id_persona,
+                    familiares: circuloFamiliar,
+                    familiares_modificado: true,
                 }
-            } catch (error) {
-                setConsultaLoading(false)
-                setLoading(false);
-                // console.error('Error:', error);
+
+
+                const editMod = datosFamiliaresIniciales?.id ? true : false // Si es TRUE, entonces es PUT, si es FALSE es POST
+                const redirect = false
+
+
+
+                try {
+                    setLoading(true);
+
+
+                    const method = estadoFormularioDatosFamiliares.id ? 'PUT' : 'POST';
+
+                    //console.log(JSON.stringify(stateForm))
+                    const url = estadoFormularioDatosFamiliares.id
+                        ? `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares/${datosFormulario.id}`
+                        : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_familiares`
+
+                    // console.log(url)
+                    const respuesta = await api_request(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(datosFormulario),
+                    });
+
+
+
+                    if (respuesta.success) {
+                        setLoading(false);
+                        setConsultaLoading(false)
+
+                        // Se setea estado global
+                        if(onSetDatosPPL){
+                            onSetDatosPPL((prev:any)=>({
+                                ...prev,
+                                datosFamiliares: {
+                                    ...estadoFormularioDatosFamiliares,
+                                    id: respuesta.datos.id,
+                                    familiares: stateCirculoFamiliar
+                                }
+                            }))
+                        }
+                        setEstadoFormularioDatosFamiliares(prev=>({
+                            ...prev,
+                            id: respuesta.datos.id,
+                        }))
+
+                        const message = estadoFormularioDatosFamiliares.id
+                            ? `Datos Familiares actualizada correctamente.`
+                            : `Datos Familiares creada correctamente.`;
+
+                        openSnackbar(message, 'success');
+
+                        if(handleAccordion){
+                            handleAccordion('')
+                        }
+
+                        if(redirect){
+                            router.push(`/ppl`);
+                        }
+                        return respuesta
+                    } else {
+                        if (respuesta.error) {
+                            setConsultaLoading(false)
+                            setLoading(false);
+                            openSnackbar(`Error al guardar los datos`, `error`);
+                            log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                        }
+                        setConsultaLoading(false)
+
+                    }
+                } catch (error) {
+                    setConsultaLoading(false)
+                    setLoading(false);
+                    // console.error('Error:', error);
+                }
             }
+        }else{
+            openSnackbar('No puedes realizar esta acción', 'warning');
         }
     }
 
@@ -636,6 +644,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </>
 
                 </Grid>
+                {sessionData &&
                 <Grid item sm={12} mt={1}>
                     <LoadingButton
                         sx={{
@@ -654,6 +663,7 @@ const BloqueFamiliar: FC<BloqueFamiliarProps> = (
                     </LoadingButton>
 
                 </Grid>
+                }
             </Grid>
 
         </Box>

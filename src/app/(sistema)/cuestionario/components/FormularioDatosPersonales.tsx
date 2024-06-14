@@ -30,6 +30,8 @@ import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
 import {usePathname, useRouter} from "next/navigation";
 import AutocompleteCiudad from "@/components/hooks/autocompleteCiudad";
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 interface datosPersonales {
     flag?: boolean;
@@ -186,9 +188,12 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
     /** 8. Estado para autcomplete de ciudades*/
     const [selectedCity, setSelectedCity] = useState<any>({});
 
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_perfil', session) || PermissionValidator('actualizar_ppl_form_perfil', session);
     const pathname = usePathname()
     const router = useRouter();
     const {openSnackbar} = useGlobalContext();
+
 
     useEffect(() => {
 
@@ -351,9 +356,9 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
     }, [selectedCity]);
 
 
-    /** Efecto que carga el estado del autocomplete de cidad de naciomiento si es que hay datos iniciales y si ya esta
-     * cargado el estado de lista de ciudades
-     * */
+    /**
+     * Efecto que carga el estado del autocomplete de cidad de naciomiento si es que hay datos iniciales y si ya esta
+     * cargado el estado de lista de ciudades* */
     useEffect(() => {
 
         if(datosDeIdentificacion.lugarDeNacimiento && ciudadLista.length > 0){
@@ -477,55 +482,59 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        setConsultaLoading(true)
+        if(sessionData) {
+            setConsultaLoading(true)
 
-        if (datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil && extranjeroValidator()) {
-            const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
-            const url = datosDeIdentificacion.id_datos_personales ?
-                `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
-                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
-            const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
+            if (datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil && extranjeroValidator()) {
+                const methodForm = datosDeIdentificacion.id_datos_personales ? 'PUT' : 'POST';
+                const url = datosDeIdentificacion.id_datos_personales ?
+                    `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/${datosDeIdentificacion.id_datos_personales}`
+                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_personales/`
+                const datosDelFormulario: datosPersonales = Object.assign({}, datosPersonalesState);
 
 
-            const respuesta = await api_request(url, {
-                method: methodForm,
-                body: JSON.stringify(datosDelFormulario),
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            if (respuesta.success) {
+                const respuesta = await api_request(url, {
+                    method: methodForm,
+                    body: JSON.stringify(datosDelFormulario),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                if (respuesta.success) {
 
-                /*if(onSetDatosPPL){
-                    onSetDatosPPL((prev:any)=>({
+                    /*if(onSetDatosPPL){
+                        onSetDatosPPL((prev:any)=>({
+                            ...prev,
+                            datosPersonales: {
+                                ...datosPersonalesState,
+                                id: respuesta.datos.id,
+                                flag:true,
+                            }
+                        }))
+                    }*/
+
+                    setDatosPersonalesState(prev => ({
                         ...prev,
-                        datosPersonales: {
-                            ...datosPersonalesState,
-                            id: respuesta.datos.id,
-                            flag:true,
-                        }
+                        id: respuesta.datos.id,
                     }))
-                }*/
-
-                setDatosPersonalesState(prev => ({
-                    ...prev,
-                    id: respuesta.datos.id,
-                }))
-                setConsultaLoading(false)
-                openSnackbar("Datos guardados correctamente", "success")
-                if (pathname.startsWith('/ppl')) {
-                    window.location.reload();
+                    setConsultaLoading(false)
+                    openSnackbar("Datos guardados correctamente", "success")
+                    if (pathname.startsWith('/ppl')) {
+                        window.location.reload();
+                    }
+                } else {
+                    if (respuesta.error) {
+                        setConsultaLoading(false)
+                        openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
+                        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                    }
                 }
             } else {
-                if (respuesta.error) {
-                    setConsultaLoading(false)
-                    openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
-                    log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                }
+                openSnackbar('Completar campos requerido', 'warning')
+                setConsultaLoading(false)
             }
-        } else {
-            openSnackbar('Completar campos requerido', 'warning')
-            setConsultaLoading(false)
+        }else{
+            openSnackbar('No tienes permiso para realizar esta accion', 'warning')
         }
 
 
@@ -1036,6 +1045,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
 
                 </Grid>
+                {(sessionData) &&
                 <Grid item sm={12}>
                     <Stack direction="row" spacing={2}>
                         <LoadingButton
@@ -1057,6 +1067,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
                     </Stack>
                 </Grid>
+                }
             </Grid>
         </Box>
     )

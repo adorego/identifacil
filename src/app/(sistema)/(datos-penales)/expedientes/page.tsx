@@ -11,6 +11,7 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import {signIn, useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 const header = [
     {id: 'id', label: 'id'},
@@ -134,7 +135,10 @@ export default function Page() {
         <>
 
             <Box mb={3}>
-                <TituloComponent  titulo='Expedientes judiciales' newEntry={'/expedientes/crear'}>
+                <TituloComponent
+                    titulo='Expedientes judiciales'
+                    newEntry={PermissionValidator('crear_expedientes', session) ? '/expedientes/crear' : undefined}
+                >
                     <BreadCrumbComponent listaDeItems={listaDeItemBread} />
                 </TituloComponent>
             </Box>

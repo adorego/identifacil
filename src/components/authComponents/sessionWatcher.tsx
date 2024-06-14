@@ -51,7 +51,7 @@ const pageMapping = [
     },
     {
         nombre: 'Lista de Visitas',
-        url: 'acceso/lista-visitas',
+        url: '/acceso/lista-visitas',
         permission: 'lista_visitas',
     },
     {
@@ -131,7 +131,7 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     const pathname = usePathname();
 
     useEffect(() => {
-        // console.log(sessionData)
+        console.log(sessionData)
         if(sessionData){
 
             setSessionState((prev:any)=>({
@@ -155,7 +155,7 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     }, [status]);
 
     const permissionValidator = ()=>{
-        console.log(pathname)
+
         // Se obtiene objeto de pagina actual
         // @ts-ignore
         const paginaActualObject :{permission:String} = pageMapping ? pageMapping.find(page => pathname.startsWith(page.url)) : [];

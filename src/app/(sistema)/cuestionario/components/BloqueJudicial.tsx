@@ -34,6 +34,8 @@ import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pi
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -82,7 +84,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
     /** 6. Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
-
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_judiciales', session) || PermissionValidator('actualizar_ppl_form_judiciales', session);
     const {openSnackbar} = useGlobalContext();
     const isEditMode = !!datosIniciales?.id;
     const router: AppRouterInstance = useRouter();
@@ -381,156 +384,160 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        setConsultaLoading(true)
+        if(sessionData){
+            setConsultaLoading(true)
 
-        const tipoMehtod = !!estadoFormularioJudicial.id
-        console.log('TIpo metodo', tipoMehtod)
+            const tipoMehtod = !!estadoFormularioJudicial.id
+            console.log('TIpo metodo', tipoMehtod)
 
-        const validarFormulario = validateForm()
-
-
-        // console.log('Validar el form ' + validarFormulario)
+            const validarFormulario = validateForm()
 
 
-        /** Se controla que la persona exista y que pase todas las pruebas del form*/
-        if (id_persona != null && validarFormulario) {
-
-            // Se arma URL para creacion o actualizacion de datos judiciales
-            const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${tipoMehtod ? ('/' + estadoFormularioJudicial.id) : ''}`;
-
-            // Se arma URL para actualizacion de PPL en Expediente seleccionado
-            const url_patch_expediente = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${datosFormulario.expedientesSeleccionados.id}/ppls`;
-
-            // Se crea el form data para enviar los datos
-            const formData = new FormData();
-
-            /** Se obtiene expediente judicial de datos iniciales pre existentes */
-            const expedienteInicial = datosIniciales !== null && datosIniciales.ingresos_a_prision !== undefined
-                ? datosIniciales.ingresos_a_prision[0]?.expedienteJudicial?.id
-                : null;
-
-            /** Se arma el formdata para enviar en la peticion POST O PUT */
-            Object.keys(estadoFormularioJudicial).forEach((key: string) => {
-
-                // @ts-ignore
-                const valor = estadoFormularioJudicial[key]
-
-                switch (typeof valor) {
-                    case 'string':
-                        formData.append(key, valor as string);
-                        break;
-                    case 'number':
-                        formData.append(key, String(valor));
-                        break;
-                    case 'object':
-                        if (isDayjs(valor)) formData.append(key, valor.toISOString());
-                        if (isFile(valor)) formData.append(key, valor);
-
-                        break;
-                    case 'boolean':
-                        formData.append(key, String(valor));
-                        break;
-
-                    default:
-                        console.log(typeof valor);
-
-                }
-
-            })
+            // console.log('Validar el form ' + validarFormulario)
 
 
-            /** Solicitud para actualizacion del formulario judicial se verifica que el nuevo expediente seleccionaddo sea diferente al inicial */
-            if (estadoFormularioJudicial.expediente_id !== expedienteInicial) {
+            /** Se controla que la persona exista y que pase todas las pruebas del form*/
+            if (id_persona != null && validarFormulario) {
 
-                console.log('check 4: Expediente inicial y actualizado son diferentes')
+                // Se arma URL para creacion o actualizacion de datos judiciales
+                const url_dato_judicial = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_judiciales${tipoMehtod ? ('/' + estadoFormularioJudicial.id) : ''}`;
 
-                Promise.all([
-                    await postData(url_patch_expediente, JSON.stringify({ppls: [estadoFormularioJudicial.id_persona]}), 'PATCH').then(res => {
-                        console.log('respuestas de peticion patch')
-                        if (res.success) {
-                            setConsultaLoading(false)
-                            openSnackbar('PPL asignado a expediente correctamente')
-                            //router.push(`/ppl}`)
-                            // router.push(`/ppl/${id_persona}`)
-                        }
-                    }),
-                    await postDataJudicial(url_dato_judicial, formData, tipoMehtod).then(res => {
-                        console.log('respuestas de peticion datos judiciales')
-                        if (res.success) {
-                            setConsultaLoading(false)
-                            console.log(res)
-                            openSnackbar('Datos judiciales actualizado correctamente')
-                            setEstadoFormularioJudicial(prev => ({
-                                ...prev,
-                                id: res.datos.id,
-                            }))
-                            if (onSetDatosPPL) {
-                                onSetDatosPPL((prev: any) => ({
+                // Se arma URL para actualizacion de PPL en Expediente seleccionado
+                const url_patch_expediente = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes/${datosFormulario.expedientesSeleccionados.id}/ppls`;
+
+                // Se crea el form data para enviar los datos
+                const formData = new FormData();
+
+                /** Se obtiene expediente judicial de datos iniciales pre existentes */
+                const expedienteInicial = datosIniciales !== null && datosIniciales.ingresos_a_prision !== undefined
+                    ? datosIniciales.ingresos_a_prision[0]?.expedienteJudicial?.id
+                    : null;
+
+                /** Se arma el formdata para enviar en la peticion POST O PUT */
+                Object.keys(estadoFormularioJudicial).forEach((key: string) => {
+
+                    // @ts-ignore
+                    const valor = estadoFormularioJudicial[key]
+
+                    switch (typeof valor) {
+                        case 'string':
+                            formData.append(key, valor as string);
+                            break;
+                        case 'number':
+                            formData.append(key, String(valor));
+                            break;
+                        case 'object':
+                            if (isDayjs(valor)) formData.append(key, valor.toISOString());
+                            if (isFile(valor)) formData.append(key, valor);
+
+                            break;
+                        case 'boolean':
+                            formData.append(key, String(valor));
+                            break;
+
+                        default:
+                            console.log(typeof valor);
+
+                    }
+
+                })
+
+
+                /** Solicitud para actualizacion del formulario judicial se verifica que el nuevo expediente seleccionaddo sea diferente al inicial */
+                if (estadoFormularioJudicial.expediente_id !== expedienteInicial) {
+
+                    console.log('check 4: Expediente inicial y actualizado son diferentes')
+
+                    Promise.all([
+                        await postData(url_patch_expediente, JSON.stringify({ppls: [estadoFormularioJudicial.id_persona]}), 'PATCH').then(res => {
+                            console.log('respuestas de peticion patch')
+                            if (res.success) {
+                                setConsultaLoading(false)
+                                openSnackbar('PPL asignado a expediente correctamente')
+                                //router.push(`/ppl}`)
+                                // router.push(`/ppl/${id_persona}`)
+                            }
+                        }),
+                        await postDataJudicial(url_dato_judicial, formData, tipoMehtod).then(res => {
+                            console.log('respuestas de peticion datos judiciales')
+                            if (res.success) {
+                                setConsultaLoading(false)
+                                console.log(res)
+                                openSnackbar('Datos judiciales actualizado correctamente')
+                                setEstadoFormularioJudicial(prev => ({
                                     ...prev,
-                                    datosJudiciales: {
-                                        ...estadoFormularioJudicial,
-                                        id: res.datos.id,
-                                        flag: true,
-                                        expediente_obj: datosFormulario.expedientesSeleccionados
-                                    }
+                                    id: res.datos.id,
                                 }))
+                                if (onSetDatosPPL) {
+                                    onSetDatosPPL((prev: any) => ({
+                                        ...prev,
+                                        datosJudiciales: {
+                                            ...estadoFormularioJudicial,
+                                            id: res.datos.id,
+                                            flag: true,
+                                            expediente_obj: datosFormulario.expedientesSeleccionados
+                                        }
+                                    }))
+                                }
+                                if (handleAccordion) {
+                                    handleAccordion('')
+                                }
                             }
-                            if (handleAccordion) {
-                                handleAccordion('')
-                            }
-                        }
-                    })
-                ]).catch((err) => {
-                    console.log(err)
-                }).finally(() => {
-                    setConsultaLoading(false)
-                });
+                        })
+                    ]).catch((err) => {
+                        console.log(err)
+                    }).finally(() => {
+                        setConsultaLoading(false)
+                    });
 
-            } else {
-                try {
-                    await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res => {
-                        console.log('respuestas de peticion datos judiciales')
-                        if (res.success) {
-                            setConsultaLoading(false)
-                            if (onSetDatosPPL) {
-                                onSetDatosPPL((prev: any) => ({
+                } else {
+                    try {
+                        await postDataJudicial(url_dato_judicial, formData, isEditMode).then(res => {
+                            console.log('respuestas de peticion datos judiciales')
+                            if (res.success) {
+                                setConsultaLoading(false)
+                                if (onSetDatosPPL) {
+                                    onSetDatosPPL((prev: any) => ({
+                                        ...prev,
+                                        datosJudiciales: {
+                                            ...estadoFormularioJudicial,
+                                            id: res.datos.id,
+                                            flag: true,
+                                            expediente_obj: datosFormulario.expedientesSeleccionados
+                                        }
+                                    }))
+                                }
+                                setEstadoFormularioJudicial(prev => ({
                                     ...prev,
-                                    datosJudiciales: {
-                                        ...estadoFormularioJudicial,
-                                        id: res.datos.id,
-                                        flag: true,
-                                        expediente_obj: datosFormulario.expedientesSeleccionados
-                                    }
+                                    id: res.datos.id,
                                 }))
+                                openSnackbar('Datos judiciales actualizado correctamente')
+                                // router.push(`/ppl`)
+                                // router.push(`/ppl/${id_persona}`)
+                                if (handleAccordion) {
+                                    handleAccordion('')
+                                }
                             }
-                            setEstadoFormularioJudicial(prev => ({
-                                ...prev,
-                                id: res.datos.id,
-                            }))
-                            openSnackbar('Datos judiciales actualizado correctamente')
-                            // router.push(`/ppl`)
-                            // router.push(`/ppl/${id_persona}`)
-                            if (handleAccordion) {
-                                handleAccordion('')
-                            }
-                        }
 
-                    })
-                } catch (err) {
-                    console.log('err')
-                } finally {
-                    setConsultaLoading(false)
-                    if (handleAccordion) {
-                        handleAccordion('')
+                        })
+                    } catch (err) {
+                        console.log('err')
+                    } finally {
+                        setConsultaLoading(false)
+                        if (handleAccordion) {
+                            handleAccordion('')
+                        }
                     }
                 }
+
+
+            } else {
+                setConsultaLoading(false)
+                openSnackbar("Error al guardar el formulario.", "error");
+
             }
-
-
-        } else {
-            setConsultaLoading(false)
-            openSnackbar("Error al guardar el formulario.", "error");
-
+        }else{
+            openSnackbar('No tienes permiso para realizar esta acción', 'warning')
         }
     }
 
@@ -880,6 +887,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                     </>
 
                 </Grid>
+                {sessionData &&
                 <Grid item sm={12}>
                     <LoadingButton
                         sx={{
@@ -896,8 +904,8 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                             {consultaLoading ? 'Guardando...' : 'Guardar'}
                         </span>
                     </LoadingButton>
-
                 </Grid>
+                }
             </Grid>
 
         </Box>

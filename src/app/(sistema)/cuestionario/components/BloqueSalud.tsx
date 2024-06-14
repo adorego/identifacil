@@ -15,6 +15,8 @@ import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 import {NacionalidadesDTO} from "@/model/nacionalidad.model";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 
 const nineMonthsFromNow = dayjs().add(9, 'month');
@@ -123,6 +125,8 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
     const [inputValue, setInputValue] = React.useState('');
     const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<Array<{ id: number; nombre: string }>>([]);
 
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_perfil', session) || PermissionValidator('actualizar_ppl_form_perfil', session);
     const {openSnackbar} = useGlobalContext();
 
     useEffect(() => {
@@ -370,65 +374,70 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
 
     const onDatosSaludSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
+        if(sessionData){
 
-        setConsultaLoading(true)
+            setConsultaLoading(true)
 
-        const url = datosSalud.id ?
-            `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`
-            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`
+            const url = datosSalud.id ?
+                `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud/${datosSalud.id}`
+                : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/salud`
 
-        const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSalud);
-        datosDelFormulario.id_persona = id_persona;
+            const datosDelFormulario: datosDeSalud2Type = Object.assign({}, datosSalud);
+            datosDelFormulario.id_persona = id_persona;
 
-        // TODO: Verificar este type para enviar los datos
-        // @ts-ignore
-        datosDelFormulario.grupo_sanguineo = datosSalud.grupo_sanguineo?.id
+            // TODO: Verificar este type para enviar los datos
+            // @ts-ignore
+            datosDelFormulario.grupo_sanguineo = datosSalud.grupo_sanguineo?.id
 
-        datosDelFormulario.saludFisica.discapacidad_fisica = JSON.stringify(stateSaludFisica).toString();
-        // @ts-ignore
-        datosDelFormulario.vacunas_recibidas = datosSalud.vacunas_recibidas.map(objeto => objeto.id)
+            datosDelFormulario.saludFisica.discapacidad_fisica = JSON.stringify(stateSaludFisica).toString();
+            // @ts-ignore
+            datosDelFormulario.vacunas_recibidas = datosSalud.vacunas_recibidas.map(objeto => objeto.id)
 
-        const datosProcesados = {
-            ...datosDelFormulario,
-            temperatura: datosDelFormulario.temperatura ? datosDelFormulario.temperatura : 0,
-            peso: datosDelFormulario.peso ? datosDelFormulario.peso : 0,
-            imc: datosDelFormulario.imc ? datosDelFormulario.imc : 0,
-            talla: datosDelFormulario.talla ? datosDelFormulario.talla : 0,
-        }
-
-        const methodForm = datosSalud.id ? 'PUT' : 'POST';
-
-        const respuesta = await api_request(url, {
-            method: methodForm,
-            body: JSON.stringify(datosProcesados),
-            headers: {
-                'Content-Type': 'application/json'
+            const datosProcesados = {
+                ...datosDelFormulario,
+                temperatura: datosDelFormulario.temperatura ? datosDelFormulario.temperatura : 0,
+                peso: datosDelFormulario.peso ? datosDelFormulario.peso : 0,
+                imc: datosDelFormulario.imc ? datosDelFormulario.imc : 0,
+                talla: datosDelFormulario.talla ? datosDelFormulario.talla : 0,
             }
-        })
-        if (respuesta.success) {
-            setConsultaLoading(false)
-            if (onSetDatosPPL) {
-                onSetDatosPPL((prev: any) => ({
+
+            const methodForm = datosSalud.id ? 'PUT' : 'POST';
+
+            const respuesta = await api_request(url, {
+                method: methodForm,
+                body: JSON.stringify(datosProcesados),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            if (respuesta.success) {
+                setConsultaLoading(false)
+                if (onSetDatosPPL) {
+                    onSetDatosPPL((prev: any) => ({
+                        ...prev,
+                        datosDeSalud: {
+                            ...datosSalud,
+                            id: respuesta.datos.id,
+                        }
+                    }))
+                }
+                setDatosSalud(prev => ({
                     ...prev,
-                    datosDeSalud: {
-                        ...datosSalud,
-                        id: respuesta.datos.id,
-                    }
+                    id: respuesta.datos.id,
                 }))
-            }
-            setDatosSalud(prev => ({
-                ...prev,
-                id: respuesta.datos.id,
-            }))
-            openSnackbar("Datos guardados correctamente", "success")
-            if (handleAccordion) {
-                handleAccordion('')
-            }
-        } else {
-            setConsultaLoading(false)
-            openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`, `error`);
-            // log.error("Error al guardar los datos", respuesta.datos);
+                openSnackbar("Datos guardados correctamente", "success")
+                if (handleAccordion) {
+                    handleAccordion('')
+                }
+            } else {
+                setConsultaLoading(false)
+                openSnackbar(`Error al guardar los datos: ${respuesta.datos.message}`, `error`);
+                // log.error("Error al guardar los datos", respuesta.datos);
 
+            }
+        }
+        else{
+            openSnackbar('No tienes permisos para realizar esta acción', 'warning')
         }
 
 
@@ -1052,6 +1061,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
                             </RadioGroup>
                         </FormControl>
                     </Grid>
+                    {sessionData &&
                     <Grid item sm={12} mt={4}>
                         <LoadingButton
                             sx={{
@@ -1072,6 +1082,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
                             Guardar cambios
                         </Button>*/}
                     </Grid>
+                    }
                 </Grid>
 
             </Box>

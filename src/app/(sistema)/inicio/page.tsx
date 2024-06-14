@@ -84,7 +84,7 @@ export default function Main() {
                         borderRadius: '10px'
                     }}>
                         <Typography variant='h4' sx={{fontWeight: 'bold'}}>
-                            Bienvenido  <br />
+                            Bienvenido/a  <br />
                             {session && (`${session.nombre} ${session.apellido}`)}
                         </Typography>
 

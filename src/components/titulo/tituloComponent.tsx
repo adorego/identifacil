@@ -63,6 +63,7 @@ export default function TituloComponent({titulo, url = "", newEntry = "", childr
                 </Grid>
             </Box>
             <Box>
+
                 {newEntry
                     ? (
                         <Link href={newEntry}>

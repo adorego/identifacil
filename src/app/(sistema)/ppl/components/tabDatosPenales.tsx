@@ -55,6 +55,7 @@ export default function TabDatosPersonales({idPersona=null} : { idPersona: numbe
     }
     return (
         <Box mt={3}>
+
             <Paper elevation={1}>
 
                 <Box>

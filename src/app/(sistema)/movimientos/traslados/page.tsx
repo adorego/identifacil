@@ -21,6 +21,7 @@ import {fetchData} from "@/components/utils/utils";
 import NoDataBox from "@/components/loadingScreens/noDataBox";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import {signIn, useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 const header2 = [
     {id: 'id', label: 'ID'},
@@ -185,56 +186,59 @@ export default function Ppl() {
 
     return (
         <Box>
-            <TituloComponent titulo='Traslados' url='asd' newEntry='traslados/crear'>
-                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+            <TituloComponent
+                titulo='Traslados'
+                newEntry={PermissionValidator('crear_traslados', session) ? 'traslados/crear' : undefined}
+            >
+                <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
             </TituloComponent>
 
 
-                {Object.keys(data).length > 0  ?
-                    (
-                        <Paper elevation={1} sx={{
-                            mt: '32px'
-                        }}>
-                            {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
-                            {/*Elemento de tabla de traslados filtros */}
-                            <Box px={3} py={3}>
-                                <FiltrosTables
-                                    dateSearchField='fecha_de_traslado'
-                                    searchField='numero_de_documento'
-                                    dataSinFiltro={data} handleFiltro={handleFitros} />
+            {Object.keys(data).length > 0 ?
+                (
+                    <Paper elevation={1} sx={{
+                        mt: '32px'
+                    }}>
+                        {/*<TabTitle tabName={tabName} targetURL={'/movimientos/traslados/crear'} />*/}
+                        {/*Elemento de tabla de traslados filtros */}
+                        <Box px={3} py={3}>
+                            <FiltrosTables
+                                dateSearchField='fecha_de_traslado'
+                                searchField='numero_de_documento'
+                                dataSinFiltro={data} handleFiltro={handleFitros}/>
 
 
-                            </Box>
+                        </Box>
 
-                            {/* Elemento Tabla de Traslado*/}
-                            <Box>
-                                <CustomTable
-                                    data={filterData ? filterData : data}
-                                    /*data={data}*/
-                                    headers={header2}
-                                    showId={true}
-                                    deleteRecord={handleOpenModal}
-                                    options={{
+                        {/* Elemento Tabla de Traslado*/}
+                        <Box>
+                            <CustomTable
+                                data={filterData ? filterData : data}
+                                /*data={data}*/
+                                headers={header2}
+                                showId={true}
+                                deleteRecord={handleOpenModal}
+                                options={{
 
-                                        targetURL: '/movimientos/traslados',
-                                        rowsPerPageCustom: 5,
-                                        pagination: true,
+                                    targetURL: '/movimientos/traslados',
+                                    rowsPerPageCustom: 5,
+                                    pagination: true,
 
-                                    }}
-                                />
-                            </Box>
-                        </Paper>
-                    )
-                    :
-                    (
-                        <>
-                            <NoDataBox />
-                        </>
-                    )
-                }
+                                }}
+                            />
+                        </Box>
+                    </Paper>
+                )
+                :
+                (
+                    <>
+                        <NoDataBox/>
+                    </>
+                )
+            }
 
 
             <ModalBorrado open={modalOpen} onClose={handleCloseModal} data={selectedData} metodo={handleDeleteRecord}/>
         </Box>
-    )
+    );
 }

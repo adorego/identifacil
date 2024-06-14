@@ -14,6 +14,8 @@ import {useRouter} from "next/navigation";
 import {CameraAlt} from "@mui/icons-material";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 
 const videoConstraints = {
@@ -50,6 +52,8 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
 
     const [img, setImg] = useState<string | null>(null);
 
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_galeria', session) || PermissionValidator('actualizar_ppl_form_galeria', session);
     const router = useRouter();
     const {openSnackbar} = useGlobalContext();
     const isEditMode = datosIniciales.length > 0 //params.id !== 'crear';
@@ -135,7 +139,6 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
         setImg(null)
     };
 
-
     const handleFotografia = () => {
         /*setFormActualizado(prev=>({
             ...prev,
@@ -151,7 +154,11 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
     }
 
     const handleSubmit = () => {
-        postData()
+        if(sessionData){
+            postData()
+        }else{
+            openSnackbar('No tienes permiso para realizar esta accion', 'warning')
+        }
 
     }
 
@@ -306,7 +313,7 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
 
             </Grid>
             <Grid container spacing={2} mt={1}>
-
+                {sessionData &&
                 <Grid item sm={6} md={3}>
                     <LoadingButton
                         sx={{
@@ -332,6 +339,7 @@ export default function BloqueGaleria({id_persona, datosIniciales, handleAccordi
                         Guardar
                     </Button>*/}
                 </Grid>
+                }
             </Grid>
 
             {/* Componente */}

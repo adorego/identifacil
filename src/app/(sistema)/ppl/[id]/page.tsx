@@ -12,8 +12,6 @@ import TabDatosPersonales from "@/app/(sistema)/ppl/components/tabDatosPenales";
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
-import Image from "next/image";
-import avatar from "@/common/blank-profile-picture-973460_960_720.webp"
 import {
     datosDeSalud2Initial, datosDeSalud2Type,
     datosEducacionInicial,
@@ -23,12 +21,10 @@ import {
     datosJudicialesType,
     datosSeguridadInicial, datosSeguridadType
 } from "@/components/utils/systemTypes";
-import TabSalidaTransitoia from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
-import TabSalidaTransitoria from "@/app/(sistema)/ppl/components/tabSalidasTransitorias";
-import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import TabConcubino from "@/app/(sistema)/ppl/components/tabConcubino";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import {signIn, useSession} from "next-auth/react";
-
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 type dataType = {
     id_persona: number;
@@ -139,7 +135,7 @@ const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT
 
 export default function Page({params}: { params: { id: number } }) {
     /**1. For tabs position */
-    const [value, setValue] = React.useState('1');
+    const [value, setValue] = React.useState<string | null>(null);
 
     /**2. Para datoss precargados */
     const [data, setData] = React.useState<dataType>(initialData);
@@ -160,8 +156,6 @@ export default function Page({params}: { params: { id: number } }) {
     }, [status]);
 
     useEffect(() => {
-
-
         setLoading(true)
 
         fetchData(`${ENDPOINT}${params.id}`)
@@ -183,18 +177,15 @@ export default function Page({params}: { params: { id: number } }) {
                     }
 
                     return ({
-
                         condenado: condenadoValue,
                         fecha_ingreso: fetchedData?.datosJudiciales?.ingresos_a_prision.length > 0 ? fetchedData.datosJudiciales?.ingresos_a_prision.find((item: any) => item.ultimo_ingreso).fecha_ingreso : 'N/D'
                     })
                 })
                 setData(fetchedData);
             }).finally(() => {
-
             setLoading(false)
         });
     }, []);
-
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
         setValue(newValue);
@@ -205,7 +196,38 @@ export default function Page({params}: { params: { id: number } }) {
         {nombre: `${data ? data.nombre + ' ' + data.apellido : 'PPL'}`, url: '', lastItem: true},
     ];
 
+    const tabs = [
+        {
+            label: 'Informaciones',
+            value: '1',
+            component: <NestedInformacionPreso datosPersona={data}/>,
+            permission: 'ver_ppl_form_informaciones',
+        },
+        {
+            label: 'Datos penales',
+            value: '2',
+            component: <TabDatosPersonales idPersona={data.id_persona}/>,
+            permission: 'ver_ppl_form_expediente',
+        },
+        {
+            label: 'Conyuge',
+            value: '3',
+            component: <TabConcubino id_persona={params.id}/>,
+            permission: 'ver_ppl_form_conyuge',
+        }
+    ];
 
+    const filteredTabs = tabs.filter(tab => PermissionValidator(tab.permission, session));
+
+    // Set the initial tab value to the first available tab
+    useEffect(() => {
+        if(filteredTabs){
+
+            if (filteredTabs.length > 0 && value === null) {
+                setValue(filteredTabs[0].value);
+            }
+        }
+    }, [filteredTabs]);
 
     if (status === 'loading') {
         return(
@@ -245,6 +267,7 @@ export default function Page({params}: { params: { id: number } }) {
             </div>
         )
     }
+
 
     return (
         <Box>
@@ -323,97 +346,30 @@ export default function Page({params}: { params: { id: number } }) {
                             </Stack>
                         </Grid>
                     </Grid>
-                    {/*<Grid className="tabProfileNavigator" container sx={{
-                            borderTop: '1px solid #e0e0e0',
-                        }}>
-                            <Grid xs={12} item>
-                                <Stack alignItems="flex-end">
-                                    <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
-                                        <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
-                                            <Tab label="Perfil" {...a11yProps(0)} />
-                                            <Tab label="Información" {...a11yProps(1)} />
-                                            <Tab label="Datos penales" {...a11yProps(2)} />
-                                        </Tabs>
-                                    </Box>
-                                </Stack>
-                            </Grid>
-                        </Grid>*/}
                 </Grid>
             </Grid>
             <Box mt={3}>
-                <TabContext value={value}>
+                <TabContext
+                    // TODO: verificar esto
+                    // @ts-ignore
+                    value={value}>
 
                     {/* Tabs */}
                     <Box sx={{borderBottom: 1, borderColor: 'divider'}}>
                         <TabList onChange={handleChange} aria-label="lab API tabs example">
-                            <Tab label="Informaciones" value="1"/>
-                            <Tab label="Datos penales" value="2"/>
-                            <Tab label="Conyuge" value="3"/>
-                            {/*<Tab label="Salidas Transitorias" value="3" />*/}
-                            {/*<Tab label="Perfil" value="1" />*/}
+                            {filteredTabs.map((tab, index) => (
+                                <Tab key={index} label={tab.label} value={tab.value} />
+                            ))}
                         </TabList>
                     </Box>
 
                     {/* Contenidos de tabs */}
                     <Box>
-                        {/*<TabPanel value="1" sx={{p:'0'}}>
-                            <Grid container mt={2} spacing={2}>
-                                <Grid item xs={8}>
-
-                                    <DocumentosJudicialesTable />
-
-                                    <CustomTable options={{
-                                        title: 'Ultimos documentos judiciales/penales/etc',
-                                        targetURL: '/',
-                                        rowsPerPageCustom: 10,
-                                        deleteOption: false,
-                                        pagination: false,
-                                        expandedList: '/'
-                                    }}/>
-
-                                </Grid>
-                                <Grid item xs={4}>
-                                    <Box>
-                                        <ProximasAudicienciasTable />
-                                        <CustomTable
-                                            data={audienciasDummy.data}
-                                            headers={audienciasDummy.header}
-                                            options={{
-                                                title: 'Proximas audiencias',
-                                                rowsPerPageCustom: 3,
-                                                deleteOption: false,
-                                                pagination: false,
-                                                expandedList: '/',
-                                                targetURL: '/',
-                                            }}
-                                        />
-                                    </Box>
-                                    <Box mt={2}>
-                                        <CustomTable
-                                            data={visitaDummy.data}
-                                            headers={visitaDummy.header}
-                                            options={{
-                                                title: 'Ultimas visitas',
-                                                rowsPerPageCustom: 3,
-                                                deleteOption: false,
-                                                expandedList: '/',
-                                                pagination: false,
-                                                targetURL: '/',
-                                            }}
-                                        />
-                                    </Box>
-                                </Grid>
-                            </Grid>
-                        </TabPanel>*/}
-                        <TabPanel value="1" sx={{p: '0'}}>
-                            <NestedInformacionPreso datosPersona={data}/>
-                        </TabPanel>
-                        <TabPanel value="2" sx={{p: '0'}}>
-                            <TabDatosPersonales idPersona={data.id_persona}/>
-                        </TabPanel>
-                        <TabPanel value="3" sx={{p: '0'}}>
-                            <TabConcubino id_persona={params.id} />
-                        </TabPanel>
+                        {filteredTabs.map((tab, index) => (
+                            <TabPanel key={index} value={tab.value} sx={{p: '0'}}>
+                                {tab.component}
+                            </TabPanel>
+                        ))}
                     </Box>
                 </TabContext>
             </Box>

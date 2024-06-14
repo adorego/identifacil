@@ -46,15 +46,31 @@ export const authOptions = {
                     // const decoded = await decode(user.access_token);
                     const decoded : tokenLoginType = jwtDecode(user.access_token)
                     console.log('decoded_token en route.ts', decoded)
+                    // @ts-ignore
+                    const rolId =decoded?.roles[0].id
 
-                    return {
-                        id: decoded.sub.toString(),
-                        ci: decoded.ci, // Asegúrate de que el id esté en el token
-                        accessToken: user.access_token,
-                        roles: decoded?.roles || [], // Asegúrate de que los roles estén en el token
-                        nombre: decoded?.nombre || '', // Incluye otros datos de usuario si es necesario
-                        apellido: decoded?.apellido || '',
-                    };
+
+
+                    const resPermisos = await fetch(`${API_URL_REGISTRO}/rol/${rolId}/permiso`)
+
+
+                    if (resPermisos.ok) {
+                        const datos = await resPermisos.json()
+                        console.log('Captura de datos: ', datos)
+
+
+                        return {
+                            id: decoded.sub.toString(),
+                            ci: decoded.ci, // Asegúrate de que el id esté en el token
+                            accessToken: user.access_token,
+                            // @ts-ignore
+                            roles: decoded?.roles.map((item:any)=>({id:item.id, nombre:item.nombre, permisos: datos})) || [], // Asegúrate de que los roles estén en el token
+                            nombre: decoded?.nombre || '', // Incluye otros datos de usuario si es necesario
+                            apellido: decoded?.apellido || '',
+                        };
+                    }else{
+                        return null
+                    }
                 } else {
                     return null;
                 }
@@ -74,7 +90,7 @@ export const authOptions = {
     callbacks: {
         // @ts-ignore
         async jwt({ token, user }) {
-            console.log('token param en callback', token);
+            // console.log('token param en callback', token);
             const cookieStore = cookies();
             const newtoken = cookieStore.get('next-auth.session-token')?.value
             const tokenDecoded = await decode({

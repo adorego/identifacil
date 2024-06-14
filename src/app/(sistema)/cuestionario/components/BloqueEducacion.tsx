@@ -19,6 +19,8 @@ import log from "loglevel";
 import {useGlobalContext} from "@/app/Context/store";
 import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 export interface BloqueEducacionProps {
     id_persona: number | null;
@@ -34,6 +36,8 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
     /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [consultaLoading, setConsultaLoading] = useState(false)
 
+    const {data: session}: { data: any; } = useSession();
+    const sessionData = PermissionValidator('crear_ppl_form_educacion', session) || PermissionValidator('actualizar_ppl_form_educacion', session);
     const {openSnackbar} = useGlobalContext();
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,66 +87,70 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
 
     const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        const methodForm = estadoFormularioDeEducacion.id ? 'PUT' : 'POST';
-        setConsultaLoading(true)
+        if(sessionData){
+            const methodForm = estadoFormularioDeEducacion.id ? 'PUT' : 'POST';
+            setConsultaLoading(true)
 
-        if (id_persona) {
-            try {
+            if (id_persona) {
+                try {
 
 
-                const url = estadoFormularioDeEducacion.id ?
-                    `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion/${estadoFormularioDeEducacion.id}`
-                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`
+                    const url = estadoFormularioDeEducacion.id ?
+                        `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion/${estadoFormularioDeEducacion.id}`
+                        : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`
 
-                const respuesta = await api_request(url, {
-                    method: methodForm,
-                    body: JSON.stringify({
-                        ...estadoFormularioDeEducacion,
-                        id_persona:id_persona,
-                    }),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
+                    const respuesta = await api_request(url, {
+                        method: methodForm,
+                        body: JSON.stringify({
+                            ...estadoFormularioDeEducacion,
+                            id_persona:id_persona,
+                        }),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
 
-                });
+                    });
 
-                if (respuesta.success) {
-                    if(onSetDatosPPL){
-                        onSetDatosPPL((prev:any)=>({
+                    if (respuesta.success) {
+                        if(onSetDatosPPL){
+                            onSetDatosPPL((prev:any)=>({
+                                ...prev,
+                                datosEducacion: {
+                                    ...estadoFormularioDeEducacion,
+                                    id: respuesta.datos.id,
+                                },
+
+                            }))
+                        }
+                        setEstadoFormularioDeEducacion(prev=>({
                             ...prev,
-                            datosEducacion: {
-                                ...estadoFormularioDeEducacion,
-                                id: respuesta.datos.id,
-                            },
-
+                            id: respuesta.datos.id,
                         }))
-                    }
-                    setEstadoFormularioDeEducacion(prev=>({
-                        ...prev,
-                        id: respuesta.datos.id,
-                    }))
-                    openSnackbar("Datos guardados correctamente", "success")
-                    setConsultaLoading(false)
-
-                    if(handleAccordion){
-                        handleAccordion('')
-                    }
-                } else {
-                    if (respuesta.error) {
+                        openSnackbar("Datos guardados correctamente", "success")
                         setConsultaLoading(false)
-                        openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
-                        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+
+                        if(handleAccordion){
+                            handleAccordion('')
+                        }
+                    } else {
+                        if (respuesta.error) {
+                            setConsultaLoading(false)
+                            openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
+                            log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                        }
                     }
+                } catch (error) {
+                    setConsultaLoading(false)
+                    openSnackbar(`Error al guardar los datos:${error}`, "error");
                 }
-            } catch (error) {
-                setConsultaLoading(false)
-                openSnackbar(`Error al guardar los datos:${error}`, "error");
+
+
+                // console.log("Respuesta:", respuesta);
+            } else {
+                openSnackbar("Falta el id de la persona", "error");
             }
-
-
-            // console.log("Respuesta:", respuesta);
-        } else {
-            openSnackbar("Falta el id de la persona", "error");
+        }else{
+            openSnackbar('No tienes permisos para realizar esta acción', 'warning')
         }
     }
 
@@ -257,6 +265,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                         />
                     </FormControl>
                 </Grid>
+                {sessionData &&
                 <Grid item sm={12} mt={4}>
                     <LoadingButton
                         sx={{
@@ -274,6 +283,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                         </span>
                     </LoadingButton>
                 </Grid>
+                }
 
             </Grid>
         </Box>
