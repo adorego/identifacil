@@ -36,6 +36,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
 import {signIn, useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -290,7 +291,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
         setSelecciones(nuevasSelecciones);
     };
 
-
     const handleDespachoJudicial = (event: { target: { name: any; value: any; }; }) => {
         setDatosFormularios((prev: any) => ({
             ...prev,
@@ -299,9 +299,9 @@ export default function FormCausa({params}: { params: { id: number | string } })
         }))
     }
 
-    // TODO: Fix any type
 
-    /** Funcion para obtener personas del formulario de personas en el Expediente
+    /**
+     * Funcion para obtener personas del formulario de personas en el Expediente
      *
      * @param persona se recibe un objeto persona del array
      * @param editMode parametro para determinar si es que el PPL existe es nuevo o una edicion. Para evitar que se
@@ -380,11 +380,6 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     }
 
-    const testClick = (e: any) => {
-        e.preventDefault()
-        console.log('test')
-    }
-
     const handleSubmit = (e: any) => {
         e.preventDefault()
         if(validacionFormCausas()){
@@ -395,19 +390,21 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
     const validacionFormCausas = () =>{
         let esValidado = false
+        if(PermissionValidator('crear_expedientes', session) || PermissionValidator('actualizar_expedientes', session)){
 
-        for(const item of selecciones){
+            for(const item of selecciones){
 
-
-            if(item.causaId == 0 || item.hechoPunibleId == 0){
-                openSnackbar('Seleccionar correcamente hechos punibles/causas', 'error')
-                break;
-            }else{
-                esValidado = true;
+                if(item.causaId == 0 || item.hechoPunibleId == 0){
+                    openSnackbar('Seleccionar correcamente hechos punibles/causas', 'error')
+                    break;
+                }else{
+                    esValidado = true;
+                }
             }
+            return esValidado
+        } else{
+            openSnackbar('No tienes permiso para realizar esta accion', 'warning')
         }
-
-        return esValidado
     }
 
     const isCausaSelected = (hechoPunibleId:number, causaId:number) => {
@@ -926,6 +923,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
                         <Stack direction='row' spacing={2}>
+                            {(PermissionValidator('crear_expedientes', session) || PermissionValidator('actualizar_expedientes', session)) &&
                             <LoadingButton
                                 sx={{
                                     minHeight: "100%",
@@ -937,10 +935,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 loadingPosition='start'
                                 startIcon={<SaveIcon />}
                                 variant="contained">
-                        <span>
-                            {consultaLoading ? 'Guardando...' : 'Guardar'}
-                        </span>
+                            <span>
+                                {consultaLoading ? 'Guardando...' : 'Guardar'}
+                            </span>
                             </LoadingButton>
+                            }
                             <Button variant='outlined' onClick={()=>router.push('/expedientes')} sx={{
                                 minHeight: "100%",
                                 px: "48px",

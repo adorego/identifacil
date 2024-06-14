@@ -42,6 +42,7 @@ import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
 import {signIn, useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -309,40 +310,44 @@ export default function Page({params}: { params: { id: number | string } }) {
     // Manejador de envio
     const handleSubmit = (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+        if(PermissionValidator('crear_traslados', session) || PermissionValidator('actualizar_traslados', session)){
 
-        const form_procesado =
-            {
-                id: trasladoForm.id,
-                numero_de_documento: trasladoForm.numero_de_documento,
-                fecha_de_documento: trasladoForm.fechaDocumento,
-                fecha_de_traslado: trasladoForm.fechaTraslado,
-                autorizado_por: trasladoForm.autorizo,
-                motivo_de_traslado: trasladoForm.motivoTraslado,
-                medidas_de_seguridad: [trasladoForm.medidasSeguridad],
-                descripcion_motivo: trasladoForm.descripcionMotivo,
-                custodios: [trasladoForm.custodia],
-                chofer: trasladoForm.chofer,
-                vehiculo: trasladoForm.vehiculoId,
-                origenTraslado: trasladoForm.origenTraslado,
-                destinoTraslado: trasladoForm.destinoTraslado,
-                documentoAdjunto: trasladoForm.documentoAdjunto,
-                // @ts-ignore
-                ppls: Object.keys(trasladoForm.PPLs).map(key => trasladoForm.PPLs[key].id_persona),
+            const form_procesado =
+                {
+                    id: trasladoForm.id,
+                    numero_de_documento: trasladoForm.numero_de_documento,
+                    fecha_de_documento: trasladoForm.fechaDocumento,
+                    fecha_de_traslado: trasladoForm.fechaTraslado,
+                    autorizado_por: trasladoForm.autorizo,
+                    motivo_de_traslado: trasladoForm.motivoTraslado,
+                    medidas_de_seguridad: [trasladoForm.medidasSeguridad],
+                    descripcion_motivo: trasladoForm.descripcionMotivo,
+                    custodios: [trasladoForm.custodia],
+                    chofer: trasladoForm.chofer,
+                    vehiculo: trasladoForm.vehiculoId,
+                    origenTraslado: trasladoForm.origenTraslado,
+                    destinoTraslado: trasladoForm.destinoTraslado,
+                    documentoAdjunto: trasladoForm.documentoAdjunto,
+                    // @ts-ignore
+                    ppls: Object.keys(trasladoForm.PPLs).map(key => trasladoForm.PPLs[key].id_persona),
+                }
+            if (formTrasladoValidator(form_procesado)) {
+
+                postForm(
+                    isEditMode,
+                    'movimientos',
+                    'movimiento',
+                    form_procesado,
+                    setLoading,
+                    openSnackbar,
+                    router,
+                    true,
+                    '/movimientos/traslados'
+                );
             }
 
-        if (formTrasladoValidator(form_procesado)) {
-
-            postForm(
-                isEditMode,
-                'movimientos',
-                'movimiento',
-                form_procesado,
-                setLoading,
-                openSnackbar,
-                router,
-                true,
-                '/movimientos/traslados'
-            );
+        }else{
+            openSnackbar('No tienes permiso para realizar esta accion', 'warning')
         }
 
     }
@@ -792,6 +797,7 @@ export default function Page({params}: { params: { id: number | string } }) {
 
                                     }
 
+                                    {(PermissionValidator('crear_traslados', session) || PermissionValidator('actualizar_traslados', session)) &&
                                     <Grid item xs={12}>
                                         <Button
                                             variant="contained"
@@ -802,6 +808,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                 <CircularProgress color='success' size={24}/> : "Guardar Cambios"}
                                         </Button>
                                     </Grid>
+                                    }
 
                                 </Grid>
                             </form>)
