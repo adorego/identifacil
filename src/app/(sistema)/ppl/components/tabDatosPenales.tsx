@@ -63,7 +63,7 @@ export default function TabDatosPersonales({idPersona=null} : { idPersona: numbe
                     <TabContext value={value}  aria-orientation='vertical'>
                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                             <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                <Tab  label="Causas" value="1" />
+                                <Tab  label="Expedientes judiciales" value="1" />
                                 {/*<Tab label="Audiencias" disabled  value="2" />
                                 <Tab label="Libertades" disabled  value="3" />*/}
                             </TabList>

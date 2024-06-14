@@ -131,7 +131,7 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     const pathname = usePathname();
 
     useEffect(() => {
-        console.log(sessionData)
+        // console.log(sessionData)
         if(sessionData){
 
             setSessionState((prev:any)=>({
@@ -142,9 +142,6 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
 
         }
     }, []);
-
-
-
 
     useEffect(() => {
         const datos_sesion : any = {...session}
@@ -158,10 +155,10 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     }, [status]);
 
     const permissionValidator = ()=>{
-
+        console.log(pathname)
         // Se obtiene objeto de pagina actual
         // @ts-ignore
-        const paginaActualObject :{permission:String} = pageMapping ? pageMapping.find(page => page.url === pathname) : [];
+        const paginaActualObject :{permission:String} = pageMapping ? pageMapping.find(page => pathname.startsWith(page.url)) : [];
 
         // console.log(paginaActualObject);
 
@@ -194,7 +191,6 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     return (
         <>
             {/*<Toaster />*/}
-            {/* You can include any additional elements you need here */}
         </>
     );
 
