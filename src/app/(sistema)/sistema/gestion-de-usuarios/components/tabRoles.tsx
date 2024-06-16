@@ -26,7 +26,7 @@ export default function TabRoles(){
             setData(data.map((item:any)=>({
                 id: item.id,
                 nombre: item.nombre,
-                permisos: item.permisos.length
+                // permisos: item.permisos.length
             })))
         })
 

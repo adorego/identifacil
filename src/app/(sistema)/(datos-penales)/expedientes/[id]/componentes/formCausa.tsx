@@ -107,6 +107,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
     const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
 
     const { data: session, status } = useSession();
+    const sessionData = PermissionValidator('crear_expedientes', session) || PermissionValidator('actualizar_ppl_form_perfil', session);
 
 
     useEffect(() => {
@@ -563,6 +564,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             error={datosFormulario.numeroDeExpediente == ''}
                             helperText={datosFormulario.numeroDeExpediente == "" ? '* Campo requerido' : ''}
                             fullWidth
+                            disabled={!sessionData}
                             label="Nro. de expediente"
                             variant="outlined"
                             value={datosFormulario.numeroDeExpediente}
@@ -581,8 +583,8 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 onChange={handleBooleanChange}
                                 value={datosFormulario.condenado}
                             >
-                                <FormControlLabel value={false} control={<Radio/>} label="Procesado"/>
-                                <FormControlLabel value={true} control={<Radio/>} label="Condenado"/>
+                                <FormControlLabel disabled={!sessionData} value={false} control={<Radio/>} label="Procesado"/>
+                                <FormControlLabel disabled={!sessionData} value={true} control={<Radio/>} label="Condenado"/>
 
 
                             </RadioGroup>
@@ -592,6 +594,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                         <Grid item sm={4}>
                             <TextField
+                                disabled={!sessionData}
                                 fullWidth
                                 label="Nro. S.D. "
                                 variant="outlined"
@@ -605,6 +608,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <FormControl fullWidth>
                                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                     <MobileDatePicker
+                                        disabled={!sessionData}
                                         format="DD/MM/YYYY"
                                         name='fecha_sentencia_definitiva'
                                         onChange={(newValue: Dayjs | null) => {
@@ -629,6 +633,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     <Grid item sm={12}>
                         <TextField
                             fullWidth
+                            disabled={!sessionData}
                             label="Caratula"
                             error={datosFormulario.caratula_expediente == ''}
                             helperText={datosFormulario.caratula_expediente == "" ? '* Campo requerido' : ''}
@@ -647,9 +652,11 @@ export default function FormCausa({params}: { params: { id: number | string } })
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
                         <Typography variant='h6'>Hechos Punibles</Typography>
+                        {sessionData &&
                         <Typography variant='caption' color='error' ml={2}>
                             * Campo requerido
                         </Typography>
+                        }
                     </Grid>
 
                 </Grid>
@@ -660,6 +667,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             <FormControl fullWidth>
                                 <InputLabel id="hechosPunibles-field">Hechos punibles</InputLabel>
                                 <Select
+                                    disabled={!sessionData}
                                     label='Hechos punibles' value={seleccion.hechoPunibleId}
                                     onChange={(e) => handleHechoPunibleChange(index, parseInt(e.target.value as string))}
                                 >
@@ -675,6 +683,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                                 <InputLabel id="causas-field">Causas</InputLabel>
                                 <Select
                                     label='causas'
+                                    disabled={!sessionData}
                                     value={seleccion.causaId ? seleccion.causaId : 0}
                                     onChange={(e) => handleCausaChange(index, parseInt(e.target.value as string))}
                                 >
@@ -698,16 +707,18 @@ export default function FormCausa({params}: { params: { id: number | string } })
                             </FormControl>
                         </Grid>
                         <Grid item sm={1} alignItems='center'>
-                            <button onClick={() => handleEliminar(index)}>X</button>
+                            <button hidden={!sessionData} onClick={() => handleEliminar(index)}>X</button>
                         </Grid>
                     </Grid>
                 ))}
+                {sessionData &&
                 <Grid container spacing={2} mt={1}>
                     <Grid item>
                         <Button startIcon={<Add />} variant='text' onClick={handleAgregar}>Agregar Hecho Punible</Button>
 
                     </Grid>
                 </Grid>
+                }
 
 
                 <Grid container spacing={2} mt={1}>
@@ -722,6 +733,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <FormControl fullWidth>
                             <InputLabel id="circunscripcion-field">Circunscripciones</InputLabel>
                             <Select
+                                disabled={!sessionData}
                                 labelId="circunscripcion-field"
                                 id="circunscripcion"
                                 name='circunscripcion'
@@ -748,6 +760,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Juzgado de tribunal de sentencia</InputLabel>
                             <Select
+                                disabled={!sessionData}
                                 label="Juzgado de tribunal de sentencia"
                                 variant="outlined"
                                 value={typeof datosFormulario.juzgado_de_tribunal_de_sentencia == 'number' ? String(datosFormulario.juzgado_de_tribunal_de_sentencia) : datosFormulario.juzgado_de_tribunal_de_sentencia}
@@ -762,6 +775,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                     </Grid>
                     <Grid item sm={6}>
                         <TextField
+                            disabled={!sessionData}
                             fullWidth
                             label="Secretaria"
                             variant="outlined"
@@ -774,6 +788,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <FormControl fullWidth>
                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                 <DatePicker
+                                    disabled={!sessionData}
                                     format="DD/MM/YYYY"
                                     name='fecha_del_hecho'
                                     onChange={(newValue: Dayjs | null) => {
@@ -791,6 +806,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
                         <FormControl fullWidth>
                             <InputLabel id="ciudad-field">Ciudad</InputLabel>
                             <Select
+                                disabled={!sessionData}
                                 labelId="ciudad-field"
                                 id="ciudad"
                                 name='ciudad'
@@ -806,16 +822,10 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                             </Select>
                         </FormControl>
-                        {/*<TextField
-                            fullWidth
-                            label="Ciudad"
-                            variant="outlined"
-                            value={datosFormulario.ciudad}
-                            name="ciudad"
-                            onChange={handleChange}/>*/}
                     </Grid>
                     <Grid item sm={3}>
                         <TextField
+                            disabled={!sessionData}
                             fullWidth
                             label="Barrio"
                             variant="outlined"
@@ -826,6 +836,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                     <Grid item sm={6}>
                         <TextField
+                            disabled={!sessionData}
                             fullWidth
                             label="Link de la noticia"
                             variant="outlined"
@@ -841,6 +852,7 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                     <Grid item sm={12} mt={1}>
                         <ModalPersona
+
                             onHandlerPersona={handlerPersona}
                             editPersona={editPersona}
                             onClose={handleCloseModal}
@@ -922,32 +934,32 @@ export default function FormCausa({params}: { params: { id: number | string } })
 
                 <Grid container spacing={2} mt={1}>
                     <Grid item sm={12}>
-                        <Stack direction='row' spacing={2}>
-                            {(PermissionValidator('crear_expedientes', session) || PermissionValidator('actualizar_expedientes', session)) &&
-                            <LoadingButton
-                                sx={{
+                        {(PermissionValidator('crear_expedientes', session) || PermissionValidator('actualizar_expedientes', session)) &&
+                            <Stack direction='row' spacing={2}>
+                                <LoadingButton
+                                    sx={{
+                                        minHeight: "100%",
+                                        px: "48px",
+                                        height: '48px'
+                                    }}
+                                    onClick={handleSubmit}
+                                    loading={consultaLoading}
+                                    loadingPosition='start'
+                                    startIcon={<SaveIcon />}
+                                    variant="contained">
+                                <span>
+                                    {consultaLoading ? 'Guardando...' : 'Guardar'}
+                                </span>
+                                </LoadingButton>
+                                <Button variant='outlined' onClick={()=>router.push('/expedientes')} sx={{
                                     minHeight: "100%",
                                     px: "48px",
                                     height: '48px'
-                                }}
-                                onClick={handleSubmit}
-                                loading={consultaLoading}
-                                loadingPosition='start'
-                                startIcon={<SaveIcon />}
-                                variant="contained">
-                            <span>
-                                {consultaLoading ? 'Guardando...' : 'Guardar'}
-                            </span>
-                            </LoadingButton>
-                            }
-                            <Button variant='outlined' onClick={()=>router.push('/expedientes')} sx={{
-                                minHeight: "100%",
-                                px: "48px",
-                                height: '48px'
-                            }}>
-                                Cancelar
-                            </Button>
-                        </Stack>
+                                }}>
+                                    Cancelar
+                                </Button>
+                            </Stack>
+                        }
                     </Grid>
                 </Grid>
 

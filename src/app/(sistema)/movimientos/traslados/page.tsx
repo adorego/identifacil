@@ -45,6 +45,9 @@ export default function Ppl() {
 
     const { data: session, status } = useSession();
 
+    const sessionData = PermissionValidator('crear_traslados', session);
+    const sessionDataReadonly = PermissionValidator('crear_traslados', session) || PermissionValidator('actualizar_traslados', session);
+
 
     useEffect(() => {
 
@@ -188,7 +191,7 @@ export default function Ppl() {
         <Box>
             <TituloComponent
                 titulo='Traslados'
-                newEntry={PermissionValidator('crear_traslados', session) ? 'traslados/crear' : undefined}
+                newEntry={sessionData ? 'traslados/crear' : undefined}
             >
                 <BreadCrumbComponent listaDeItems={listaDeItemBread}/>
             </TituloComponent>
@@ -223,6 +226,7 @@ export default function Ppl() {
                                     targetURL: '/movimientos/traslados',
                                     rowsPerPageCustom: 5,
                                     pagination: true,
+                                    readonly: !sessionDataReadonly,
 
                                 }}
                             />

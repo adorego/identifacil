@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -25,6 +26,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {dummyData} from "@/app/dummyData/data";
 import dayjs from "dayjs";
+import {PanoramaFishEye} from "@mui/icons-material";
+import {Visibility} from "@mui/icons-material/";
 
 interface Header {
     id: string;
@@ -45,6 +48,7 @@ interface TableOptions {
     expandedList?: string;
     newRecord?: string;
     deleteOption?: boolean;
+    readonly?: boolean
 }
 
 interface DeleteRecordArgs {
@@ -90,6 +94,7 @@ function CustomTable({
                              expandedList: '',
                              newRecord: '',
                              deleteOption: false,
+                             readonly: false,
                          }
                      }: CustomTableProps): JSX.Element {
 
@@ -246,11 +251,10 @@ function CustomTable({
                                                         color="primary"
                                                         aria-label="Edit"
                                                         component={Link}
-                                                        //href={`${options.targetURL}`}
                                                         href={options.busqueda ? `${options.targetURL}/${row[options.busqueda]}` : `${options.targetURL}/${row.id}`}
-                                                        /*onClick={() => handleCellClick(row.id as number)}*/
+
                                                     >
-                                                        <EditIcon/>
+                                                            {options.readonly ? <Visibility /> : <EditIcon/> }
                                                     </IconButton>
                                                 ) : (
                                                     ''

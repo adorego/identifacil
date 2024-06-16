@@ -16,7 +16,6 @@ import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 const header = [
     { id: 'id', label: 'ID' },
     { id: 'nombre', label: 'Medida de seguridad' },
-    { id: 'lastUpdate', label: 'Ultima actualización' },
 ]
 
 export default function Page(){

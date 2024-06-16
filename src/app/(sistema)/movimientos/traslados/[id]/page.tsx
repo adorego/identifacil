@@ -3,7 +3,7 @@
 import {
     Alert,
     Autocomplete,
-    Box, Breadcrumbs,
+    Box,
     Button,
     CardContent,
     CircularProgress,
@@ -21,7 +21,6 @@ import {
 import {
     Medidas,
     Motivo,
-    PPLType,
     TrasladoForm,
     Vehiculo,
     pplTraslado
@@ -35,7 +34,7 @@ import {SelectChangeEvent} from '@mui/material/Select';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from 'next/navigation';
-import {DatePicker, LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+import { LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 import dayjs, {Dayjs} from "dayjs";
@@ -151,7 +150,7 @@ export default function Page({params}: { params: { id: number | string } }) {
     const router = useRouter();
     const isEditMode: boolean = params?.id !== 'crear';
     const { data: session, status } = useSession();
-
+    const sessionData = PermissionValidator('crear_traslados', session) || PermissionValidator('actualizar_traslados', session);
 
     useEffect(() => {
 
@@ -404,7 +403,7 @@ export default function Page({params}: { params: { id: number | string } }) {
     };
 
     const listaDeItemBread = [
-        {nombre: 'Lista de traslados', url: '/movimientos/traslados', lastItem: true},
+        {nombre: 'Lista de traslados', url: '/movimientos/traslados', lastItem: false},
         {nombre: 'Traslado', url: '', lastItem: true},
     ];
 
@@ -478,6 +477,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     <Grid item xs={3}>
                                         <TextField
                                             fullWidth
+                                            disabled={!sessionData}
                                             label="Nro. de documento de traslado"
                                             variant="outlined"
                                             helperText='* Campo requerido'
@@ -492,6 +492,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                                 <MobileDatePicker
+                                                    disabled={!sessionData}
                                                     label="Fecha del documento"
                                                     format="DD/MM/YYYY"
                                                     name='fechaDocumento'
@@ -514,6 +515,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                                 <MobileDatePicker
+                                                    disabled={!sessionData}
                                                     label="Fecha del traslado"
                                                     format="DD/MM/YYYY"
                                                     name='fechaTraslado'
@@ -536,6 +538,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Persona que autorizó traslado</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.autorizo}
                                                 value={trasladoForm.autorizo}
                                                 onChange={handleSelectChange}
@@ -561,6 +564,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Tipo de medidas de seguridad</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.medidasSeguridad}
                                                 value={trasladoForm.medidasSeguridad}
                                                 onChange={handleSelectChange}
@@ -586,6 +590,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Motivo del traslado</InputLabel>
                                             <Select label='Motivo del traslado'
+                                                    disabled={!sessionData}
                                                     error={!trasladoForm.motivoTraslado}
                                                     value={trasladoForm.motivoTraslado}
                                                     onChange={handleSelectChange}
@@ -605,6 +610,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     {/* Descripción del motivo */}
                                     <Grid item xs={12}>
                                         <TextField fullWidth multiline rows={4} label="Descripción del motivo"
+                                                   disabled={!sessionData}
                                                    variant="outlined"
                                                    value={trasladoForm.descripcionMotivo}
                                                    name="descripcionMotivo"
@@ -618,6 +624,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Personal de custodia</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.custodia}
                                                 value={trasladoForm.custodia}
                                                 onChange={handleSelectChange}
@@ -645,6 +652,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>chofer</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.chofer}
                                                 value={trasladoForm.chofer}
                                                 onChange={handleSelectChange}
@@ -673,6 +681,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Chapa del vehiculo</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.vehiculoId}
                                                 value={trasladoForm.vehiculoId}
                                                 onChange={handleSelectChange}
@@ -695,6 +704,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Modelo del vehiculo</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.vehiculoId}
                                                 value={trasladoForm.vehiculoId}
                                                 onChange={handleSelectChange}
@@ -718,6 +728,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Destino del traslado</InputLabel>
                                             <Select
+                                                disabled={!sessionData}
                                                 error={!trasladoForm.destinoTraslado}
                                                 value={trasladoForm.destinoTraslado}
                                                 onChange={handleSelectChange}
@@ -740,6 +751,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     <Grid item xs={6}>
 
                                         <TextField
+                                            disabled={!sessionData}
                                             variant="outlined"
                                             type="text"
                                             label='Documento adjunto'
@@ -771,7 +783,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                 <Typography variant='h6'>PPLs a ser trasladados</Typography>
                                             </Grid>
                                             <Grid item xs={6} textAlign='right'>
-                                                <Button variant="contained" color="primary" onClick={handleOpen}>
+                                                <Button disabled={!sessionData} variant="contained" color="primary" onClick={handleOpen}>
                                                     Agregar PPL
                                                 </Button>
                                             </Grid>
@@ -786,7 +798,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             deleteRecord={handleDeleteRecord}
                                             options={{
                                                 pagination: true,
-                                                deleteOption: true,
+                                                deleteOption: sessionData ? true : false,
                                             }}
                                         />
                                     </Grid>

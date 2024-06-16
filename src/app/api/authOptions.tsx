@@ -45,7 +45,7 @@ export const authOptions = {
                 if (res.ok) {
                     // const decoded = await decode(user.access_token);
                     const decoded : tokenLoginType = jwtDecode(user.access_token)
-                    console.log('decoded_token en route.ts', decoded)
+                    // console.log('decoded_token en route.ts', decoded)
                     // @ts-ignore
                     const rolId =decoded?.roles[0].id
 

@@ -37,6 +37,7 @@ import es from 'dayjs/locale/es';
 import {MuiFileInput} from "mui-file-input";
 import Link from "next/link";
 import {signIn, useSession} from "next-auth/react";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -309,6 +310,10 @@ export default function Page({params}: { params: { id: number | string } }) {
         }
 
     };
+    const listaDeItemBread = [
+        {nombre:'Lista de medidas de fuerza', url:'/gestion-ppl/medidas-de-fuerza/', lastItem: false},
+        {nombre:'Medidas de fuerza', url:'', lastItem: true},
+    ];
 
 
     if (status === 'loading') {
@@ -352,7 +357,10 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     return (
         <Box>
-            <TituloComponent titulo={isEditMode ? `Medida de fuerza` : 'Crear Medidas de Fuerza'}/>
+            <TituloComponent titulo={isEditMode ? `Medida de fuerza` : 'Crear Medidas de Fuerza'}>
+                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+            </TituloComponent>
+
 
             {/*<QueryBlock/>*/}
             <Box mt={4}>

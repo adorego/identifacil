@@ -36,6 +36,8 @@ export default function Page() {
     const [data, setData] = useState(null);
     const [dataFiltrado, setDataFiltrado] = useState(null);
     const { data: session, status } = useSession();
+    const sessionData = PermissionValidator('crear_expedientes', session);
+    const sessionDataReadonly = PermissionValidator('crear_traslados', session) || PermissionValidator('actualizar_expedientes', session);
 
 
     useEffect(() => {
@@ -137,7 +139,7 @@ export default function Page() {
             <Box mb={3}>
                 <TituloComponent
                     titulo='Expedientes judiciales'
-                    newEntry={PermissionValidator('crear_expedientes', session) ? '/expedientes/crear' : undefined}
+                    newEntry={sessionData ? '/expedientes/crear' : undefined}
                 >
                     <BreadCrumbComponent listaDeItems={listaDeItemBread} />
                 </TituloComponent>
@@ -161,7 +163,8 @@ export default function Page() {
                             rowsPerPageCustom: 10,
                             deleteOption: false,
                             pagination: true,
-                            targetURL: '/expedientes'
+                            targetURL: '/expedientes',
+                            readonly: !sessionDataReadonly
                         }}
                     />
                 </Box>

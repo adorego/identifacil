@@ -93,8 +93,7 @@ export default function Page(){
     };
 
     const listaDeItemBread = [
-        {nombre:'Lista de Choferes', url:'/sistema/choferes', lastItem: false},
-        {nombre:'Choferes', url:'', lastItem: true},
+        {nombre:'Lista de Choferes', url:'/sistema/choferes', lastItem: true}
     ];
 
     if (!data) {

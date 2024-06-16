@@ -91,8 +91,7 @@ export default function Page(){
     };
 
     const listaDeItemBread = [
-        {nombre:'Lista de custodios', url:'/sistema/personal', lastItem: false},
-        {nombre:'Custodio', url:'', lastItem: true},
+        {nombre:'Lista de custodios', url:'/sistema/personal', lastItem: true}
     ];
 
 

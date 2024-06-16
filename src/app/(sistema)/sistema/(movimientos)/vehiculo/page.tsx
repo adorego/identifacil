@@ -93,8 +93,7 @@ export default function Page(){
     };
 
     const listaDeItemVehiculos = [
-        {nombre:'Lista de vehiculos', url:'/sistema/vehiculo', lastItem: false},
-        {nombre:'Vehiculo', url:'', lastItem: true},
+        {nombre:'Lista de vehiculos', url:'/sistema/vehiculo', lastItem: true}
     ];
 
     return(

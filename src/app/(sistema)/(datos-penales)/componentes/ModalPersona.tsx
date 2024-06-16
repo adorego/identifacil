@@ -25,6 +25,8 @@ import {
 } from "@/app/(sistema)/(datos-penales)/expedientes/[id]/componentes/expedientesType";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import es from 'dayjs/locale/es';
+import {useSession} from "next-auth/react";
+import PermissionValidator from "@/components/authComponents/permissionValidator";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
 
@@ -51,6 +53,7 @@ type ModalPropsType = {
     editPersona: {} | null;
     onOpen: boolean;
     onClose: () => void;
+
 }
 
 const ENDPOINT_API = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API
@@ -86,6 +89,9 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
     const [isEditMode, setIsEditMode] = useState<boolean>(false)
 
     const {openSnackbar, closeSnackbar} = useGlobalContext();
+
+    const { data: session, status } = useSession();
+    const sessionData = PermissionValidator('crear_expedientes', session) || PermissionValidator('actualizar_ppl_form_perfil', session);
 
     /** Se carga al iniciar el FORM */
     useEffect(() => {
@@ -317,12 +323,17 @@ const ModalPersona: FC<ModalPropsType> = ({onHandlerPersona, editPersona = null,
 
     return (
         <>
-            <Stack spacing={2} direction='row' justifyContent='space-between'>
-                <Typography variant='h6'>PPLs vinculados</Typography>
-                <Button onClick={onHandleOpen} variant={'contained'}>
-                    Agregar PPL
-                </Button>
-            </Stack>
+            {console.log(sessionData)}
+
+                <Stack spacing={2} direction='row' justifyContent='space-between' >
+                    <Typography variant='h6'>PPLs vinculados</Typography>
+                    <Box hidden={!sessionData}>
+                        <Button disabled={!sessionData} onClick={onHandleOpen} variant={'contained'}>
+                            Agregar PPL
+                        </Button>
+                    </Box>
+                </Stack>
+
 
             <ModalComponent open={open} onClose={() => {
                 handleClose()

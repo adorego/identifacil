@@ -223,7 +223,9 @@ header.MuiPaper-root {
     background: transparent;
 }
 
-.MuiInputBase-input.Mui-disabled, .fechaNacimientoField .MuiInputBase-root.Mui-disabled{
+input.MuiInputBase-input.Mui-disabled,
+.MuiInputBase-root.MuiOutlinedInput-root.MuiInputBase-colorPrimary.Mui-disabled,
+.fechaNacimientoField .MuiInputBase-root.Mui-disabled{
     background: rgba(0, 0, 0, 0.040);
     border-radius: 5px;
 }

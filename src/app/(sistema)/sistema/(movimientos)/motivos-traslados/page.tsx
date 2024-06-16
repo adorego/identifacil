@@ -75,8 +75,7 @@ export default function Page(){
     };
 
     const listaDeItemBread = [
-        {nombre:'Lista de motivos de traslados', url:'/sistema/motivos-traslados', lastItem: false},
-        {nombre:'Motivos de traslados', url:'', lastItem: true},
+        {nombre:'Lista de motivos de traslados', url:'/sistema/motivos-traslados', lastItem: true},
     ];
 
     if (!data) {
