@@ -126,7 +126,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
     const [vacunasSeleccionadas, setVacunasSeleccionadas] = useState<Array<{ id: number; nombre: string }>>([]);
 
     const {data: session}: { data: any; } = useSession();
-    const sessionData = PermissionValidator('crear_ppl_form_perfil', session) || PermissionValidator('actualizar_ppl_form_perfil', session);
+    const sessionData = PermissionValidator('crear_ppl_form_salud', session) || PermissionValidator('actualizar_ppl_form_salud', session);
     const {openSnackbar} = useGlobalContext();
 
     useEffect(() => {
@@ -1061,6 +1061,7 @@ const BloqueSalud: FC<BloqueSaludProps> = ({
                             </RadioGroup>
                         </FormControl>
                     </Grid>
+                    {console.log(sessionData)}
                     {sessionData &&
                     <Grid item sm={12} mt={4}>
                         <LoadingButton
