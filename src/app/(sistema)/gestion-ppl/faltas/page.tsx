@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import {Box, CircularProgress} from "@mui/material";
+import {Box, CircularProgress, Paper} from "@mui/material";
 import {useEffect, useState} from 'react';
 
 import CustomTable from "@/components/CustomTable";
@@ -11,6 +11,7 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 import {fetchData} from "@/components/utils/utils";
+import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
@@ -84,6 +85,10 @@ export default function Page(){
         setModalOpen(false);
     };
 
+    const listaDeItemBread = [
+        {nombre:'Lista de faltas y sanciones', url:'/gestion-ppl/medidas-de-fuerza/', lastItem: true}
+    ];
+
     if (!data) {
         return (
             <Box sx={{
@@ -102,8 +107,11 @@ export default function Page(){
     return(
 
         <Box>
-            <TituloComponent titulo='Faltas y sanciones' url='/' newEntry='/gestion-ppl/faltas/crear'/>
-            <Box mt={4}>
+
+            <TituloComponent titulo={'Faltas y sanciones'}>
+                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+            </TituloComponent>
+            <Box mt={4} component={Paper}>
                 <CustomTable
                     showId={false}
                     headers={header}
@@ -111,7 +119,8 @@ export default function Page(){
                     // @ts-ignore
                     deleteRecord={handleOpenModal}
                     options={{
-
+                        title: 'Lista de faltas y sanciones',
+                        newRecord: '/gestion-ppl/faltas/crear',
                         pagination:true,
                         rowsPerPageCustom: 5,
                         targetURL:`/gestion-ppl/faltas`,

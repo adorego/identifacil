@@ -268,14 +268,14 @@ export default function SidebarDrawer()
                                 isActive={pathname === '/gestion-ppl/medidas-de-fuerza'}
                             />
                             }
-
-                            {/*<SidebarItem
+                            {PermissionValidator('ver_faltas_y_sanciones', session) &&
+                            <SidebarItem
                                 icon={<span className='subIcon'></span>}
                                 label="Faltas y sanciones"
                                 path="/gestion-ppl/faltas"
                                 isActive={pathname === '/gestion-ppl/faltas'}
-                            />*/}
-
+                            />
+                            }
                         </List>
                     </Collapse>
 

@@ -310,6 +310,7 @@ export default function Page({params}: { params: { id: number | string } }) {
         }
 
     };
+
     const listaDeItemBread = [
         {nombre:'Lista de medidas de fuerza', url:'/gestion-ppl/medidas-de-fuerza/', lastItem: false},
         {nombre:'Medidas de fuerza', url:'', lastItem: true},
