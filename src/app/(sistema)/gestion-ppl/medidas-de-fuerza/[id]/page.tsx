@@ -159,14 +159,6 @@ export default function Page({params}: { params: { id: number | string } }) {
                     )
                 }))
 
-
-
-                /*{
-                    ...res,
-                    archivo_registro_medico: res. archivo_registro_medico && (
-                        <Link href={`${res.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
-                    )
-                }*/
                 setStateHistorialMedico(datos_procesados)
             })
         }
@@ -192,6 +184,19 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     }, []);
 
+    useEffect(() => {
+        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
+
+            const datos_procesados = res.map((data:any)=>({
+                ...data,
+                archivo_registro_medico: data. archivo_registro_medico && (
+                    <Link href={`${ASSETS_URL}${data.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                )
+            }))
+
+            setStateHistorialMedico(datos_procesados)
+        })
+    }, [statePPL]);
 
     const handleSelectChange = (event: SelectChangeEvent<string | number | [number]>) => {
         const name = event.target.name;
@@ -299,8 +304,22 @@ export default function Page({params}: { params: { id: number | string } }) {
                 // Manejar la respuesta exitosa
                 // @ts-ignore
                 setStateHistorialMedico((prev: any) => [...prev, stateRegistroMedicoModal]);
-                setStateRegistroMedicoModal(registroInitial)
-                handleClose();
+                fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
+
+                    const datos_procesados = res.map((data:any)=>({
+                        ...data,
+                        archivo_registro_medico: data. archivo_registro_medico && (
+                            <Link href={`${ASSETS_URL}${data.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                        )
+                    }))
+
+                    setStateHistorialMedico(datos_procesados)
+
+                }).catch(err=>console.log(err)).finally(()=>{
+                    setStateRegistroMedicoModal(registroInitial)
+                    handleClose();
+                })
+
             } catch (err) {
                 console.error(err);
                 // Manejar el error
@@ -548,6 +567,7 @@ export default function Page({params}: { params: { id: number | string } }) {
 
                 </Paper>
             </Box>
+
             <Modal open={open} onClose={handleClose}>
                 <Box
                     sx={styleModal}
