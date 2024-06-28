@@ -29,6 +29,8 @@ export const authOptions = {
                     return null;
                 }
 
+                console.log('Check de URL en auth', `${API_URL_REGISTRO}/login`)
+
                 // Realiza la solicitud al endpoint de login
                 const res = await fetch(`${API_URL_REGISTRO}/login`, {
                     method: 'POST',
@@ -40,6 +42,9 @@ export const authOptions = {
                 });
 
                 const user = await res.json();
+
+                console.log('respuesta de json', user)
+
                 // Si recibes un access_token, decodifica el token para obtener los datos adicionales
 
                 if (res.ok) {
