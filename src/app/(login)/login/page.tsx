@@ -53,7 +53,7 @@ export default function Login() {
             });
 
             if (res && res.error) {
-                console.error(res.error);
+                console.error(res);
             } else {
                 // Redirige al usuario a la página principal
                 router.push('/inicio');

@@ -4,7 +4,9 @@ import {cookies} from "next/headers";
 import {decode} from "next-auth/jwt";
 import {fetchData} from "@/components/utils/utils";
 
-const API_URL_REGISTRO = process.env.NEXT_PUBLIC_IDENTIFACIL_AUTH_API
+const API_URL_REGISTRO = process.env.NODE_ENV == 'production' ?
+    process.env.NEXTAUTH_URL
+    : process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER;
 
 interface tokenLoginType{
     sub:number;
@@ -32,7 +34,7 @@ export const authOptions = {
                 }
 
                 console.log('***** check establecimientos comienza ***** ')
-                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/establecimientos/`;
+                const url = `${process.env.NEXT_PUBLIC_ESTABLECIMIENTO}/establecimientos/`;
                 fetch(url).then(res=>res.json())
                     .then(fetchedData => {
                         console.log(fetchedData)
@@ -45,11 +47,11 @@ export const authOptions = {
 
 
 
-                console.log('Check de URL en auth', `${API_URL_REGISTRO}/login`)
+                console.log('Check de URL en auth', `${API_URL_REGISTRO}/api/registro/auth/login`)
                 // Realiza la solicitud al endpoint de login
 
                 try {
-                    const res = await fetch(`${API_URL_REGISTRO}/login`, {
+                    const res = await fetch(`${API_URL_REGISTRO}/api/registro/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -60,19 +62,20 @@ export const authOptions = {
 
                     const user = await res.json();
 
-                    console.log('respuesta de json', user)
+                    console.log('respuesta de json', res)
 
                     // Si recibes un access_token, decodifica el token para obtener los datos adicionales
 
                     if (res.ok) {
+                        console.log('Res fue OK')
                         // const decoded = await decode(user.access_token);
                         const decoded : tokenLoginType = jwtDecode(user.access_token)
                         // console.log('decoded_token en route.ts', decoded)
                         // @ts-ignore
                         const rolId =decoded?.roles[0].id
 
-                        const resPermisos = await fetch(`${API_URL_REGISTRO}/rol/${rolId}/permiso`)
-
+                        const resPermisos = await fetch(`${API_URL_REGISTRO}/api/registro/auth/rol/${rolId}/permiso`)
+                        console.log(resPermisos)
 
                         if (resPermisos.ok) {
                             const datos = await resPermisos.json()
