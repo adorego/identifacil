@@ -33,8 +33,12 @@ export const authOptions = {
                     return null;
                 }
 
-                console.log('***** check establecimientos comienza ***** ')
                 const url = `${process.env.NEXT_PUBLIC_ESTABLECIMIENTO}/establecimientos/`;
+                console.log('Check de URL de auth', `${API_URL_REGISTRO}/api/registro/auth/login`)
+                console.log('Check de URL de establecimientos', url)
+
+                console.log('***** check establecimientos comienza ***** ')
+
                 fetch(url).then(res=>res.json())
                     .then(fetchedData => {
                         console.log(fetchedData)
@@ -47,10 +51,11 @@ export const authOptions = {
 
 
 
-                console.log('Check de URL en auth', `${API_URL_REGISTRO}/api/registro/auth/login`)
+
                 // Realiza la solicitud al endpoint de login
 
                 try {
+                    console.log('***** Comientzo de check login de auth ***** ')
                     const res = await fetch(`${API_URL_REGISTRO}/api/registro/auth/login`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -99,6 +104,8 @@ export const authOptions = {
                     }
                 }catch (e){
                     console.log('Error capturar en fetch de auth',e)
+                }finally {
+                    console.log('***** FIN de check de auth login ***** ')
                 }
 
             },
