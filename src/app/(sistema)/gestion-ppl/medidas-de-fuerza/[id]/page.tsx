@@ -28,18 +28,21 @@ import {SelectChangeEvent} from '@mui/material/Select';
 import TituloComponent from "@/components/titulo/tituloComponent";
 import {useGlobalContext} from "@/app/Context/store";
 import {useRouter} from 'next/navigation';
-import { LocalizationProvider, MobileDatePicker} from "@mui/x-date-pickers";
+import {LocalizationProvider, MobileDatePicker, MobileTimePicker} from "@mui/x-date-pickers";
 
 import dayjs, {Dayjs} from "dayjs";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat"
 import es from 'dayjs/locale/es';
 
 import {MuiFileInput} from "mui-file-input";
 import Link from "next/link";
 import {signIn, useSession} from "next-auth/react";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import {TimePicker} from "@mui/x-date-pickers/TimePicker";
 
 dayjs.locale(es); // Configura dayjs globalmente al español
+dayjs.extend(customParseFormat);
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -66,20 +69,26 @@ interface medidaFuerzaType {
     id: number | null;
     ppl: number;
     tipo_de_medida_de_fuerza: number;
-    fecha_de_inicio: Dayjs | null;
-    fecha_de_fin: Dayjs | null;
+    fecha_inicio: Dayjs | null;
+    fecha_fin: Dayjs | null;
     motivo: number;
     exigencias?: string;
     negociadores?: number;
+    estado: string;
+    hora_inicio?: Dayjs | null;
+    hora_fin?: Dayjs | null;
 }
 
 const medidaFuerzaInitial = {
     id: null,
     ppl: 0,
     tipo_de_medida_de_fuerza: 0,
-    fecha_de_inicio: dayjs(),
-    fecha_de_fin: null,
+    fecha_inicio: dayjs(),
+    fecha_fin: null,
     motivo: 0,
+    estado: 'EN_PROCESO',
+    hora_inicio: null,
+    hora_fin: null,
 }
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
@@ -92,7 +101,9 @@ export default function Page({params}: { params: { id: number | string } }) {
 
 
     const [stateMedidasDeFuerza, setStateMedidasDeFuerza] = useState<medidaFuerzaType>(medidaFuerzaInitial);
+
     const [loading, setLoading] = useState(false);
+
     const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{
         id_persona: number;
         nombre: string;
@@ -102,8 +113,11 @@ export default function Page({params}: { params: { id: number | string } }) {
     const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
 
     const [stateTiposMedidas, setStateTiposMedidas] = useState([]);
+
     const [stateMotivosMedidas, setStateMotivosMedidas] = useState([]);
+
     const [stateHistorialMedico, setStateHistorialMedico] = useState([]);
+
     const [stateRegistroMedicoModal, setStateRegistroMedicoModal] = useState<{
         fecha_consulta: Dayjs | null;
         diagnostico: string;
@@ -130,12 +144,16 @@ export default function Page({params}: { params: { id: number | string } }) {
         if (isEditMode) {
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/medida_de_fuerza/${params.id}`).then((res: any) => {
                 // @ts-ignore
+
+                console.log(res)
                 const dato_procesado = {
                     ...res,
                     motivo: res.motivo ? res.motivo.id : null,
                     tipo_de_medida_de_fuerza: res.tipo_de_medida_de_fuerza ? res.tipo_de_medida_de_fuerza.id : null,
-                    fecha_de_fin: res.fecha_fin ? dayjs(res.fecha_fin).format('YYYY-MM-DD') : null,
-                    fecha_de_inicio: res.fecha_inicio ? dayjs(res.fecha_inicio).format('YYYY-MM-DD') : null,
+                    fecha_fin: res.fecha_fin ? dayjs(res.fecha_fin).format('YYYY-MM-DD') : null,
+                    fecha_inicio: res.fecha_inicio ? dayjs(res.fecha_inicio).format('YYYY-MM-DD') : null,
+                    hora_inicio: res.hora_inicio ? dayjs(res.hora_inicio, "HH:mm:ss") : null,
+                    hora_fin: res.hora_fin ? dayjs(res.hora_fin, "HH:mm:ss") : null,
                     ppl: res.ppl ? res.ppl.persona.id : null,
                 }
                 console.log(dato_procesado)
@@ -185,17 +203,22 @@ export default function Page({params}: { params: { id: number | string } }) {
     }, []);
 
     useEffect(() => {
-        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
+        if(params.id !== 'crear'){
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
 
-            const datos_procesados = res.map((data:any)=>({
-                ...data,
-                archivo_registro_medico: data. archivo_registro_medico && (
-                    <Link href={`${ASSETS_URL}${data.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
-                )
-            }))
+                if(res){
 
-            setStateHistorialMedico(datos_procesados)
-        })
+                    const datos_procesados = res.map((data:any)=>({
+                        ...data,
+                        archivo_registro_medico: data. archivo_registro_medico && (
+                            <Link href={`${ASSETS_URL}${data.archivo_registro_medico}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                        )
+                    }))
+                    setStateHistorialMedico(datos_procesados)
+
+                }
+            })
+        }
     }, [statePPL]);
 
     const handleSelectChange = (event: SelectChangeEvent<string | number | [number]>) => {
@@ -208,17 +231,39 @@ export default function Page({params}: { params: { id: number | string } }) {
     }
 
     const formValidator = ()=>{
-        // @ts-ignore
-        if( !!stateMedidasDeFuerza.motivo && !!stateMedidasDeFuerza.tipo_de_medida_de_fuerza && !!stateMedidasDeFuerza.fecha_de_inicio && !!personasSeleccionadas.id_persona){
-            return true
+        let formEsValidado: boolean;
+
+
+        if( !!stateMedidasDeFuerza.motivo
+            && !!stateMedidasDeFuerza.tipo_de_medida_de_fuerza
+            && !!stateMedidasDeFuerza.fecha_inicio
+            // @ts-ignore
+            && !!personasSeleccionadas.id_persona
+            && !!stateMedidasDeFuerza.hora_inicio
+        ){
+            formEsValidado = true
         }else{
-            return false
+            formEsValidado =  false
         }
+
+
+        if(stateMedidasDeFuerza.estado == 'FINALIZADO'){
+
+            if(stateMedidasDeFuerza.hora_fin && stateMedidasDeFuerza.fecha_fin){
+                formEsValidado = true
+            }else{
+                formEsValidado = false
+            }
+        }
+
+
+        return formEsValidado;
     }
 
     // Manejador de envio
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
+
 
         if(formValidator()){
 
@@ -230,6 +275,9 @@ export default function Page({params}: { params: { id: number | string } }) {
             const state_procesado = {
                 ...stateMedidasDeFuerza,
                 ppl: personasSeleccionadas ? personasSeleccionadas.id_persona : null,
+                hora_inicio: stateMedidasDeFuerza.hora_inicio ? dayjs(stateMedidasDeFuerza.hora_inicio).format('hh:mm:ss') : null,
+                fecha_de_inicio: stateMedidasDeFuerza.fecha_inicio,
+                fecha_de_fin: stateMedidasDeFuerza.fecha_fin,
             }
 
 
@@ -477,22 +525,38 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
-
+                                    <Grid item xs={8}>
+                                        <FormControl fullWidth variant="outlined">
+                                            <InputLabel>Estado</InputLabel>
+                                            <Select
+                                                value={stateMedidasDeFuerza.estado}
+                                                onChange={handleSelectChange}
+                                                label="Estado"
+                                                name="estado"
+                                            >
+                                                <MenuItem value={'EN_PROCESO'}>En proceso</MenuItem>
+                                                <MenuItem value={'FINALIZADO'}>Finalizado</MenuItem>
+                                            </Select>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={4}>
+                                    </Grid>
 
                                     {/* Documento adjunto */}
                                     {/* Fecha del documento */}
-                                    <Grid item xs={6}>
+                                    <Grid item xs={3}>
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                                 <MobileDatePicker
                                                     label="Fecha de inicio"
                                                     format="DD/MM/YYYY"
-                                                    name='fecha_de_inicio'
-                                                    value={stateMedidasDeFuerza.fecha_de_inicio ? dayjs(stateMedidasDeFuerza.fecha_de_inicio) : null}
+                                                    name='fecha_inicio'
+                                                    value={stateMedidasDeFuerza.fecha_inicio ? dayjs(stateMedidasDeFuerza.fecha_inicio) : null}
                                                     onChange={(newValue: Dayjs | null) => {
                                                         setStateMedidasDeFuerza((prevState: any) => ({
                                                             ...prevState,
-                                                            fecha_de_inicio: newValue,
+                                                            fecha_inicio: newValue,
                                                         }))
                                                     }}
 
@@ -501,27 +565,66 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={3}>
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
-                                                <MobileDatePicker
-                                                    label="Fecha de fin"
-                                                    format="DD/MM/YYYY"
-                                                    name='fecha_de_fin'
-                                                    value={stateMedidasDeFuerza.fecha_de_fin ? dayjs(stateMedidasDeFuerza.fecha_de_fin) : null}
+                                                <TimePicker
+                                                    label="Hora de inicio"
+                                                    format="hh:mm"
+                                                    name='hora_inicio'
+                                                    value={stateMedidasDeFuerza.hora_inicio ? dayjs(stateMedidasDeFuerza.hora_inicio) : null}
                                                     onChange={(newValue: Dayjs | null) => {
                                                         setStateMedidasDeFuerza((prevState: any) => ({
                                                             ...prevState,
-                                                            fecha_de_fin: newValue,
+                                                            hora_inicio: newValue,
                                                         }))
                                                     }}
 
                                                 />
                                             </LocalizationProvider>
-
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                                <MobileDatePicker
+                                                    label="Fecha de finalizacion"
+                                                    format="DD/MM/YYYY"
+                                                    name='fecha_fin'
+                                                    value={stateMedidasDeFuerza.fecha_fin ? dayjs(stateMedidasDeFuerza.fecha_fin) : null}
+                                                    onChange={(newValue: Dayjs | null) => {
+                                                        setStateMedidasDeFuerza((prevState: any) => ({
+                                                            ...prevState,
+                                                            fecha_fin: newValue,
+                                                        }))
+                                                    }}
 
+                                                />
+                                            </LocalizationProvider>
+                                            {stateMedidasDeFuerza.estado == 'FINALIZADO' && (<FormHelperText>* Campo requerido</FormHelperText>)}
+                                        </FormControl>
+                                    </Grid>
+                                    <Grid item xs={3}>
+                                        <FormControl fullWidth>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
+                                                <TimePicker
+                                                    label="Hora de finalizacion"
+                                                    format="hh:mm"
+                                                    name='hora_fin'
+                                                    value={stateMedidasDeFuerza.hora_fin ? dayjs(stateMedidasDeFuerza.hora_fin) : null}
+                                                    onChange={(newValue: Dayjs | null) => {
+                                                        setStateMedidasDeFuerza((prevState: any) => ({
+                                                            ...prevState,
+                                                            hora_fin: newValue,
+                                                        }))
+                                                    }}
+
+                                                />
+                                            </LocalizationProvider>
+                                            {stateMedidasDeFuerza.estado == 'FINALIZADO' && (<FormHelperText>* Campo requerido</FormHelperText>)}
+                                        </FormControl>
+                                    </Grid>
 
                                     {/* Agregar PPL Button */}
                                     {stateMedidasDeFuerza.id &&
