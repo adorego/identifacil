@@ -347,8 +347,10 @@ export default function Page({params}: { params: { id: number | string } }) {
                     throw new Error('Error al enviar los datos del registro médico');
                 }
 
+                openSnackbar('Registro medico guardado correctamente.', 'success')
+
                 const data = await response.json();
-                console.log(data);
+
                 // Manejar la respuesta exitosa
                 // @ts-ignore
                 setStateHistorialMedico((prev: any) => [...prev, stateRegistroMedicoModal]);
