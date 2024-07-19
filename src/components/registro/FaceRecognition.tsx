@@ -163,7 +163,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                         zIndex: '10'
                     }}>
                         <Alert severity="info">
-                            Por favor situe a la persona frente a la camara y presione el botón Capturar para el registro
+                            Por favor situe a la persona frente a la camara, debe parpadear y presione el botón Capturar para el registro
                         </Alert>
                     </Box>
 
