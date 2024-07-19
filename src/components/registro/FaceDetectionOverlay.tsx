@@ -2,6 +2,7 @@ import * as faceapi from "face-api.js";
 
 import {FC, useEffect, useRef, useState} from "react";
 
+
 const TIEMPO_ENTRE_FOTOS:number=100;
 const INTERVALO_DE_DETECCION:number=100; //milisegundos entre detección de rostros
 const PARPADEO_THRESHOLD:number=0.25
