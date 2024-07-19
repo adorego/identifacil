@@ -20,6 +20,8 @@ interface ModalProps{
 export default function ModalBorrado({open, onClose, data, metodo}:ModalProps) {
     const [state, setState] = useState({id:0, name: 'Default'})
 
+    console.log(state)
+
 
     const handleSubmit = () =>{
         if(metodo){

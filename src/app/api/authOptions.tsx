@@ -2,8 +2,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import {jwtDecode} from "jwt-decode";
 import {cookies} from "next/headers";
 import {decode} from "next-auth/jwt";
+import {fetchData} from "@/components/utils/utils";
 
-const API_URL_REGISTRO = process.env.NEXTAUTH_API
+const API_URL_REGISTRO = process.env.NODE_ENV == 'production' ?
+    process.env.NEXTAUTH_URL
+    : process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER;
 
 interface tokenLoginType{
     sub:number;
@@ -24,56 +27,87 @@ export const authOptions = {
                 ci: { label: 'CI', type: 'text' },
                 clave: { label: 'Clave', type: 'password' },
             },
+            // @ts-ignore
             authorize: async (credentials) => {
                 if (!credentials) {
                     return null;
                 }
 
-                // Realiza la solicitud al endpoint de login
-                const res = await fetch(`${API_URL_REGISTRO}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        ci: credentials.ci,
-                        clave: credentials.clave,
-                    }),
+                const url = `${process.env.NEXT_PUBLIC_ESTABLECIMIENTO}/establecimientos/`;
+                console.log('Check de URL de auth', `${API_URL_REGISTRO}/api/registro/auth/login`)
+                console.log('Check de URL de establecimientos', url)
+
+                console.log('***** check establecimientos comienza ***** ')
+
+                fetch(url).then(res=>res.json())
+                    .then(fetchedData => {
+                        console.log(fetchedData)
+                    }).catch(err=>{
+                        console.log('Error obteniendo establecimientos en auth', err)
+                }).finally(()=>{
+                    console.log('***** check establecimientos fin *****')
                 });
 
-                const user = await res.json();
-                // Si recibes un access_token, decodifica el token para obtener los datos adicionales
-
-                if (res.ok) {
-                    // const decoded = await decode(user.access_token);
-                    const decoded : tokenLoginType = jwtDecode(user.access_token)
-                    // console.log('decoded_token en route.ts', decoded)
-                    // @ts-ignore
-                    const rolId =decoded?.roles[0].id
 
 
 
-                    const resPermisos = await fetch(`${API_URL_REGISTRO}/rol/${rolId}/permiso`)
+
+                // Realiza la solicitud al endpoint de login
+
+                try {
+                    console.log('***** Comientzo de check login de auth ***** ')
+                    const res = await fetch(`${API_URL_REGISTRO}/api/registro/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            ci: credentials.ci,
+                            clave: credentials.clave,
+                        }),
+                    });
+
+                    const user = await res.json();
+
+                    console.log('respuesta de json', res)
+
+                    // Si recibes un access_token, decodifica el token para obtener los datos adicionales
+
+                    if (res.ok) {
+                        console.log('Res fue OK')
+                        // const decoded = await decode(user.access_token);
+                        const decoded : tokenLoginType = jwtDecode(user.access_token)
+                        // console.log('decoded_token en route.ts', decoded)
+                        // @ts-ignore
+                        const rolId =decoded?.roles[0].id
+
+                        const resPermisos = await fetch(`${API_URL_REGISTRO}/api/registro/auth/rol/${rolId}/permiso`)
+                        console.log(resPermisos)
+
+                        if (resPermisos.ok) {
+                            const datos = await resPermisos.json()
+                            console.log('Captura de datos: ', datos)
 
 
-                    if (resPermisos.ok) {
-                        const datos = await resPermisos.json()
-                        console.log('Captura de datos: ', datos)
-
-
-                        return {
-                            id: decoded.sub.toString(),
-                            ci: decoded.ci, // Asegúrate de que el id esté en el token
-                            accessToken: user.access_token,
-                            // @ts-ignore
-                            roles: decoded?.roles.map((item:any)=>({id:item.id, nombre:item.nombre, permisos: datos})) || [], // Asegúrate de que los roles estén en el token
-                            nombre: decoded?.nombre || '', // Incluye otros datos de usuario si es necesario
-                            apellido: decoded?.apellido || '',
-                        };
-                    }else{
-                        return null
+                            return {
+                                id: decoded.sub.toString(),
+                                ci: decoded.ci, // Asegúrate de que el id esté en el token
+                                accessToken: user.access_token,
+                                // @ts-ignore
+                                roles: decoded?.roles.map((item:any)=>({id:item.id, nombre:item.nombre, permisos: datos})) || [], // Asegúrate de que los roles estén en el token
+                                nombre: decoded?.nombre || '', // Incluye otros datos de usuario si es necesario
+                                apellido: decoded?.apellido || '',
+                            };
+                        }else{
+                            return null
+                        }
+                    } else {
+                        return null;
                     }
-                } else {
-                    return null;
+                }catch (e){
+                    console.log('Error capturar en fetch de auth',e)
+                }finally {
+                    console.log('***** FIN de check de auth login ***** ')
                 }
+
             },
         }),
     ],
@@ -90,7 +124,7 @@ export const authOptions = {
     callbacks: {
         // @ts-ignore
         async jwt({ token, user }) {
-            // console.log('token param en callback', token);
+
             const cookieStore = cookies();
             const newtoken = cookieStore.get('next-auth.session-token')?.value
             const tokenDecoded = await decode({
@@ -98,7 +132,6 @@ export const authOptions = {
                 secret: process.env.NEXTAUTH_SECRET as string,
             });
 
-            // console.log('token param en callback', token);
 
             return {...user, ...token};
         },

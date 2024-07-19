@@ -192,7 +192,7 @@ export default function Page({params}: { params: { id: number } }) {
     };
 
     const listaDeItemBread = [
-        {nombre: 'Lista de PPL', url: '', lastItem: false},
+        {nombre: 'Lista de PPL', url: '/ppl', lastItem: false},
         {nombre: `${data ? data.nombre + ' ' + data.apellido : 'PPL'}`, url: '', lastItem: true},
     ];
 
