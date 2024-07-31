@@ -737,7 +737,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                 <Grid item sm={4}>
                     <TextField
                         fullWidth
-                        label="Numero de contacto"
+                        label="Número de contacto"
                         name="numeroDeContacto"
                         value={datosPersonalesState.numeroDeContacto ? datosPersonalesState.numeroDeContacto : ''}
                         onChange={onDatoChangeNumber}

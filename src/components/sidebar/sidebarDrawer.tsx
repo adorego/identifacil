@@ -471,7 +471,7 @@ export default function SidebarDrawer()
                         <ListItemIcon>
                             <Settings/>
                         </ListItemIcon>
-                        <ListItemText primary={'Medidas de fuerza'} hidden={false}/>
+                        <ListItemText primary={'Datos de Gestion de PPL'} hidden={false}/>
                         {openMenus.medidasDeFuerza ? <ExpandLess/> : <ExpandMore/>}
                     </ListItemButton>
                 </>
@@ -487,13 +487,23 @@ export default function SidebarDrawer()
                                 isActive={pathname === '/sistema/tipos-medidas-de-fuerza'}
                             />
                             }
+
                             {PermissionValidator('ver_motivos_de_medida_de_fuerza', session) &&
-                            <SidebarItem
-                                icon={<span className='subIcon'></span>}
-                                label="Motivos"
-                                path="/sistema/motivos-de-medida-de-fuerza"
-                                isActive={pathname === '/sistema/motivos-de-medida-de-fuerza'}
-                            />
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Motivos"
+                                    path="/sistema/motivos-de-medida-de-fuerza"
+                                    isActive={pathname === '/sistema/motivos-de-medida-de-fuerza'}
+                                />
+                            }
+
+                            {PermissionValidator('ver_motivos_de_medida_de_fuerza', session) &&
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Tipos de sanciones"
+                                    path="/sistema/tipos-sanciones"
+                                    isActive={pathname === '/sistema/tipos-sanciones'}
+                                />
                             }
                         </List>
                     </Collapse>

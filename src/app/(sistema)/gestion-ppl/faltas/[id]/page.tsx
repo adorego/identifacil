@@ -1,11 +1,12 @@
 'use client'
 
 import {
+    Autocomplete,
     Box,
     Button,
     CardContent,
     CircularProgress,
-    FormControl,
+    FormControl, FormHelperText,
     Grid,
     IconButton,
     InputLabel,
@@ -68,7 +69,6 @@ const intialFaltasForm: faltasForm = {
 };
 
 
-
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 const URL_ENDPOINT = `${API_URL}/movimientos/motivos_de_traslado`;
 const URL_ENDPOINT_MEDIDAS = `${API_URL}/movimientos/medidas_de_seguridad`;
@@ -87,6 +87,18 @@ export default function Page({params}: { params: { id: number | string } }) {
     // Estados del form
     const [stateForm, setStateForm] = useState<faltasForm>(intialFaltasForm);
 
+    const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{
+        id_persona: number;
+        nombre: string;
+        apellido: string;
+        numero_de_identificacion?: string | number;
+    } | null>(null)
+
+    const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
+
+
+
+
     const [loading, setLoading] = useState(false);
 
     // Variables del form
@@ -95,17 +107,38 @@ export default function Page({params}: { params: { id: number | string } }) {
     // Hooks del form
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
-    const { data: session, status } = useSession();
+    const {data: session, status} = useSession();
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
-        setStateForm((prev)=>({
+
+    useEffect(() => {
+        Promise.all([
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res => {
+                // @ts-ignore
+                setStatePPL(res);
+            }),
+            /*fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/tipo_de_medida_de_fuerza`).then(res => {
+                // @ts-ignore
+                setStateTiposMedidas(res);
+            }),
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/motivo_de_medida_de_fuerza`).then(res => {
+                // @ts-ignore
+                setStateMotivosMedidas(res);
+            }),*/
+
+        ]).finally(() => {
+            console.info('Finished loading data.')
+        })
+    }, []);
+
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setStateForm((prev) => ({
             ...prev,
             [event.target.name]: event.target.value,
         }));
     }
 
     // Manejador para actualizar selects
-    const handleSelectChange = (event: SelectChangeEvent<string|number|[number]>) => {
+    const handleSelectChange = (event: SelectChangeEvent<string | number | [number]>) => {
         const name = event.target.name as keyof typeof stateForm;
         // console.log('value: ' + event.target.value);
         setStateForm({
@@ -123,14 +156,8 @@ export default function Page({params}: { params: { id: number | string } }) {
     }
 
 
-
-    const listaDeItemBread = [
-        {nombre:'Lista de faltas y sanciones', url:'/gestion-ppl/medidas-de-fuerza/', lastItem: false},
-        {nombre:'Faltas y sanciones', url:'', lastItem: true}
-    ];
-
     if (status === 'loading') {
-        return(
+        return (
             <div>
                 <Box sx={{
                     display: 'flex',
@@ -171,7 +198,10 @@ export default function Page({params}: { params: { id: number | string } }) {
     return (
         <Box>
             <TituloComponent titulo={isEditMode ? `Faltas y sanciones` : 'Crear Faltas y sanciones'}>
-                <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                <BreadCrumbComponent listaDeItems={[
+                    {nombre: 'Lista de faltas y sanciones', url: '/gestion-ppl/medidas-de-fuerza/', lastItem: false},
+                    {nombre: 'Faltas y sanciones', url: '', lastItem: true}
+                ]}/>
             </TituloComponent>
 
             {/*<QueryBlock/>*/}
@@ -196,18 +226,25 @@ export default function Page({params}: { params: { id: number | string } }) {
                                 <Grid container spacing={3}>
                                     {/* Nro. del documento */}
                                     <Grid item xs={6}>
-                                        <FormControl fullWidth variant="outlined">
-                                            <InputLabel>Seleccionar PPL</InputLabel>
-                                            <Select
-                                                value={stateForm.ppl.id}
-                                                onChange={handleSelectChange}
-                                                label="Seleccionar PPL"
-                                                name="ppl"
-                                            >
-
-                                                <MenuItem value={0}>Seleccionar ppl</MenuItem>
-                                                <MenuItem value={1}>Gonzalez Ramirez, Juan Perez</MenuItem>
-                                            </Select>
+                                        <FormControl fullWidth>
+                                            <Autocomplete
+                                                fullWidth={true}
+                                                value={personasSeleccionadas ? personasSeleccionadas : null}
+                                                onChange={(event, newValue: any) => {
+                                                    // @ts-ignore
+                                                    setPersonasSeleccionadas((prev: any) => ({
+                                                        ...newValue
+                                                    }));
+                                                }}
+                                                id="controllable-states-demo"
+                                                options={statePPL}
+                                                getOptionLabel={(option) => option.apellido ? `${option.apellido}, ${option.nombre} - ${option.numero_de_identificacion}` : "Seleccionar PPL"}
+                                                renderInput={(params) =>
+                                                    <TextField
+                                                        error={!personasSeleccionadas}
+                                                        {...params} label="PPL"/>}
+                                            />
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
 
@@ -256,19 +293,21 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         />
                                     </Grid>
                                     <Grid item xs={3}>
-                                        <DatePicker
-                                            label="Fecha de la resolcuion"
-                                            format="DD/MM/YYYY"
-                                            name='fecha_falta'
-                                            value={stateForm.fecha_resolucion ? dayjs(stateForm.fecha_resolucion) : null}
-                                            onChange={(newValue: Dayjs | null) => {
-                                                setStateForm(prevState => ({
-                                                    ...prevState,
-                                                    fecha_resolucion: newValue,
-                                                }))
-                                            }}
+                                        <FormControl fullWidth>
+                                            <DatePicker
+                                                label="Fecha de la resolcuion"
+                                                format="DD/MM/YYYY"
+                                                name='fecha_falta'
+                                                value={stateForm.fecha_resolucion ? dayjs(stateForm.fecha_resolucion) : null}
+                                                onChange={(newValue: Dayjs | null) => {
+                                                    setStateForm(prevState => ({
+                                                        ...prevState,
+                                                        fecha_resolucion: newValue,
+                                                    }))
+                                                }}
 
-                                        />
+                                            />
+                                        </FormControl>
                                     </Grid>
                                 </Grid>
                                 <Grid container spacing={2} mt={2}>
