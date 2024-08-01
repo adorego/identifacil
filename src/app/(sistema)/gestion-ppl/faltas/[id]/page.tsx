@@ -42,6 +42,9 @@ import {signIn, useSession} from "next-auth/react";
 import {faltasForm} from "@/app/(sistema)/gestion-ppl/faltas/[id]/componentes/faltasTypes";
 import {MuiFileInput} from "mui-file-input";
 import AddIcon from "@mui/icons-material/Add";
+import Link from "next/link";
+
+const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -126,10 +129,49 @@ export default function Page({params,}: { params: { id: number | string } }) {
         })
 
         if(isEditMode){
-            fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/faltas_sanciones/faltas/ppl/1`).then(res=>{
+            fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/faltas_sanciones/faltas/${params.id}`).then(res=>{
                 return res.json()
             }).then(data=>{
-                console.log(data)
+                // console.log(data)
+
+                let data_processed = {
+                    id: 0,
+                    ppl: {
+                        id: data.ppl.persona.id,
+                        nombre: data.ppl.persona.nombre,
+                        apellido: data.ppl.persona.apellido,
+                        documento: data.ppl.persona.numero_identificacion
+                    },
+                    fecha_falta: dayjs(data.fecha_y_hora_de_la_falta),
+                    hora_falta: dayjs(data.fecha_y_hora_de_la_falta),
+                    numero_de_resoulucion: data.numero_de_resolucion,
+                    fecha_resolucion: dayjs(data.fecha_de_la_resolucion),
+                    descripcion_de_la_falta: data.descripcion_de_la_falta,
+                    resolucion_falta: data.archivo_de_resolucion,
+                    tipo_falta: 0,
+                    grado_de_falta: data.grado_de_falta ? data.grado_de_falta.id : 0,
+                    victimas: data.victimas_de_la_falta ? data.victimas_de_la_falta.map((jsonString:string) => {
+                        const obj = JSON.parse(jsonString);
+                        return {
+                            documento: obj.ci,
+                            nombre: obj.nombre,
+                            apellido: obj.apellido
+                        };
+                    }) : {id: 0, nombre: '', apellido: '', documento: ''},
+                    tipo_victima: 0,
+
+                };
+                if(data.ppl.persona){
+                    setPersonasSeleccionadas({
+                        ...data.ppl.persona,
+                        id_persona: data.ppl.persona.id,
+                    });
+                }
+
+
+
+
+                setStateForm(data_processed)
             })
         }
 
@@ -386,6 +428,9 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 }}
                                             />
                                         </FormControl>
+                                        { isEditMode && stateForm.resolucion_falta ?
+                                            <Link href={`${ASSETS_URL}${stateForm.resolucion_falta}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                                            : ''}
                                         <FormHelperText>* Campo requerido</FormHelperText>
                                     </Grid>
                                 </Grid>
