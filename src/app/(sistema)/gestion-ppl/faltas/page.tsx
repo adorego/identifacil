@@ -12,42 +12,39 @@ import {deleteRecord} from "@/app/api";
 import {useGlobalContext} from "@/app/Context/store";
 import {fetchData} from "@/components/utils/utils";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
+import dayjs from "dayjs";
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Page(){
+    const [data, setData] = useState(null);
     const { openSnackbar } = useGlobalContext();
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
-    const [data, setData] = useState(null);
 
     // Datos para armar el header de la tabla
     const header = [
-        { id: 'fecha_falta', label: 'Fecha falta' },
-        { id: 'nombre_apellido', label: 'Apellido, Nombre' },
-        { id: 'tipo_falta', label: 'Tipo' },
-        { id: 'dimension_falta', label: 'Gravedad' },
-        { id: 'fecha_inicio', label: 'Fecha de inicio' },
-        { id: 'fecha_fin', label: 'Fecha de fin' },
-        { id: 'cant_dias', label: 'Cantidad de dias' },
+        { id: 'id', label: 'ID' },
+        { id: 'numero_de_resolucion', label: 'Nro. Resolución' },
+        { id: 'descripcion_de_la_falta', label: 'Descripcion' },
+        { id: 'fecha_y_hora_de_la_falta', label: 'Fecha de la falta', type: 'date' },
     ]
 
-    const dataSanciones = [
-        { fecha_falta: '01/03/2024', nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_falta: "Conflicto con otro interno", dimension_falta:"Grave", fecha_inicio: '01/03/2024', fecha_fin: '30/03/2024', cant_dias: "10" },
-        { fecha_falta: '01/03/2024', nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_falta: "Conflicto con otro interno", dimension_falta:"Grave", fecha_inicio: '01/03/2024', fecha_fin: '30/03/2024', cant_dias: "10" },
-        { fecha_falta: '01/03/2024', nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_falta: "Conflicto con otro interno", dimension_falta:"Grave", fecha_inicio: '01/03/2024', fecha_fin: '30/03/2024', cant_dias: "10" },
-        { fecha_falta: '01/03/2024', nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_falta: "Conflicto con otro interno", dimension_falta:"Grave", fecha_inicio: '01/03/2024', fecha_fin: '30/03/2024', cant_dias: "10" },
-        { fecha_falta: '01/03/2024', nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_falta: "Conflicto con otro interno", dimension_falta:"Grave", fecha_inicio: '01/03/2024', fecha_fin: '30/03/2024', cant_dias: "10" },
-        { fecha_falta: '01/03/2024', nombre_apellido: 'Gonzalez Ramirez, Juan Perez', tipo_falta: "Conflicto con otro interno", dimension_falta:"Grave", fecha_inicio: '01/03/2024', fecha_fin: '30/03/2024', cant_dias: "10" },
-    ]
     // TODO: Si viene vacio o da error no mostrar la tabla por que explota
 
 
     useEffect(() => {
-        fetchData(`${API_URL}/movimientos/motivos_de_traslado`)
+        fetchData(`${API_URL}/faltas_sanciones/faltas`)
             .then(fetchedData => {
+                console.log(fetchedData.faltas)
                 //@ts-ignore
-                setData(Object.keys(fetchedData).map(key=>fetchedData[key]));
+                setData([
+                    ...fetchedData.faltas.map((item:any,index:number)=>({
+                        ...fetchedData.faltas[index],
+                        fecha_y_hora_de_la_falta: dayjs(fetchedData.faltas[index].fecha_y_hora_de_la_falta).format('DD-MM-YYYY'),
+                    }))]
+
+                );
             });
     }, []); // El array vacío asegura que el efecto se ejecute solo una vez
 
@@ -113,9 +110,9 @@ export default function Page(){
             </TituloComponent>
             <Box mt={4} component={Paper}>
                 <CustomTable
-                    showId={false}
+                    showId={true}
                     headers={header}
-                    data={dataSanciones}
+                    data={data}
                     // @ts-ignore
                     deleteRecord={handleOpenModal}
                     options={{

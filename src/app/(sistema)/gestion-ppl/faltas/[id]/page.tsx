@@ -13,7 +13,7 @@ import {
     MenuItem,
     Modal,
     Paper,
-    Select,
+    Select, Stack,
     TextField,
     Typography,
 } from '@mui/material';
@@ -40,6 +40,8 @@ import {TimePicker} from "@mui/x-date-pickers/TimePicker";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import {signIn, useSession} from "next-auth/react";
 import {faltasForm} from "@/app/(sistema)/gestion-ppl/faltas/[id]/componentes/faltasTypes";
+import {MuiFileInput} from "mui-file-input";
+import AddIcon from "@mui/icons-material/Add";
 
 const styleModal = {
     position: 'absolute' as 'absolute',
@@ -60,29 +62,25 @@ const intialFaltasForm: faltasForm = {
     hora_falta: dayjs(),
     numero_de_resoulucion: '',
     fecha_resolucion: dayjs(),
-    descripcion_falta: '',
+    descripcion_de_la_falta: '',
     tipo_falta: 0,
-    grado_falta: 0,
+    grado_de_falta: 0,
     victima_falta: {id: 0, nombre: '', apellido: '', documento: ''},
     tipo_victima: 0,
+    victimas: [],
 
 };
 
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 const URL_ENDPOINT = `${API_URL}/movimientos/motivos_de_traslado`;
-const URL_ENDPOINT_MEDIDAS = `${API_URL}/movimientos/medidas_de_seguridad`;
-const URL_ENDPOINT_CUSTODIO = `${API_URL}/movimientos/custodios`;
-const URL_ENDPOINT_CHOFER = `${API_URL}/movimientos/choferes`;
-const URL_ENDPOINT_VEHICULOS = `${API_URL}/movimientos/vehiculos`;
-const URL_ENDPOINT_ESTABLECIMIENTOS = `${API_URL}/establecimientos`;
 
 // TODO: Cuando se envia el submit se debe bloquear el boton de guardado
 // TODO: Luego de enviar la peticion se debe mostrar una alerta de que se guardo correctamente
 // TODO: hacer un spinner que bloquee toda la pantalla cuando carga o guarda los datos
 // TODO: Origen de destino debe ser dinamico
 
-export default function Page({params}: { params: { id: number | string } }) {
+export default function Page({params,}: { params: { id: number | string } }) {
 
     // Estados del form
     const [stateForm, setStateForm] = useState<faltasForm>(intialFaltasForm);
@@ -95,8 +93,6 @@ export default function Page({params}: { params: { id: number | string } }) {
     } | null>(null)
 
     const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
-
-
 
 
     const [loading, setLoading] = useState(false);
@@ -128,6 +124,15 @@ export default function Page({params}: { params: { id: number | string } }) {
         ]).finally(() => {
             console.info('Finished loading data.')
         })
+
+        if(isEditMode){
+            fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/faltas_sanciones/faltas/ppl/1`).then(res=>{
+                return res.json()
+            }).then(data=>{
+                console.log(data)
+            })
+        }
+
     }, []);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -147,12 +152,63 @@ export default function Page({params}: { params: { id: number | string } }) {
         });
     };
 
+    const handleVictimaChange = (index: number, field: string, value: any) => {
+        setStateForm((prevData) => ({
+                ...prevData,
+                victimas: prevData.victimas?.map((item: any, i: number) =>
+                    i === index ? {...item, [field]: value} : item
+                )
+            })
+        );
+    }
+
     // Manejador de envio
-    const handleSubmit = (e: { preventDefault: () => void; }) => {
+    // TODO: Hacer el update
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         const form_method = isEditMode ? 'PUT' : 'POST'
 
-        console.log('Form de motivos', stateForm)
+        // console.log('Falta', stateForm.fecha_falta?.toISOString())
+        var fechaFalta = stateForm.fecha_falta;
+        var horaFalta = stateForm.hora_falta;
+        if (fechaFalta && horaFalta) {
+            fechaFalta.hour(horaFalta.hour()).minute(horaFalta.minute()).second(horaFalta.second())
+        }
+
+        const formData = new FormData();
+
+        formData.append('ppl', personasSeleccionadas ? personasSeleccionadas.id_persona.toString() : '');
+        formData.append('numero_de_resolucion', stateForm.numero_de_resoulucion);
+        formData.append('fecha_de_resolucion', stateForm.fecha_resolucion ? stateForm.fecha_resolucion.toISOString() : '');
+        if (stateForm.resolucion_falta) formData.append('resolucion_falta', stateForm.resolucion_falta);
+
+        formData.append('descripcion_de_la_falta', stateForm.descripcion_de_la_falta);
+        formData.append('grado_de_falta', stateForm.grado_de_falta.toString());
+        formData.append('fecha_y_hora_de_la_falta', fechaFalta ? fechaFalta.toISOString() : '');
+        if (stateForm.victimas && stateForm.victimas.length > 0) {
+            stateForm.victimas.forEach((item: any, i: number) => {
+                formData.append(`victimas_de_la_falta[${i}][ci]`, stateForm.victimas ? stateForm.victimas[i].documento : '');
+                formData.append(`victimas_de_la_falta[${i}][nombre]`, stateForm.victimas ? stateForm.victimas[i].nombre : '');
+                formData.append(`victimas_de_la_falta[${i}][apellido]`, stateForm.victimas ? stateForm.victimas[i].apellido : '');
+                formData.append(`tipos_de_victimas[${i}]`, stateForm.victimas ? stateForm.victimas[i].tipos_de_victima.toString() : '');
+            })
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/faltas_sanciones/faltas`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al enviar los datos del registro médico');
+            }
+
+            openSnackbar('Falta guardado correctamente.', 'success')
+
+        } catch (err) {
+            console.log(err)
+        }
     }
 
 
@@ -273,7 +329,8 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             <TimePicker
                                                 label="Hora de la falta"
                                                 format="hh:mm"
-                                                name='fecha_falta'
+                                                name='hora_falta'
+
                                                 value={stateForm.hora_falta ? dayjs(stateForm.hora_falta) : null}
                                                 onChange={(newValue: Dayjs | null) => {
                                                     setStateForm(prevState => ({
@@ -285,14 +342,16 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             />
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    <Grid item xs={4}>
                                         <TextField
                                             fullWidth
                                             label='Nro. de resolucion'
-                                            name='numero_resolucion'
+                                            name='numero_de_resoulucion'
+                                            value={stateForm.numero_de_resoulucion}
+                                            onChange={handleChange}
                                         />
                                     </Grid>
-                                    <Grid item xs={3}>
+                                    <Grid item xs={4}>
                                         <FormControl fullWidth>
                                             <DatePicker
                                                 label="Fecha de la resolcuion"
@@ -309,14 +368,25 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             />
                                         </FormControl>
                                     </Grid>
-                                </Grid>
-                                <Grid container spacing={2} mt={2}>
-                                    <Grid item xs={6}>
-                                        <TextField
-                                            fullWidth
-                                            label='Resolucion documento'
-                                            name='resolcuion_documento'
-                                        />
+                                    <Grid item xs={4}>
+                                        <FormControl fullWidth>
+                                            <MuiFileInput
+                                                fullWidth
+                                                required
+                                                error={!stateForm.resolucion_falta}
+                                                value={stateForm.resolucion_falta}
+                                                variant="outlined"
+                                                label="Seleccionar documento"
+                                                getInputText={(value) => value ? value.name : ''}
+                                                onChange={(newValue) => {
+                                                    setStateForm((prev: any) => ({
+                                                        ...prev,
+                                                        resolucion_falta: newValue,
+                                                    }))
+                                                }}
+                                            />
+                                        </FormControl>
+                                        <FormHelperText>* Campo requerido</FormHelperText>
                                     </Grid>
                                 </Grid>
                                 <Grid container spacing={2} mt={2}>
@@ -324,9 +394,9 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <TextField
                                             fullWidth
                                             label='Descripcion de la falta'
-                                            name='descripcion_falta'
+                                            name='descripcion_de_la_falta'
                                             onChange={handleChange}
-                                            value={stateForm.descripcion_falta}
+                                            value={stateForm.descripcion_de_la_falta}
                                         />
                                     </Grid>
                                 </Grid>
@@ -350,10 +420,10 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Grado de falta</InputLabel>
                                             <Select
-                                                value={stateForm.grado_falta}
+                                                value={stateForm.grado_de_falta}
                                                 onChange={handleSelectChange}
                                                 label="Seleccionar PPL"
-                                                name="grado_falta"
+                                                name="grado_de_falta"
                                             >
 
                                                 <MenuItem value={0}>Seleccionar grado</MenuItem>
@@ -363,7 +433,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             </Select>
                                         </FormControl>
                                     </Grid>
-                                    <Grid item xs={6}>
+                                    {/*<Grid item xs={6}>
                                         <TextField
                                             fullWidth
                                             label='Victima de la falta'
@@ -379,7 +449,82 @@ export default function Page({params}: { params: { id: number | string } }) {
                                             name='tipo_victima'
                                             value={stateForm.tipo_victima}
                                         />
+                                    </Grid>*/}
+
+                                </Grid>
+                                <Grid container spacing={2} mt={2}>
+                                    <Grid item sm={12}>
+                                        <Typography variant='subtitle1' fontWeight='bold' mb={2}>Victimas</Typography>
+
                                     </Grid>
+
+                                    {stateForm.victimas?.map((item: any, index: number) => (
+                                        <Grid item sm={12} key={index}>
+                                            <Stack spacing={1} direction='row' justifyContent='space-around'>
+                                                <TextField
+                                                    fullWidth
+                                                    label='Nro. de documento'
+                                                    name='documento'
+                                                    value={stateForm.victimas ? stateForm.victimas[index].documento : ''}
+                                                    onChange={(e) => handleVictimaChange(index, 'documento', e.target.value)}
+                                                />
+                                                <TextField
+                                                    fullWidth
+                                                    label='Nombre'
+                                                    name='nombre'
+                                                    value={stateForm.victimas ?stateForm.victimas[index].nombre : ''}
+                                                    onChange={(e) => handleVictimaChange(index, 'nombre', e.target.value)}
+                                                />
+                                                <TextField
+                                                    fullWidth
+                                                    label='Victima de Apellido falta'
+                                                    name='apellido'
+                                                    value={stateForm.victimas ? stateForm.victimas[index].apellido : ''}
+                                                    onChange={(e) => handleVictimaChange(index, 'apellido', e.target.value)}
+                                                />
+                                                <FormControl fullWidth variant="outlined">
+                                                    <InputLabel>Tipo de Victima</InputLabel>
+                                                    <Select
+                                                        value={stateForm.victimas ? stateForm.victimas[index].tipos_de_victima : ' '}
+                                                        onChange={(e) => handleVictimaChange(index, 'tipos_de_victima', e.target.value)}
+                                                        label="Seleccionar PPL"
+                                                        name="tipos_de_victima"
+                                                    >
+
+                                                        <MenuItem value={0}>Seleccionar tipo</MenuItem>
+                                                        <MenuItem value={1}>PPL</MenuItem>
+                                                        <MenuItem value={2}>Funcionario</MenuItem>
+                                                    </Select>
+                                                </FormControl>
+                                            </Stack>
+                                        </Grid>
+                                    ))}
+                                    <Grid item sm={12}>
+                                        <Button
+                                            variant="outlined"
+                                            color="primary"
+                                            startIcon={<AddIcon/>}
+                                            onClick={
+                                                () => {
+                                                    console.log('trigger button')
+                                                    setStateForm((prev: any) => {
+                                                        return {
+                                                            ...prev,
+                                                            victimas: [...prev.victimas, {
+                                                                documento: '',
+                                                                nombre: '',
+                                                                apellido: '',
+                                                            }]
+                                                        }
+                                                    })
+                                                }
+                                            }
+                                        >
+                                            Agregar Victima
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                                <Grid container spacing={2} mt={2}>
                                     <Grid item xs={12}>
                                         <Button
                                             variant="contained"
@@ -391,6 +536,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         </Button>
                                     </Grid>
                                 </Grid>
+
                             </form>)
                         }
 
