@@ -38,3 +38,9 @@ export function numberValidator (value){
 
 
 }
+
+
+export async function downloadFile(url) {
+    const response = await fetch(url);
+    return response.blob(); // Obtiene el contenido del archivo como Blob
+}

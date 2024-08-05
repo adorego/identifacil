@@ -38,7 +38,7 @@ export default function FormUsuarios({params}: { params: { id: number | string }
         }))
     }
 
-    const handleSubmit = (e)=>{
+    const handleSubmit = (e:any)=>{
         e.preventDefault()
         console.log(formState)
     }

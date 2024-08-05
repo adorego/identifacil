@@ -90,120 +90,130 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
     const isEditMode = !!datosIniciales?.id;
     const router: AppRouterInstance = useRouter();
 
-    /** Este useEffect se ejecuta una vez al cargarse toda la pagina **/
+    /** Este useEffect se ejecuta una vez al cargarse toda la pagina si es que existen DATOS INICIALES **/
     useEffect(() => {
 
-            console.log('Debug UseEffect 1')
-            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`).then(res => {
-                // console.log(res[0])
+        // Se obtienen datos de expedientes existentes para poblar lista de expedientes.
+        fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`).then(res => {
+            console.log('Datos recibidos de oficios, ', res)
+            // Se guardan datos en estado de formulario
+            setDatosFormulario((prev: any) => ({
+                ...prev,
+                expedientes: res
+            }))
+        }).finally(() => {
+
+            // Se cargan en estado del formulario id_persona, establecimiento y ID de registro existente.
+            setEstadoFormularioJudicial(prev => ({
+                ...prev,
+                id_persona: id_persona,
+                establecimiento_penitenciario: 1,
+                id: datosIniciales?.id ? datosIniciales.id : 0,
+            }))
+
+            // Datos inciales flag es para verificar si es que se actualizao ID de formulario desde la creacion POST
+            // @ts-ignore
+            if (datosIniciales !== null && datosIniciales.flag && datosIniciales) {
+
+
+                // Se cargan datos iniciales a estado de formulario.
+                setEstadoFormularioJudicial((prev: any) => ({
+                    ...prev,
+                    ...datosIniciales
+                }))
+
+                // Si existe un expediente en los datos iniciales se carga en el estado auxiliar de datos de formulario
                 setDatosFormulario((prev: any) => ({
                     ...prev,
-                    expedientes: res
-                }))
-            }).finally(() => {
-                console.log('Debug UseEffect 1.5')
-                setEstadoFormularioJudicial(prev => ({
-                    ...prev,
-                    id_persona: id_persona,
-                    establecimiento_penitenciario: 1,
-                    id: datosIniciales?.id ? datosIniciales.id : 0,
-                }))
+                    expedientesSeleccionados: datosIniciales.expediente_obj ? datosIniciales.expediente_obj : null
+                }));
 
-                console.log(datosIniciales)
-                // @ts-ignore
-                if (datosIniciales !== null && datosIniciales.flag && datosIniciales) {
-                    console.log('Debug UseEffect 2')
-                    console.log(datosFormulario)
-                    setEstadoFormularioJudicial((prev: any) => ({
-                        ...prev,
-                        ...datosIniciales
-                    }))
-                    setDatosFormulario((prev: any) => ({
-                        ...prev,
-                        expedientesSeleccionados: datosIniciales.expediente_obj ? datosIniciales.expediente_obj : null
-                    }));
-                } else {
-                    // Se verifica que existan datos iniciales para cargar el estado
-                    if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
-                        console.log('Debug UseEffect 3')
-
-                        const datos_ingreso_prision = datosIniciales.ingresos_a_prision[0];
-
-                        /** Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de oficio judicial*/
-                        const oficioJudicialBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "oficio_judicial");
-
-                        /**Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento de resolucion MJ*/
-                        const resolucionBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "resolucion_mj");
+            } else {
+                // Se verifica que existan datos iniciales para cargar el estado y si existe datos de ingreso a prision
+                if (datosIniciales !== null && datosIniciales !== undefined && datosIniciales.ingresos_a_prision !== undefined) {
 
 
-                        if (datos_ingreso_prision.expedienteJudicial !== undefined && datos_ingreso_prision.expedienteJudicial !== null) {
-                            setDatosFormulario((prev: any) => ({
-                                ...prev,
-                                expedientesSeleccionados: datos_ingreso_prision.expedienteJudicial
-                            }));
+                    const datos_ingreso_prision = datosIniciales.ingresos_a_prision[0];
 
-                            setEstadoFormularioJudicial(prev => ({
-                                ...prev,
-                                expediente_id: datos_ingreso_prision.expedienteJudicial.id
-                            }))
-                        }
-
-                        const descargarArchivos = async (archivoURL: string, propiedad: string) => {
-                            const fileBlob = await downloadFile(archivoURL);
-                            const file = new File([fileBlob], `${archivoURL.split('/').pop()}`, {type: fileBlob.type});
+                    /**
+                     * Se guarda en variable el objeto que tenga coincida con la condicion y sea un documento
+                     *  de oficio judicial y una resolucion MJ respectivamente
+                     * */
+                    const oficioJudicialBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "oficio_judicial");
+                    const resolucionBuscado: any = datos_ingreso_prision.documentos_que_ordenan_prision?.find((documento: any) => documento.tipo === "resolucion_mj");
 
 
-                            /** seteador de estado para guardaar la url de un archivo preguardado y mostrar*/
-                            setDatosFormulario((prev: any) => ({
-                                ...prev,
-                                [propiedad]: archivoURL,
-                            }))
+                    // Se guardan expedientes judiciales existentes a estado si existen
+                    if (datos_ingreso_prision.expedienteJudicial !== undefined && datos_ingreso_prision.expedienteJudicial !== null) {
 
-                            setEstadoFormularioJudicial((prev: any) => ({
-                                ...prev,
-                                [propiedad]: file,
-                            }))
+                        // Se guarda en auxiliar el objeto del expediente
+                        setDatosFormulario((prev: any) => ({
+                            ...prev,
+                            expedientesSeleccionados: datos_ingreso_prision.expedienteJudicial
+                        }));
+
+                        // Se guarda en formulario el ID del expediente seleccionado
+                        setEstadoFormularioJudicial(prev => ({
+                            ...prev,
+                            expediente_id: datos_ingreso_prision.expedienteJudicial.id
+                        }))
+                    }
+
+                    // Funcion para bajar archivo desde la URL del GET para volver a convertir a archivo
+                    const descargarArchivos = async (archivoURL: string, propiedad: string) => {
+                        const fileBlob = await downloadFile(archivoURL);
+                        const file = new File([fileBlob], `${archivoURL.split('/').pop()}`, {type: fileBlob.type});
 
 
-                        }
+                        /** seteador de estado para guardaar la url de un archivo preguardado y mostrar*/
+                        setDatosFormulario((prev: any) => ({
+                            ...prev,
+                            [propiedad]: archivoURL,
+                        }))
 
-                        descargarArchivos(`${ASSETS_URL}${oficioJudicialBuscado.ruta}`, 'oficioJudicial_documento')
-
-                        descargarArchivos(`${ASSETS_URL}${resolucionBuscado.ruta}`, 'resolucion_documento')
-
-                        // TODO Arreglar tipo aca
                         setEstadoFormularioJudicial((prev: any) => ({
                             ...prev,
-                            id: datosIniciales.id, // ID DEL FORMULARIO JUDICIAL
-                            primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
-                            cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
-                            fecha_ingreso_a_establecimiento: datos_ingreso_prision.fecha_ingreso ? datos_ingreso_prision.fecha_ingreso : '',
-                            pabellon: datos_ingreso_prision.pabellon ? datos_ingreso_prision.pabellon : '',
-                            celda: datos_ingreso_prision.celda ? datos_ingreso_prision.celda : '',
-                            establecimiento_penitenciario: datos_ingreso_prision.establecimiento_penitenciario.id ? datos_ingreso_prision.establecimiento_penitenciario.id : null,
-
-                            // Documento de oficio judicial
-                            oficioJudicial_numeroDeDocumento: oficioJudicialBuscado?.numero_documento ? oficioJudicialBuscado.numero_documento : null,
-                            oficioJudicial_fechaDeDocumento: oficioJudicialBuscado?.fecha ? dayjs(oficioJudicialBuscado.fecha) : null,
-
-
-                            // Documento de Resolucion MJ
-                            resolucion_numeroDeDocumento: resolucionBuscado ? resolucionBuscado.numero_documento : null,
-                            resolucion_fechaDeDocumento: resolucionBuscado.fecha ? dayjs(resolucionBuscado.fecha) : null,
-                            // resolucion_documento: resolucionBuscado.ruta? `${ASSETS_URL}${resolucionBuscado.ruta}` : null,
+                            [propiedad]: file,
                         }))
+
 
                     }
 
-                    /** Metodo para obetener datos de expedientes y poblar la lista en el form
-                     * */
+                    descargarArchivos(`${ASSETS_URL}${oficioJudicialBuscado.ruta}`, 'oficioJudicial_documento')
+
+                    descargarArchivos(`${ASSETS_URL}${resolucionBuscado.ruta}`, 'resolucion_documento')
+
+                    // TODO Arreglar tipo aca
+                    setEstadoFormularioJudicial((prev: any) => ({
+                        ...prev,
+                        id: datosIniciales.id, // ID DEL FORMULARIO JUDICIAL
+                        primeraVezEnPrision: datosIniciales.primera_vez_en_prision,
+                        cantidadDeIngresos: datosIniciales.cantidad_de_veces_que_ingreso,
+                        fecha_ingreso_a_establecimiento: datos_ingreso_prision.fecha_ingreso ? datos_ingreso_prision.fecha_ingreso : '',
+                        pabellon: datos_ingreso_prision.pabellon ? datos_ingreso_prision.pabellon : '',
+                        celda: datos_ingreso_prision.celda ? datos_ingreso_prision.celda : '',
+                        establecimiento_penitenciario: datos_ingreso_prision.establecimiento_penitenciario.id ? datos_ingreso_prision.establecimiento_penitenciario.id : null,
+
+                        // Documento de oficio judicial
+                        oficioJudicial_numeroDeDocumento: oficioJudicialBuscado?.numero_documento ? oficioJudicialBuscado.numero_documento : null,
+                        oficioJudicial_fechaDeDocumento: oficioJudicialBuscado?.fecha ? dayjs(oficioJudicialBuscado.fecha) : null,
+
+
+                        // Documento de Resolucion MJ
+                        resolucion_numeroDeDocumento: resolucionBuscado ? resolucionBuscado.numero_documento : null,
+                        resolucion_fechaDeDocumento: resolucionBuscado.fecha ? dayjs(resolucionBuscado.fecha) : null,
+                        // resolucion_documento: resolucionBuscado.ruta? `${ASSETS_URL}${resolucionBuscado.ruta}` : null,
+                    }))
 
                 }
-            })
 
+                /** Metodo para obetener datos de expedientes y poblar la lista en el form
+                 * */
 
-        }, [datosIniciales]
-    )
+            }
+        })
+
+    }, [datosIniciales])
 
     useEffect(() => {
         fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/datos_penales/expedientes`).then(res => {
@@ -384,11 +394,10 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        if(sessionData){
+        if (sessionData) {
             setConsultaLoading(true)
 
             const tipoMehtod = !!estadoFormularioJudicial.id
-            console.log('TIpo metodo', tipoMehtod)
 
             const validarFormulario = validateForm()
 
@@ -536,7 +545,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                 openSnackbar("Error al guardar el formulario.", "error");
 
             }
-        }else{
+        } else {
             openSnackbar('No tienes permiso para realizar esta acción', 'warning')
         }
     }
@@ -756,7 +765,6 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                             value={estadoFormularioJudicial.oficioJudicial_documento}
                                             variant="outlined"
                                             label="Seleccionar documento"
-                                            /*onChange={onFileOficioJudicialChange}*/
                                             getInputText={(value) => value ? value.name : ''}
                                             onChange={(newValue) => {
                                                 setEstadoFormularioJudicial(prev => ({
@@ -766,24 +774,24 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                             }}
                                         />
                                         {
-                                            (
-                                                datosFormulario.oficioJudicial_documento
-                                            ) ?
-                                                <a href={datosFormulario.oficioJudicial_documento}
-                                                   target='_blank'>Descargar </a>
+                                            (datosFormulario.oficioJudicial_documento)
+                                                ? <a href={datosFormulario.oficioJudicial_documento} target='_blank'>Descargar </a>
                                                 : null
                                         }
                                         <FormHelperText>* Campo requerido</FormHelperText>
                                     </FormControl>
                                     {
-                                        estadoFormularioJudicial.oficioJudicial_documento !== null ?
-                                            <Box>
-                                                <IconButton color='error'
-                                                            onClick={(event) => onCleanField(event, 'oficioJudicial_documento')}>
-                                                    <Close/>
-                                                </IconButton>
-                                            </Box>
-                                            : null}
+                                        estadoFormularioJudicial.oficioJudicial_documento !== null
+                                            ? (
+                                                <Box>
+                                                    <IconButton color='error'
+                                                                onClick={(event) => onCleanField(event, 'oficioJudicial_documento')}>
+                                                        <Close/>
+                                                    </IconButton>
+                                                </Box>
+                                            )
+                                            : null
+                                    }
                                 </Stack>
                             </Grid>
                         </Grid>
@@ -888,23 +896,23 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
 
                 </Grid>
                 {sessionData &&
-                <Grid item sm={12}>
-                    <LoadingButton
-                        sx={{
-                            minHeight: "100%",
-                            px: "48px",
-                            height: '48px'
-                        }}
-                        onClick={onFormSubmit}
-                        loading={consultaLoading}
-                        loadingPosition='start'
-                        startIcon={<SaveIcon/>}
-                        variant="contained">
+                    <Grid item sm={12}>
+                        <LoadingButton
+                            sx={{
+                                minHeight: "100%",
+                                px: "48px",
+                                height: '48px'
+                            }}
+                            onClick={onFormSubmit}
+                            loading={consultaLoading}
+                            loadingPosition='start'
+                            startIcon={<SaveIcon/>}
+                            variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}
                         </span>
-                    </LoadingButton>
-                </Grid>
+                        </LoadingButton>
+                    </Grid>
                 }
             </Grid>
 
