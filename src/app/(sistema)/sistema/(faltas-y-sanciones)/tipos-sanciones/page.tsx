@@ -22,7 +22,8 @@ import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'nombre', label: 'Descripcion'},
+    {id: 'nombre', label: 'Descripción'},
+    {id: 'maximo_dias_de_sancion', label: 'Max. días de sanción'},
 ]
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
@@ -37,7 +38,7 @@ export default function Page() {
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
-        fetchData(`${API_URL}/tipo_de_medida_de_fuerza`)
+        fetchData(`${API_URL}/faltas_sanciones/tipos_de_sanciones`)
             .then(fetchedData => {
                 /*console.log(Object.keys(fetchedData).map(key=>fetchedData[key]).map(item=>({
                     ...item,
@@ -47,7 +48,7 @@ export default function Page() {
                 // TODO: veritifcar porque hace problema typescript aca
 
                 //@ts-ignore
-                setData(fetchedData);
+                setData(fetchedData.tipos_de_sanciones);
                 console.log(fetchedData)
             });
     }, []);
@@ -60,6 +61,7 @@ export default function Page() {
             name: row.descripcion,
         });
     };
+
     const handleCloseModal = () => {
         setModalOpen(false);
     };
@@ -69,11 +71,7 @@ export default function Page() {
         setFilterData(value)
     }
 
-    const listaDeItemBread = [
-        {nombre:'Lista de tipo de medidas de fuerza', url:'', lastItem: true},
-    ];
 
-    console.log(data)
     if (data == null) {
         return (
             <Box sx={{
@@ -92,8 +90,10 @@ export default function Page() {
         <>
             <Box >
 
-                <TituloComponent titulo='Tipo de medidas de fuerza'>
-                    <BreadCrumbComponent listaDeItems={listaDeItemBread} />
+                <TituloComponent titulo='Tipo de Sanciones'>
+                    <BreadCrumbComponent listaDeItems={[
+                        {nombre:'Lista de tipo de sanciones', url:'', lastItem: true},
+                    ]} />
                 </TituloComponent>
                 <Box mt={4} component={Paper}>
                     <CustomTable
@@ -102,9 +102,9 @@ export default function Page() {
                         data={data}
                         deleteRecord={handleOpenModal}
                         options={{
-                            title: 'Lista de tipos de medidas de fuerza',
-                            newRecord: '/sistema/tipos-medidas-de-fuerza/crear',
-                            targetURL: '/sistema/tipos-medidas-de-fuerza',
+                            title: 'Lista de tipos de sanciones',
+                            newRecord: '/sistema/tipos-sanciones/crear',
+                            targetURL: '/sistema/tipos-sanciones',
                             rowsPerPageCustom: 5,
                             pagination: true,
                         }}

@@ -110,6 +110,7 @@ export default function Page({params}: { params: { id: number | string } }) {
         apellido: string;
         numero_de_identificacion?: string | number;
     } | null>(null)
+
     const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
 
     const [stateTiposMedidas, setStateTiposMedidas] = useState([]);

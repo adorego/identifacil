@@ -176,7 +176,9 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
 
     const tabs = [
         {
-            label: 'Perfil', permission: 'ver_ppl_form_perfil', component: <FormularioDatosPersonales
+            label: 'Perfil',
+            permission: 'ver_ppl_form_perfil',
+            component: <FormularioDatosPersonales
                 tipo_de_documento={datosPPL.tipo_de_documento?.id}
                 onSetDatosPPL={setdatosPPL}
                 datosDeIdentificacion={{

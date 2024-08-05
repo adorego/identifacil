@@ -52,7 +52,9 @@ export default function TabUsuarios(){
                 headers={headers}
                 data={data}
                 options={{
-                    /*targetURL: '/sistema/tipos-medidas-de-fuerza',*/
+                    newRecord:'/sistema/gestion-de-usuarios/usuarios/crear',
+                    title: 'Lista de usuarios',
+                    targetURL: '/sistema/gestion-de-usuarios/usuarios',
                     rowsPerPageCustom: 5,
                     pagination: true,
                 }}
