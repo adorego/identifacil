@@ -7,7 +7,7 @@ import {
     CardContent,
     CircularProgress,
     FormControl, FormHelperText,
-    Grid,
+    Grid, IconButton,
     InputLabel,
     MenuItem, Modal,
     Paper,
@@ -38,6 +38,13 @@ import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import {downloadFile} from "@/components/utils/formUtils";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import es from 'dayjs/locale/es';
+import DeleteIcon from "@mui/icons-material/Delete";
+import {onConsultarRegistroCivil} from "@/components/utils/utils_client";
+
+dayjs.locale(es); // Configura dayjs globalmente al español
+
+
 
 const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
@@ -102,11 +109,13 @@ const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
 
 export default function Page({params,}: { params: { id: number | string } }) {
 
-    // Estados del form
+    // 1. Estado del form principal de Faltas
     const [stateForm, setStateForm] = useState<faltasForm>(intialFaltasForm);
 
+    // 2. Estado del Modal de sanciones
     const [modalForm, setModalForm] = useState<SancionesModalType>(sancionesModalInitial)
 
+    // 3. Estado auxiliar de las persona seleccionada del form de faltas.
     const [personasSeleccionadas, setPersonasSeleccionadas] = useState<{
         id_persona: number;
         nombre: string;
@@ -114,8 +123,10 @@ export default function Page({params,}: { params: { id: number | string } }) {
         numero_de_identificacion?: string | number;
     } | null>(null)
 
+    // 4. Estado auxiliar para lista de PPLS
     const [statePPL, setStatePPL] = useState<pplTraslado[]>([]);
 
+    // 5. Estado para manejar el Loading de la vista
     const [loading, setLoading] = useState(false);
 
     // Variables del form
@@ -124,6 +135,8 @@ export default function Page({params,}: { params: { id: number | string } }) {
     // Hooks del form
     const {openSnackbar} = useGlobalContext();
     const router = useRouter();
+
+    // Hook para obtener datos de sesion del AuthNext
     const {data: session, status} = useSession();
 
 
@@ -141,7 +154,6 @@ export default function Page({params,}: { params: { id: number | string } }) {
                     ...prev,
                     tipos_de_sanciones_lista: res.tipos_de_sanciones,
                 }));
-
             })
 
         ]).finally(() => {
@@ -240,6 +252,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
     const [open, setOpen] = React.useState(false);
 
 
+    // Manejador para abrir el Modal
     const handleOpen = () => {
         // Reseteamos los valores del formulario del modal antes de abrirlo
         // setStateRegistroMedicoModal(registroInitial)
@@ -247,12 +260,12 @@ export default function Page({params,}: { params: { id: number | string } }) {
         setOpen(true);
     };
 
+    // Manejador para cerrar el Modal
     const handleClose = () => {
         setOpen(false);
     };
 
     // Manejadores de elementos del form
-
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setStateForm((prev) => ({
             ...prev,
@@ -276,6 +289,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
      *  @param index number posicion donde se va actualizar el campo
      *  @param field string Campo que se va actualizar dentro del objeto de la sancion
      *  @param value any Valor para cargar en el campo del objeto
+     *
      * */
     const handleVictimaChange = (index: number, field: string, value: any) => {
         setStateForm((prevData) => ({
@@ -304,94 +318,213 @@ export default function Page({params,}: { params: { id: number | string } }) {
         );
     }
 
+    const handleDocumentoVictima = async (index: number, field: string, value: any) => {
+        const datosCedula = await onConsultarRegistroCivil(value)
+
+        if(datosCedula){
+
+            setStateForm((prevData) => ({
+                    ...prevData,
+                    victimas: prevData.victimas?.map((item: any, i: number) =>
+                        i === index ? {
+                            ...item,
+                            nombre: datosCedula.nombres,
+                            apellido: datosCedula.apellidos,
+                        } : item
+                    )
+                })
+            );
+        }else{
+            openSnackbar('Cedula no fue encontrada', 'warning')
+        }
+    }
+
+    const modalSancionesValidator = () =>{
+        let isValid: boolean = false;
+
+        if(
+            modalForm.tipoDeSancion
+            && modalForm.fechaFin
+            && modalForm.fechaInicio
+            && modalForm.resolucion_sancion
+        ){
+            isValid = true;
+        }else{
+            isValid = false;
+        }
+        return isValid;
+    }
+
     // Manejador de envio de Modal de Sanciones
+    const handleSubmitModalSanciones = async (e:any) => {
+        e.preventDefault();
 
-    const handleSubmitModalSanciones = async () => {
+        if(modalSancionesValidator()){
+            // Se inicializa form data
+            const formData = new FormData();
+            console.log(stateForm)
+            // Se arma datos para enviar luego la peticion
+            if(stateForm.id) formData.append('falta', stateForm.id.toString() );
+            formData.append('tipoDeSancion', modalForm.tipoDeSancion.toString());
+            formData.append('fechaInicio', modalForm.fechaInicio ? dayjs(modalForm.fechaInicio).format('YYYY-MM-DD') : '');
+            formData.append('fechaFin', modalForm.fechaFin ? dayjs(modalForm.fechaFin).format('YYYY-MM-DD') : '');
+            if (modalForm.resolucion_sancion) formData.append('resolucion_sancion', modalForm.resolucion_sancion);
 
+            // Envio de datos
+            try {
+                const response = await fetch(`${API_URL}/faltas_sanciones/sanciones`, {
+                    method: modalForm.id !== 0 ? 'PUT' : 'POST',
+                    body: formData,
+                });
 
-        const formData = new FormData();
-        console.log('ID SANCIONES', modalForm.id)
-        if(params.id) formData.append('falta', params.id.toString() );
-        formData.append('tipoDeSancion', modalForm.tipoDeSancion.toString());
-        formData.append('fechaInicio', modalForm.fechaInicio ? dayjs(modalForm.fechaInicio).format('YYYY-MM-DD') : '');
-        formData.append('fechaFin', modalForm.fechaFin ? dayjs(modalForm.fechaFin).format('YYYY-MM-DD') : '');
-        if (modalForm.resolucion_sancion) formData.append('resolucion_sancion', modalForm.resolucion_sancion);
+                if (!response.ok) {
+                    throw new Error('Error al enviar los datos de sancion');
+                }else{
+                    fetch(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/faltas_sanciones/faltas/${stateForm.id}`).then(res => {
+                        return res.json()
+                    }).then(data=>{
+                        console.log(data)
+                        setStateForm((prev:any)=>({
+                            ...prev,
+                            sanciones: data.sanciones_aplicadas.map((item:any)=>({
+                                id: item.id,
+                                fecha_inicio: item.fecha_inicio,
+                                fecha_fin: item.fecha_fin,
+                                resolucion: item. resolucion && (
+                                    <Link href={`${ASSETS_URL}${data.resolucion}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                                ),
+                            })),
+                        }))
+                    })
+                }
 
-        try {
-            const response = await fetch(`${API_URL}/faltas_sanciones/sanciones`, {
-                method: modalForm.id !== 0 ? 'PUT' : 'POST',
-                body: formData,
-            });
+                openSnackbar('Sancion guardada correctamente.', 'success')
+                handleClose() // Se cierra el modal
 
-            if (!response.ok) {
-                throw new Error('Error al enviar los datos de sancion');
+            } catch (err) {
+                console.log(err)
             }
-
-            openSnackbar('Sancion guardada correctamente.', 'success')
-            handleClose()
-
-        } catch (err) {
-            console.log(err)
+        }else{
+            openSnackbar('Debe completar los campos obligatorios', 'error')
         }
 
+    }
+
+    const victimasValidator = ()=>{
+        if(stateForm.victimas){
+
+            const areAllValuesValid = stateForm.victimas.every(obj =>
+                Object.values(obj).every(value =>
+                    value !== null && value !== '' && value !== 0 && (!Array.isArray(value) || value.length !== 0)
+                )
+            );
+
+            // console.log('Victimas', areAllValuesValid);
+            return areAllValuesValid
+        }
+    }
+
+    const handleDeleteVictima = (index:number)=>{
+
+        if(stateForm.victimas){
+            if ((index < 0 || index >= stateForm.victimas.length)) throw new Error('Invalid position');
+
+            setStateForm((prev:any)=>({
+                ...prev,
+                victimas: stateForm.victimas && stateForm.victimas.slice(0, index).concat(stateForm.victimas.slice(index + 1)),
+            }))
+
+        }
+        console.log(index)
+    }
+
+    const formValidator = (data?:any) =>{
+        let isValid = false;
+
+        if(
+            personasSeleccionadas
+            && stateForm.fecha_falta
+            && stateForm.hora_falta
+            && stateForm.numero_de_resoulucion
+            && stateForm.fecha_resolucion
+            && stateForm.resolucion_falta
+            && stateForm.descripcion_de_la_falta
+            && stateForm.grado_de_falta
+            && (stateForm.victimas && stateForm.victimas.length > 0)
+            && victimasValidator()
+        ){
+
+            isValid = true;
+        }else{
+
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     // Manejador de envio
     // TODO: Hacer el update
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-        const form_method = isEditMode ? 'PUT' : 'POST'
 
-        // console.log('Falta', stateForm.fecha_falta?.toISOString())
-        var fechaFalta = stateForm.fecha_falta;
-        var horaFalta = stateForm.hora_falta;
-        if (fechaFalta && horaFalta) {
-            fechaFalta.hour(horaFalta.hour()).minute(horaFalta.minute()).second(horaFalta.second())
-        }
+        if(formValidator()){
+            const form_method = isEditMode ? 'PUT' : 'POST'
 
-        const formData = new FormData();
 
-        formData.append('ppl', personasSeleccionadas ? personasSeleccionadas.id_persona.toString() : '');
-        formData.append('numero_de_resolucion', stateForm.numero_de_resoulucion);
-        formData.append('fecha_de_resolucion', stateForm.fecha_resolucion ? stateForm.fecha_resolucion.toISOString() : '');
-        if (stateForm.resolucion_falta) formData.append('resolucion_falta', stateForm.resolucion_falta);
-
-        formData.append('descripcion_de_la_falta', stateForm.descripcion_de_la_falta);
-        formData.append('tipo_de_falta', stateForm.tipo_de_falta ? stateForm.tipo_de_falta.toString() : '0');
-        formData.append('grado_de_falta', stateForm.grado_de_falta.toString());
-        formData.append('fecha_y_hora_de_la_falta', fechaFalta ? fechaFalta.toISOString() : '');
-        if (stateForm.victimas && stateForm.victimas.length > 0) {
-            stateForm.victimas.forEach((item: any, i: number) => {
-                formData.append(`victimas_de_la_falta[${i}][ci]`, stateForm.victimas ? stateForm.victimas[i].documento : '');
-                formData.append(`victimas_de_la_falta[${i}][nombre]`, stateForm.victimas ? stateForm.victimas[i].nombre : '');
-                formData.append(`victimas_de_la_falta[${i}][apellido]`, stateForm.victimas ? stateForm.victimas[i].apellido : '');
-                // formData.append(`tipos_de_victimas[${i}]`, stateForm.victimas ? stateForm.victimas[i].tipos_de_victima.toString() : '');
-            })
-        }
-
-        try {
-            const paramURL = stateForm.id !== 0 ? ('/' + params.id) : ''
-            const response = await fetch(`${API_URL}/faltas_sanciones/faltas${paramURL}`, {
-                method: stateForm.id !== 0 ? 'PUT' : 'POST',
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error('Error al enviar los datos de la falta');
-            }else{
-
-                setStateForm((prev:any)=>({
-                    ...prev,
-                    // @ts-ignore
-                    id: response.id
-                }))
+            // Se concatena ambos datos de fecha y hora en una sola variable
+            var fechaFalta = stateForm.fecha_falta;
+            var horaFalta = stateForm.hora_falta;
+            if (fechaFalta && horaFalta) {
+                fechaFalta.hour(horaFalta.hour()).minute(horaFalta.minute()).second(horaFalta.second())
             }
 
-            openSnackbar('Falta guardada correctamente.', 'success')
+            const formData = new FormData(); // Se inicializa form data
 
-        } catch (err) {
-            console.log(err)
+            // Se arman la informacion para enviar peticion
+            formData.append('ppl', personasSeleccionadas ? personasSeleccionadas.id_persona.toString() : '');
+            formData.append('numero_de_resolucion', stateForm.numero_de_resoulucion);
+            formData.append('fecha_de_resolucion', stateForm.fecha_resolucion ? stateForm.fecha_resolucion.toISOString() : '');
+            if (stateForm.resolucion_falta) formData.append('resolucion_falta', stateForm.resolucion_falta);
+            formData.append('descripcion_de_la_falta', stateForm.descripcion_de_la_falta);
+            formData.append('tipo_de_falta', stateForm.tipo_de_falta ? stateForm.tipo_de_falta.toString() : '0');
+            formData.append('grado_de_falta', stateForm.grado_de_falta.toString());
+            formData.append('fecha_y_hora_de_la_falta', fechaFalta ? fechaFalta.toISOString() : '');
+            if (stateForm.victimas && stateForm.victimas.length > 0) {
+                stateForm.victimas.forEach((item: any, i: number) => {
+                    formData.append(`victimas_de_la_falta[${i}][ci]`, stateForm.victimas ? stateForm.victimas[i].documento : '');
+                    formData.append(`victimas_de_la_falta[${i}][nombre]`, stateForm.victimas ? stateForm.victimas[i].nombre : '');
+                    formData.append(`victimas_de_la_falta[${i}][apellido]`, stateForm.victimas ? stateForm.victimas[i].apellido : '');
+                    // formData.append(`tipos_de_victimas[${i}]`, stateForm.victimas ? stateForm.victimas[i].tipos_de_victima.toString() : '');
+                })
+            }
+
+
+            // Envio de datos
+            try {
+                const paramURL = stateForm.id !== 0 ? ('/' + params.id) : ''
+
+                fetch(`${API_URL}/faltas_sanciones/faltas${paramURL}`, {
+                    method: stateForm.id !== 0 ? 'PUT' : 'POST',
+                    body: formData,
+                }).then(res => res.json()).then(data => {
+                    setStateForm((prev:any)=>({
+                        ...prev,
+                        // @ts-ignore
+                        id: data.id
+                    }))
+                    openSnackbar('Falta guardada correctamente.', 'success')
+                }).catch(error => console.log(error, 'Error al enviar los datos de la falta'));
+
+
+
+            } catch (err) {
+                console.log(err)
+            }
+        }else{
+            openSnackbar('Debe completar campos requeridos', 'error')
         }
+
     }
 
 
@@ -436,6 +569,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
 
     return (
         <Box>
+
             <TituloComponent titulo={isEditMode ? `Faltas y sanciones` : 'Crear Faltas y sanciones'}>
                 <BreadCrumbComponent listaDeItems={[
                     {nombre: 'Lista de faltas y sanciones', url: '/gestion-ppl/faltas/', lastItem: false},
@@ -491,7 +625,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     {/* Fecha del traslado */}
                                     <Grid item xs={3}>
                                         <FormControl fullWidth>
-
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                             <DatePicker
                                                 label="Fecha de la falta"
                                                 format="DD/MM/YYYY"
@@ -505,6 +639,8 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 }}
 
                                             />
+                                            </LocalizationProvider>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={3}>
@@ -513,7 +649,6 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 label="Hora de la falta"
                                                 format="hh:mm"
                                                 name='hora_falta'
-
                                                 value={stateForm.hora_falta ? dayjs(stateForm.hora_falta) : null}
                                                 onChange={(newValue: Dayjs | null) => {
                                                     setStateForm(prevState => ({
@@ -524,18 +659,22 @@ export default function Page({params,}: { params: { id: number | string } }) {
 
                                             />
                                         </FormControl>
+                                        <FormHelperText>* Campo requerido</FormHelperText>
                                     </Grid>
                                     <Grid item xs={4}>
                                         <TextField
                                             fullWidth
+                                            error={!stateForm.numero_de_resoulucion}
                                             label='Nro. de resolucion'
                                             name='numero_de_resoulucion'
                                             value={stateForm.numero_de_resoulucion}
                                             onChange={handleChange}
                                         />
+                                        <FormHelperText>* Campo requerido</FormHelperText>
                                     </Grid>
                                     <Grid item xs={4}>
                                         <FormControl fullWidth>
+                                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                             <DatePicker
                                                 label="Fecha de la resolcuion"
                                                 format="DD/MM/YYYY"
@@ -549,6 +688,8 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 }}
 
                                             />
+                                            </LocalizationProvider>
+                                            <FormHelperText>* Campo requerido</FormHelperText>
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={4}>
@@ -583,6 +724,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                             label='Descripcion de la falta'
                                             name='descripcion_de_la_falta'
                                             onChange={handleChange}
+                                            error={!stateForm.descripcion_de_la_falta}
                                             value={stateForm.descripcion_de_la_falta}
                                         />
                                     </Grid>
@@ -592,6 +734,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Tipo de falta</InputLabel>
                                             <Select
+                                                error={!stateForm.tipo_de_falta}
                                                 value={stateForm.tipo_de_falta}
                                                 onChange={handleSelectChange}
                                                 label="Seleccionar PPL"
@@ -607,6 +750,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Grado de falta</InputLabel>
                                             <Select
+                                                error={!stateForm.grado_de_falta}
                                                 value={stateForm.grado_de_falta}
                                                 onChange={handleSelectChange}
                                                 label="Seleccionar PPL"
@@ -636,13 +780,16 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                     fullWidth
                                                     label='Nro. de documento'
                                                     name='documento'
+                                                    error={(stateForm.victimas && !stateForm.victimas[index].documento)}
                                                     value={stateForm.victimas ? stateForm.victimas[index].documento : ''}
-                                                    onChange={(e) => handleVictimaChange(index, 'documento', e.target.value)}
+                                                    onBlur={(e)=>handleDocumentoVictima(index, 'documento', e.target.value)}
+                                                    onChange={(e)=>handleVictimaChange(index, 'documento', e.target.value)}
                                                 />
                                                 <TextField
                                                     fullWidth
                                                     label='Nombre'
                                                     name='nombre'
+                                                    error={(stateForm.victimas && !stateForm.victimas[index].nombre)}
                                                     value={stateForm.victimas ? stateForm.victimas[index].nombre : ''}
                                                     onChange={(e) => handleVictimaChange(index, 'nombre', e.target.value)}
                                                 />
@@ -650,9 +797,13 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                     fullWidth
                                                     label='Victima de Apellido falta'
                                                     name='apellido'
+                                                    error={(stateForm.victimas && !stateForm.victimas[index].apellido)}
                                                     value={stateForm.victimas ? stateForm.victimas[index].apellido : ''}
                                                     onChange={(e) => handleVictimaChange(index, 'apellido', e.target.value)}
                                                 />
+                                                <IconButton aria-label="delete" onClick={(e)=>handleDeleteVictima(index)}>
+                                                    <DeleteIcon />
+                                                </IconButton>
                                                 {/*<FormControl fullWidth variant="outlined">
                                                     <InputLabel>Tipo de Victima</InputLabel>
                                                     <Select
@@ -765,6 +916,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     <Select
                                         label="Seleccionar PPL"
                                         name="tipoDeSancion"
+                                        error={modalForm.tipoDeSancion == 0}
                                         value={modalForm ? modalForm.tipoDeSancion : 0}
                                         onChange={(e) => setModalForm((prev :any)=>({
                                             ...prev,
@@ -778,9 +930,10 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         ))}
 
                                     </Select>
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </FormControl>
                                 <FormControl fullWidth>
-
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                     <DatePicker
                                         label="Fecha de inicio"
                                         format="DD/MM/YYYY"
@@ -794,9 +947,11 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         }}
 
                                     />
+                                    </LocalizationProvider>
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </FormControl>
                                 <FormControl fullWidth>
-
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                     <DatePicker
                                         label="Fecha de fin"
                                         format="DD/MM/YYYY"
@@ -809,13 +964,15 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                             }))
                                         }}
                                     />
+                                    </LocalizationProvider>
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </FormControl>
                                 <FormControl fullWidth>
                                     <MuiFileInput
                                         fullWidth
                                         required
                                         //@ts-ignore
-                                        error={!modalForm && !modalForm.resolucion_sancion}
+                                        error={!modalForm.resolucion_sancion}
                                         value={modalForm ? modalForm.resolucion_sancion : null}
                                         variant="outlined"
                                         label="Seleccionar documento"
@@ -832,6 +989,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     {/*{ isEditMode && stateForm.resolucion_falta_url ?
                                                         <Link href={`${stateForm.resolucion_falta_url}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
                                                         : ''}*/}
+                                    <FormHelperText>* Campo requerido</FormHelperText>
                                 </FormControl>
 
                             </Stack>
