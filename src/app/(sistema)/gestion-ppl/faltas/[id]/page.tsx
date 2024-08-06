@@ -730,7 +730,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     </Grid>
                                 </Grid>
                                 <Grid container spacing={2} mt={2}>
-                                    <Grid item xs={6}>
+                                    {/*<Grid item xs={6}>
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Tipo de falta</InputLabel>
                                             <Select
@@ -745,7 +745,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 <MenuItem value={1}>Conflicto interno</MenuItem>
                                             </Select>
                                         </FormControl>
-                                    </Grid>
+                                    </Grid>*/}
                                     <Grid item xs={6}>
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Grado de falta</InputLabel>
