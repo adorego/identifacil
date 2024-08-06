@@ -26,6 +26,7 @@ export default function Page(){
     const header = [
         { id: 'id', label: 'ID' },
         { id: 'numero_de_resolucion', label: 'Nro. Resolución' },
+        { id: 'ppl', label: 'Apellido, Nombre' },
         { id: 'descripcion_de_la_falta', label: 'Descripcion' },
         { id: 'fecha_y_hora_de_la_falta', label: 'Fecha de la falta', type: 'date' },
     ]
@@ -42,6 +43,7 @@ export default function Page(){
                     ...fetchedData.faltas.map((item:any,index:number)=>({
                         ...fetchedData.faltas[index],
                         fecha_y_hora_de_la_falta: dayjs(fetchedData.faltas[index].fecha_y_hora_de_la_falta).format('DD-MM-YYYY'),
+                        ppl: `${item.ppl.persona.apellido} ${item.ppl.persona.nombre}`
                     }))]
 
                 );
