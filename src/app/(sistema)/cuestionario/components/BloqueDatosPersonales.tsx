@@ -50,6 +50,8 @@ interface datosPersonales {
     direccion: string;
     barrioCompania: string;
     numeroDeContacto: string;
+    nombreDeContactoDeEmergencia1: string;
+    nombreDeContactoDeEmergencia2: string;
     contactoDeEmergencia1: string;
     contactoDeEmergencia2: string;
     pueblosIndigenas: boolean;
@@ -84,6 +86,8 @@ const datosPersonalesInicial: datosPersonales = {
     direccion: '',
     barrioCompania: '',
     numeroDeContacto: '',
+    nombreDeContactoDeEmergencia1: '',
+    nombreDeContactoDeEmergencia2: '',
     contactoDeEmergencia1: '',
     contactoDeEmergencia2: '',
     pueblosIndigenas: false,
@@ -182,6 +186,14 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     });
                     // console.log("Respuesta:", respuesta);
                     if (respuesta.success && respuesta.datos) {
+                        respuesta.datos.nacionalidades.sort((a: { ID: number; nombre: string; }, b: { ID: number; nombre: any; }) => {
+
+                            if (a.ID !== b.ID) {
+                                return a.ID - b.ID;
+                            }
+                            return a.nombre.localeCompare(b.nombre);
+
+                        })
                         setNacionalidades(respuesta.datos.nacionalidades);
                     } else {
                         openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
@@ -717,7 +729,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
 
-                <Grid item sm={4}>
+                <Grid item sm={6}>
                     <TextField
                         fullWidth
                         label="Numero de contacto"
@@ -726,7 +738,20 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         onChange={onDatoChangeNumber}
                     />
                 </Grid>
-                <Grid item xs={4}>
+            </Grid>
+            <Grid container spacing={2} mt={2}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth variant="outlined">
+                        <TextField
+                            label="Nombre de contacto de emergencia 1"
+                            fullWidth
+                            name="nombreDeContactoDeEmergencia1"
+                            value={datosPersonalesState.nombreDeContactoDeEmergencia1 ? datosPersonalesState.nombreDeContactoDeEmergencia1 : ''}
+                            onChange={onDatoChange}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
                         <TextField
                             label="Contacto de emergencia 1"
@@ -737,7 +762,20 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                         />
                     </FormControl>
                 </Grid>
-                <Grid item xs={4}>
+            </Grid>
+            <Grid container spacing={2} mt={2}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth variant="outlined">
+                        <TextField
+                            label="Nombre de contacto de emergencia 2"
+                            fullWidth
+                            name="nombreDeContactoDeEmergencia2"
+                            value={datosPersonalesState.nombreDeContactoDeEmergencia2 ? datosPersonalesState.nombreDeContactoDeEmergencia2 : ''}
+                            onChange={onDatoChange}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
                         <TextField
                             label="Contacto de emergencia 2"
@@ -749,6 +787,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = ({datosDeIdentific
                     </FormControl>
                 </Grid>
             </Grid>
+
 
 
             {/* Bloque Extranjero*/}

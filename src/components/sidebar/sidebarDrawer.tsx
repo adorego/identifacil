@@ -497,12 +497,20 @@ export default function SidebarDrawer()
                                 />
                             }
 
-                            {PermissionValidator('ver_motivos_de_medida_de_fuerza', session) &&
+                            {PermissionValidator('ver_tipos_de_sanciones', session) &&
                                 <SidebarItem
                                     icon={<span className='subIcon'></span>}
                                     label="Tipos de sanciones"
                                     path="/sistema/tipos-sanciones"
                                     isActive={pathname === '/sistema/tipos-sanciones'}
+                                />
+                            }
+                            {PermissionValidator('vert_tipos_de_faltas', session) &&
+                                <SidebarItem
+                                    icon={<span className='subIcon'></span>}
+                                    label="Tipos de faltas"
+                                    path="/sistema/tipos-faltas"
+                                    isActive={pathname === '/sistema/tipos-faltas'}
                                 />
                             }
                         </List>

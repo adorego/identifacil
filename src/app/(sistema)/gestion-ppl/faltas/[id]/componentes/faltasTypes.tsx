@@ -17,5 +17,6 @@ export type faltasForm = {
     tipo_victima: number;
     victimas?: Array<{ documento:string; nombre: string; apellido: string; tipos_de_victima: number; }>;
     tipos_de_sanciones_lista?:Array<{id:number;maximo_dias_de_sancion:number;nombre:string;}>
+    tipos_de_faltas_lista?:Array<{id:number;eliminado:number;nombre:string;}>
     sanciones?:Array<{resolucion_sancion:any;tipoDeSancion:number; fechaInicio:Dayjs|null; fechaFin:Dayjs|null;}>
 };

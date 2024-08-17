@@ -154,6 +154,17 @@ export default function Page({params,}: { params: { id: number | string } }) {
                     ...prev,
                     tipos_de_sanciones_lista: res.tipos_de_sanciones,
                 }));
+            }),
+            /** Se obtienen datos para poblar select de Tipo de Faltas **/
+            fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/faltas_sanciones/tipos_de_faltas`).then(res => {
+
+                setStateForm((prev: any) => {
+                    const tipos_Faltas_procesado = res.filter((item:any)=>(!item.elimado))
+                    return{
+                        ...prev,
+                        tipos_de_faltas_lista: tipos_Faltas_procesado,
+                    }
+                });
             })
 
         ]).finally(() => {
@@ -181,7 +192,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                     fecha_resolucion: dayjs(data.fecha_de_la_resolucion),
                     descripcion_de_la_falta: data.descripcion_de_la_falta,
                     resolucion_falta: data.archivo_de_resolucion,
-                    tipo_de_falta: 0,
+                    tipo_de_falta: data.tipo_de_falta ? data.tipo_de_falta.id : 0,
                     grado_de_falta: data.grado_de_falta ? data.grado_de_falta.id : 0,
                     victimas: data.victimas_de_la_falta ? data.victimas_de_la_falta.map((jsonString: string) => {
                         const obj = JSON.parse(jsonString);
@@ -730,7 +741,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     </Grid>
                                 </Grid>
                                 <Grid container spacing={2} mt={2}>
-                                    {/*<Grid item xs={6}>
+                                    <Grid item xs={6}>
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Tipo de falta</InputLabel>
                                             <Select
@@ -738,14 +749,16 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 value={stateForm.tipo_de_falta}
                                                 onChange={handleSelectChange}
                                                 label="Seleccionar PPL"
-                                                name="tipo_falta"
+                                                name="tipo_de_falta"
                                             >
-
                                                 <MenuItem value={0}>Seleccionar falta</MenuItem>
-                                                <MenuItem value={1}>Conflicto interno</MenuItem>
+                                                {stateForm.tipos_de_faltas_lista && stateForm.tipos_de_faltas_lista.map((item:any)=>(
+                                                    <MenuItem key={item.id} value={item.id}>{item.nombre}</MenuItem>
+                                                ))}
+
                                             </Select>
                                         </FormControl>
-                                    </Grid>*/}
+                                    </Grid>
                                     <Grid item xs={6}>
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Grado de falta</InputLabel>

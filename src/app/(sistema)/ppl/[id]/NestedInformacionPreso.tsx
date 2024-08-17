@@ -84,6 +84,8 @@ type datosPersonaType = {
             id: number | null;
         };
         numeroDeContacto: string;
+        nombreDeContactoDeEmergencia1?: string;
+        nombreDeContactoDeEmergencia2?: string;
         contactoDeEmergencia1: string;
         contactoDeEmergencia2: string;
         pueblosIndigenas: boolean;
@@ -130,6 +132,8 @@ const datosPersonaInitial: datosPersonaType = {
             id: null,
         },
         numeroDeContacto: "",
+        nombreDeContactoDeEmergencia1: "",
+        nombreDeContactoDeEmergencia2: "",
         contactoDeEmergencia1: "",
         contactoDeEmergencia2: "",
         pueblosIndigenas: false,
@@ -195,6 +199,8 @@ export default function NestedInformacionPreso({datosPersona = datosPersonaIniti
                     direccion: datosPPL?.datosPersonales?.direccion ? datosPPL?.datosPersonales?.direccion : '',
                     barrioCompania: datosPPL?.datosPersonales?.barrioCompania ? datosPPL?.datosPersonales?.barrioCompania : '',
                     numeroDeContacto: datosPPL?.datosPersonales?.numeroDeContacto ? datosPPL?.datosPersonales?.numeroDeContacto : '',
+                    nombreDeContactoDeEmergencia1: datosPPL?.datosPersonales?.nombreDeContactoDeEmergencia1 ? datosPPL?.datosPersonales?.nombreDeContactoDeEmergencia1 : '',
+                    nombreDeContactoDeEmergencia2: datosPPL?.datosPersonales?.nombreDeContactoDeEmergencia2 ? datosPPL?.datosPersonales?.nombreDeContactoDeEmergencia2 : '',
                     contactoDeEmergencia1: datosPPL?.datosPersonales?.contactoDeEmergencia1 ? datosPPL?.datosPersonales?.contactoDeEmergencia1 : '',
                     contactoDeEmergencia2: datosPPL?.datosPersonales?.contactoDeEmergencia2 ? datosPPL?.datosPersonales?.contactoDeEmergencia2 : '',
                     pueblosIndigenas: datosPPL?.datosPersonales?.pueblosIndigenas,

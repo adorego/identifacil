@@ -2,7 +2,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid,
     InputLabel,
@@ -21,15 +21,21 @@ import {LoadingButton} from "@mui/lab";
 import SaveIcon from "@mui/icons-material/Save";
 import {useSession} from "next-auth/react";
 import PermissionValidator from "@/components/authComponents/permissionValidator";
+import {is} from "@react-spring/shared";
 
 export interface BloqueEducacionProps {
     id_persona: number | null;
     datosEducacionIniciales?: datosEducacionType;
-    handleAccordion?: (s: string)=>void;
+    handleAccordion?: (s: string) => void;
     onSetDatosPPL?: Dispatch<SetStateAction<any>>;
 }
 
-const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIniciales, handleAccordion,onSetDatosPPL}) => {
+const BloqueEducacion: FC<BloqueEducacionProps> = ({
+                                                       id_persona,
+                                                       datosEducacionIniciales,
+                                                       handleAccordion,
+                                                       onSetDatosPPL
+                                                   }) => {
     /** Estado para manejo de spinner de boton de solicitud de guardado */
     const [estadoFormularioDeEducacion, setEstadoFormularioDeEducacion] = useState<datosEducacionType>(datosEducacionInicial);
 
@@ -85,71 +91,110 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
         )
     }
 
+    const formValidator = () => {
+        let isValid = true;
+        console.log('check 1')
+
+        let checKInstitucionEducativa = false
+        let checKOficio = false
+
+        if (estadoFormularioDeEducacion.nivelAcademico == 'ninguna') {
+            checKInstitucionEducativa = true
+        } else if (!!estadoFormularioDeEducacion?.institucionEducativa) {
+            checKInstitucionEducativa = true
+        }
+
+
+        if (!estadoFormularioDeEducacion.tieneOficio){
+            checKOficio = true
+        }else if(!!estadoFormularioDeEducacion.nombreOficio && estadoFormularioDeEducacion.tieneOficio){
+            checKOficio = true
+        }
+
+
+
+        if (
+            checKInstitucionEducativa
+            && (checKOficio)
+            && !!estadoFormularioDeEducacion.ultimoTrabajo
+        ) {
+            isValid = true
+        } else {
+            isValid = false
+        }
+
+        return isValid
+    }
+
     const onGuardarClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        if(sessionData){
-            const methodForm = estadoFormularioDeEducacion.id ? 'PUT' : 'POST';
-            setConsultaLoading(true)
+        if (sessionData) {
+            if (formValidator()) {
+                const methodForm = estadoFormularioDeEducacion.id ? 'PUT' : 'POST';
+                setConsultaLoading(true)
 
-            if (id_persona) {
-                try {
+                if (id_persona) {
+                    try {
 
 
-                    const url = estadoFormularioDeEducacion.id ?
-                        `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion/${estadoFormularioDeEducacion.id}`
-                        : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`
+                        const url = estadoFormularioDeEducacion.id ?
+                            `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion/${estadoFormularioDeEducacion.id}`
+                            : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/educacion`
 
-                    const respuesta = await api_request(url, {
-                        method: methodForm,
-                        body: JSON.stringify({
-                            ...estadoFormularioDeEducacion,
-                            id_persona:id_persona,
-                        }),
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
+                        const respuesta = await api_request(url, {
+                            method: methodForm,
+                            body: JSON.stringify({
+                                ...estadoFormularioDeEducacion,
+                                id_persona: id_persona,
+                            }),
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
 
-                    });
+                        });
 
-                    if (respuesta.success) {
-                        if(onSetDatosPPL){
-                            onSetDatosPPL((prev:any)=>({
+                        if (respuesta.success) {
+                            if (onSetDatosPPL) {
+                                onSetDatosPPL((prev: any) => ({
+                                    ...prev,
+                                    datosEducacion: {
+                                        ...estadoFormularioDeEducacion,
+                                        id: respuesta.datos.id,
+                                    },
+
+                                }))
+                            }
+                            setEstadoFormularioDeEducacion(prev => ({
                                 ...prev,
-                                datosEducacion: {
-                                    ...estadoFormularioDeEducacion,
-                                    id: respuesta.datos.id,
-                                },
-
+                                id: respuesta.datos.id,
                             }))
-                        }
-                        setEstadoFormularioDeEducacion(prev=>({
-                            ...prev,
-                            id: respuesta.datos.id,
-                        }))
-                        openSnackbar("Datos guardados correctamente", "success")
-                        setConsultaLoading(false)
-
-                        if(handleAccordion){
-                            handleAccordion('')
-                        }
-                    } else {
-                        if (respuesta.error) {
+                            openSnackbar("Datos guardados correctamente", "success")
                             setConsultaLoading(false)
-                            openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
-                            log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+
+                            if (handleAccordion) {
+                                handleAccordion('')
+                            }
+                        } else {
+                            if (respuesta.error) {
+                                setConsultaLoading(false)
+                                openSnackbar(`Error al guardar los datos: ${respuesta.error.message}`, `error`);
+                                log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                            }
                         }
+                    } catch (error) {
+                        setConsultaLoading(false)
+                        openSnackbar(`Error al guardar los datos:${error}`, "error");
                     }
-                } catch (error) {
-                    setConsultaLoading(false)
-                    openSnackbar(`Error al guardar los datos:${error}`, "error");
+
+
+                    // console.log("Respuesta:", respuesta);
+                } else {
+                    openSnackbar("Falta el id de la persona", "error");
                 }
-
-
-                // console.log("Respuesta:", respuesta);
             } else {
-                openSnackbar("Falta el id de la persona", "error");
+                openSnackbar("Completar campos requeridos", 'error')
             }
-        }else{
+        } else {
             openSnackbar('No tienes permisos para realizar esta acción', 'warning')
         }
     }
@@ -205,9 +250,11 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                             <OutlinedInput
                                 name="institucionEducativa"
                                 label="Institución educativa"
+                                error={!estadoFormularioDeEducacion?.institucionEducativa}
                                 value={estadoFormularioDeEducacion?.institucionEducativa}
                                 onChange={onDatoChange}
                             />
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                     </Grid>
                 }
@@ -233,7 +280,7 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                     </FormControl>
                 </Grid>
             </Grid>
-            { estadoFormularioDeEducacion.tieneOficio ?
+            {estadoFormularioDeEducacion.tieneOficio ?
                 <Grid container spacing={2}>
                     <Grid item sm={6} mt={2}>
 
@@ -241,48 +288,51 @@ const BloqueEducacion: FC<BloqueEducacionProps> = ({id_persona, datosEducacionIn
                             <InputLabel htmlFor="datoOficio">Oficio</InputLabel>
                             <OutlinedInput
                                 name="nombreOficio"
+                                error={!estadoFormularioDeEducacion?.nombreOficio}
                                 value={estadoFormularioDeEducacion?.nombreOficio}
                                 label="Oficio"
                                 onChange={onDatoChange}
                                 disabled={!estadoFormularioDeEducacion.tieneOficio}
                             />
-
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
 
 
                     </Grid>
                 </Grid>
-            : null }
+                : null}
             <Grid container spacing={2} mt={2}>
                 <Grid item sm={6}>
                     <FormControl fullWidth={true}>
                         <InputLabel htmlFor="datoUltimaEducativa">Ultimo lugar de trabajo</InputLabel>
                         <OutlinedInput
                             name="ultimoTrabajo"
+                            error={!estadoFormularioDeEducacion.ultimoTrabajo}
                             value={estadoFormularioDeEducacion.ultimoTrabajo}
                             label="Ultimo lugar de trabajo"
                             onChange={onDatoChange}
                         />
+                        <FormHelperText>* Campo requerido</FormHelperText>
                     </FormControl>
                 </Grid>
                 {sessionData &&
-                <Grid item sm={12} mt={4}>
-                    <LoadingButton
-                        sx={{
-                            minHeight: "100%",
-                            px: "48px",
-                            height: '48px'
-                        }}
-                        onClick={onGuardarClick}
-                        loading={consultaLoading}
-                        loadingPosition='start'
-                        startIcon={<SaveIcon />}
-                        variant="contained">
+                    <Grid item sm={12} mt={4}>
+                        <LoadingButton
+                            sx={{
+                                minHeight: "100%",
+                                px: "48px",
+                                height: '48px'
+                            }}
+                            onClick={onGuardarClick}
+                            loading={consultaLoading}
+                            loadingPosition='start'
+                            startIcon={<SaveIcon/>}
+                            variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}
                         </span>
-                    </LoadingButton>
-                </Grid>
+                        </LoadingButton>
+                    </Grid>
                 }
 
             </Grid>
