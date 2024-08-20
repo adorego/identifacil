@@ -55,6 +55,8 @@ interface datosPersonales {
     pueblosIndigenas: boolean;
     nombreEtnia: string;
     perteneceAComunidadLGTBI: boolean;
+    nombreDeContactoDeEmergencia1?: string;
+    nombreDeContactoDeEmergencia2?: string;
     grupoLGTBI: string;
     es_extranjero: boolean;
     tiene_contacto_en_embajada: boolean;
@@ -136,6 +138,8 @@ export interface BloqueDatosPersonalesProps {
         perteneceAComunidadLGTBI: boolean;
         tiene_contacto_en_embajada: boolean;
         contactoDeEmbajada_id?: number;
+        nombreDeContactoDeEmergencia1?: string;
+        nombreDeContactoDeEmergencia2?: string;
         contactoDeEmbajada_nombre?: string;
         contactoDeEmbajada_numero?: string;
         departamento: number;
@@ -208,6 +212,18 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                     });
                     // console.log("Respuesta:", respuesta);
                     if (respuesta.success && respuesta.datos) {
+                        respuesta.datos.nacionalidades.sort((a: { ID: number; nombre: string; }, b: {
+                            ID: number;
+                            nombre: any;
+                        }) => {
+
+                            if (a.ID !== b.ID) {
+                                return a.ID - b.ID;
+                            }
+                            return a.nombre.localeCompare(b.nombre);
+
+                        })
+
                         setNacionalidades(respuesta.datos.nacionalidades);
                     } else {
                         openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
@@ -324,6 +340,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                     direccion: datosDeIdentificacion.direccion,
                     barrioCompania: datosDeIdentificacion.barrioCompania,
                     numeroDeContacto: datosDeIdentificacion.numeroDeContacto,
+                    nombreDeContactoDeEmergencia1: datosDeIdentificacion.nombreDeContactoDeEmergencia1,
+                    nombreDeContactoDeEmergencia2: datosDeIdentificacion.nombreDeContactoDeEmergencia2,
                     contactoDeEmergencia1: datosDeIdentificacion.contactoDeEmergencia1,
                     contactoDeEmergencia2: datosDeIdentificacion.contactoDeEmergencia2,
                     pueblosIndigenas: datosDeIdentificacion.pueblosIndigenas,
@@ -361,14 +379,12 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
      * cargado el estado de lista de ciudades* */
     useEffect(() => {
 
-        if(datosDeIdentificacion.lugarDeNacimiento && ciudadLista.length > 0){
-            const lugarEncontrado = ciudadLista.find(item=>  item.id == parseInt(datosDeIdentificacion.lugarDeNacimiento))
+        if (datosDeIdentificacion.lugarDeNacimiento && ciudadLista.length > 0) {
+            const lugarEncontrado = ciudadLista.find(item => item.id == parseInt(datosDeIdentificacion.lugarDeNacimiento))
             setSelectedCity(lugarEncontrado)
         }
 
     }, [datosDeIdentificacion.ciudad, ciudadLista]);
-
-
 
 
     const onDatoChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -413,13 +429,13 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
         const nombreSelect = event.target.name
         const valorSelect = event.target.value
 
-        if(nombreSelect == 'departamento'){
-            setDatosPersonalesState((prev:any)=>({
+        if (nombreSelect == 'departamento') {
+            setDatosPersonalesState((prev: any) => ({
                 ...prev,
                 ciudad: 0,
                 [nombreSelect]: valorSelect
             }))
-        }else{
+        } else {
 
             setDatosPersonalesState(
                 (previus) => {
@@ -482,7 +498,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
     const onDatosPersonalesSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        if(sessionData) {
+        if (sessionData) {
             setConsultaLoading(true)
 
             if (datosPersonalesState.departamento && datosPersonalesState.ciudad && datosPersonalesState.estadoCivil && extranjeroValidator()) {
@@ -502,26 +518,15 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                 })
                 if (respuesta.success) {
 
-                    /*if(onSetDatosPPL){
-                        onSetDatosPPL((prev:any)=>({
-                            ...prev,
-                            datosPersonales: {
-                                ...datosPersonalesState,
-                                id: respuesta.datos.id,
-                                flag:true,
-                            }
-                        }))
-                    }*/
-
                     setDatosPersonalesState(prev => ({
                         ...prev,
                         id: respuesta.datos.id,
                     }))
                     setConsultaLoading(false)
                     openSnackbar("Datos guardados correctamente", "success")
-                    if (pathname.startsWith('/ppl')) {
+                    /*if (pathname.startsWith('/ppl')) {
                         window.location.reload();
-                    }
+                    }*/
                 } else {
                     if (respuesta.error) {
                         setConsultaLoading(false)
@@ -533,7 +538,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                 openSnackbar('Completar campos requerido', 'warning')
                 setConsultaLoading(false)
             }
-        }else{
+        } else {
             openSnackbar('No tienes permiso para realizar esta accion', 'warning')
         }
 
@@ -734,7 +739,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
                 </Grid>
 
-                <Grid item sm={4}>
+                <Grid item sm={6}>
                     <TextField
                         fullWidth
                         label="Número de contacto"
@@ -743,7 +748,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                         onChange={onDatoChangeNumber}
                     />
                 </Grid>
-                <Grid item xs={4}>
+            </Grid>
+
+            <Grid container spacing={2}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth variant="outlined">
+                        <TextField
+                            label="Nombre de contacto de emergencia 1"
+                            fullWidth
+                            name="nombreDeContactoDeEmergencia1"
+                            value={datosPersonalesState.nombreDeContactoDeEmergencia1 ? datosPersonalesState.nombreDeContactoDeEmergencia1 : ''}
+                            onChange={onDatoChange}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
                         <TextField
                             label="Contacto de emergencia 1"
@@ -754,7 +773,21 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                         />
                     </FormControl>
                 </Grid>
-                <Grid item xs={4}>
+            </Grid>
+
+            <Grid container spacing={2} mt={2}>
+                <Grid item xs={6}>
+                    <FormControl fullWidth variant="outlined">
+                        <TextField
+                            label=" Nombre de contacto de emergencia 2"
+                            fullWidth
+                            name="nombreDeContactoDeEmergencia2"
+                            value={datosPersonalesState.nombreDeContactoDeEmergencia2 ? datosPersonalesState.nombreDeContactoDeEmergencia2 : ''}
+                            onChange={onDatoChange}
+                        />
+                    </FormControl>
+                </Grid>
+                <Grid item xs={6}>
                     <FormControl fullWidth variant="outlined">
                         <TextField
                             label="Contacto de emergencia 2"
@@ -765,6 +798,10 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                         />
                     </FormControl>
                 </Grid>
+            </Grid>
+
+
+            <Grid container spacing={2} mt={2}>
                 <Grid item sm={12}>
                     <Typography variant='h6'>
                         Datos de residencia
@@ -805,8 +842,8 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                             {console.log('lista de ciudades', ciudadLista)}*/}
                             <MenuItem value={0}>Seleccionar ciudad</MenuItem>
 
-                            {ciudadLista.map((item : any, index) => {
-                                if(item.departamento.id == datosPersonalesState.departamento){
+                            {ciudadLista.map((item: any, index) => {
+                                if (item.departamento.id == datosPersonalesState.departamento) {
                                     return (
                                         <MenuItem key={index} value={item.id}>{item.nombre}</MenuItem>
                                     )
@@ -1046,27 +1083,27 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
                 </Grid>
                 {(sessionData) &&
-                <Grid item sm={12}>
-                    <Stack direction="row" spacing={2}>
-                        <LoadingButton
-                            sx={{
-                                minHeight: "100%",
-                                px: "48px",
-                                height: '48px'
-                            }}
-                            onClick={onDatosPersonalesSubmit}
-                            loading={consultaLoading}
-                            startIcon={<SaveIcon/>}
-                            loadingPosition='start'
+                    <Grid item sm={12}>
+                        <Stack direction="row" spacing={2}>
+                            <LoadingButton
+                                sx={{
+                                    minHeight: "100%",
+                                    px: "48px",
+                                    height: '48px'
+                                }}
+                                onClick={onDatosPersonalesSubmit}
+                                loading={consultaLoading}
+                                startIcon={<SaveIcon/>}
+                                loadingPosition='start'
 
-                            variant="contained">
+                                variant="contained">
                         <span>
                             {consultaLoading ? 'Guardando...' : 'Guardar'}
                         </span>
-                        </LoadingButton>
+                            </LoadingButton>
 
-                    </Stack>
-                </Grid>
+                        </Stack>
+                    </Grid>
                 }
             </Grid>
         </Box>

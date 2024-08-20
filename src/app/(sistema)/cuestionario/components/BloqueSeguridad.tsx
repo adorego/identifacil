@@ -2,7 +2,7 @@ import {
     Box,
     Button,
     FormControl,
-    FormControlLabel,
+    FormControlLabel, FormHelperText,
     FormLabel,
     Grid,
     InputLabel,
@@ -87,59 +87,88 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
         )
     }
 
+    const formValidator = ()=>{
+        let isvalid = true;
+        console.log(estadoBloqueSeguridadFormulario.riesgoParaPersonal && !estadoBloqueSeguridadFormulario.riesgoParaPersonalRespuesta)
+
+        if(estadoBloqueSeguridadFormulario.riesgoParaPersonal && !estadoBloqueSeguridadFormulario.riesgoParaPersonalRespuesta){
+            isvalid = false
+        }else if(estadoBloqueSeguridadFormulario.riesgoParaReclusos && !estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta){
+            isvalid = false
+        }else if(estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusos && !estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusosRespuesta){
+            isvalid = false
+        }else if(estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedad && !estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedadRespuesta){
+            isvalid = false
+        }else if(estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridad && !estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta){
+            isvalid = false
+        }else if(estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevio && !estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevioRespuesta){
+            isvalid = false
+        }else if(estadoBloqueSeguridadFormulario.eraFuncionarioPublico && !estadoBloqueSeguridadFormulario.eraFuncionarioPublicoRespuesta){
+            isvalid = false
+        }
+
+
+        return isvalid
+    }
+
     const onFormSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
         if(sessionData){
-            setConsultaLoading(true)
+            if( formValidator()){
+                setConsultaLoading(true)
 
-            const methodForm = estadoBloqueSeguridadFormulario?.id  ? 'PUT' : 'POST';
+                const methodForm = estadoBloqueSeguridadFormulario?.id  ? 'PUT' : 'POST';
 
-            if (id_persona) {
-                const url = estadoBloqueSeguridadFormulario?.id ?
-                    `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${estadoBloqueSeguridadFormulario.id}`
-                    : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
+                if (id_persona) {
+                    const url = estadoBloqueSeguridadFormulario?.id ?
+                        `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad/${estadoBloqueSeguridadFormulario.id}`
+                        : `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/seguridad`
 
 
 
-                const respuesta = await api_request(url, {
-                    method: methodForm,
-                    body: JSON.stringify({...estadoBloqueSeguridadFormulario, id_persona: id_persona}),
-                    headers: {'Content-Type': 'application/json'}
+                    const respuesta = await api_request(url, {
+                        method: methodForm,
+                        body: JSON.stringify({...estadoBloqueSeguridadFormulario, id_persona: id_persona}),
+                        headers: {'Content-Type': 'application/json'}
 
-                })
-                if (respuesta.success) {
-                    if(onSetDatosPPL){
-                        onSetDatosPPL((prev:any)=>({
+                    })
+                    if (respuesta.success) {
+                        if(onSetDatosPPL){
+                            onSetDatosPPL((prev:any)=>({
+                                ...prev,
+                                datosDeSeguridad: {
+                                    ...estadoBloqueSeguridadFormulario,
+                                    id: respuesta.datos.id,
+                                }
+                            }))
+                        }
+
+                        setEstadoBloqueSeguridadFormulario(prev=>({
                             ...prev,
-                            datosDeSeguridad: {
-                                ...estadoBloqueSeguridadFormulario,
-                                id: respuesta.datos.id,
-                            }
+
                         }))
-                    }
-
-                    setEstadoBloqueSeguridadFormulario(prev=>({
-                        ...prev,
-
-                    }))
-                    setConsultaLoading(false)
-                    if(handleAccordion){
-                        handleAccordion('')
-                    }
-
-                    openSnackbar("Datos guardados correctamente", "success")
-                } else {
-                    if (respuesta.error) {
                         setConsultaLoading(false)
-                        openSnackbar(`Error al guardar los datos`, `error`);
-                        log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
-                    }
-                }
+                        if(handleAccordion){
+                            handleAccordion('')
+                        }
 
-            } else {
-                setConsultaLoading(false)
-                openSnackbar("Falta el identifiicador de la persona", "error");
+                        openSnackbar("Datos guardados correctamente", "success")
+                    } else {
+                        if (respuesta.error) {
+                            setConsultaLoading(false)
+                            openSnackbar(`Error al guardar los datos`, `error`);
+                            log.error("Error al guardar los datos", respuesta.error.code, respuesta.error.message);
+                        }
+                    }
+
+                } else {
+                    setConsultaLoading(false)
+                    openSnackbar("Falta el identifiicador de la persona", "error");
+                }
+            }else{
+                openSnackbar("Debe completar los datos olbigatorios", `error`);
             }
+
         }
     }
 
@@ -184,9 +213,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                             <OutlinedInput
                                 disabled={!estadoBloqueSeguridadFormulario.riesgoParaPersonal}
                                 name="riesgoParaPersonalRespuesta"
+                                error={!estadoBloqueSeguridadFormulario.riesgoParaPersonalRespuesta}
                                 value={estadoBloqueSeguridadFormulario.riesgoParaPersonalRespuesta}
                                 onChange={onDatoChange}
                                 label="Observacion"/>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl> : null
                     }
 
@@ -218,9 +249,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                             </InputLabel>
                             <OutlinedInput
                                 name="riesgoParaReclusosRespuesta"
+                                error={!estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
                                 value={estadoBloqueSeguridadFormulario.riesgoParaReclusosRespuesta}
                                 onChange={onDatoChange}
                                 label="Observacion"/>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                         : null
                     }
@@ -252,9 +285,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                                 </InputLabel>
                                 <OutlinedInput
                                     name="riesgoDeSufrirLesionPorOtrosReclusosRespuesta"
+                                    error={!estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusosRespuesta}
                                     value={estadoBloqueSeguridadFormulario.riesgoDeSufrirLesionPorOtrosReclusosRespuesta}
                                     onChange={onDatoChange}
                                     label="Observacion"/>
+                                <FormHelperText>* Campo requerido</FormHelperText>
                             </FormControl>
                             : null
                     }
@@ -286,9 +321,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                             </InputLabel>
                             <OutlinedInput
                                 name="riesgoDeDanharLaPropiedadRespuesta"
+                                error={!estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedadRespuesta}
                                 value={estadoBloqueSeguridadFormulario.riesgoDeDanharLaPropiedadRespuesta}
                                 onChange={onDatoChange}
                                 label="Observacion"/>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                         : null
                     }
@@ -319,9 +356,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                             <InputLabel htmlFor="miembroGrupoRpta">Nombre del grupo</InputLabel>
                             <OutlinedInput
                                 name="miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta"
+                                error={!estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta}
                                 value={estadoBloqueSeguridadFormulario.miembroDeGrupoQueConstituyeAmenazaParaSeguridadRespuesta}
                                 onChange={onDatoChange}
                                 label="Nombre del grupo"/>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                         : null
                     }
@@ -352,9 +391,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                             <InputLabel htmlFor="entrenamientoMilitarRpta">Agregar Respuesta</InputLabel>
                             <OutlinedInput
                                 name="tieneEntrenamientoMilitarPrevioRespuesta"
+                                error={!estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevioRespuesta}
                                 value={estadoBloqueSeguridadFormulario.tieneEntrenamientoMilitarPrevioRespuesta}
                                 onChange={onDatoChange}
                                 label="Agregar Respuesta"/>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                         : null
                     }
@@ -384,9 +425,11 @@ const BloqueSeguridad: FC<BloqueSeguridadProps> = ({datosIniciales = datosSeguri
                             <InputLabel htmlFor='eraFuncionarioPublicoRespuesta'>Agregar cargo</InputLabel>
                             <OutlinedInput
                                 name="eraFuncionarioPublicoRespuesta"
+                                error={!estadoBloqueSeguridadFormulario.eraFuncionarioPublicoRespuesta}
                                 value={estadoBloqueSeguridadFormulario.eraFuncionarioPublicoRespuesta}
                                 onChange={onDatoChange}
                                 label="Agregar cargo"/>
+                            <FormHelperText>* Campo requerido</FormHelperText>
                         </FormControl>
                         : null
                     }

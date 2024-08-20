@@ -379,6 +379,7 @@ export type circuloFamiliarStateType = {
     id: number | null;
     indexArray?: number;
     nombre: string | null;
+    cedulaDeIdentidad: string;
     apellido: string | null;
     esFuncionario: boolean | null;
     vinculo: {
