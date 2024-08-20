@@ -7,6 +7,8 @@ import {circuloFamiliarStateType} from "@/components/utils/systemTypes";
 import {useEffect, useState} from "react";
 import {fetchData} from "@/components/utils/utils";
 import {useGlobalContext} from "@/app/Context/store";
+import {onConsultarRegistroCivil} from "@/components/utils/utils_client";
+import dayjs from "dayjs";
 
 interface FormularioCirculoFamiliarProps {
     onClose: () => void;
@@ -20,6 +22,7 @@ const familiarInitialState = {
     nombre: "",
     esFuncionario: false,
     apellido: "",
+    cedulaDeIdentidad: "",
     vinculo: {
         id: 0,
         nombre: null,
@@ -35,6 +38,8 @@ const familiarInitialState = {
 export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps> = ({ onClose, onHandleChangeCirculo,savedState=null }) => {
     const [state, setState] = React.useState<circuloFamiliarStateType>(familiarInitialState)
 
+    const [documentLoader, setDocumentLoader] = useState(false)
+
     const [editMode, setEditMode] = useState(false)
 
     const {openSnackbar} = useGlobalContext();
@@ -48,6 +53,19 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
         setState(familiarInitialState)
     }, [open]);
 
+    useEffect(() => {
+
+        const apiUrl = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API; // Puedes cambiar la URL según tus necesidades
+        fetchData(apiUrl+'/vinculos_familiares')
+            .then(fetchedData => {
+                setStateVinculos(fetchedData.vinculos_familiares);
+            });
+
+        fetchData(apiUrl+'/establecimientos')
+            .then(fetchedData => {
+                setStateEstablecimiento(fetchedData.establecimientos);
+            });
+    }, []);
 
     useEffect(() => {
         if(savedState){
@@ -70,6 +88,28 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
           }
         })
     };
+
+    const handleCedula = async (e: { target: { value: string; }; }) =>{
+        setDocumentLoader(true)
+        onConsultarRegistroCivil(e.target.value).then(res=>{
+            console.log(res)
+            if( res){
+                console.log('check 2')
+                setState((prev: any) => ({
+                    ...prev,
+                    cedulaDeIdentidad: e.target.value,
+                    nombre:  res.nombres ?  res.nombres : '',
+                    apellido:  res.apellidos,
+                }))
+                console.log('check 3')
+            }
+        }).catch(err=>{
+            console.log('error en consulta', err)
+        }).finally(()=>{
+            setDocumentLoader(false)
+        })
+
+    }
 
     const handleSelectChange = (event: SelectChangeEvent<number|string | null>) => {
         console.log(event.target.value)
@@ -138,19 +178,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
         }
     }
 
-    useEffect(() => {
 
-        const apiUrl = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API; // Puedes cambiar la URL según tus necesidades
-        fetchData(apiUrl+'/vinculos_familiares')
-            .then(fetchedData => {
-                setStateVinculos(fetchedData.vinculos_familiares);
-            });
-
-        fetchData(apiUrl+'/establecimientos')
-            .then(fetchedData => {
-                setStateEstablecimiento(fetchedData.establecimientos);
-            });
-    }, []);
 
 
     return (
@@ -160,10 +188,27 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
 
                     <Grid item sm={6} mt={2}>
                         <TextField
+                            label="Número de documento"
+                            name="cedulaDeIdentidad"
+                            error={!state.cedulaDeIdentidad}
+                            helperText={documentLoader ? 'Consultando datos..' : ''}
+                            disabled={documentLoader}
+                            value={state.cedulaDeIdentidad}
+                            onBlur={handleCedula}
+                            onChange={handleChange}
+                            variant="outlined"
+                            fullWidth/>
+                    </Grid>
+                </Grid>
+                <Grid container spacing={2}>
+
+                    <Grid item sm={6} mt={2}>
+                        <TextField
                             label="Nombre"
                             name="nombre"
                             error={!state.nombre}
                             helperText='* Campo requerido'
+                            disabled={documentLoader}
                             value={state.nombre}
                             onChange={handleChange}
                             variant="outlined"
@@ -173,6 +218,7 @@ export const FormularioCirculoFamiliar: React.FC<FormularioCirculoFamiliarProps>
                         <TextField
                             error={!state.apellido}
                             helperText='* Campo requerido'
+                            disabled={documentLoader}
                             label="Apellido"
                             name="apellido"
                             value={state.apellido}
