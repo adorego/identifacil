@@ -179,6 +179,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
 
     /** 4. */
     const [nacionalidades, setNacionalidades] = useState<Array<Nacionalidad>>([]);
+    const [paises, setPaises] = useState<Array<{ id: number; nombre: string; }>>([]);
 
     /** 5. */
     const [estadosCiviles, setEstadosCiviles] = useState<Array<EstadoCivil>>([]);
@@ -225,6 +226,44 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                         })
 
                         setNacionalidades(respuesta.datos.nacionalidades);
+                    } else {
+                        openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
+                    }
+
+                } catch (error) {
+                    openSnackbar(`Error en la consulta de datos:${error}`, "error");
+                }
+
+
+            }
+
+            const getPaises = async () => {
+                const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/paises`;
+                try {
+                    const respuesta: RequestResponse = await api_request(url, {
+                        method: 'GET',
+                        headers: {
+                            'Content-type': 'application/json'
+                        }
+                    });
+                    // console.log("Respuesta:", respuesta);
+                    if (respuesta.success && respuesta.datos) {
+                        /*respuesta.datos.nacionalidades.sort((a: { ID: number; nombre: string; }, b: {
+                            ID: number;
+                            nombre: any;
+                        }) => {
+
+                            if (a.ID !== b.ID) {
+                                return a.ID - b.ID;
+                            }
+                            return a.nombre.localeCompare(b.nombre);
+
+                        })                    */
+
+                        console.log(respuesta.datos.paises)
+
+                        setPaises(respuesta.datos.paises);
+
                     } else {
                         openSnackbar(`Error en la consulta de datos:${respuesta.error?.message}`, "error");
                     }
@@ -306,6 +345,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
             Promise.all([
                 getEstadosCiviles(),
                 getNacionalidades(),
+                getPaises(),
                 getDepartamentos(),
                 getCiudades()
             ]).then(() => {
@@ -942,11 +982,11 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                                                     name="pais_embajada"
                                                 >
                                                     <MenuItem value={0}>Seleccionar un país</MenuItem>
-                                                    {nacionalidades ? nacionalidades.map(
+                                                    {paises ? paises.map(
                                                         (data, id) => {
                                                             return (
                                                                 <MenuItem key={data.id}
-                                                                          value={data.id}>{data.pais}</MenuItem>
+                                                                          value={data.id}>{data.nombre}</MenuItem>
                                                             )
                                                         }
                                                     ) : null}

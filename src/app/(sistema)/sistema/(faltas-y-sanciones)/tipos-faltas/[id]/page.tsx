@@ -18,9 +18,9 @@ export default function Page({ params }: { params: { id: number } }) {
     return(
         <>
 
-            <TituloComponent titulo='Tipo de sancion' url={URL_PARAM}>
+            <TituloComponent titulo='Tipo de falta' url={URL_PARAM}>
                 <BreadCrumbComponent listaDeItems={ [
-                    {nombre:'Lista de tipos de faltas', url:'/sistema/tipos-medidas-de-fuerza/', lastItem: false},
+                    {nombre:'Lista de tipos de faltas', url:'/sistema/tipos-faltas', lastItem: false},
                     {nombre:'Tipo de falta', url:'', lastItem: true},
                 ]} />
             </TituloComponent>

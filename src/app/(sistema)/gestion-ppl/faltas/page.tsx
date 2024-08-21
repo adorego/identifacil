@@ -85,7 +85,7 @@ export default function Page(){
     };
 
     const listaDeItemBread = [
-        {nombre:'Lista de faltas y sanciones', url:'/gestion-ppl/medidas-de-fuerza/', lastItem: true}
+        {nombre:'Lista de faltas y sanciones', url:'', lastItem: true}
     ];
 
     if (!data) {
