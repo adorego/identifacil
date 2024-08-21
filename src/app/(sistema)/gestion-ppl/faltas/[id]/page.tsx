@@ -206,6 +206,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                     sanciones: data.sanciones_aplicadas.map((item:any)=>({
                         id: item.id,
                         fecha_inicio: item.fecha_inicio,
+                        tipo_sancion: item.tipo.nombre,
                         fecha_fin: item.fecha_fin,
                         resolucion: item. resolucion && (
                             <Link href={`${ASSETS_URL}${item.resolucion}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
@@ -876,6 +877,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                             data={stateForm.sanciones}
                                             headers={[
                                                 { id: 'id', label: 'ID' },
+                                                { id: 'tipo_sancion', label: 'Tipo' },
                                                 { id: 'fecha_inicio', label: 'Fecha inicio' },
                                                 { id: 'fecha_fin', label: 'Fecha fin' },
                                                 { id: 'resolucion', label: 'Resolucion' },
