@@ -72,7 +72,7 @@ const intialFaltasForm: faltasForm = {
     grado_de_falta: 0,
     victima_falta: {id: 0, nombre: '', apellido: '', documento: ''},
     tipo_victima: 0,
-    victimas: [],
+    victimas: [{ documento:'', nombre: '', apellido: '', tipos_de_victima: 1 }],
     tipos_de_sanciones_lista: [],
     sanciones: [],
 };
@@ -208,7 +208,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                         fecha_inicio: item.fecha_inicio,
                         fecha_fin: item.fecha_fin,
                         resolucion: item. resolucion && (
-                            <Link href={`${ASSETS_URL}${data.resolucion}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
+                            <Link href={`${ASSETS_URL}${item.resolucion}`} target="_blank" rel="noopener noreferrer">Ver documento adjunto</Link>
                         ),
                     })),
 
@@ -422,6 +422,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
     }
 
     const victimasValidator = ()=>{
+
         if(stateForm.victimas){
 
             const areAllValuesValid = stateForm.victimas.every(obj =>
@@ -430,7 +431,6 @@ export default function Page({params,}: { params: { id: number | string } }) {
                 )
             );
 
-            // console.log('Victimas', areAllValuesValid);
             return areAllValuesValid
         }
     }
