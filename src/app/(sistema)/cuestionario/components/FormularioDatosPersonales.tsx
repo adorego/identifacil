@@ -248,7 +248,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                     });
                     // console.log("Respuesta:", respuesta);
                     if (respuesta.success && respuesta.datos) {
-                        /*respuesta.datos.nacionalidades.sort((a: { ID: number; nombre: string; }, b: {
+                        respuesta.datos.paises.sort((a: { ID: number; nombre: string; }, b: {
                             ID: number;
                             nombre: any;
                         }) => {
@@ -258,7 +258,7 @@ const BloqueDatosPersonales: FC<BloqueDatosPersonalesProps> = (
                             }
                             return a.nombre.localeCompare(b.nombre);
 
-                        })                    */
+                        })
 
                         console.log(respuesta.datos.paises)
 
