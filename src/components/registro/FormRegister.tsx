@@ -73,9 +73,10 @@ export default function FormRegister() {
     const { data: session, status } = useSession();
 
 
-    // console.log("Identidad:", identidad);
+    
     useEffect(
         () => {
+            
             switch (activeStep) {
                 case(0):
                     setBotonesDeFlujo({
@@ -110,12 +111,12 @@ export default function FormRegister() {
     const setIdentificacion = (identificacion: DatosDeIdentificacion) => {
         // console.log("Datos de identificacion:", identificacion);
         identidad.current = identificacion;
-        console.log("Identidad:",identidad.current);
+       
     }
 
 
     const agregar_reconocimiento = async (reconocimiento: IReconocimiento) => {
-        console.log("Entro en agregar_reconocimiento");
+       
         reconocimientos.current.push(reconocimiento);
         contadorReconocimiento.current++;
         if (contadorReconocimiento.current === 3) {
@@ -142,10 +143,7 @@ export default function FormRegister() {
                 identidad.current.tipo_identificacion = 3;
             }
 
-            console.log(identidad.current)
-            console.log(identidad.current?.tipo_identificacion)
-            console.log(identidad.current)
-
+           
             const formData = new FormData();
             formData.append('tipo_identificacion', String(identidad.current.tipo_identificacion));
             formData.append('numero_identificacion', numero_identificacion);
@@ -181,7 +179,7 @@ export default function FormRegister() {
                     const data = await result.json();
                     setProgresoRegistro(EstadosProgreso[3]);
                     setMensaje(`Ocurrió un error al realizar el registro, vuelva a intentarlo: ${data.message}`);
-                    log.error("Ocurrio un error durante el registro: ", data);
+                    
                 } else {
                     const data: RegistroResponse = await result.json() as RegistroResponse;
                     console.log('verificacion de foto')
@@ -209,6 +207,7 @@ export default function FormRegister() {
 
 
     const habilitarBotonSiguiente = (estado: boolean) => {
+        
         setBotonesDeFlujo(
             (previus) => {
                 return (
@@ -284,7 +283,7 @@ export default function FormRegister() {
                 }}>
 
                     <Box>
-                        Regirigiendo...
+                        Redirigiendo...
                     </Box>
                 </Box>
             </div>
@@ -319,6 +318,7 @@ export default function FormRegister() {
                         activeStep === 0 &&
                         <IdentificacionForm
                             identificar_ppl={true}
+                            es_extranjero={false}
                             habilitarBotonSiguiente={habilitarBotonSiguiente}
                             actualizarIdentificacion={setIdentificacion}/>
                     }

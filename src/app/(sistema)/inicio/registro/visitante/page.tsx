@@ -243,6 +243,7 @@ export default function RegistroVisitante() {
                 }}>
                     {activeStep === 0 && <IdentificationForm
                         identificar_ppl={false}
+                        es_extranjero={false}
                         habilitarBotonSiguiente={setHabilitarBotonSiguiente}
                         actualizarIdentificacion={setIdentificacion}
                     />}
