@@ -132,6 +132,7 @@ export default function Page({params}: { params: { id: number | string } }) {
     const { data: session, status } = useSession();
 
 
+    // Verica el estado de la sesion
     useEffect(() => {
 
         if (status === 'unauthenticated') {
@@ -139,6 +140,7 @@ export default function Page({params}: { params: { id: number | string } }) {
         }
     }, [status]);
 
+    // se carga la primera vez que carga la vista
     useEffect(() => {
         // Fetch para PPL lista para traslado
 
@@ -182,6 +184,11 @@ export default function Page({params}: { params: { id: number | string } }) {
             })
         }
 
+        // Si es modo edicion bloquea los campos completados
+        if (isEditMode) {
+
+        }
+
 
         Promise.all([
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`).then(res => {
@@ -203,6 +210,7 @@ export default function Page({params}: { params: { id: number | string } }) {
 
     }, []);
 
+    // Se actualiza cuando se agrega un
     useEffect(() => {
         if(params.id !== 'crear'){
             fetchData(`${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/registro_medico/${params.id}`).then(res => {
@@ -457,6 +465,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     <Grid item xs={8}>
                                         <FormControl fullWidth>
                                             <Autocomplete
+                                                disabled={isEditMode}
                                                 fullWidth={true}
                                                 value={personasSeleccionadas ? personasSeleccionadas : null}
                                                 onChange={(event, newValue: any) => {
@@ -486,8 +495,9 @@ export default function Page({params}: { params: { id: number | string } }) {
                                     {/* Persona que autorizó traslado */}
                                     <Grid item xs={8}>
                                         <FormControl fullWidth variant="outlined">
-                                            <InputLabel>Tipo de medida de fuerza</InputLabel>
+                                            <InputLabel>Tipo de medida de fuerza !</InputLabel>
                                             <Select
+                                                disabled={isEditMode}
                                                 value={stateMedidasDeFuerza.tipo_de_medida_de_fuerza}
                                                 error={!stateMedidasDeFuerza.tipo_de_medida_de_fuerza}
                                                 onChange={handleSelectChange}
@@ -510,6 +520,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Motivo</InputLabel>
                                             <Select
+                                                disabled={isEditMode}
                                                 value={stateMedidasDeFuerza.motivo}
                                                 error={!stateMedidasDeFuerza.motivo}
                                                 onChange={handleSelectChange}
@@ -552,6 +563,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                                 <MobileDatePicker
+                                                    disabled={isEditMode}
                                                     label="Fecha de inicio"
                                                     format="DD/MM/YYYY"
                                                     name='fecha_inicio'
@@ -572,6 +584,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                                 <TimePicker
+                                                    disabled={isEditMode}
                                                     label="Hora de inicio"
                                                     format="hh:mm"
                                                     name='hora_inicio'
@@ -594,6 +607,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                 <MobileDatePicker
                                                     label="Fecha de finalizacion"
                                                     format="DD/MM/YYYY"
+                                                    disabled={isEditMode && stateMedidasDeFuerza.estado == 'FINALIZADO'}
                                                     name='fecha_fin'
                                                     value={stateMedidasDeFuerza.fecha_fin ? dayjs(stateMedidasDeFuerza.fecha_fin) : null}
                                                     onChange={(newValue: Dayjs | null) => {
@@ -612,6 +626,7 @@ export default function Page({params}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                                 <TimePicker
+                                                    disabled={isEditMode && stateMedidasDeFuerza.estado == 'FINALIZADO'}
                                                     label="Hora de finalizacion"
                                                     format="hh:mm"
                                                     name='hora_fin'
@@ -638,10 +653,12 @@ export default function Page({params}: { params: { id: number | string } }) {
                                                         <Typography variant='h6'>Historial medico</Typography>
                                                     </Grid>
                                                     <Grid item xs={6} textAlign='right'>
+                                                        { (stateMedidasDeFuerza.id && stateMedidasDeFuerza.estado !== 'FINALIZADO') &&
                                                         <Button startIcon={<Add/>} variant="text" color="primary"
                                                                 onClick={handleOpen}>
                                                             Agregar registro medico
                                                         </Button>
+                                                        }
                                                     </Grid>
                                                 </Grid>
                                             </Grid>

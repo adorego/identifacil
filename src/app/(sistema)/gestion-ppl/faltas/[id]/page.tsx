@@ -612,7 +612,9 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     {/* Nro. del documento */}
                                     <Grid item xs={6}>
                                         <FormControl fullWidth>
+                                            {/* TODO: Make this a component */}
                                             <Autocomplete
+                                                disabled={isEditMode}
                                                 fullWidth={true}
                                                 value={personasSeleccionadas ? personasSeleccionadas : null}
                                                 onChange={(event, newValue: any) => {
@@ -639,6 +641,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                             <DatePicker
+                                                disabled={isEditMode}
                                                 label="Fecha de la falta"
                                                 format="DD/MM/YYYY"
                                                 name='fecha_falta'
@@ -658,6 +661,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     <Grid item xs={3}>
                                         <FormControl fullWidth>
                                             <TimePicker
+                                                disabled={isEditMode}
                                                 label="Hora de la falta"
                                                 format="hh:mm"
                                                 name='hora_falta'
@@ -675,6 +679,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     </Grid>
                                     <Grid item xs={4}>
                                         <TextField
+                                            disabled={isEditMode}
                                             fullWidth
                                             error={!stateForm.numero_de_resoulucion}
                                             label='Nro. de resolucion'
@@ -688,6 +693,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                             <DatePicker
+                                                disabled={isEditMode}
                                                 label="Fecha de la resolcuion"
                                                 format="DD/MM/YYYY"
                                                 name='fecha_falta'
@@ -707,6 +713,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     <Grid item xs={4}>
                                         <FormControl fullWidth>
                                             <MuiFileInput
+                                                disabled={isEditMode}
                                                 fullWidth
                                                 required
                                                 error={!stateForm.resolucion_falta}
@@ -732,6 +739,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                 <Grid container spacing={2} mt={2}>
                                     <Grid item xs={12}>
                                         <TextField
+                                            disabled={isEditMode}
                                             fullWidth
                                             label='Descripcion de la falta'
                                             name='descripcion_de_la_falta'
@@ -751,6 +759,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 onChange={handleSelectChange}
                                                 label="Seleccionar PPL"
                                                 name="tipo_de_falta"
+                                                disabled={isEditMode}
                                             >
                                                 <MenuItem value={0}>Seleccionar falta</MenuItem>
                                                 {stateForm.tipos_de_faltas_lista && stateForm.tipos_de_faltas_lista.map((item:any)=>(
@@ -764,6 +773,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         <FormControl fullWidth variant="outlined">
                                             <InputLabel>Grado de falta</InputLabel>
                                             <Select
+                                                disabled={isEditMode}
                                                 error={!stateForm.grado_de_falta}
                                                 value={stateForm.grado_de_falta}
                                                 onChange={handleSelectChange}
@@ -791,6 +801,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                         <Grid item sm={12} key={index}>
                                             <Stack spacing={1} direction='row' justifyContent='space-around'>
                                                 <TextField
+                                                    disabled={isEditMode}
                                                     fullWidth
                                                     label='Nro. de documento'
                                                     name='documento'
@@ -800,6 +811,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                     onChange={(e)=>handleVictimaChange(index, 'documento', e.target.value)}
                                                 />
                                                 <TextField
+                                                    disabled={isEditMode}
                                                     fullWidth
                                                     label='Nombre'
                                                     name='nombre'
@@ -808,6 +820,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                     onChange={(e) => handleVictimaChange(index, 'nombre', e.target.value)}
                                                 />
                                                 <TextField
+                                                    disabled={isEditMode}
                                                     fullWidth
                                                     label='Victima de Apellido falta'
                                                     name='apellido'
@@ -815,7 +828,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                     value={stateForm.victimas ? stateForm.victimas[index].apellido : ''}
                                                     onChange={(e) => handleVictimaChange(index, 'apellido', e.target.value)}
                                                 />
-                                                <IconButton aria-label="delete" onClick={(e)=>handleDeleteVictima(index)}>
+                                                <IconButton disabled={isEditMode} aria-label="delete" onClick={(e)=>handleDeleteVictima(index)}>
                                                     <DeleteIcon />
                                                 </IconButton>
                                                 {/*<FormControl fullWidth variant="outlined">
@@ -838,6 +851,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
 
                                     <Grid item sm={12}>
                                         <Button
+                                            disabled={isEditMode}
                                             variant="outlined"
                                             color="primary"
                                             startIcon={<AddIcon/>}
