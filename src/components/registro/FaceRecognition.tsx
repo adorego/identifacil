@@ -36,6 +36,10 @@ const progressInitialState: IRegisterProgress = {
     estado: 'Iniciando'
 }
 
+const textosGuias = [
+    "Por favor situe a la persona frente a la camara, aguarde la detección de rostro y gire la cabeza a la derecha",
+    "Pongase de frente y presione el botón capturar"
+]
 const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) => {
     const videoElementRef = useRef<HTMLVideoElement | null>(null);
     const [capturarFoto, setCapturarFoto] = useState<boolean>(false);
@@ -44,6 +48,14 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
     const [loading,setLoading] = useState<boolean>(true);
     const [habilitarBotonCapturarFoto,setHabilitarBotonCapturarFoto] = useState<boolean>(false);
     const [modelosCargados,setModelosCargados] = useState<boolean>(false);
+    const [textoGuia,setTextoGuia] = useState<string>(textosGuias[0]);
+    
+
+    const manejador_de_estados = (estado:number)=>{
+        
+        setTextoGuia(textosGuias[estado])
+        
+    }
 
     
     const conectar_con_webcam = (): MediaStream | null => {
@@ -58,6 +70,9 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                             setIniciarDeteccion(true);
                             return mediaStream;
                         }
+                    })
+                    .catch((error)=>{
+                        openSnackbar("Hubo un error al abrir el video:","error");
                     })
 
             } else {
@@ -163,7 +178,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                         zIndex: '10'
                     }}>
                         <Alert variant="filled" severity="error">
-                            Por favor situe a la persona frente a la camara, DEBE PARPADEAR y presione el botón Capturar para el registro
+                            {textoGuia}
                         </Alert>
                     </Box>
 
@@ -183,7 +198,8 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                                 reset_capturar_foto={reset_capturar_foto}
                                 numero_de_capturas={props.numero_de_capturas}
                                 habilitarBotonDeCapturaDeFoto={habilitarBotonDeCapturaDeFoto}
-                                enviar_reconocimiento={props.agregar_reconocimiento}/>
+                                enviar_reconocimiento={props.agregar_reconocimiento}
+                                manejador_de_estado={manejador_de_estados}/>
                             {/* {capturarFoto ? 
                             <LinearProgressionWithLabel indicador={progress.indicador} estado={progress.estado} />
                             : null } */}

@@ -5,7 +5,8 @@ import {FC, useEffect, useRef, useState} from "react";
 
 const TIEMPO_ENTRE_FOTOS:number=100;
 const INTERVALO_DE_DETECCION:number=100; //milisegundos entre detección de rostros
-const PARPADEO_THRESHOLD:number=0.25
+const PARPADEO_THRESHOLD:number=0.255;
+const CAPTURAS_DE_PARPADEOS:number = 3;
 
 export interface IReconocimiento {
     foto: File;
@@ -22,6 +23,7 @@ interface FaceDetectionOverlayProps {
     reset_capturar_foto: () => void;
     numero_de_capturas: number;
     habilitarBotonDeCapturaDeFoto:(valor:boolean)=>void;
+    manejador_de_estado:(estado:number)=>void;
 
 }
 
@@ -47,12 +49,15 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
          reset_capturar_foto,
          progreso,
          numero_de_capturas,
-         habilitarBotonDeCapturaDeFoto
+         habilitarBotonDeCapturaDeFoto,
+         manejador_de_estado
      }) => {
         const intervalId = useRef<any>(null);
         const overlayRef = useRef<HTMLCanvasElement>(null);
         const currentDetectionRef = useRef<IDetection>();
-        const blinkingDetected = useRef<boolean>(false);
+        const nosePointRef = useRef<Array<Point> | null>(null);
+        const detectMove = useRef<boolean>(false);
+        const enablePictureTakeRef = useRef<boolean>(false);
 
 
         //console.log('Parametro de agregar_reconocimiento es:', agregar_reconocimiento);
@@ -85,7 +90,14 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
             }, [capturar_foto]
         )
 
-        
+        const reiniciar_estado_reconocimiento = ()=>{
+            habilitarBotonDeCapturaDeFoto(false);
+            manejador_de_estado(0);
+            enablePictureTakeRef.current = false;
+           
+            
+
+        }
 
         const detectFaces = async () => {
             try {
@@ -106,19 +118,37 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
                                 const {box} = detectionForSize.detection;
                                 faceapi.draw.drawDetections(canvas, detectionForSize);
                                 faceapi.draw.drawFaceLandmarks(canvas,detectionForSize);
-                                const earLeft = calculateEAR(detectionResult.landmarks.getLeftEye());
-                                const earRight = calculateEAR(detectionResult.landmarks.getRightEye());
-                                const ear = (earLeft + earRight) / 2.0;
-                                if(ear < PARPADEO_THRESHOLD){
-                                    blinkingDetected.current = true;
-                                    console.log("Parpadeo detectado");
+                                if(enablePictureTakeRef.current){
+                                    habilitarBotonDeCapturaDeFoto(true);
                                 }
+                                if(!detectMove.current){
+                                    nosePointRef.current = detectionResult.landmarks.getNose();
+                                    detectMove.current = true;
+                                }else if(nosePointRef.current){
+                                    const faceMoved = detectHeadMovement(nosePointRef.current,detectionResult.landmarks.getNose());
+                                    if(faceMoved){
+                                        console.log("Reconoció un giro de rostro");
+                                        manejador_de_estado(1);
+                                        habilitarBotonDeCapturaDeFoto(true);
+                                        enablePictureTakeRef.current = true;
+                                        setTimeout(reiniciar_estado_reconocimiento,20000);
+                                    }
+                                    detectMove.current = false;
+                                }else{
+                                    detectMove.current = false;
+                                }
+                                
+                                
+                                    
+                                    
+                                
+                                
 
                                 currentDetectionRef.current = {
                                         box: box,
                                         canvas: canvas
                                     }
-                                habilitarBotonDeCapturaDeFoto(blinkingDetected.current);
+                               
                                 
                                 
 
@@ -135,16 +165,31 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
                             if (context) {
                                 context.clearRect(0, 0, canvas.width, canvas.height);
                             }
-                            blinkingDetected.current = false;
+                           
                         }
                     }
                 }
 
 
             } catch (error) {
+                habilitarBotonDeCapturaDeFoto(false);
                 console.log(error);
             }
         }
+
+        const detectHeadMovement = (previusNosePoint:Array<Point>, currentNosePoint:Array<Point>) => {
+            // Por ejemplo, podrías comparar la posición de la nariz en dos marcos consecutivos
+            
+        
+            // Define un umbral de movimiento mínimo
+            const movementThreshold = 30;  
+        
+            const dist = distance(previusNosePoint[0], currentNosePoint[0]);  // Distancia entre la posición de la nariz
+            console.log("Distancia:", dist);
+            return dist > movementThreshold;
+        };
+
+        
         function calculateEAR(eye:Array<Point>):number {
             const p2p6 = distance(eye[1], eye[5]);
             const p3p5 = distance(eye[2], eye[4]);
@@ -182,7 +227,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
                                 const file = new File([foto], nombreArchivo);
                                 const descriptor = detectionResult.descriptor;
                                 const resultado =  enviar_reconocimiento({foto: file, descriptor: descriptor})
-                                blinkingDetected.current = false;
+                                
                             }
                         }
                     )
