@@ -177,7 +177,7 @@ const FaceRecognition: FC<FaceRecognitionProps> = (props: FaceRecognitionProps) 
                         top: "0",
                         zIndex: '10'
                     }}>
-                        <Alert variant="filled" severity="error">
+                        <Alert variant="filled" severity="warning">
                             {textoGuia}
                         </Alert>
                     </Box>
