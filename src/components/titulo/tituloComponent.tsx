@@ -18,7 +18,7 @@ export default function TituloComponent({titulo, url = "", newEntry = "", childr
     const {openSnackbar} = useGlobalContext();
 
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+
     useEffect(() => {
         console.log('Check URL: ', url)
         console.log('check includes ori: ', url.includes("/crear" && url))
