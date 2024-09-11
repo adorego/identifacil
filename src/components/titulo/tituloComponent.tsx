@@ -20,7 +20,11 @@ export default function TituloComponent({titulo, url = "", newEntry = "", childr
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
-        if (!url.includes("/crear" && url)) {
+        console.log('Check URL: ', url)
+        console.log('check includes ori: ', url.includes("/crear" && url))
+        console.log('check includes new: ', url.includes("/crear"))
+        if (!url.includes("/crear") && url !== '') {
+            console.log('check entro')
 
                 const fetchData = async () => {
                     const result = await getRecord(url);
