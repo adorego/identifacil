@@ -21,8 +21,8 @@ export default function TituloComponent({titulo, url = "", newEntry = "", childr
 
     useEffect(() => {
         console.log('Check URL: ', url)
-        console.log('check includes ori: ', url.includes("/crear" && url))
-        console.log('check includes new: ', url.includes("/crear"))
+    //    console.log('check includes ori: ', url.includes("/crear" && url))
+    //    console.log('check includes new: ', url.includes("/crear"))
         if (!url.includes("/crear") && url !== '') {
             console.log('check entro')
 
