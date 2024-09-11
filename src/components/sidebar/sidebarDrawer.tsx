@@ -380,6 +380,16 @@ export default function SidebarDrawer()
                         </Collapse>
 
                         {/* Menu de Reportes */}
+                        {PermissionValidator('ver_defensores', session) &&
+                            <SidebarItem
+                                icon={<BarChart/>}
+                                label="Defensores"
+                                path="/defensores"
+                                isActive={pathname === '/defensores'}
+                            />
+                        }
+
+                        {/* Menu de Reportes */}
                         {PermissionValidator('ver_informes', session) &&
                             <SidebarItem
                                 icon={<BarChart/>}
