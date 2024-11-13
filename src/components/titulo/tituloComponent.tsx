@@ -20,15 +20,15 @@ export default function TituloComponent({titulo, url = "", newEntry = "", childr
 
 
     useEffect(() => {
-        console.log('Check URL: ', url)
+        /*console.log('Check URL: ', url)
         console.log('check includes ori: ', url.includes("/crear" && url))
-        console.log('check includes new: ', url.includes("/crear"))
+        console.log('check includes new: ', url.includes("/crear"))*/
         if (!url.includes("/crear") && url !== '') {
-            console.log('check entro')
+            // console.log('check entro')
 
                 const fetchData = async () => {
                     const result = await getRecord(url);
-                    {console.log(result)}
+                    // {console.log(result)}
                     if (result.success) {
                         setDatos(result.data);
                     } else {

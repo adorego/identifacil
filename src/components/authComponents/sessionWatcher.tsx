@@ -131,7 +131,7 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     const pathname = usePathname();
 
     useEffect(() => {
-        console.log(sessionData)
+        // console.log(sessionData)
         if(sessionData){
 
             setSessionState((prev:any)=>({

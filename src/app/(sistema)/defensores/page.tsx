@@ -24,6 +24,7 @@ import {PeopleAltTwoTone} from "@mui/icons-material";
 import CardDefensores from "@/app/(sistema)/defensores/components/cardDefensores";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import IntervencionModal from '@/app/(sistema)/defensores/components/intervencionModal';
 
 
 const header2 = [
@@ -88,7 +89,7 @@ export default function Page() {
     useEffect(() => {
         fetchData(`${API_URL}/medida_de_fuerza`)
             .then(fetchedData => {
-                console.log(fetchedData)
+                // console.log(fetchedData)
                 const data_procesado = fetchedData.map((item: any) => ({
                     fecha_inicio: item.fecha_inicio ? dayjs(item.fecha_inicio).format('DD/MM/YYYY') : 'N/D',
                     fecha_fin: item.fecha_fin ? dayjs(item.fecha_fin).format('DD/MM/YYYY') : 'N/D',
@@ -110,7 +111,7 @@ export default function Page() {
     }, []);
 
     useEffect(() => {
-        console.log(session)
+        // console.log(session)
         if (status === 'unauthenticated') {
             signIn();
         }
@@ -270,9 +271,8 @@ export default function Page() {
                             <CustomTabPanel value={value} index={0}>
 
                                     <Box mb={2}>
-                                        <Button variant='contained'>
-                                            Agregar intervencion
-                                        </Button>
+
+                                        <IntervencionModal />
                                     </Box>
                                     <CustomTable
                                         showId={true}
