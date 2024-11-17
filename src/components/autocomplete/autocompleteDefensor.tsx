@@ -51,6 +51,17 @@ export default function AutocompleteDefensor({ selectedItemExternal, handleItemC
         }
     }, [selectedItem]);
 
+    useEffect(() => {
+
+        if(lista.length >0 && selectedItemExternal){
+            const selectedDefensorObj = lista.find(item=>item.id== selectedItemExternal) ?? []
+            if(selectedDefensorObj){
+                setSelectedItem(selectedDefensorObj);
+            }
+        }
+
+    }, [selectedItemExternal,open,lista]);
+
 
     return (
         <FormControl fullWidth>

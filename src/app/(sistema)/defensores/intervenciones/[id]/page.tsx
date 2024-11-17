@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import {
     Button,
-    CircularProgress, Grid,
+    CircularProgress, Divider, Grid,
     Paper, Stack, TextField, Typography,
 } from "@mui/material";
 import {useEffect, useState} from "react";
@@ -22,29 +22,49 @@ import ModalDialog from "@/components/modal/ModalDialog";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogActions from "@mui/material/DialogActions";
 import FormIntervencion from "@/app/(sistema)/defensores/components/formIntervencion";
+import entrevistasURL from "@/app/api/lib/endpoint";
+import {getIntervencion, listaEntrevistaPorIntervencion} from "@/app/api/lib/defensores/intervenciones";
+import {listaDefensores} from "@/app/api/lib/defensores/defensores";
+import EntrevistaModal from "@/app/(sistema)/defensores/components/entrevistaModal";
+import IntervencionesDashboard from "@/app/(sistema)/defensores/components/intervencionesDashboard";
+import IntervencionModal from "@/app/(sistema)/defensores/components/intervencionModal";
 
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'ppl', label: 'Apellido, Nombre'},
-    {id: 'tipo_de_medida_de_fuerza', label: 'Tipo'},
-    {id: 'motivo', label: 'Motivo'},
-    {id: 'fecha_inicio', label: 'Fecha inicio'},
-    {id: 'fecha_fin', label: 'Fecha fin'},
+    {id: 'fecha', label: 'Fecha'},
+    {id: 'se_realizo_la_entrevista', label: 'Se realizo entrevista'},
+    {id: 'tipo_entrevista', label: 'Tipo de entrevista'},
+    {id: 'relato', label: 'Relato'},
+
 ]
 
-const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
+const boxStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    alignItems: 'start',
+    justifyContent: 'space-between',
+    height: '75vh',
+}
+
+// TODO: Utilizar el endpoint de dashboard
+/// TODO: Utilizar los nuevos valores el endpoint de lista de intevernciones. Como ppl, defensor, expedientes vinculados
+export default function Page({ params }: { params: { id: string } }) {
 
 
-export default function Page() {
-
-    const [data, setData] = useState(null);
-
-    const [modalStatus, setModalStatus] = useState(false);
-
-    const [filterData, setFilterData] = useState(null);
     const {data: session, status} = useSession();
+    const sessionData = PermissionValidator('crear_expedientes', session);
 
+    /** Estados */
+    const [dataIntervencion, setDataIntervencion] = useState({});
+    const [dataEntrevistas, setDataEntrevistas] = useState([]);
+    const [rowSeleccionado, setRowSeleccionado] = useState<null|number|string>(null)
+    const [openModalEntrevista, setOpenModalEntrevista] = useState(false)
+
+    /** Modal */
+    const [modalStatus, setModalStatus] = useState(false);
+    const [filterData, setFilterData] = useState(null);
     const handleOpenModal = () => {
         setModalStatus(true);
     }
@@ -52,27 +72,48 @@ export default function Page() {
         setModalStatus(false);
     }
 
-    const sessionData = PermissionValidator('crear_expedientes', session);
+
 
     useEffect(() => {
+        if(params.id){
+
+            // Get Lista de entrevistas por Intervencion
+            const fetchData = async () => {
+                const response = await listaEntrevistaPorIntervencion({id_intervencion:params.id});
+
+                const { data } = await response.json()
+                const entrevistasProcesadas = data.resultado.map((item:any)=>({
+                    ...item,
+                    se_realizo_la_entrevista: item.se_realizo_la_entrevista ? "Si" : "No",
+                    tipo_entrevista: item.virtual ? "Presencial" : "Virtual",
+                    relato: item.relato.length > 30 ? `${item.relato.slice(0, 30)}...` : item.relato,
+                }))
+                setDataEntrevistas(entrevistasProcesadas)
+            };
+
+            fetchData().catch(console.error);
+        }
 
     }, []);
+
+
+    // Handle para pasar el valor seleccionado en la fila de la tabla para pasaerle al modal
+    const handelValueForModal = (value:string|number|null=null) =>{
+        setRowSeleccionado(value) // Se setea el valor del row para que cuando se abra el modal tenga este valor
+        setOpenModalEntrevista(true) // Para abrir desde afuera el modal
+    }
+
+    const handleCloseExternal = ()=>{
+        setOpenModalEntrevista(false)
+        setRowSeleccionado(null)
+    }
 
 
     if (status === 'loading') {
         return (
             <div>
-                <Box sx={{
-                    display: 'flex',
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '75vh',
-                }}>
-
-                    <Box>
-                        <CircularProgress/>
-                    </Box>
+                <Box sx={boxStyle}>
+                    <CircularProgress/>
                 </Box>
             </div>
         )
@@ -80,44 +121,19 @@ export default function Page() {
 
     if (!session) {
         signIn();
-        return (
-            <div>
-                <Box sx={{
-                    display: 'flex',
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '75vh',
-                }}>
-
-                    <Box>
-                        Regirigiendo...
-                    </Box>
-                </Box>
-            </div>
-        )
+        return (<><Box sx={boxStyle}>Regirigiendo..</Box></>)
     }
 
     // TODO: Invertir al terminar de maquetar
-    if (data) {
+    if (!dataEntrevistas) {
         return (
-            <Box sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%',
-                alignItems: 'start',
-                justifyContent: 'space-between',
-                height: '75vh',
-            }}>
+            <Box sx={boxStyle}>
 
-                <Box>
-                    <TituloComponent titulo='Intervencion'>
-                        <BreadCrumbComponent listaDeItems={[
-                            {nombre: 'Defensores', url: '/', lastItem: true},
-                        ]}/>
-                    </TituloComponent>
-                </Box>
-
+                <TituloComponent titulo='Intervencion'>
+                    <BreadCrumbComponent listaDeItems={[
+                        {nombre: 'Intervencion', url: '/', lastItem: true},
+                    ]}/>
+                </TituloComponent>
                 <Box sx={{margin: 'auto'}}>
                     <CircularProgress/>
                 </Box>
@@ -127,13 +143,11 @@ export default function Page() {
 
     return (
         <>
-            <ModalDialog modalStatus={modalStatus} closeModal={handlCloseModal}>
-                <FormIntervencion handleCloseModal={handlCloseModal} />
-            </ModalDialog>
+
             <Box>
                 <TituloComponent titulo='Intervencion'>
                     <BreadCrumbComponent listaDeItems={[
-                        {nombre: 'Defensores', url: '/', lastItem: true},
+                        {nombre: 'Intervencion', url: '/', lastItem: true},
                     ]}/>
                 </TituloComponent>
                 <Box mt={4} component={Paper}>
@@ -145,100 +159,30 @@ export default function Page() {
                                     <Typography variant="h6" component="div">
                                         Datos de intervencion
                                     </Typography>
-                                    <Button onClick={handleOpenModal} variant='outlined' startIcon={<EditIcon/>}>
+                                    {/*<Button onClick={handleOpenModal} variant='outlined' startIcon={<EditIcon/>}>
                                         Modificar
-                                    </Button>
+                                    </Button>*/}
+                                    <IntervencionModal buttonLabel={'Modificar'} id_intervencion={params.id}/>
                                 </Stack>
 
                             </Grid>
-                            <Grid item sm={12}>
-                                <Grid container spacing={2}>
-                                    <Grid item sm={4}>
-                                        <Typography variant='caption'>
-                                            Tipo de intervencion
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            Alta
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item sm={4}>
-                                        <Typography variant='caption'>
-                                            Defensor
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            Juan jose Perez [Privado]
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item sm={4}>
-                                        <Typography variant='caption'>
-                                            PPL
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            Pedro Jose Gonzalez Martinez
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item sm={12}>
-                                        <Typography variant='caption'>
-                                            Caratula de Expediente vinculado
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            Asalto a mano armada con intento de robo
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-                                <Grid container spacing={2} mt={2}>
-                                    <Grid item sm={3}>
-                                        <Typography variant='caption'>
-                                            Inicio de la intervencion
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            24/10/2024
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item sm={3}>
-                                        <Typography variant='caption'>
-                                            Documento de inicio de intervencion
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            <a href="#">Ver adjunto</a>
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item sm={3}>
-                                        <Typography variant='caption'>
-                                            Fin de la intervencion
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            24/10/2024
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item sm={3}>
-                                        <Typography variant='caption'>
-                                            Documento de fin de intervencion
-                                        </Typography>
-                                        <Typography variant='body1' fontWeight='bold'>
-                                            <a href="#">Ver adjunto</a>
-                                        </Typography>
-                                    </Grid>
-                                </Grid>
-
-                            </Grid>
+                            <IntervencionesDashboard id_intervencion={params.id}/>
                         </Grid>
                     </Box>
-                    <Box>
-                        <Stack spacing={2} direction='row' p={3} justifyContent='space-between'>
+                    <Box mx={3}>
+                        <Divider />
+                        <Stack spacing={2} direction='row' py={4} justifyContent='space-between'>
                             <Typography variant="h6" component="div">
-                                Seguimiento de PPL
+                                Entrevistas de seguimiento
                             </Typography>
-                            <Button variant='text' startIcon={<AddIcon/>}>
-                                Agregar registro
-                            </Button>
+                            <EntrevistaModal buttonLabel={'Agregar entrevista'} id_intervencion={params.id} id_entrevista={rowSeleccionado} openExternal={openModalEntrevista} handleCloseExternal={handleCloseExternal}/>
                         </Stack>
                         <CustomTable
                             showId={true}
-                            // headers={header2}
-                            // data={data}
+                            headers={header2}
+                            data={dataEntrevistas}
+                            editModal={handelValueForModal}
                             options={{
-                                targetURL: '/gestion-ppl/medidas-de-fuerza',
                                 rowsPerPageCustom: 5,
                                 pagination: true,
                             }}

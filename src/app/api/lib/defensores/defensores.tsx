@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { API_DEFENSORE_GET_LISTA } from '@/app/api/lib/endpoint';
+
 /**
  * Funcion para poder realizar el alta del usuario.
  * @param usuario
@@ -7,9 +9,9 @@ import { NextResponse } from 'next/server'
  * @param rol
  */
 
-const URL_QUERY = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/gestion_ppl/ppls`
+const URL_QUERY = `${API_DEFENSORE_GET_LISTA}`
 
-export const listaPPL = async (authorization?: string) => {
+export const listaDefensores = async (authorization?: string) => {
     const response = await fetch(
         `${URL_QUERY}`,
         {
@@ -21,7 +23,7 @@ export const listaPPL = async (authorization?: string) => {
         }
     )
     const data = await response.json()
-    // console.log('Check response en lib', data)
+    console.log('Check response en lib Entrevista', data)
 
     return NextResponse.json({ data })
 }

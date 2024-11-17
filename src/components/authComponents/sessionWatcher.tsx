@@ -178,7 +178,7 @@ export default function SessionWatcher({sessionData}:{sessionData:any}){
     }
 
     if (!session) {
-        toast.warning('Favor iniciar sesión')
+        // toast.warning('Favor iniciar sesión')
     }else{
 
 

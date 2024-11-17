@@ -11,7 +11,7 @@ export default function CardDefensores() {
             <Stack spacing={2} direction='row'
                    sx={{
                        border: '1px solid lightgray',
-                       padding: '40px 20px',
+                       padding: '20px 20px',
                        borderRadius: '5px',
                    }}>
 

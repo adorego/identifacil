@@ -39,6 +39,6 @@ export const listaUsuario = async (authorization?: string) => {
         }
     )
     const data = await response.json()
-    console.log('test datos',data)
+    // console.log('test datos',data)
     return NextResponse.json({ data })
 }

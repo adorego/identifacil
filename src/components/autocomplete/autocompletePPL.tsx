@@ -14,6 +14,7 @@ type elementType = {
 
 type PPL = {
     id: number;
+    id_persona?: number;
     nombre: string;
     apellido: string;
     ci: string;
@@ -34,7 +35,6 @@ export default function AutocompletePPL({ selectedItemExternal, handleItemChange
             const usuarios = await listaPPL();
             const { data } = await usuarios.json()
 
-            // console.log('lista de PPL', data);
             if(data){
                 setLista(data)
             }
@@ -43,6 +43,30 @@ export default function AutocompletePPL({ selectedItemExternal, handleItemChange
             fetchData().catch(console.error);
 
     }, []);
+
+    /** Efecto para */
+    useEffect(() => {
+        if(handleItemChange){
+            handleItemChange(selectedItem);
+        }
+    }, [selectedItem]);
+
+    useEffect(() => {
+        if(handleItemChange){
+            handleItemChange(selectedItem);
+        }
+    }, [selectedItem]);
+
+    useEffect(() => {
+
+        if(lista.length >0 && selectedItemExternal){
+            const selectedDefensorObj = lista.find(item=>item.id_persona== selectedItemExternal)
+            if(selectedDefensorObj){
+                setSelectedItem(selectedDefensorObj);
+            }
+        }
+
+    }, [selectedItemExternal,open,lista]);
 
 
     return (

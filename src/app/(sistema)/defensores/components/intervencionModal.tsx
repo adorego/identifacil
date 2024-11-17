@@ -15,10 +15,10 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    InputLabel, FormControl, FormHelperText,
+    InputLabel, FormControl, FormHelperText, InputAdornment, OutlinedInput,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { FileUploadOutlined, Label } from '@mui/icons-material';
+import {Close, FileUploadOutlined, Label} from '@mui/icons-material';
 
 // IDENTIFACIL Compontenes
 import AutocompleteDefensor from '@/components/autocomplete/autocompleteDefensor';
@@ -30,15 +30,16 @@ import { MuiFileInput } from 'mui-file-input';
 import { fetchData } from '@/components/utils/utils';
 import Link from 'next/link';
 import { API_INTERVENCION_POST } from '@/app/api/lib/endpoint';
+import dayjs, {Dayjs} from "dayjs";
+import {toast} from "sonner";
+import {intervencionAltaType} from "@/app/api/interfaces/intervenciones";
+import {getIntervencion, listaEntrevistaPorIntervencion} from "@/app/api/lib/defensores/intervenciones";
+import {useEffect, useState} from "react";
 
-type intervencionAltaType = {
-    idDefensor: string;
-    tipoIntervencion: string;
-    idPersonaPPL: string;
-    idExpediente: string;
-    circunscripcion: string;
-    fechaInicioProceso: string;
-    oficio_judicial_alta_intervencion?: File;
+type IntervencionModalType = {
+    buttonLabel: string;
+    id_intervencion?: string;
+    openModalExternal?: boolean;
 }
 
 const intervencionAltaInitial: intervencionAltaType = {
@@ -47,16 +48,21 @@ const intervencionAltaInitial: intervencionAltaType = {
     idPersonaPPL: "",
     idExpediente: "",
     circunscripcion: "",
-    fechaInicioProceso: "",
+    fechaInicioProceso: null,
+    oficio_judicial_alta_intervencion_url: '',
 }
-export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
 
+export default function IntervencionModal({ buttonLabel = 'Agregar',id_intervencion,openModalExternal }: IntervencionModalType) {
+
+    // React hook form y sus funciones
     const { register, handleSubmit, getValues, setValue,reset, control, formState: { errors } } = useForm<intervencionAltaType>({
         defaultValues: intervencionAltaInitial,
     });
 
-
-    const [open, setOpen] = React.useState(false);
+    ///1. Form de estado de
+    const [formIntervencion, setFormIntervencion] = useState<intervencionAltaType>(intervencionAltaInitial)
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -66,12 +72,50 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
         setOpen(false);
     };
 
-    React.useEffect(() => {
+
+    // Si se recibe un ID desde el componente padre
+    useEffect(() => {
         if(open){
             reset(intervencionAltaInitial)
+
+            const isEditMode = id_intervencion ? 'PUT' : 'POST';
+
+            console.log('is  edit mode?', isEditMode)
         }
 
-    }, [open]);
+        if(open && id_intervencion){
+            setLoading(true)
+            reset(intervencionAltaInitial)
+
+            const fetchData = async () => {
+                const response = await getIntervencion({id_intervencion:id_intervencion as string});
+
+                const { data } = await response.json()
+
+                console.log('DATOS OBTENIDOS DE INTERVENCION', data.resultado)
+
+                const intervencionProcesadas :intervencionAltaType = {
+                    // ...data.resultado,
+                    circunscripcion: '1',
+                    tipoIntervencion: data.resultado.activo ? "ALTA" : "BAJA",
+                    fechaInicioProceso: dayjs(data.resultado.fecha_inicio_intervencion),
+                    idDefensor: data.resultado.defensor.id,
+                    idPersonaPPL: data.resultado.ppl.persona.id,
+                    idExpediente: data.resultado.expediente.id,
+                    oficio_judicial_alta_intervencion_url: data.resultado.oficio_judicial_alta_intervencion,
+                }
+                setValue('tipoIntervencion', "ALTA")
+                handleDefensorChange(data.resultado.defensor.id)
+                reset(intervencionProcesadas)
+                setFormIntervencion(intervencionProcesadas)
+            };
+
+            fetchData().catch(console.error).finally(()=>setLoading(false));
+        }else{
+            setLoading(false)
+        }
+
+    }, [id_intervencion,open]);
 
     const handleDefensorChange = (value: { id:number|string })=>{
         setValue('idDefensor', value.id as string)
@@ -81,24 +125,41 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
         setValue('idExpediente', value.id as string)
     }
 
-    const handlePplChange = (value: { id:number|string })=>{
-        setValue('idPersonaPPL', value.id as string)
+    const handlePplChange = (value: { id_persona:number|string })=>{
+        setValue('idPersonaPPL', value.id_persona as string)
     }
 
+    // Arma el form data para enviar la peticion
+    const buildFormData = (data:intervencionAltaType)=>{
+
+        const formData = new FormData();
+
+        formData.append('idDefensor', data.idDefensor ? data.idDefensor.toString() : '');
+        formData.append('idPersonaPPL', data.idPersonaPPL ? data.idPersonaPPL.toString() : '');
+        formData.append('idExpediente', data.idExpediente ? data.idExpediente.toString() : '');
+        formData.append('circunscripcion', '1');
+        formData.append('fechaInicioProceso', data.fechaInicioProceso ? data.fechaInicioProceso.toISOString() : '');
+
+        // Se verifica si el dato existe ya que podria ser nulo
+        if (data.oficio_judicial_alta_intervencion) {
+            formData.append('oficio_judicial_alta_intervencion', data.oficio_judicial_alta_intervencion);
+        }
+        return formData;
+    }
+
+    // Funcion para envio del formulario
     const onSubmit = async (data:intervencionAltaType)=>{
         console.log('Check test: ', data)
 
-        /*const formData = new FormData();
-        formData.append('id', data.fecha_consulta ? stateRegistroMedicoModal.fecha_consulta.toISOString() : '');
+        const formData = buildFormData(data)
 
-        if (data.oficio_judicial_alta_intervencion) {
-            formData.append('documento_registro_medico', data.oficio_judicial_alta_intervencion);
-        }*/
+        const isEditMode = id_intervencion ? 'PUT' : 'POST';
+
 
         try {
             const response = await fetch(`${API_INTERVENCION_POST}`, {
-                method: 'POST',
-                body: data,
+                method: isEditMode,
+                body: formData,
             });
 
             if (!response.ok) {
@@ -107,19 +168,24 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
 
 
             const dataRes = await response.json();
-            console.log(dataRes)
+
+            toast.success('Intervencion creada correctamente')
+
             handleClose();
 
 
         } catch (err) {
             console.error(err);
-            // Manejar el error
+            toast.success(`Error al crear intervencion: ${err}`)
         }
+
     }
+
+
 
     return (
         <React.Fragment>
-            <Button variant="outlined" onClick={handleClickOpen}>
+            <Button variant="contained" color='primary' onClick={handleClickOpen}>
                 {buttonLabel}
             </Button>
             <Dialog
@@ -136,9 +202,13 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
                             minWidth: '550px',
                         }}
                     >
+                        {loading && ( <>
+                            Cargando...
+                        </>)}
+
+                        {!loading &&(
                         <Box>
                             <Grid container spacing={2}>
-
                                 <Grid item sm={12} mt={2}>
                                     <FormControl fullWidth>
 
@@ -146,7 +216,7 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
                                             name='tipoIntervencion'
                                             control={control}
                                             defaultValue={''}
-                                            render={({ field: { onChange }, }) => (
+                                            render={({field: {onChange,value},}) => (
                                                 <>
                                                     <InputLabel>
                                                         Tipo de intervencion
@@ -156,8 +226,10 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
                                                         fullWidth
                                                         label="Tipo de intervencion"
                                                         defaultValue={''}
+                                                        value={value}
                                                     >
-                                                        <MenuItem value={''} disabled >Seleccionar tipo de intervencion</MenuItem>
+                                                        <MenuItem value={''} disabled>Seleccionar tipo de
+                                                            intervencion</MenuItem>
                                                         <MenuItem value={'ALTA'}>Alta</MenuItem>
                                                         <MenuItem value={'BAJA'}>Baja</MenuItem>
                                                     </Select>
@@ -170,13 +242,17 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
                                     </FormControl>
                                 </Grid>
                                 <Grid item sm={12}>
-                                    <AutocompleteDefensor handleItemChange={handleDefensorChange} />
+                                    <AutocompleteDefensor selectedItemExternal={formIntervencion.idDefensor} handleItemChange={handleDefensorChange}/>
                                 </Grid>
                                 <Grid item sm={12}>
-                                    <AutocompletePPL handleItemChange={handlePplChange}/>
+                                    <AutocompletePPL
+                                        selectedItemExternal={formIntervencion.idPersonaPPL}
+                                        handleItemChange={handlePplChange}/>
                                 </Grid>
                                 <Grid item sm={12}>
-                                    <AutocompleteExpediente label={'Expediente'} handleItemChange={handleExpedienteChange} />
+                                    <AutocompleteExpediente label={'Expediente'}
+                                                            selectedItemExternal={formIntervencion.idExpediente}
+                                                            handleItemChange={handleExpedienteChange}/>
                                 </Grid>
                                 <Grid item sm={12}>
                                     <LocalizationProvider
@@ -184,9 +260,9 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
                                     >
                                         <Controller
                                             name='fechaInicioProceso'
-                                            rules={{ required: true }}
+                                            rules={{required: true}}
                                             control={control}
-                                            render={({ field:{value, onChange} }) => (
+                                            render={({field: {value, onChange}}) => (
                                                 <>
                                                     <FormControl fullWidth>
                                                         <DatePicker
@@ -206,10 +282,11 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
 
                                 </Grid>
                                 <Grid item sm={12}>
+                                    {(typeof formIntervencion.oficio_judicial_alta_intervencion_url == 'object' || !formIntervencion.oficio_judicial_alta_intervencion_url) && (
                                     <Controller
                                         name="oficio_judicial_alta_intervencion"
                                         control={control}
-                                        render={({ field, fieldState }) => (
+                                        render={({field, fieldState}) => (
                                             <>
                                                 <FormControl fullWidth>
                                                     <label>
@@ -217,19 +294,45 @@ export default function IntervencionModal({ buttonLabel = 'Agregar' }) {
                                                     </label>
                                                     <MuiFileInput
                                                         {...field}
+                                                        placeholder={'Adjuntar acrhivo...'}
                                                         helperText={fieldState.invalid ? "Archivo invalido" : ""}
                                                         error={fieldState.invalid}
+
                                                     />
                                                 </FormControl>
-
                                             </>
 
                                         )}
+
                                     />
+                                    )}
+                                    {(typeof formIntervencion.oficio_judicial_alta_intervencion_url == 'string' && formIntervencion.oficio_judicial_alta_intervencion_url) && (
+                                        <FormControl variant="outlined" fullWidth>
+                                            <InputLabel htmlFor="document_alta_alt_url">Documento adjunto de alta</InputLabel>
+                                            <OutlinedInput
+                                                fullWidth
+                                                value={formIntervencion.oficio_judicial_alta_intervencion_url}
+                                                id="document_alta_alt_url"
+                                                type={'text'}
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={()=>setFormIntervencion((prev)=>({...prev,oficio_judicial_alta_intervencion_url: ''}))}
+                                                            edge="end"
+                                                        >
+                                                            <Close />
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                                label="Documento adjunto de alta"
+                                            />
+                                        </FormControl>
+                                    )}
 
                                 </Grid>
                             </Grid>
                         </Box>
+                        )}
                     </DialogContent>
                     <DialogActions sx={{ m: 2 }}>
                         <Button onClick={handleClose}>Cancelar</Button>

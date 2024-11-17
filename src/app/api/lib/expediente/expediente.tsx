@@ -23,7 +23,7 @@ export const listaExpedientes = async (authorization?: string) => {
         }
     )
     const data = await response.json()
-    console.log('Check response en lib', data)
+    // console.log('Check response en lib', data)
 
     return NextResponse.json({ data })
 }

@@ -48,7 +48,7 @@ interface TableOptions {
     expandedList?: string;
     newRecord?: string;
     deleteOption?: boolean;
-    readonly?: boolean
+    readonly?: boolean;
 }
 
 interface DeleteRecordArgs {
@@ -63,6 +63,7 @@ interface CustomTableProps {
     showId?: boolean;
     options?: TableOptions;
     deleteRecord?: any;
+    editModal?: (args0: string | number | null)=>void
 }
 
 const {headersCustom, rowsCustom} = dummyData();
@@ -84,6 +85,7 @@ function CustomTable({
                          showId = false,
                          data = rowsCustom,
                          deleteRecord,
+                         editModal,
                          headers = headersCustom,
                          options = {
                              rowsPerPageCustom: 5,
@@ -208,7 +210,7 @@ function CustomTable({
                                     </TableCell>
                                 )
                             })}
-                            {options.targetURL || options.deleteOption ?
+                            {options.targetURL || options.deleteOption || editModal ?
                                 <TableCell>Acciones</TableCell>
                                 : ''
                             }
@@ -282,6 +284,26 @@ function CustomTable({
                                         ''
                                     )}
 
+                                    {editModal && (
+                                        <TableCell sx={rowStyle}>
+                                            <Stack direction='row'>
+                                                    <IconButton
+                                                        color="primary"
+                                                        aria-label="Edit"
+                                                        component={Link}
+                                                        onClick={()=> {
+                                                            if(editModal){
+
+                                                            editModal(row.id)
+
+                                                            }
+                                                        }}
+                                                        >
+                                                        <EditIcon/>
+                                                    </IconButton>
+                                            </Stack>
+                                        </TableCell>
+                                    )}
                                 </TableRow>
                             ))
                         }
