@@ -1,28 +1,34 @@
-import {Box, Grid, Typography} from "@mui/material";
+import {Box, Grid, Stack, Typography} from "@mui/material";
 import * as React from "react";
 import {IntervencionSingular, IntervencionSingularInitial} from "@/app/api/interfaces/intervencionSingular";
 import {useEffect, useState} from "react";
 import {getIntervencion} from "@/app/api/lib/defensores/intervenciones";
 
+const ASSETS_URL = process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER ? process.env.NEXT_PUBLIC_URL_ASSESTS_SERVER : '';
 
 
-export default function IntervencionesDashboard({id_intervencion}:{id_intervencion:string|number}) {
+export default function IntervencionesDashboard({id_intervencion,reaload=false}:{id_intervencion:string|number;reaload:boolean}) {
 
     const [data, setData] = useState<IntervencionSingular>(IntervencionSingularInitial)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-
-        // Get datos de intervencion
-        const fetchDataInvertencion = async () => {
-            const response = await getIntervencion({id_intervencion:id_intervencion as string});
-            const { data } = await response.json()
-            setData(data.resultado)
-        };
-
         fetchDataInvertencion().catch(console.error).finally(()=>setLoading(false));
-
     }, []);
+
+    useEffect(() => {
+        if(reaload){
+            fetchDataInvertencion().catch(console.error).finally(()=>setLoading(false));
+        }
+    }, [reaload]);
+
+    // Get datos de intervencion
+    const fetchDataInvertencion = async () => {
+        const response = await getIntervencion({id_intervencion:id_intervencion as string});
+        const { data } = await response.json()
+        setData(data.resultado)
+    };
+
 
     if(!data || loading){
         return(
@@ -41,10 +47,10 @@ export default function IntervencionesDashboard({id_intervencion}:{id_intervenci
                     <Grid container spacing={2}>
                         <Grid item sm={4}>
                             <Typography variant='caption'>
-                                Tipo de intervencion
+                                Estado de la intervención
                             </Typography>
                             <Typography variant='body1' fontWeight='bold'>
-                                {data.activo ? 'Activo' : 'N/D'}
+                                {data.activo ? 'Alta' : 'Baja'}
                             </Typography>
                         </Grid>
                         <Grid item sm={4}>
@@ -82,12 +88,17 @@ export default function IntervencionesDashboard({id_intervencion}:{id_intervenci
                             </Typography>
                         </Grid>
                         <Grid item sm={3}>
-                            <Typography variant='caption'>
-                                Documento de inicio de intervencion
-                            </Typography>
-                            <Typography variant='body1' fontWeight='bold'>
-                                <a href="#">Ver adjunto</a>
-                            </Typography>
+                            <Stack direction='column' justifyContent='center' >
+                                <Typography variant='caption'>
+                                    Documento de inicio de intervencion
+                                </Typography>
+                                {data.oficio_judicial_alta_intervencion ? (
+                                    <Typography variant='body1' fontWeight='bold'>
+                                        <a target='_blank' href={`${ASSETS_URL}${data.oficio_judicial_alta_intervencion}`}>Ver adjunto</a>
+                                    </Typography>
+                                ) : 'N/D'}
+                            </Stack>
+
                         </Grid>
                         <Grid item sm={3}>
                             <Typography variant='caption'>
@@ -97,14 +108,21 @@ export default function IntervencionesDashboard({id_intervencion}:{id_intervenci
                                 {data.fecha_fin_intervencion ? `${data.fecha_fin_intervencion}` : 'N/D'}
                             </Typography>
                         </Grid>
-                        <Grid item sm={3}>
+
+                        <Grid item sm={3} direction='column'>
+                            <Stack direction='column' justifyContent='center' >
                             <Typography variant='caption'>
                                 Documento de fin de intervencion
                             </Typography>
+                            {data.oficio_judicial_baja_intervencion ? (
                             <Typography variant='body1' fontWeight='bold'>
-                                <a href="#">Ver adjunto</a>
+                                <a target='_blank' href={`${ASSETS_URL}${data.oficio_judicial_baja_intervencion}`}>Ver
+                                    adjunto</a>
                             </Typography>
+                            ): 'N/D'}
+                            </Stack>
                         </Grid>
+
                     </Grid>
 
                 </Grid>

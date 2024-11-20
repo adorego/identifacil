@@ -27,6 +27,10 @@ import Tab from '@mui/material/Tab';
 import IntervencionModal from '@/app/(sistema)/defensores/components/intervencionModal';
 import TabDefensores from "@/app/(sistema)/defensores/components/tabDefensores";
 import DefensoresDashboard from "@/app/(sistema)/defensores/components/defensoresDashboard";
+import {
+    listaDeIntervencionesPorCircunscripcion,
+    listaEntrevistaPorIntervencion
+} from "@/app/api/lib/defensores/intervenciones";
 
 const boxStyle = {
     display: 'flex',
@@ -40,8 +44,9 @@ const header2 = [
     {id: 'id', label: 'ID'},
     {id: 'fecha_inicio_intervencion', label: 'Fecha Inicio'},
     {id: 'fecha_fin_intervencion', label: 'Fecha fin'},
-    {id: 'activo', label: 'Tipo'},
+    {id: 'activo', label: 'Estado'},
     {id: 'expediente', label: 'Expediente'},
+    {id: 'defensor', label: 'Defensor'},
     {id: 'ppl', label: 'PPL'},
 ]
 
@@ -78,51 +83,43 @@ function a11yProps(index: number) {
 
 export default function Page() {
 
+    // 1. Estados de lista de intervenciones
     const [data, setData] = useState(null);
+
+    // 2. Estado para manejo de reload de lista
+    const [reloadIntervencion, setReloadIntervencion] = useState(false)
+
+    // 3. Dashboard data state
+    const [dashboardData, setDashboardData] = useState<
+        { defensores:number;
+            intervenciones_activas: number;
+            promedio_entrevistas: number;
+        }>({defensores:0, intervenciones_activas:0,promedio_entrevistas:0});
+
     const [filterData, setFilterData] = useState(null);
     const { data: session, status } = useSession();
-    const sessionData = PermissionValidator('crear_expedientes', session);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
+
+    const sessionData = PermissionValidator('crear_expedientes', session);
     const {openSnackbar} = useGlobalContext();
 
     // tabs
     const [value, setValue] = React.useState(0);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
+
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
 
         // Lista de intervencones por circunscripcion
-        // TODO: Obtener el ID de la circunscripcion
-        fetchData(`${API_URL}/defensores/intervenciones/circunscripcion/1`)
-            .then(fetchedData => {
+        fetchIntervenciones().catch(console.error);// TODO: Obtener el ID de la circunscripcion
 
-                console.log(fetchedData)
+        // Se obtinen datos para los cards
+        fetchData(`${API_URL}/defensores/dashboard_data`).then(fetchedData => {
 
-                const data_procesado = fetchedData.resultado.map((item: any) => ({
-                    ...item,
-                    // oficio_judicial_alta_intervencion: "asd",
-                    // oficio_judicial_baja_intervencion: "asd",
-                    activo: item.activo ? "Activo" : "Baja",
-                    expediente: item.expediente ? `${item.expediente.numeroDeExpediente} - ${item.expediente.caratula_expediente}` : "N/D",
-                    ppl: item.ppl ? `${item.ppl.persona.nombre} ${item.ppl.persona.apellido}` : 'N/D',
-                }))
-
-                console.log(data_procesado)
-
-                // @ts-ignore
-                setData(data_procesado);
-
-            });
-
-        fetchData(`${API_URL}/defensores/dashboard_data`)
-            .then(fetchedData => {
-                console.log('Dashboard data: ',fetchedData)
-            });
+            setDashboardData(fetchedData)
+        });
     }, []);
 
     useEffect(() => {
@@ -131,6 +128,41 @@ export default function Page() {
             signIn();
         }
     }, [status]);
+
+    // Efecto para recargar datos de intervencion
+    useEffect(() => {
+        if(reloadIntervencion) fetchIntervenciones().catch(console.error);// TODO: Obtener el ID de la circunscripcion
+    }, [reloadIntervencion]);
+
+    useEffect(() => {
+
+    }, [session]);
+
+    // Get Lista de entrevistas por Intervencion
+    const fetchIntervenciones = async () => {
+        const response = await listaDeIntervencionesPorCircunscripcion({id_circunscripcion:1});
+
+        const { data } = await response.json()
+        console.log('CEHCK DFE GESTTT', data)
+        const data_procesado = data.resultado.map((item: any) => ({
+            ...item,
+            // oficio_judicial_alta_intervencion: "asd",
+            // oficio_judicial_baja_intervencion: "asd",
+            activo: item.activo ? "Alta" : "Baja",
+            expediente: item.expediente ? `${item.expediente.numeroDeExpediente} - ${item.expediente.caratula_expediente}` : "N/D",
+            ppl: item.ppl ? `${item.ppl.persona.nombre} ${item.ppl.persona.apellido}` : 'N/D',
+            defensor: item.defensor ? `${item.defensor.nombre} ${item.defensor.apellido}` : 'N/D',
+        }))
+        setData(data_procesado)
+    };
+
+    const handleRelodIntervenciones = (value: {success:boolean}) =>{
+        if(value.success)setReloadIntervencion(true)
+    }
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
@@ -178,23 +210,13 @@ export default function Page() {
     }
 
 
-
     if (status === 'loading') {
         return(<><Box sx={boxStyle}><CircularProgress/></Box></>)
     }
 
     if (!session) {
         signIn();
-        return (
-            <div>
-                <Box sx={boxStyle}>
-
-                    <Box>
-                        Regirigiendo...
-                    </Box>
-                </Box>
-            </div>
-        )
+        return (<Box sx={boxStyle}><Box>Regirigiendo...</Box></Box>)
     }
 
     if (!data) {
@@ -216,20 +238,21 @@ export default function Page() {
                 </TituloComponent>
                 <Box mt={4} component={Paper}>
                     <Box p={3}>
-                        <DefensoresDashboard />
+
+                        <DefensoresDashboard user={session.user} data={dashboardData} />
                     </Box>
                     <Box>
                         <Box sx={{ width: '100%' }}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                                     <Tab label="Intervenciones" {...a11yProps(0)} />
-                                    <Tab label="Defensores" {...a11yProps(1)} />
-                                    <Tab label="PPL" {...a11yProps(2)} />
+                                    {/*<Tab label="Defensores" {...a11yProps(1)} />
+                                    <Tab label="PPL" {...a11yProps(2)} />*/}
                                 </Tabs>
                             </Box>
                             <CustomTabPanel value={value} index={0}>
                                     <Box mb={2}>
-                                        <IntervencionModal buttonLabel={'Agregar Intervencion'}/>
+                                        <IntervencionModal handleReturn={handleRelodIntervenciones} buttonLabel={'Agregar Intervencion'}/>
                                     </Box>
                                     <CustomTable
                                         showId={true}

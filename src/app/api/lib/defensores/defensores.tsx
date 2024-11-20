@@ -23,7 +23,7 @@ export const listaDefensores = async (authorization?: string) => {
         }
     )
     const data = await response.json()
-    console.log('Check response en lib Entrevista', data)
+    // console.log('Check response en lib Entrevista', data)
 
     return NextResponse.json({ data })
 }

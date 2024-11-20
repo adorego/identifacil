@@ -61,6 +61,9 @@ export default function Page({ params }: { params: { id: string } }) {
     const [dataEntrevistas, setDataEntrevistas] = useState([]);
     const [rowSeleccionado, setRowSeleccionado] = useState<null|number|string>(null)
     const [openModalEntrevista, setOpenModalEntrevista] = useState(false)
+    // 6. Reload
+    const [reloadEntrevisaStatus, setReloadEntrevistaStatus] = useState<boolean>(false)
+    const [reloadIntervencionStatus, setReloadIntervencionStatus] = useState<boolean>(false)
 
     /** Modal */
     const [modalStatus, setModalStatus] = useState(false);
@@ -76,26 +79,57 @@ export default function Page({ params }: { params: { id: string } }) {
 
     useEffect(() => {
         if(params.id){
-
-            // Get Lista de entrevistas por Intervencion
-            const fetchData = async () => {
-                const response = await listaEntrevistaPorIntervencion({id_intervencion:params.id});
-
-                const { data } = await response.json()
-                const entrevistasProcesadas = data.resultado.map((item:any)=>({
-                    ...item,
-                    se_realizo_la_entrevista: item.se_realizo_la_entrevista ? "Si" : "No",
-                    tipo_entrevista: item.virtual ? "Presencial" : "Virtual",
-                    relato: item.relato.length > 30 ? `${item.relato.slice(0, 30)}...` : item.relato,
-                }))
-                setDataEntrevistas(entrevistasProcesadas)
-            };
-
             fetchData().catch(console.error);
         }
 
     }, []);
 
+    useEffect(() => {
+
+        if(reloadEntrevisaStatus){
+            setReloadEntrevistaStatus(true)
+            Promise.all([
+                fetchData().catch(console.error)
+            ]).finally(()=> setReloadEntrevistaStatus(false))
+        }
+
+        if(reloadIntervencionStatus){
+            setReloadIntervencionStatus(true)
+            Promise.all([
+                fetchData().catch(console.error)
+            ]).finally(()=> setReloadIntervencionStatus(false))
+        }
+
+
+    }, [reloadEntrevisaStatus, reloadIntervencionStatus]);
+
+    // Get Lista de entrevistas por Intervencion
+    const fetchData = async () => {
+        const response = await listaEntrevistaPorIntervencion({id_intervencion:params.id});
+
+        const { data } = await response.json()
+        const entrevistasProcesadas = data.resultado.map((item:any)=>({
+            ...item,
+            se_realizo_la_entrevista: item.se_realizo_la_entrevista ? "Si" : "No",
+            tipo_entrevista: item.virtual ? "Presencial" : "Virtual",
+            relato: item.relato.length > 30 ? `${item.relato.slice(0, 30)}...` : item.relato,
+        }))
+        setDataEntrevistas(entrevistasProcesadas)
+    };
+
+    //Check para controlar reload de tabla de Entrevistas
+    const handleReturnedDataFromModal = (value:Object)=>{
+        setReloadEntrevistaStatus(true)
+    }
+
+    //Check para controlar reload de Intervencion
+    const handleReturnedDataFromModalIntervencion = (value: { success:boolean })=>{
+        console.log('Check return de intervencion: ', value)
+        if(value.success){
+            setReloadIntervencionStatus(true)
+        }
+
+    }
 
     // Handle para pasar el valor seleccionado en la fila de la tabla para pasaerle al modal
     const handelValueForModal = (value:string|number|null=null) =>{
@@ -162,11 +196,14 @@ export default function Page({ params }: { params: { id: string } }) {
                                     {/*<Button onClick={handleOpenModal} variant='outlined' startIcon={<EditIcon/>}>
                                         Modificar
                                     </Button>*/}
-                                    <IntervencionModal buttonLabel={'Modificar'} id_intervencion={params.id}/>
+                                    <IntervencionModal
+                                        buttonLabel={'Modificar'}
+                                        handleReturn={handleReturnedDataFromModalIntervencion}
+                                        id_intervencion={params.id}/>
                                 </Stack>
 
                             </Grid>
-                            <IntervencionesDashboard id_intervencion={params.id}/>
+                            <IntervencionesDashboard reaload={reloadIntervencionStatus} id_intervencion={params.id}/>
                         </Grid>
                     </Box>
                     <Box mx={3}>
@@ -175,7 +212,14 @@ export default function Page({ params }: { params: { id: string } }) {
                             <Typography variant="h6" component="div">
                                 Entrevistas de seguimiento
                             </Typography>
-                            <EntrevistaModal buttonLabel={'Agregar entrevista'} id_intervencion={params.id} id_entrevista={rowSeleccionado} openExternal={openModalEntrevista} handleCloseExternal={handleCloseExternal}/>
+                            <EntrevistaModal
+                                buttonLabel={'Agregar entrevista'}
+                                id_intervencion={params.id}
+                                id_entrevista={rowSeleccionado}
+                                openExternal={openModalEntrevista}
+                                handleCloseExternal={handleCloseExternal}
+                                handleReturn={handleReturnedDataFromModal}
+                            />
                         </Stack>
                         <CustomTable
                             showId={true}

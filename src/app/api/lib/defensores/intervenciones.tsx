@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
-import entrevistasURL, {API_DEFENSORE_GET_LISTA, API_INTERVENCION_GET} from '@/app/api/lib/endpoint';
+import entrevistasURL, {
+    API_DEFENSORE_GET_LISTA,
+    API_INTERVENCION_GET,
+    API_INTERVENCION_GET_CIRCUNSCRIPCION
+} from '@/app/api/lib/endpoint';
 
 /**
  * Funcion para poder realizar el alta del usuario.
@@ -30,7 +34,6 @@ export const listaEntrevistaPorIntervencion = async ({authorization, id_interven
     )
     const data = await response.json()
     // console.log('Check response en lib', data)
-
     return NextResponse.json({ data })
 
 }
@@ -55,6 +58,25 @@ export const getIntervencion = async ({authorization, id_intervencion}:entrevist
     )
     const data = await response.json()
 
+    return NextResponse.json({ data })
+
+}
+
+
+export const listaDeIntervencionesPorCircunscripcion = async ({authorization,id_circunscripcion}:{id_circunscripcion?:number; authorization?:any}) => {
+
+    const response = await fetch(
+        `${API_INTERVENCION_GET_CIRCUNSCRIPCION}/1`,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: authorization ? authorization : "",
+            },
+        }
+    )
+    const data = await response.json()
+    // console.log('Check response en lib', data)
 
     return NextResponse.json({ data })
 

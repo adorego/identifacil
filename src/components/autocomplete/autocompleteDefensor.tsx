@@ -1,87 +1,84 @@
-'use client';
-
-import { Autocomplete, FormControl, FormHelperText, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Autocomplete, FormControl, FormHelperText, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { listaUsuario } from '@/app/api/lib/usuarios';
-
+import { Controller } from 'react-hook-form';
+import {listaDefensores} from "@/app/api/lib/defensores/defensores";
 
 type elementType = {
-    selectedItemExternal?: Object;
-    handleItemChange?: any;
-    queryUrl?: string;
-}
+    name: string; // Name of the field (required for react-hook-form)
+    control: any; // Control from react-hook-form
+    rules?: object; // Validation rules for the field
+};
 
 type usuarioDefensor = {
+    apellido: string;
     id: number;
     nombre: string;
-    apellido: string;
-    ci: string;
-    roles: [{
-        id:number;
-        nombre: string;
-    }];
-}
+    supervisor: boolean;
+    telefono: string;
+    tipo: string;
+};
 
-export default function AutocompleteDefensor({ selectedItemExternal, handleItemChange }: elementType) {
+export default function AutocompleteDefensor({ name, control, rules }: elementType) {
     const [lista, setLista] = useState<usuarioDefensor[]>([]);
-    const [selectedItem, setSelectedItem] = useState<Object>({});
 
-    // console.log(selectedItem);
     useEffect(() => {
-        const fetchData = async () => {
-            const usuarios = await listaUsuario();
-            const { data } = await usuarios.json()
-            // console.log('lista de users', data);
-            setLista(data)
-        };
 
-            fetchData().catch(console.error);
+        fetchData().catch(console.error);
+        fetchDataDefensores().catch(console.error);
     }, []);
 
-    /** Efecto para */
-    useEffect(() => {
-        if(handleItemChange){
-            handleItemChange(selectedItem);
-        }
-    }, [selectedItem]);
+    const fetchData = async () => {
+        const usuarios = await listaUsuario();
+        const { data } = await usuarios.json();
+        //setLista(data);
+    };
 
-    useEffect(() => {
-        if(handleItemChange){
-            handleItemChange(selectedItem);
-        }
-    }, [selectedItem]);
+    const fetchDataDefensores = async () => {
+        const usuarios = await listaDefensores();
+        const { data } = await usuarios.json();
 
-    useEffect(() => {
-
-        if(lista.length >0 && selectedItemExternal){
-            const selectedDefensorObj = lista.find(item=>item.id== selectedItemExternal) ?? []
-            if(selectedDefensorObj){
-                setSelectedItem(selectedDefensorObj);
-            }
-        }
-
-    }, [selectedItemExternal,open,lista]);
+        setLista(data.defensores);
+    };
 
 
     return (
         <FormControl fullWidth>
-            <Autocomplete
-                fullWidth={true}
-                value={selectedItem ? selectedItem : null}
-                onChange={(event, newValue: any) => {
-                    // @ts-ignore
-                    setSelectedItem((prev: any) => ({
-                        ...newValue,
-                    }));
-                }}
-                id="controllable-states-demo"
-                options={lista}
-                getOptionLabel={(option) => option.nombre ? `${option.nombre}` : 'Seleccionar Defensor'}
-                renderInput={(params) => <TextField {...params} label="Defensores" />}
+            <Controller
+                name={name}
+                control={control}
+                rules={rules}
+                render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <>
+                        <Autocomplete
+                            fullWidth
+                            value={value || null}
+                            onChange={(event, newValue) => {
+                                onChange(newValue); // Pass selected value to react-hook-form
+                            }}
+                            options={lista}
+                            getOptionLabel={(option) =>
+                                option.nombre ? `${option.nombre} ${option.apellido} [${option.tipo}]` : ''
+                            }
+                            isOptionEqualToValue={(option, value) => option.id === value?.id}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Defensores"
+                                    error={!!error} // Highlight field in red if error exists
+                                    // helperText={error?.message} // Display validation error message
+                                />
+                            )}
+                        />
+                        {error ? (
+                            <FormHelperText >
+                                {error.message || '* Campo requerido'}
+                            </FormHelperText>
+                        ) : <FormHelperText >* Campo requerido</FormHelperText>
+                        }
+                    </>
+                )}
             />
-            <FormHelperText>
-                * Campo requerido
-            </FormHelperText>
         </FormControl>
     );
 }

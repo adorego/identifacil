@@ -19,7 +19,8 @@ import {
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { FileUploadOutlined, Label } from '@mui/icons-material';
-
+import es from 'dayjs/locale/es';
+dayjs.locale(es);
 // IDENTIFACIL Compontenes
 import AutocompleteDefensor from '@/components/autocomplete/autocompleteDefensor';
 import AutocompletePPL from '@/components/autocomplete/autocompletePPL';
@@ -36,39 +37,31 @@ import {intervencionAltaType} from "@/app/api/interfaces/intervenciones";
 import {EntrevistaType} from "@/app/api/interfaces/entrevistas";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AddIcon from "@mui/icons-material/Add";
-import {crearEntrevista} from "@/app/api/lib/defensores/entrevistas";
-import {useEffect, useState} from "react";
+import {actualizarEntrevista, crearEntrevista} from "@/app/api/lib/defensores/entrevistas";
+import {ChangeEvent, useEffect, useState} from "react";
 
 
 
 const entrevistaAltaInitial: EntrevistaType = {
-    seRealizoEntrevista: false,
-    entrevistaPresencial: false,
+    seRealizoEntrevista: 'false',
+    entrevistaPresencial: 'false',
     fechaEntrevista: null,
     relatoDeEntrevista: '',
 }
-export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervencion, id_entrevista, openExternal, handleCloseExternal }:{handleCloseExternal:()=>void;openExternal:boolean; buttonLabel?: string; id_intervencion?: string; id_entrevista?: string|null|number}) {
+export default function EntrevistaModal(
+    { buttonLabel = 'Agregar', id_intervencion, id_entrevista, openExternal, handleCloseExternal, handleReturn }:
+    {handleReturn:(arg0:Object)=>void;handleCloseExternal:()=>void;openExternal:boolean; buttonLabel?: string; id_intervencion?: string; id_entrevista?: string|null|number}) {
 
     const { register, handleSubmit, getValues, setValue,reset, control, formState: { errors } } = useForm<EntrevistaType>({
         defaultValues: entrevistaAltaInitial,
     });
 
+    const isEditMode = id_entrevista ? true : false;
+
     const [entrevistaForm, setEntrevistaForm] = useState<EntrevistaType>(entrevistaAltaInitial)
     const [loading, setLoading] = useState(true)
-
     const [open, setOpen] = React.useState(false);
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
-    const handleClose = () => {
-        reset(entrevistaAltaInitial)
-        setOpen(false);
-        setEntrevistaForm(entrevistaAltaInitial)
-        console.log('Valores FINALES:::', getValues())
-        handleCloseExternal()
-    };
 
 
     useEffect(() => {
@@ -87,8 +80,8 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
 
                 const dataProcessed = {
                     id: data.resultado.id,
-                    seRealizoEntrevista: data.resultado.se_realizo_la_entrevista,
-                    entrevistaPresencial: data.resultado.virtual,
+                    seRealizoEntrevista: data.resultado.se_realizo_la_entrevista ? 'true' : 'false',
+                    entrevistaPresencial: data.resultado.entrevistaPresencial ? 'true' : 'false',
                     fechaEntrevista: dayjs(data.resultado.fecha),
                     relatoDeEntrevista: data.resultado.relato as string,
                 }
@@ -103,41 +96,65 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
         }
     }, [id_entrevista,open]);
 
-    /*React.useEffect(() => {
-        if(open)reset(entrevistaAltaInitial)
-        if(!id_entrevista)setLoading(false)
-
-    }, [open]);*/
-
     useEffect(() => {
         if(openExternal)handleClickOpen()
 
     }, [openExternal]);
 
 
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        reset(entrevistaAltaInitial)
+        setOpen(false);
+        setEntrevistaForm(entrevistaAltaInitial)
+
+        handleCloseExternal()
+    };
+
+    const handleRadioChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = event.target;
+
+        // @ts-ignore
+        setValue(name, value)
+        setEntrevistaForm(prev=>({
+            ...prev,
+            [name]: value == 'true'? 'true' : "false",
+        }))
+
+    }
+
     const onSubmit = async (data:EntrevistaType)=>{
-        console.log('Check test: ', data)
-
-
+        console.log('Check Entrevista antes de enviar: ', data)
         try {
-            const response = await crearEntrevista({id_intervencion:id_intervencion as string,bodyData:data});
+            const response = isEditMode
+                ? await actualizarEntrevista({id_intervencion:id_intervencion as string,bodyData:data, id_entrevista:id_entrevista as string})
+                : await crearEntrevista({id_intervencion:id_intervencion as string,bodyData:data})
 
-            if (!response.ok) {
-                throw new Error('Error al enviar los datos del registro médico');
-            }
+
+            if (!response.ok) throw new Error('Error al enviar los datos del registro médico');
 
             const dataRes = await response.json();
+
+            console.log('Respuesta de entrevista', dataRes)
 
             toast.success('Entrevista creada correctamente')
 
             handleClose();
-
+            handleReturn(dataRes)
 
         } catch (err) {
             console.error(err);
             toast.error(`Error al crear entrevista: ${err}`)
         }
 
+    }
+
+    const onError = (err: any) =>{
+        console.log('Check de envio de error de form', err)
+        toast.error('Completar los campos requeridos')
     }
 
     return (
@@ -165,7 +182,7 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
                     </Box>
                 </>)}
                 {!loading && (
-                <form noValidate onSubmit={handleSubmit(onSubmit)}>
+                <form noValidate onSubmit={handleSubmit(onSubmit, onError)}>
                     <DialogTitle>Datos de Entrevista</DialogTitle>
                     <DialogContent
                         style={{
@@ -184,10 +201,11 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
                                                 <FormLabel id="demo-row-radio-buttons-group-label">Se realizo la entrevista?</FormLabel>
                                                 <RadioGroup
                                                     {...field}
+                                                    onChange={handleRadioChange}
                                                     row
                                                 >
-                                                    <FormControlLabel value={true} control={<Radio />} label="Si" />
-                                                    <FormControlLabel value={false} control={<Radio />} label="No" />
+                                                    <FormControlLabel value={'true'} control={<Radio />} label="Si" />
+                                                    <FormControlLabel value={'false'} control={<Radio />} label="No" />
                                                 </RadioGroup>
                                             </FormControl>
                                         )}
@@ -198,7 +216,7 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
                                 <Grid item sm={6} mt={2}>
                                     <Controller
                                         name='entrevistaPresencial'
-                                        defaultValue={false}
+                                        defaultValue={'false'}
                                         rules={{required: true}}
                                         control={control}
                                         render={({field}) => (
@@ -207,10 +225,11 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
                                                 <RadioGroup
                                                     {...field}
                                                     value={field.value}
+                                                    onChange={handleRadioChange}
                                                     row
                                                 >
-                                                    <FormControlLabel value={true} control={<Radio />} label="Presencial" />
-                                                    <FormControlLabel value={false} control={<Radio />} label="Virtual" />
+                                                    <FormControlLabel value={'true'} control={<Radio />} label="Presencial" />
+                                                    <FormControlLabel value={'false'} control={<Radio />} label="Virtual" />
                                                 </RadioGroup>
                                                 <FormHelperText>
                                                     * Campo requerido
@@ -221,21 +240,26 @@ export default function EntrevistaModal({ buttonLabel = 'Agregar', id_intervenci
                                 </Grid>
 
                                 <Grid item sm={6}>
-                                    <LocalizationProvider
-                                        dateAdapter={AdapterDayjs}
-                                    >
+                                    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                         <Controller
                                             name='fechaEntrevista'
+
                                             rules={{required: true}}
                                             control={control}
-                                            render={({field: {value, onChange}}) => (
+                                            render={({field: {value, onChange}, fieldState: {error}}) => (
                                                 <>
                                                     <FormControl fullWidth>
                                                         <DatePicker
+                                                            format="DD/MM/YYYY"
                                                             value={value}
                                                             onChange={onChange}
                                                             label='Fecha de interenvcion'
-
+                                                            slotProps={{
+                                                                textField: {
+                                                                    error: !!error, // Highlight text field in red
+                                                                    helperText: error?.message, // Show error message if validation fails
+                                                                },
+                                                            }}
                                                         />
                                                         <FormHelperText>
                                                             * Campo requerido
