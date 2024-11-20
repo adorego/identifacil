@@ -233,7 +233,7 @@ export default function Page() {
     return (
         <>
             <Box>
-                <TituloComponent titulo='Medidas de fuerza'>
+                <TituloComponent titulo='Defensores'>
                     <BreadCrumbComponent listaDeItems={[{nombre:'Defensores', url:'/', lastItem: true},]} />
                 </TituloComponent>
                 <Box mt={4} component={Paper}>
