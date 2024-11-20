@@ -24,15 +24,30 @@ import {PeopleAltTwoTone} from "@mui/icons-material";
 import CardDefensores from "@/app/(sistema)/defensores/components/cardDefensores";
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import IntervencionModal from '@/app/(sistema)/defensores/components/intervencionModal';
+import TabDefensores from "@/app/(sistema)/defensores/components/tabDefensores";
+import DefensoresDashboard from "@/app/(sistema)/defensores/components/defensoresDashboard";
+import {
+    listaDeIntervencionesPorCircunscripcion,
+    listaEntrevistaPorIntervencion
+} from "@/app/api/lib/defensores/intervenciones";
 
+const boxStyle = {
+    display: 'flex',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '75vh',
+}
 
 const header2 = [
     {id: 'id', label: 'ID'},
-    {id: 'ppl', label: 'Apellido, Nombre'},
-    {id: 'tipo_de_medida_de_fuerza', label: 'Tipo'},
-    {id: 'motivo', label: 'Motivo'},
-    {id: 'fecha_inicio', label: 'Fecha inicio'},
-    {id: 'fecha_fin', label: 'Fecha fin'},
+    {id: 'fecha_inicio_intervencion', label: 'Fecha Inicio'},
+    {id: 'fecha_fin_intervencion', label: 'Fecha fin'},
+    {id: 'activo', label: 'Estado'},
+    {id: 'expediente', label: 'Expediente'},
+    {id: 'defensor', label: 'Defensor'},
+    {id: 'ppl', label: 'PPL'},
 ]
 
 const API_URL = process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API;
@@ -66,55 +81,88 @@ function a11yProps(index: number) {
     };
 }
 
-
 export default function Page() {
 
+    // 1. Estados de lista de intervenciones
     const [data, setData] = useState(null);
+
+    // 2. Estado para manejo de reload de lista
+    const [reloadIntervencion, setReloadIntervencion] = useState(false)
+
+    // 3. Dashboard data state
+    const [dashboardData, setDashboardData] = useState<
+        { defensores:number;
+            intervenciones_activas: number;
+            promedio_entrevistas: number;
+        }>({defensores:0, intervenciones_activas:0,promedio_entrevistas:0});
+
     const [filterData, setFilterData] = useState(null);
     const { data: session, status } = useSession();
-    const sessionData = PermissionValidator('crear_expedientes', session);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedData, setSelectedData] = useState<{ id: number, name: string }>({id: 0, name: ''});
+
+    const sessionData = PermissionValidator('crear_expedientes', session);
     const {openSnackbar} = useGlobalContext();
 
     // tabs
     const [value, setValue] = React.useState(0);
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
-    };
+
 
     // Se ejectua ni bien se monta el componente para luego llamara fecthcData
     useEffect(() => {
-        fetchData(`${API_URL}/medida_de_fuerza`)
-            .then(fetchedData => {
-                console.log(fetchedData)
-                const data_procesado = fetchedData.map((item: any) => ({
-                    fecha_inicio: item.fecha_inicio ? dayjs(item.fecha_inicio).format('DD/MM/YYYY') : 'N/D',
-                    fecha_fin: item.fecha_fin ? dayjs(item.fecha_fin).format('DD/MM/YYYY') : 'N/D',
-                    motivo: item.motivo ? item.motivo.nombre : 'N/D',
-                    tipo_de_medida_de_fuerza: item.tipo_de_medida_de_fuerza ? item.tipo_de_medida_de_fuerza.nombre : 'N/D',
-                    ppl: item.ppl ? (item.ppl.persona.nombre + ' ' + item.ppl.persona.apellido) : 'N/D',
-                    id: item.id ? item.id : 'N/D',
-                    registro_eliminado: item.registro_eliminado,
-                })).filter((item:any)=> {
-                    console.log('control de item', item)
-                    return !item.registro_eliminado
-                })
 
-                /*console.log(data_procesado)*/
-                // @ts-ignore
-                setData(data_procesado);
+        // Lista de intervencones por circunscripcion
+        fetchIntervenciones().catch(console.error);// TODO: Obtener el ID de la circunscripcion
 
-            });
+        // Se obtinen datos para los cards
+        fetchData(`${API_URL}/defensores/dashboard_data`).then(fetchedData => {
+
+            setDashboardData(fetchedData)
+        });
     }, []);
 
     useEffect(() => {
-        console.log(session)
+        // console.log(session)
         if (status === 'unauthenticated') {
             signIn();
         }
     }, [status]);
+
+    // Efecto para recargar datos de intervencion
+    useEffect(() => {
+        if(reloadIntervencion) fetchIntervenciones().catch(console.error);// TODO: Obtener el ID de la circunscripcion
+    }, [reloadIntervencion]);
+
+    useEffect(() => {
+
+    }, [session]);
+
+    // Get Lista de entrevistas por Intervencion
+    const fetchIntervenciones = async () => {
+        const response = await listaDeIntervencionesPorCircunscripcion({id_circunscripcion:1});
+
+        const { data } = await response.json()
+        console.log('CEHCK DFE GESTTT', data)
+        const data_procesado = data.resultado.map((item: any) => ({
+            ...item,
+            // oficio_judicial_alta_intervencion: "asd",
+            // oficio_judicial_baja_intervencion: "asd",
+            activo: item.activo ? "Alta" : "Baja",
+            expediente: item.expediente ? `${item.expediente.numeroDeExpediente} - ${item.expediente.caratula_expediente}` : "N/D",
+            ppl: item.ppl ? `${item.ppl.persona.nombre} ${item.ppl.persona.apellido}` : 'N/D',
+            defensor: item.defensor ? `${item.defensor.nombre} ${item.defensor.apellido}` : 'N/D',
+        }))
+        setData(data_procesado)
+    };
+
+    const handleRelodIntervenciones = (value: {success:boolean}) =>{
+        if(value.success)setReloadIntervencion(true)
+    }
+
+    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+        setValue(newValue);
+    };
 
     const handleOpenModal = (row: { id: number, descripcion: string }) => {
 
@@ -162,61 +210,20 @@ export default function Page() {
     }
 
 
-
-
-
     if (status === 'loading') {
-        return(
-            <div>
-                <Box sx={{
-                    display: 'flex',
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '75vh',
-                }}>
-
-                    <Box>
-                        <CircularProgress/>
-                    </Box>
-                </Box>
-            </div>
-        )
+        return(<><Box sx={boxStyle}><CircularProgress/></Box></>)
     }
 
     if (!session) {
         signIn();
-        return (
-            <div>
-                <Box sx={{
-                    display: 'flex',
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '75vh',
-                }}>
-
-                    <Box>
-                        Regirigiendo...
-                    </Box>
-                </Box>
-            </div>
-        )
+        return (<Box sx={boxStyle}><Box>Regirigiendo...</Box></Box>)
     }
 
     if (!data) {
         return (
-            <Box sx={{
-                display: 'flex',
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '75vh',
-            }}>
-                <TituloComponent titulo='Medidas de fuerza'>
-                    <BreadCrumbComponent listaDeItems={[
-                        {nombre:'Defensores', url:'/', lastItem: true},
-                    ]} />
+            <Box sx={boxStyle}>
+                <TituloComponent titulo='Defensores'>
+                    <BreadCrumbComponent listaDeItems={[{nombre:'Defensores', url:'/', lastItem: true},]} />
                 </TituloComponent>
                 <CircularProgress/>
             </Box>
@@ -225,54 +232,27 @@ export default function Page() {
 
     return (
         <>
-
             <Box>
-
                 <TituloComponent titulo='Medidas de fuerza'>
-                    <BreadCrumbComponent listaDeItems={[
-                        {nombre:'Defensores', url:'/', lastItem: true},
-                    ]} />
+                    <BreadCrumbComponent listaDeItems={[{nombre:'Defensores', url:'/', lastItem: true},]} />
                 </TituloComponent>
                 <Box mt={4} component={Paper}>
                     <Box p={3}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12} mb={4}>
-                                <Typography variant="h5" color="black" component="h5" fontWeight='bold'>
-                                    Bienvenido, Carlos Lopez.
-                                </Typography>
-                                <Typography>
-                                    Emboscada
-                                </Typography>
-                            </Grid>
-                            <Grid item md={3}>
-                                <CardDefensores />
-                            </Grid>
-                            <Grid item md={3}>
-                                <CardDefensores />
-                            </Grid>
-                            <Grid item md={3}>
-                                <CardDefensores />
-                            </Grid>
-                            <Grid item md={3}>
-                                <CardDefensores />
-                            </Grid>
-                        </Grid>
+
+                        <DefensoresDashboard user={session.user} data={dashboardData} />
                     </Box>
                     <Box>
                         <Box sx={{ width: '100%' }}>
                             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                                     <Tab label="Intervenciones" {...a11yProps(0)} />
-                                    <Tab label="Defensores" {...a11yProps(1)} />
-                                    <Tab label="PPL" {...a11yProps(2)} />
+                                    {/*<Tab label="Defensores" {...a11yProps(1)} />
+                                    <Tab label="PPL" {...a11yProps(2)} />*/}
                                 </Tabs>
                             </Box>
                             <CustomTabPanel value={value} index={0}>
-
                                     <Box mb={2}>
-                                        <Button variant='contained'>
-                                            Agregar intervencion
-                                        </Button>
+                                        <IntervencionModal handleReturn={handleRelodIntervenciones} buttonLabel={'Agregar Intervencion'}/>
                                     </Box>
                                     <CustomTable
                                         showId={true}
@@ -280,44 +260,18 @@ export default function Page() {
                                         deleteRecord={handleOpenModal}
                                         data={data}
                                         options={{
-                                            targetURL: '/gestion-ppl/medidas-de-fuerza',
+                                            targetURL: '/defensores/intervenciones',
                                             rowsPerPageCustom: 5,
                                             pagination: true,
-                                            deleteOption: PermissionValidator('borrar_medidas_de_fuerza', session) ? true : false
-
                                         }}
                                     />
 
                             </CustomTabPanel>
                             <CustomTabPanel value={value} index={1}>
-                                <CustomTable
-                                    showId={true}
-                                    headers={header2}
-                                    deleteRecord={handleOpenModal}
-                                    data={data}
-                                    options={{
-                                        targetURL: '/gestion-ppl/medidas-de-fuerza',
-                                        rowsPerPageCustom: 5,
-                                        pagination: true,
-                                        deleteOption: PermissionValidator('borrar_medidas_de_fuerza', session) ? true : false
-
-                                    }}
-                                />
+                                <TabDefensores />
                             </CustomTabPanel>
                             <CustomTabPanel value={value} index={2}>
-                                <CustomTable
-                                    showId={true}
-                                    headers={header2}
-                                    deleteRecord={handleOpenModal}
-                                    data={data}
-                                    options={{
-                                        targetURL: '/gestion-ppl/medidas-de-fuerza',
-                                        rowsPerPageCustom: 5,
-                                        pagination: true,
-                                        deleteOption: PermissionValidator('borrar_medidas_de_fuerza', session) ? true : false
-
-                                    }}
-                                />
+                                2
                             </CustomTabPanel>
                         </Box>
                     </Box>

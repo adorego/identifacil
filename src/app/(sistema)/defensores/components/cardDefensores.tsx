@@ -4,14 +4,14 @@ import {Stack, Typography} from "@mui/material";
 import * as React from "react";
 
 
-export default function CardDefensores() {
+export default function CardDefensores({value=0,nombre='Default title'}:{value:number,nombre:string}) {
 
     return(
         <>
             <Stack spacing={2} direction='row'
                    sx={{
                        border: '1px solid lightgray',
-                       padding: '40px 20px',
+                       padding: '20px 20px',
                        borderRadius: '5px',
                    }}>
 
@@ -20,10 +20,10 @@ export default function CardDefensores() {
                 </Box>
                 <Box>
                     <Typography variant="h6" color="black" fontWeight='bold'>
-                        200
+                        {value}
                     </Typography>
                     <Typography>
-                        Cantidad de audiencia
+                        {nombre}
                     </Typography>
                 </Box>
             </Stack>

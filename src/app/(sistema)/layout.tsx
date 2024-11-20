@@ -13,7 +13,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/authOptions";
 import { redirect } from 'next/navigation';
 import SessionWatcher from "@/components/authComponents/sessionWatcher";
-
+import { Toaster, toast } from 'sonner'
 const inter = Inter({subsets: ['latin']});
 
 export const metadata = {
@@ -42,10 +42,11 @@ export default async function RootLayout({children,}: {
 
     return (
         <SessionProviderWrapper>
+
             <ThemeRegistry>
                 <html lang="en">
                 <body className={inter.className} suppressHydrationWarning={true}>
-
+                <Toaster position="top-right" richColors closeButton/>
 
                 <GlobalContextProvider>
                     <SnackbarComponent/>
