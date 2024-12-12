@@ -10,6 +10,10 @@ export const API_INTERVENCION_GET = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENT
 export const API_INTERVENCION_GET_CIRCUNSCRIPCION = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/defensores/intervenciones/circunscripcion`
 
 
+// Apartado Gestion de Defensores
+export const API_GET_DEFENSORES = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/defensores/defensor`
+
+
 export default function entrevistasURL(id_intervencion:string|number){
 
     const URL = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/defensores/intervenciones/${id_intervencion}/entrevistas`

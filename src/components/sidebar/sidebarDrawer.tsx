@@ -539,6 +539,15 @@ export default function SidebarDrawer()
                 />
                 }
 
+                {PermissionValidator('ver_gestion_defensores', session) &&
+                <SidebarItem
+                    icon={<ManageAccounts/>}
+                    label="Gestion de defensores"
+                    path="/sistema/gestion-de-defensores"
+                    isActive={pathname === '/sistema/gestion-de-defensores'}
+                />
+                }
+
 
             </List>
 

@@ -9,31 +9,20 @@ import Dialog from '@mui/material/Dialog';
 import {
     Box,
     Grid,
-    IconButton,
-    MenuItem,
-    Select,
     DialogTitle,
     DialogContent,
     DialogActions,
-    InputLabel, FormControl, FormHelperText, FormLabel, RadioGroup, Radio, Typography, CircularProgress,
+    FormControl, FormHelperText, FormLabel, RadioGroup, Radio, Typography, CircularProgress,
 } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { FileUploadOutlined, Label } from '@mui/icons-material';
 import es from 'dayjs/locale/es';
 dayjs.locale(es);
 // IDENTIFACIL Compontenes
-import AutocompleteDefensor from '@/components/autocomplete/autocompleteDefensor';
-import AutocompletePPL from '@/components/autocomplete/autocompletePPL';
-import AutocompleteExpediente from '@/components/autocomplete/autocompleteExpediente';
+
 import { Controller, useForm } from 'react-hook-form';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { MuiFileInput } from 'mui-file-input';
-import { fetchData } from '@/components/utils/utils';
-import Link from 'next/link';
-import { API_INTERVENCION_POST } from '@/app/api/lib/endpoint';
-import dayjs, {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import {toast} from "sonner";
-import {intervencionAltaType} from "@/app/api/interfaces/intervenciones";
 import {EntrevistaType} from "@/app/api/interfaces/entrevistas";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import AddIcon from "@mui/icons-material/Add";
