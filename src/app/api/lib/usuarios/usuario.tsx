@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server'
+import { API_DEFENSORE_GET_USER,  API_USUARIO_POST_USER } from '@/app/api/lib/endpoint';
+
+
 /**
  * Funcion para poder realizar el alta del usuario.
  * @param usuario
@@ -6,30 +9,23 @@ import { NextResponse } from 'next/server'
  * @param contrasena
  * @param rol
  */
-/*export const altaUsuario = async (alias: string, correo: string, contrasena: string, rol: string, authorization: string) => {
-    const response = await fetch(
-        `${process.env.NEXT_PUBLIC_CLIENT_BACKEND_URL}${process.env.NEXT_PUBLIC_PATH_USER_ADD}`,
-        {
+export const crearUsuario = async (data : Object) => {
+    const response = await fetch(`${API_USUARIO_POST_USER}`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: authorization,
-            },
-            body: JSON.stringify({
-                alias: alias,
-                correo: correo,
-                contrasenha: contrasena,
-                roles: [rol]
-            }),
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify(data),
         }
     )
-    return response
-}*/
-const URL_GET_USUARIOS = `${process.env.NEXT_PUBLIC_IDENTIFACIL_AUTH_API}/usuario`
+    const dataRes = await response.json()
+
+    return NextResponse.json({ dataRes })
+}
+
+
 
 export const listaUsuario = async (authorization?: string) => {
     const response = await fetch(
-        `${URL_GET_USUARIOS}`,
+        `${API_DEFENSORE_GET_USER}`,
         {
             method: 'GET',
             headers: {

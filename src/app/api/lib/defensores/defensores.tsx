@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { API_DEFENSORE_GET_LISTA } from '@/app/api/lib/endpoint';
+import { API_DEFENSORE_GET_LISTA, API_DEFENSORES_POST, API_USUARIO_POST_USER } from '@/app/api/lib/endpoint';
 
 /**
  * Funcion para poder realizar el alta del usuario.
@@ -26,4 +26,18 @@ export const listaDefensores = async (authorization?: string) => {
     // console.log('Check response en lib Entrevista', data)
 
     return NextResponse.json({ data })
+}
+
+
+
+export const createDefensor = async (data : Object) => {
+    const response = await fetch(`${API_DEFENSORES_POST}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify(data),
+        }
+    )
+    const dataRes = await response.json()
+
+    return NextResponse.json({ dataRes })
 }

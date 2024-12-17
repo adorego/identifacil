@@ -104,7 +104,18 @@ export default function Page({ params }: { params: { id: string } }) {
     }, [reloadEntrevisaStatus, reloadIntervencionStatus]);
 
     // Get Lista de entrevistas por Intervencion
+    const fetchData = async () => {
+        const response = await listaEntrevistaPorIntervencion({id_intervencion:params.id});
 
+        const { data } = await response.json()
+        const entrevistasProcesadas = data.resultado.map((item:any)=>({
+            ...item,
+            se_realizo_la_entrevista: item.se_realizo_la_entrevista ? "Si" : "No",
+            tipo_entrevista: item.virtual ? "Presencial" : "Virtual",
+            relato: item.relato.length > 30 ? `${item.relato.slice(0, 30)}...` : item.relato,
+        }))
+        setDataEntrevistas(entrevistasProcesadas)
+    };
 
     //Check para controlar reload de tabla de Entrevistas
     const handleReturnedDataFromModal = (value:Object)=>{

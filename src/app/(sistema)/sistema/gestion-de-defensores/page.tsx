@@ -69,9 +69,9 @@ export default function Page(){
                 headers={headers}
                 data={data}
                 options={{
-                    newRecord:'/sistema/gestion-de-usuarios/usuarios/crear',
+                    newRecord:'/sistema/gestion-de-defensores/crear',
                     title: 'Lista de defensores',
-                    targetURL: '/sistema/gestion-de-usuarios/usuarios',
+                    targetURL: '/sistema/gestion-de-defensores',
                     rowsPerPageCustom: 5,
                     pagination: true,
                 }}
