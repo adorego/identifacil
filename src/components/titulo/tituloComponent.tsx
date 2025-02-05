@@ -37,7 +37,7 @@ export default function TituloComponent({titulo, url = "", newEntry = "", childr
                         openSnackbar(result.message, "error");
                     }
                 };
-                fetchData();
+
 
         }
 

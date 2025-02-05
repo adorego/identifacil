@@ -313,23 +313,6 @@ export default function Page({params,}: { params: { id: number | string } }) {
         );
     }
 
-    /**
-     *  Handler para actualizar la propiedad de victimas cargadas
-     *
-     *  @param index number posicion donde se va actualizar el campo
-     *  @param field string Campo que se va actualizar dentro del objeto de la sancion
-     *  @param value any Valor para cargar en el campo del objeto
-     * */
-    const handleSancionesChange = (index: number, field: string, value: any) => {
-        setStateForm((prevData) => ({
-                ...prevData,
-                sanciones: prevData.sanciones?.map((item: any, i: number) =>
-                    i === index ? {...item, [field]: value} : item
-                )
-            })
-        );
-    }
-
     const handleDocumentoVictima = async (index: number, field: string, value: any) => {
         const datosCedula = await onConsultarRegistroCivil(value)
 
@@ -640,8 +623,9 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                     <Grid item xs={3}>
                                         <FormControl fullWidth>
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
-                                            <DatePicker
+                                            <MobileDatePicker
                                                 disabled={isEditMode}
+                                                disableFuture
                                                 label="Fecha de la falta"
                                                 format="DD/MM/YYYY"
                                                 name='fecha_falta'
@@ -694,6 +678,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                             <DatePicker
                                                 disabled={isEditMode}
+                                                disableFuture
                                                 label="Fecha de la resolcuion"
                                                 format="DD/MM/YYYY"
                                                 name='fecha_falta'
@@ -822,7 +807,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 <TextField
                                                     disabled={isEditMode}
                                                     fullWidth
-                                                    label='Victima de Apellido falta'
+                                                    label='Apellido'
                                                     name='apellido'
                                                     error={(stateForm.victimas && !stateForm.victimas[index].apellido)}
                                                     value={stateForm.victimas ? stateForm.victimas[index].apellido : ''}
@@ -831,20 +816,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                                 <IconButton disabled={isEditMode} aria-label="delete" onClick={(e)=>handleDeleteVictima(index)}>
                                                     <DeleteIcon />
                                                 </IconButton>
-                                                {/*<FormControl fullWidth variant="outlined">
-                                                    <InputLabel>Tipo de Victima</InputLabel>
-                                                    <Select
-                                                        value={stateForm.victimas ? stateForm.victimas[index].tipos_de_victima : ' '}
-                                                        onChange={(e) => handleVictimaChange(index, 'tipos_de_victima', e.target.value)}
-                                                        label="Seleccionar PPL"
-                                                        name="tipos_de_victima"
-                                                    >
 
-                                                        <MenuItem value={0}>Seleccionar tipo</MenuItem>
-                                                        <MenuItem value={1}>PPL</MenuItem>
-                                                        <MenuItem value={2}>Funcionario</MenuItem>
-                                                    </Select>
-                                                </FormControl>*/}
                                             </Stack>
                                         </Grid>
                                     ))}
@@ -964,6 +936,7 @@ export default function Page({params,}: { params: { id: number | string } }) {
                                 <FormControl fullWidth>
                                     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
                                     <DatePicker
+                                        maxDate={dayjs()}
                                         label="Fecha de inicio"
                                         format="DD/MM/YYYY"
                                         name='fechaInicio'

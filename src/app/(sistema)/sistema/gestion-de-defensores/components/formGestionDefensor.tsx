@@ -1,7 +1,6 @@
 'use client'
 
 import {
-
     Button,
     FormControl,
     FormLabel,
@@ -149,16 +148,9 @@ export default function FormGestionDefensor({params}: { params: { id: number | s
 
     const onSubmit = async (data:usuarioDefensorType)=>{
 
-        console.log('Check usuario: ', data)
-        // console.log(formState)
-        // http://localhost:4001/api/registro/auth/registro
-
         const responseCreateUsuario = await onCreateUser(data)
 
-        if(responseCreateUsuario){
-            onCreateDefensor(data, responseCreateUsuario)
-
-        }
+        if(responseCreateUsuario) onCreateDefensor(data, responseCreateUsuario)
 
     }
 

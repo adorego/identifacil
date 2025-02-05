@@ -2,7 +2,6 @@ import TituloComponent from "@/components/titulo/tituloComponent";
 import BreadCrumbComponent from "@/components/interfaz/BreadCrumbComponent";
 import React from "react";
 import {Box, Paper} from "@mui/material";
-import FormUsuarios from "@/app/(sistema)/sistema/gestion-de-usuarios/usuarios/[id]/formUsuarios";
 import FormGestionDefensor from '@/app/(sistema)/sistema/gestion-de-defensores/components/formGestionDefensor';
 
 
