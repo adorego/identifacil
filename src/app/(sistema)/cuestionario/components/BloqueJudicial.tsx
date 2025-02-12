@@ -568,7 +568,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                 value={estadoFormularioJudicial.fecha_ingreso_a_establecimiento ? dayjs(estadoFormularioJudicial.fecha_ingreso_a_establecimiento) : null}
                                 format="DD/MM/YYYY"
                                 name='fecha_ingreso_a_establecimiento'
-
+                                disableFuture={true}
                                 onChange={(newValue: Dayjs | null) => {
                                     setEstadoFormularioJudicial(prev => ({
                                         ...prev,
@@ -576,7 +576,7 @@ const BloqueJudicial: FC<BloqueJudicialProps> = (
                                         /*fecha_ingreso_a_establecimiento_modificado: true,*/
                                     }))
                                 }}
-                                label="Fecha de ingreso"/>
+                                label="Fecha de ingreso!"/>
                         </LocalizationProvider>
                     </FormControl>
                 </Grid>

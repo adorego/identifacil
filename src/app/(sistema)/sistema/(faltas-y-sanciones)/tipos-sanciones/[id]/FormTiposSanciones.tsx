@@ -42,15 +42,13 @@ export default function FormTiposSanciones({params} : { params: { id: number | s
     useEffect(() => {
         if (isEditMode) {
             handleLoading(true);
-            fetch(`${API_URL}/tipo_de_medida_de_fuerza/${params.id}`)
+
+            fetch(`${API_URL}/faltas_sanciones/tipos_de_sanciones/${params.id}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Asegúrate de que el array no esté vacío y de que el objeto tenga las propiedades necesarias
 
                     if (data) {
-                        // Los nombress de form y atributos del state deben ser lo mismo que el endpoint
-                        // o sino deberian hacer una normalizacion
-                        setStateForm(data);
+                        setStateForm(data.tipo_de_sancion);
                     }
                 }).then( ()=>{
                     handleLoading(false);
@@ -75,6 +73,7 @@ export default function FormTiposSanciones({params} : { params: { id: number | s
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
 
+
         if(name=='nombre'){
             setStateForm(prevState => ({
                 ...prevState,
@@ -82,10 +81,14 @@ export default function FormTiposSanciones({params} : { params: { id: number | s
             }));
         }
 
-        if(name== 'maximo_dias_de_sancion' && numberValidator(value)){
-            setStateForm((prevState : MyState)  => ({
+
+        if (name === 'maximo_dias_de_sancion' && numberValidator(value)) {
+            const numericValue = value.trim() === '' ? 0 : parseInt(value, 10); // Si está vacío, asignar 0
+
+
+            setStateForm((prevState: MyState) => ({
                 ...prevState,
-                maximo_dias_de_sancion: parseInt(value) ?? 0 // Asegúrate de que el valor no sea nulo o indefinido
+                maximo_dias_de_sancion: isNaN(numericValue) ? 0 : numericValue // Reemplazar NaN con 0
             }));
         }
     }
@@ -156,7 +159,7 @@ export default function FormTiposSanciones({params} : { params: { id: number | s
     }
 
     const handleCancelar = () =>{
-        router.push('/sistema/tipos-medidas-de-fuerza');
+        router.push('/sistema/tipos-sanciones');
     }
 
     return(
@@ -169,7 +172,7 @@ export default function FormTiposSanciones({params} : { params: { id: number | s
                         name="nombre"
                         value={stateForm.nombre ?? ''}
                         id="nombre"
-                        label="Tipo de medidas de fuerza"
+                        label="Nombre"
                         variant="outlined" />
                 </Grid>
             </Grid>
