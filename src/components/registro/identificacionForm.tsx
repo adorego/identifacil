@@ -290,7 +290,15 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
        
 
         setConsultaLoading(true)
-        const url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_CONSULTACI_API}/get_datos_ci/`;
+        const option_ci:any = Number(process.env.NEXT_PUBLIC_CONSULTACI_BD);
+        console.log("Opcion de ci:",option_ci);
+        let url:string | null = null;
+        if(option_ci==1){
+            url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_IDENTIFICACION_REGISTRO_API}/consulta_ci/get_datos_ci`
+        }else{
+            url = `${process.env.NEXT_PUBLIC_IDENTIFACIL_CONSULTACI_API}/get_datos_ci/`;
+        }
+       
         try {
             const headers = new Headers();
             headers.append('Content-Type', 'application/json');
@@ -345,6 +353,9 @@ const FormularioConCedulaParaguaya: FC<IdentificacionProps> = (props: Identifica
         }
 
     }
+
+    
+   
 
     const onCapturarEnter = (e:React.KeyboardEvent<HTMLInputElement>) =>{
         //e.preventDefault();
@@ -739,7 +750,6 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
     }else{
         return (
             <>
-                {console.log(formularioDeDatosDeIdentificacion)}
                 <Grid container spacing={2} mt={3}>
                     <Grid item xs={6}>
                         <TextField autoComplete="off"
@@ -752,7 +762,7 @@ const FormularioParaPPLSinDocumento: FC<IdentificacionProps> = (props: Identific
                                    variant="outlined"
                                    required/>
                     </Grid>
-    
+
                     <Grid item xs={6}>
                     </Grid>
                     <Grid item xs={6}>

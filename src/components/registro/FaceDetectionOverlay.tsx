@@ -127,7 +127,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
                                 }else if(nosePointRef.current){
                                     const faceMoved = detectHeadMovement(nosePointRef.current,detectionResult.landmarks.getNose());
                                     if(faceMoved){
-                                        console.log("Reconoció un giro de rostro");
+                                        //console.log("Reconoció un giro de rostro");
                                         manejador_de_estado(1);
                                         habilitarBotonDeCapturaDeFoto(true);
                                         enablePictureTakeRef.current = true;
@@ -173,7 +173,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
 
             } catch (error) {
                 habilitarBotonDeCapturaDeFoto(false);
-                console.log(error);
+                //console.log(error);
             }
         }
 
@@ -185,7 +185,7 @@ const FaceDetectionOverlay: FC<FaceDetectionOverlayProps> =
             const movementThreshold = 30;  
         
             const dist = distance(previusNosePoint[0], currentNosePoint[0]);  // Distancia entre la posición de la nariz
-            console.log("Distancia:", dist);
+            //console.log("Distancia:", dist);
             return dist > movementThreshold;
         };
 
